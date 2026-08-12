@@ -34,12 +34,18 @@ navegación decidida y los patrones transversales.
 **E-001 entregado y verificado.** `diseno/direccion-a.html` (operativa) y `diseno/direccion-b.html`
 (editorial).
 
-**Unidad en curso:** E-002. Marco pide tres direcciones más para elegir entre cinco. Contrato en
-`docs/encargos/E-002-direcciones-adicionales.md`: institucional, campo en oscuro y señalética vial, con
-el mismo contenido literal que la dirección A para que la comparación sea válida.
+**E-002 y E-003 entregados y verificados.** Cinco direcciones visuales en `diseno/`:
+A operativa, B editorial, C institucional, D campo en oscuro, E señalética vial. E-003 corrigió los
+muestrarios de C, D y E, que declaraban la paleta de A.
 
-Después: Marco elige dirección, Codex hace los wireframes de las nueve pantallas en ese lenguaje, y el
-sistema de diseño se congela en `docs/sistema-diseno.md`.
+Las cinco están publicadas como páginas privadas en claude.ai, una por dirección, para poder verlas en
+un celular real. Los enlaces viven en el chat; si hiciera falta que fueran públicos y permanentes, la
+vía es GitHub Pages, que exige repositorio público y `gh`, hoy no instalado.
+
+**Bloqueado esperando a Marco:** elegir dirección visual.
+
+Después: Codex hace los wireframes de las nueve pantallas en ese lenguaje, y el sistema de diseño se
+congela en `docs/sistema-diseno.md`.
 
 ## Contrato vigente
 
