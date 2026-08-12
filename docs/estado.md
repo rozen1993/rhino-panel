@@ -26,12 +26,17 @@ decisiones técnicas de backend.
 
 ## Siguiente acción
 
-Redactar `docs/fase-0-concepcion.md`: alcance, roles, recorridos, pantallas, estados vistos por el
-usuario, ubicación, mala señal y criterios de aceptación funcionales.
+`docs/fase-0-concepcion.md` está redactado, salvo la sección de Burson (§9), que depende de D-005.
 
-Las cuatro decisiones que condicionaban la forma de las pantallas ya están cerradas (D-001 a D-004,
-en `docs/decisiones.md`). Queda pendiente D-005, que solo afecta al alcance del módulo Burson: esa
-sección de la concepción se redacta cuando Marco decida.
+Faltan dos cosas para cerrar la fase:
+
+1. Marco resuelve la cola: D-005 a D-010 en `docs/decisiones-pendientes.md`. Seis entradas, cada una
+   con opciones, consecuencias y recomendación.
+2. Marco lee la concepción y confirma que el producto que describe es el que quiere. Si algo no
+   coincide con la operación real, se corrige el documento antes de diseñar nada.
+
+Con eso se completa §9, se incorporan las decisiones a los criterios de aceptación y la fase queda en
+condiciones de pasar su puerta.
 
 ## Contrato vigente
 
