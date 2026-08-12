@@ -26,15 +26,15 @@ decisiones técnicas de backend.
 
 ## Siguiente acción
 
-`docs/fase-0-concepcion.md` está completo: doce secciones, diez recorridos, nueve pantallas y
-veinticuatro criterios de aceptación, con las nueve decisiones cerradas ya incorporadas.
+`docs/fase-0-concepcion.md` está completo: doce secciones, diez recorridos, nueve pantallas,
+veintinueve criterios de aceptación y la máquina de estados con su tabla de transiciones. Las quince
+decisiones cerradas (D-001 a D-005 y D-007 a D-015) están incorporadas.
 
 Falta una sola cosa para cerrar la fase: **Marco lee la concepción y confirma que el producto que
 describe es el que quiere**. Se derivó de `CLAUDE.md`, no de observar cómo trabajan de verdad Johann,
 Eduardo, Chiara y Martín; corregirla aquí es barato y corregirla en la Fase 2 no lo es.
 
-Quedan tres decisiones abiertas que no bloquean la puerta: D-006 (Excel, bloquea la Fase 7), D-011 y
-D-012 (detalle del módulo Burson).
+Queda una decisión abierta que no bloquea la puerta: D-006, el Excel histórico, que bloquea la Fase 7.
 
 ## Contrato vigente
 

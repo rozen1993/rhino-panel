@@ -184,3 +184,87 @@ El avance se escribe a mano y es independiente del estado durante el trabajo, co
   AUNOR.
 - El formulario debe explicar por qué no deja entregar cuando el avance no llegó a 100, en vez de
   fallar en silencio.
+
+---
+
+## D-011 — El tablero de Burson lo mantienen Coordinación y Supervisión
+
+**Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+**Consecuencias**
+
+- Lo actualiza quien realmente habla con Burson, sin cargar a una sola persona.
+- El resto de los roles **no ve el módulo**, ni siquiera su entrada en la navegación. La navegación
+  deja de ser igual para todos los colaboradores.
+
+---
+
+## D-012 — Burson usa sus propios estados
+
+**Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+Una solicitud de Burson no recorre los siete estados de una actividad. Usa un conjunto propio y corto:
+
+**Solicitado · En proceso · Entregado · Aprobado · Cancelado**
+
+**Consecuencias**
+
+- Encaja con lo que el módulo es: el seguimiento de un requerimiento de un tercero, sin «Por subir» ni
+  observación interna.
+- El sistema mantiene **dos máquinas de estados distintas**. No deben mezclarse ni compartir pantallas
+  de filtro, y hay que probarlas por separado.
+- Los pendientes de Rhino y de Burson siguen siendo el dato que de verdad mueve el tablero; el estado
+  resume, no sustituye.
+
+---
+
+## D-013 — «Por subir» es obligatorio solo en los tipos que producen material
+
+**Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+| Tipo | Camino hasta Entregada |
+|---|---|
+| Grabación, Edición, Creatividad | En proceso → **Por subir** → Entregada |
+| Coordinación, Operación | En proceso → Entregada, con Por subir opcional |
+
+**Consecuencias**
+
+- Coincide con D-008: los mismos tres tipos que deben dejar un enlace son los que tienen algo que subir.
+- «Por subir» significa siempre lo mismo donde es obligatorio, y el panel de supervisión puede confiar
+  en ese estado para saber qué falta publicar.
+- Es una regla más que explicar en el formulario cuando alguien intente saltarse el paso.
+
+---
+
+## D-014 — El colaborador puede retroceder, salvo desde Entregada
+
+**Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+El responsable puede volver a un estado anterior mientras trabaja —de Por subir a En proceso, de En
+proceso a Programada—. Desde **Entregada no puede retroceder**: ahí el control pasa a supervisión.
+
+**Consecuencias**
+
+- Corregir un cambio de estado por error no exige molestar a nadie mientras el trabajo está en curso.
+- Lo que entró en revisión no sale de la bandeja de supervisión sin que supervisión lo sepa.
+- Si el colaborador entregó por error, tiene que pedir una observación o avisar por fuera. Es el mismo
+  precio que ya se aceptó en D-009 con la cancelación.
+
+---
+
+## D-015 — Supervisión resuelve las observaciones
+
+**Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+El colaborador responde y corrige; **supervisión lee y decide** si la observación queda resuelta. Al
+resolverse, la actividad vuelve exactamente al estado que tenía antes de ser observada.
+
+**Consecuencias**
+
+- Quien objeta es quien levanta la objeción: observar tiene fuerza real y no puede desactivarse desde
+  el lado observado.
+- Sostiene la trazabilidad que pide la meta final: se sabe quién observó, quién respondió y quién dio
+  por buena la respuesta.
+- Supervisión se vuelve un paso obligatorio para desbloquear. El panel de supervisión debe mostrar de
+  forma destacada las observaciones **respondidas y pendientes de cerrar**, o las actividades se quedan
+  detenidas esperando a que alguien mire.

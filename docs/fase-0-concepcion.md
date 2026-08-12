@@ -156,14 +156,38 @@ Siete estados. Descritos aquí por lo que significan para la persona, no por có
 - **El responsable puede editar su actividad hasta que se apruebe** (D-007), incluso después de
   entregarla. A cambio, el detalle debe mostrar cuándo se modificó por última vez, para que supervisión
   no apruebe a ciegas una ficha que cambió mientras la revisaba.
+- **«Por subir» es obligatorio en Grabación, Edición y Creatividad**, y opcional en Coordinación y
+  Operación (D-013). Los mismos tres tipos que deben dejar un enlace son los que tienen algo que subir.
+- **El responsable puede retroceder mientras trabaja, pero no desde Entregada** (D-014). Ahí el control
+  pasa a supervisión.
+- **La observación la resuelve supervisión**, no el colaborador (D-015). El colaborador responde y
+  corrige; supervisión lee y decide si queda cerrada.
 
-Los tres recorridos que el sistema debe soportar sin ambigüedad:
+### Quién mueve qué
+
+| Desde | A | Quién |
+|---|---|---|
+| (nueva) | Programada | Responsable o coordinación |
+| Programada | En proceso | Responsable |
+| En proceso | Por subir | Responsable |
+| Por subir | Entregada | Responsable, con avance 100 y enlace según tipo |
+| En proceso | Entregada | Responsable, solo en Coordinación y Operación |
+| En proceso · Por subir | estado anterior | Responsable |
+| En proceso · Por subir · Entregada | Observada | Solo supervisión |
+| Observada | el estado exacto previo | Solo supervisión, al resolver |
+| Entregada | Aprobada | Solo supervisión, sin observaciones abiertas |
+| Cualquiera salvo Aprobada | Cancelada | Solo supervisión |
+
+Los tres recorridos de ida y vuelta que el sistema debe soportar sin ambigüedad:
 
 ```
 En proceso  -> Observada -> En proceso
 Por subir   -> Observada -> Por subir
 Entregada   -> Observada -> Entregada -> Aprobada
 ```
+
+Que la actividad vuelva al estado *exacto* es lo que hace que observar no sea un castigo: a quien le
+observan algo que ya había subido, no se le devuelve al principio.
 
 ---
 
@@ -234,12 +258,15 @@ llena, avisa si el envío aún no llegó al servidor y permite reintentar.
 
 **P-5 · Panel de supervisión.** Todas las actividades, con filtros por mes, tipo, estado y responsable.
 Debe dejar ver de un vistazo qué espera acción de supervisión y qué está detenido esperando a un
-colaborador.
+colaborador. Como la observación solo la cierra supervisión (D-015), esta pantalla tiene que destacar
+las **observaciones ya respondidas y pendientes de cerrar**: si no, las actividades se quedan detenidas
+esperando a que alguien mire.
 
 **P-6 · Vista mensual de AUNOR.** §8.
 
 **P-7 · Módulo Burson.** §9. Tablero interno, separado del de actividades, que distingue lo que espera
-a Rhino de lo que espera a Burson.
+a Rhino de lo que espera a Burson. Solo lo ven Coordinación y Supervisión, así que la navegación no es
+idéntica para todos los colaboradores.
 
 **P-8 · Administración de cuentas.** Alta, asignación de rol, desactivación y reactivación.
 
@@ -294,12 +321,26 @@ quién le toca mover la pelota, no para exigirle nada a nadie dentro del sistema
 | fecha | Cuándo se pidió |
 | responsable | Quién de Rhino lo lleva |
 | material solicitado | Qué hay que producir o entregar |
-| estado | Ver D-012 |
+| estado | Solicitado · En proceso · Entregado · Aprobado · Cancelado |
 | pendientes de Rhino | Lo que falta de nuestro lado |
 | pendientes de Burson | Lo que estamos esperando del suyo |
 | fecha de entrega | Cuándo se entregó |
 | fecha de aprobación | Cuándo lo dieron por bueno |
 | comentarios u observaciones | Texto libre |
+
+### Estados propios
+
+Una solicitud de Burson **no recorre los siete estados de una actividad** (D-012). Usa un conjunto
+propio y corto: **Solicitado · En proceso · Entregado · Aprobado · Cancelado**. No hay «Por subir» ni
+observación interna, porque un requerimiento de un tercero no se observa: se responde.
+
+El sistema mantiene por tanto dos máquinas de estados distintas, que no se mezclan ni comparten
+filtros.
+
+### Quién lo lleva
+
+Coordinación y Supervisión (D-011). El resto de los roles **no ve el módulo**, ni siquiera su entrada
+en la navegación: la barra de navegación no es igual para todos los colaboradores.
 
 ### Pantalla
 
@@ -308,11 +349,6 @@ distinción es el motivo de existir del tablero. Cada entrada abre su ficha para
 
 Es un módulo separado del de actividades: una solicitud de Burson no es una actividad de AUNOR y no
 aparece en la vista mensual de AUNOR.
-
-### Abierto
-
-- **D-011** — quién mantiene el tablero.
-- **D-012** — qué estados usa una solicitud.
 
 ---
 
@@ -362,22 +398,39 @@ Comprobables sin conocer la implementación.
 17. AUNOR no recibe observaciones, respuestas, pendientes internos, actividades dadas de baja ni campos
     no autorizados, tampoco en la respuesta del servidor.
 18. Una entrada de Burson no aparece nunca en la vista de AUNOR.
-19. Un formulario a medio llenar sobrevive a una recarga y a una pérdida de conexión.
-20. Enviar dos veces el mismo formulario crea una sola actividad.
-21. La pantalla distingue lo guardado en el teléfono de lo confirmado por el servidor.
-22. Una cuenta desactivada no puede entrar.
-23. La importación permite simular antes de confirmar, separa cargadas de rechazadas con motivo, y
+19. Una solicitud de Burson usa sus cinco estados propios y no los siete de una actividad.
+20. Un colaborador que no sea de Coordinación ni de Supervisión no ve el módulo Burson, ni su entrada
+    en la navegación, ni alcanza sus datos escribiendo la dirección directa.
+21. Grabación, Edición y Creatividad no pueden pasar de En proceso a Entregada sin atravesar Por subir;
+    Coordinación y Operación sí pueden.
+22. El responsable puede volver de Por subir a En proceso, y no puede retroceder desde Entregada.
+23. Un colaborador no puede cerrar una observación, ni siquiera respondiéndola; solo supervisión la
+    resuelve.
+24. Un formulario a medio llenar sobrevive a una recarga y a una pérdida de conexión.
+25. Enviar dos veces el mismo formulario crea una sola actividad.
+26. La pantalla distingue lo guardado en el teléfono de lo confirmado por el servidor.
+27. Una cuenta desactivada no puede entrar.
+28. La importación permite simular antes de confirmar, separa cargadas de rechazadas con motivo, y
     permite anular un lote sin borrar su historial.
-24. Los recorridos R-1 a R-10 se completan en celular sin quedar bloqueados.
+29. Los recorridos R-1 a R-10 se completan en celular sin quedar bloqueados.
 
 ---
 
 ## 12. Lo que esta fase deja abierto a propósito
 
-- **D-006** — columnas reales del Excel histórico. No condiciona ninguna pantalla; condiciona la Fase 7.
-- **D-011** — quién mantiene el tablero de Burson (§9).
-- **D-012** — qué estados usa una solicitud de Burson (§9).
+Una sola entrada: **D-006**, las columnas reales del Excel histórico. No condiciona ninguna pantalla;
+condiciona la Fase 7. Está en `docs/decisiones-pendientes.md`.
 
-Las tres están en `docs/decisiones-pendientes.md` con opciones, consecuencias y recomendación. Ninguna
-impide explicar el producto pantalla por pantalla, que es lo que pide la puerta de salida; las dos de
-Burson afectan al detalle de una sola pantalla, no a su existencia.
+Las quince decisiones restantes están cerradas en `docs/decisiones.md` y ya incorporadas a este
+documento.
+
+### Lo que la Fase 1 hereda como obligación de diseño
+
+Tres consecuencias de las decisiones tomadas no son opinables al diseñar:
+
+1. El detalle de la actividad muestra **cuándo se modificó por última vez** (D-007), o supervisión
+   aprueba a ciegas fichas que cambiaron mientras las revisaba.
+2. El panel de supervisión destaca las **observaciones respondidas y pendientes de cerrar** (D-015), o
+   las actividades se quedan detenidas sin que nadie lo note.
+3. La navegación **no es idéntica para todos los colaboradores**: el módulo Burson solo existe para
+   Coordinación y Supervisión (D-011).
