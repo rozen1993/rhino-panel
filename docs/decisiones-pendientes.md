@@ -63,3 +63,73 @@ seguimiento de un requerimiento de un tercero.
 
 **Recomendación:** B. El seguimiento de un requerimiento externo no tiene «Por subir» ni observación
 interna, y forzarlo dentro de la máquina de actividades confundiría las dos cosas.
+
+---
+
+## D-013 — ¿Es obligatorio pasar por «Por subir»?
+
+**Fase:** 0
+**Bloquea:** las transiciones permitidas hacia adelante y qué botones ofrece el detalle.
+
+Ni `CLAUDE.md` ni la concepción dicen si el avance es estrictamente
+`Programada → En proceso → Por subir → Entregada`, o si se puede saltar el tercer paso.
+
+**Opciones**
+
+- **A. Opcional siempre.** Desde En proceso se puede ir a Por subir o directo a Entregada.
+  Consecuencia: se adapta a cada tipo sin reglas extra; «Por subir» pasa a ser informativo y algunos
+  dejarán de usarlo.
+- **B. Obligatorio en los tipos que producen material** (Grabación, Edición, Creatividad) y opcional en
+  Coordinación y Operación. Consecuencia: coincide con la regla del enlace (D-008) y hace que «Por
+  subir» signifique siempre lo mismo; una regla más que explicar.
+- **C. Obligatorio siempre.** Consecuencia: un solo camino, trivial de probar; obliga a Coordinación y
+  Operación a atravesar un estado que en su caso no significa nada.
+
+**Recomendación:** B, por coherencia con D-008: los mismos tres tipos que deben dejar un enlace son los
+que tienen algo que subir.
+
+---
+
+## D-014 — ¿Puede el colaborador retroceder por su cuenta?
+
+**Fase:** 0
+**Bloquea:** las acciones del detalle y el criterio de aceptación sobre el techo del colaborador.
+
+Si el responsable entregó y se da cuenta de que faltaba algo, no está resuelto si puede volver atrás o
+si depende de que supervisión lo observe.
+
+**Opciones**
+
+- **A. Sí, mientras no esté Aprobada.** Consecuencia: coherente con D-007, que ya le deja editar la
+  ficha hasta la aprobación; corregir no exige molestar a nadie. Supervisión puede ver desaparecer de
+  su bandeja algo que iba a revisar.
+- **B. No: solo avanza.** Para volver atrás hace falta una observación. Consecuencia: lo que entró en
+  revisión no sale sin que supervisión lo sepa; obliga a pedir una observación para un error propio.
+- **C. Sí, salvo desde Entregada.** Puede retroceder mientras trabaja, pero una vez entregado el
+  control pasa a supervisión. Consecuencia: intermedio; protege solo el tramo que de verdad importa.
+
+**Recomendación:** C. Deja libertad durante el trabajo y congela el momento en que la pelota pasa a
+supervisión.
+
+---
+
+## D-015 — ¿Quién resuelve una observación?
+
+**Fase:** 0
+**Bloquea:** los permisos de supervisión, la trazabilidad de la observación y los tres recorridos de
+ida y vuelta. Es la más importante de las tres.
+
+`CLAUDE.md` fija que al resolver la actividad vuelve exactamente al estado previo, pero no dice quién
+resuelve.
+
+**Opciones**
+
+- **A. Supervisión, tras leer la respuesta.** El colaborador responde y corrige; supervisión decide si
+  queda resuelta. Consecuencia: observar significa algo, porque quien objeta es quien levanta la
+  objeción; supervisión tiene que volver a pasar por ahí para desbloquear.
+- **B. El colaborador, al responder.** Consecuencia: nada se queda atascado esperando a supervisión; el
+  colaborador puede cerrar por su cuenta una objeción que no atendió, y observar deja de tener fuerza.
+- **C. El colaborador la marca como atendida y supervisión la cierra.** Dos pasos distintos.
+  Consecuencia: se ve quién dijo qué y cuándo; es el flujo más fiel y también el más largo.
+
+**Recomendación:** A. Es la que sostiene la trazabilidad que pide la meta final sin añadir un paso más.
