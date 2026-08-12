@@ -28,17 +28,14 @@ diseño, no código de producto.
 
 ## Siguiente acción
 
-`docs/fase-1-ux.md` tiene el inventario de pantallas y la arquitectura de información por rol.
+`docs/fase-1-ux.md` tiene el inventario de pantallas, la arquitectura de información por rol, la
+navegación decidida y los patrones transversales.
 
-Bloqueado a la espera de dos decisiones de Marco:
+**Unidad en curso:** E-001, dirección visual. El contrato está en
+`docs/encargos/E-001-direccion-visual.md` y lo ejecuta Codex: dos direcciones distintas sobre las mismas
+tres pantallas, en `diseno/`, para que Marco compare en su celular y elija.
 
-- **D-016** — qué ve Coordinación. Salió al dibujar la navegación: con D-002 puede programar
-  actividades para otros, pero con D-003 solo ve aquellas de las que es responsable, así que hoy
-  programaría a ciegas.
-- **D-017** — patrón de navegación en móvil.
-
-Con eso resuelto, la unidad siguiente es la dirección visual: dos propuestas comparables, en una página
-que Marco pueda abrir en su propio celular.
+Después: wireframes de las nueve pantallas en la dirección elegida, y sistema de diseño.
 
 ## Contrato vigente
 

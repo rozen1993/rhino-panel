@@ -53,9 +53,13 @@ Coordinación y Supervisión (D-011).
 | Rol | Destinos |
 |---|---|
 | Grabación, Edición, Operación, Creatividad | Mis actividades · Perfil |
-| Coordinación | Mis actividades · Burson · Perfil *(pendiente de D-016)* |
+| Coordinación | Actividades · Burson · Perfil |
 | Supervisión / Administración | Supervisión · Burson · Cuentas · Importar · Perfil |
 | AUNOR | Ninguno. Una sola pantalla |
+
+En Coordinación el destino se llama **Actividades**, no «Mis actividades», porque con D-016 ve las de
+todo el equipo. Es la misma pantalla P-2 con otro alcance: muestra actividades ajenas, así que necesita
+decir de quién es cada una, cosa que en el resto de los roles sobra.
 
 «Perfil» es el destino mínimo donde vive cerrar sesión y poco más. No es una pantalla de la concepción
 porque no aporta función de negocio, pero tiene que existir para poder salir de la aplicación.
@@ -64,14 +68,15 @@ porque no aporta función de negocio, pero tiene que existir para poder salir de
 
 ## 3. Navegación
 
-Pendiente de **D-017**. La propuesta es una **barra inferior fija** con los destinos del rol, porque
-todos los roles tienen entre dos y cinco, todos caben, y en móvil el borde inferior es lo único que el
-pulgar alcanza sin recolocar el teléfono.
+**Barra inferior fija** con los destinos del rol (D-017), siempre visible. En escritorio pasa a un
+lateral y el contenido gana el ancho para las tablas de supervisión y de Burson.
 
-En escritorio esa misma barra pasa a un lateral, y el contenido gana el ancho para las tablas de
-supervisión y de Burson.
+Tiene entre dos y cinco entradas según quién entre, así que no se diseña una barra de contenido fijo.
 
-El acceso (P-1) y la vista de AUNOR (P-6) no tienen navegación de ningún tipo.
+Dos consecuencias que los wireframes deben respetar:
+
+- Los formularios largos no pueden dejar el último campo ni el botón de guardar debajo de la barra.
+- El acceso (P-1) y la vista de AUNOR (P-6) no llevan barra: no tienen a dónde navegar.
 
 ---
 
@@ -112,7 +117,7 @@ muestra desactivada. Un colaborador no debe ver nunca un botón de aprobar, ni s
 
 ## 5. Qué falta en esta fase
 
-- Resolver D-016 y D-017.
-- Dirección visual: dos propuestas comparables, en una página que Marco pueda abrir en su celular.
-- Wireframes de las nueve pantallas en la dirección elegida, en móvil y en escritorio.
-- Sistema de diseño, que se congela en `docs/sistema-diseno.md` cuando Marco lo apruebe.
+1. **Dirección visual** — dos propuestas comparables que Marco pueda abrir en su celular. Encargo
+   `docs/encargos/E-001-direccion-visual.md`.
+2. **Wireframes** de las nueve pantallas en la dirección elegida, en móvil y en escritorio.
+3. **Sistema de diseño**, que se congela en `docs/sistema-diseno.md` cuando Marco lo apruebe.

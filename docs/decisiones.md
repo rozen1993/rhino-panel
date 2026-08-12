@@ -268,3 +268,42 @@ resolverse, la actividad vuelve exactamente al estado que tenía antes de ser ob
 - Supervisión se vuelve un paso obligatorio para desbloquear. El panel de supervisión debe mostrar de
   forma destacada las observaciones **respondidas y pendientes de cerrar**, o las actividades se quedan
   detenidas esperando a que alguien mire.
+
+---
+
+## D-016 — Coordinación ve todas las actividades, sin poder observar, aprobar ni cancelar
+
+**Fecha:** 2026-08-12 · **Fase:** 1 · **Decide:** Marco
+
+Coordinación es un rol de trabajo con **lectura global**. Ve todas las actividades del equipo, pero
+sus acciones siguen siendo las de un colaborador: no observa, no aprueba y no cancela.
+
+Esta decisión **acota D-003**, que sigue vigente para los demás roles de trabajo: Grabación, Edición,
+Operación y Creatividad ven solo las suyas.
+
+**Consecuencias**
+
+- Resuelve la contradicción que hacía inútil la mitad del rol: se puede seguir lo que se programó.
+- El aislamiento entre usuarios deja de ser una regla única. Hay **tres niveles de lectura** —solo lo
+  propio, todo sin gobierno, y todo con gobierno— y los tres se prueban por separado en la Fase 8.
+- Las políticas RLS de la Fase 4 tienen que contemplar el caso, no derivarse solo de «responsable = yo».
+- La pantalla P-2 de Coordinación no es la misma que la de Grabación: muestra actividades ajenas y
+  necesita saber de quién es cada una.
+
+---
+
+## D-017 — Navegación con barra inferior fija
+
+**Fecha:** 2026-08-12 · **Fase:** 1 · **Decide:** Marco
+
+Los destinos del rol viven en una **barra inferior fija**, siempre visible. En escritorio, esa misma
+barra pasa a un lateral y el contenido gana el ancho.
+
+**Consecuencias**
+
+- El pulgar alcanza la navegación sin recolocar el teléfono, que es lo que pide ser mobile-first.
+- Cuesta una franja permanente de una pantalla pequeña. Los formularios largos deben tenerlo en cuenta
+  para que la barra no tape el último campo ni el botón de guardar.
+- Como el número de destinos cambia por rol (D-011, D-016), la barra tiene entre dos y cinco entradas
+  según quién entre. No se diseña una barra fija de contenido fijo.
+- El acceso (P-1) y la vista de AUNOR (P-6) no llevan barra: no tienen a dónde navegar.
