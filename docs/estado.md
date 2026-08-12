@@ -26,12 +26,12 @@ decisiones técnicas de backend.
 
 ## Siguiente acción
 
-Marco resuelve la cola de `docs/decisiones-pendientes.md`. Las cinco entradas abiertas condicionan
-la forma de casi todas las pantallas, así que la concepción no puede cerrarse sin ellas.
+Redactar `docs/fase-0-concepcion.md`: alcance, roles, recorridos, pantallas, estados vistos por el
+usuario, ubicación, mala señal y criterios de aceptación funcionales.
 
-Mientras tanto, el trabajo autorizado que no depende de esas respuestas es redactar la parte de la
-concepción que ya se deriva de `CLAUDE.md`: tipos de actividad, campos comunes, ubicación, máquina
-de estados vista por el usuario y comportamiento ante mala señal.
+Las cuatro decisiones que condicionaban la forma de las pantallas ya están cerradas (D-001 a D-004,
+en `docs/decisiones.md`). Queda pendiente D-005, que solo afecta al alcance del módulo Burson: esa
+sección de la concepción se redacta cuando Marco decida.
 
 ## Contrato vigente
 
