@@ -1,0 +1,26 @@
+# Dependencias
+node_modules/
+
+# Build
+.next/
+out/
+dist/
+build/
+
+# Entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Sistema operativo
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editores
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
