@@ -5,34 +5,7 @@ consecuencias tiene cada una.
 
 Marco resuelve en lote. Lo resuelto pasa a `docs/decisiones.md` y desaparece de esta cola.
 
-Resueltas hasta ahora: D-001, D-002, D-003, D-004 — ver `docs/decisiones.md`.
-
----
-
-## D-005 — ¿Burson necesita cuenta propia?
-
-**Fase:** 0
-**Bloquea:** el alcance del módulo Burson y su matriz de permisos. No bloquea el resto de la
-concepción funcional.
-
-`CLAUDE.md` dice expresamente que no se asuma que Burson necesita cuenta salvo decisión de Marco, y
-describe el módulo como *"seguimiento separado de las actividades internas de Rhino"*, con pendientes
-de Rhino y pendientes de Burson.
-
-**Opciones**
-
-- **A. Sin cuenta.** Es un tablero interno de Rhino sobre lo que se coordina con Burson. Nadie de
-  Burson entra al sistema. Consecuencia: cero superficie externa nueva que asegurar y probar; los
-  pendientes de Burson los registra Rhino según lo que sabe.
-- **B. Con cuenta de solo lectura.** Burson ve el estado de sus requerimientos pero no escribe.
-  Consecuencia: menos correos de seguimiento; obliga a decidir qué campos internos no puede ver, igual
-  que con AUNOR.
-- **C. Con cuenta que escribe** sus propios pendientes. Consecuencia: el tablero se mantiene solo;
-  aparece un usuario externo con permiso de escritura, que hay que acotar y probar a fondo.
-
-**Recomendación:** A para esta entrega. Es lo que literalmente pide el requerimiento y evita abrir una
-superficie externa que después hay que asegurar y probar. B se puede añadir más tarde sin rehacer el
-módulo.
+Resueltas hasta ahora: D-001 a D-005 y D-007 a D-010 — ver `docs/decisiones.md`.
 
 ---
 
@@ -49,80 +22,44 @@ de ejemplo.
 
 ---
 
-## D-007 — ¿Puede el colaborador editar una actividad ya Entregada?
+## D-011 — ¿Quién mantiene el tablero de Burson?
 
 **Fase:** 0
-**Bloquea:** qué acciones muestra la pantalla de detalle según el estado, y los criterios de
-aceptación sobre edición.
+**Bloquea:** la matriz de permisos del módulo Burson y quién ve su entrada en la navegación.
 
-Entregada significa que el colaborador declaró que terminó. No está resuelto si después puede seguir
-tocando la ficha.
+Con D-005 resuelto, Burson es un tablero interno. Falta decidir quién de Rhino lo lleva.
 
 **Opciones**
 
-- **A. No, salvo que sea observada.** Al entregar, la ficha se bloquea; si supervisión observa, se
-  reabre. Consecuencia: lo que supervisión revisa no cambia bajo sus pies; un error de dedo obliga a
-  pedir una observación para corregirlo.
-- **B. Sí, hasta que sea Aprobada.** Consecuencia: cómodo para corregir un enlace mal pegado;
-  supervisión puede estar revisando algo que ya cambió.
-- **C. Solo algunos campos** (enlace al material y notas). Consecuencia: cubre el caso real —el enlace
-  equivocado— sin dejar mover fechas ni descripción.
+- **A. Coordinación y Supervisión.** Consecuencia: lo mantiene quien realmente habla con Burson; el
+  resto del equipo ni ve el módulo. Es la más ajustada a cómo se describe el requerimiento.
+- **B. Solo Supervisión / Administración.** Consecuencia: control máximo; carga toda la actualización
+  sobre una persona.
+- **C. Todos los colaboradores, cada uno en lo suyo.** Consecuencia: se reparte el trabajo; el tablero
+  deja de tener un dueño claro y se desordena con facilidad.
 
-**Recomendación:** C.
+**Recomendación:** A.
 
 ---
 
-## D-008 — ¿El enlace al material es obligatorio para pasar a Entregada?
+## D-012 — ¿Qué estados usa una solicitud de Burson?
 
 **Fase:** 0
-**Bloquea:** validación del formulario, el paso a Entregada y el criterio de aceptación 4.
+**Bloquea:** la pantalla del módulo Burson y sus criterios de aceptación.
+
+`CLAUDE.md` da a Burson un campo «estado», pero no dice cuál. Los siete estados internos están
+pensados para una actividad de producción con observación y aprobación, y puede que no encajen en el
+seguimiento de un requerimiento de un tercero.
 
 **Opciones**
 
-- **A. Obligatorio.** No hay entrega sin material localizable. Consecuencia: la entrega significa
-  siempre lo mismo; bloquea a quien entregó por otra vía (disco físico, transferencia directa).
-- **B. Opcional, con aviso.** Consecuencia: nunca bloquea; aparecen entregas sin material que después
-  hay que perseguir.
-- **C. Obligatorio solo para Grabación, Edición y Creatividad**, que producen material; opcional para
-  Coordinación y Operación. Consecuencia: se ajusta a lo que cada tipo produce de verdad.
+- **A. Los mismos siete estados.** Consecuencia: una sola máquina de estados en todo el sistema, más
+  fácil de explicar y de probar; arrastra a Burson conceptos que quizá le sobran, como «Por subir».
+- **B. Un conjunto propio y corto** (por ejemplo: solicitado, en proceso, entregado, aprobado,
+  cancelado). Consecuencia: encaja con lo que Burson realmente es; obliga a mantener dos máquinas de
+  estados distintas.
+- **C. Sin estados cerrados:** un texto libre. Consecuencia: mínimo esfuerzo; imposible contar,
+  agrupar o filtrar de forma fiable.
 
-**Recomendación:** C, si Coordinación y Operación no siempre dejan un archivo.
-
----
-
-## D-009 — ¿Quién puede cancelar una actividad?
-
-**Fase:** 0
-**Bloquea:** permisos por estado y el recorrido R-10.
-
-`CLAUDE.md` fija que una actividad Aprobada no puede cancelarse, pero no quién cancela.
-
-**Opciones**
-
-- **A. Solo supervisión/administración.** Consecuencia: control claro; el colaborador tiene que pedirlo.
-- **B. El responsable y supervisión.** Consecuencia: ágil en campo, donde una cobertura se cae sola;
-  el colaborador puede hacer desaparecer trabajo comprometido.
-- **C. El responsable solo hasta Programada**; después, solo supervisión. Consecuencia: cubre el caso
-  real —la actividad que nunca empezó— sin dejar cancelar trabajo ya en curso.
-
-**Recomendación:** C.
-
----
-
-## D-010 — ¿El avance está atado al estado?
-
-**Fase:** 0
-**Bloquea:** el formulario, la pantalla de detalle y qué significa el número que ve AUNOR.
-
-Hay un avance de 0 a 100 y además siete estados. No está resuelto si son dos cosas independientes.
-
-**Opciones**
-
-- **A. Independientes.** El avance es informativo y se mueve a mano. Consecuencia: máxima libertad;
-  aparecerán actividades Entregadas al 60 %, y eso confunde.
-- **B. El estado manda y el avance se deduce.** Consecuencia: nunca se contradicen; se pierde el matiz
-  de "voy por la mitad" dentro de En proceso.
-- **C. Independientes con reglas mínimas:** entregar exige 100, y aprobar lo mantiene en 100.
-  Consecuencia: conserva el matiz durante el trabajo y evita la contradicción al final.
-
-**Recomendación:** C.
+**Recomendación:** B. El seguimiento de un requerimiento externo no tiene «Por subir» ni observación
+interna, y forzarlo dentro de la máquina de actividades confundiría las dos cosas.

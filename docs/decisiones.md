@@ -89,3 +89,98 @@ AUNOR accede con cuenta individual y rol de solo lectura. No se usa un enlace p�
   contraseña.
 - La separación de datos de AUNOR debe existir igual en el servidor: la cuenta no es la protección,
   solo la puerta.
+
+---
+
+## D-005 — Burson no tiene cuenta
+
+**Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+El módulo Burson es un tablero **interno de Rhino** sobre lo que se coordina con Burson. Nadie de
+Burson entra al sistema.
+
+**Consecuencias**
+
+- No se abre ninguna superficie externa nueva que asegurar, filtrar y probar. Los únicos usuarios
+  externos siguen siendo los de AUNOR.
+- Los pendientes de Burson los registra Rhino según lo que sabe: son una anotación propia, no una
+  declaración del cliente.
+- Si más adelante Burson quisiera ver su estado, se puede añadir una cuenta de solo lectura sin
+  rehacer el módulo. El camino inverso sería más caro.
+
+---
+
+## D-006 — Excel histórico
+
+Pendiente. Ver `docs/decisiones-pendientes.md`.
+
+---
+
+## D-007 — El colaborador puede editar su actividad hasta que se apruebe
+
+**Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+Entregar no bloquea la ficha. El responsable sigue pudiendo editarla mientras no esté Aprobada.
+
+**Consecuencias**
+
+- Corregir un enlace mal pegado, una fecha o una descripción no exige pedir una observación.
+- **Riesgo asumido:** supervisión puede estar revisando una ficha que cambia mientras la lee. Para que
+  eso no sea invisible, el diseño de la Fase 1 debe mostrar en el detalle **cuándo se modificó por
+  última vez**, de forma que supervisión note que lo que aprueba no es lo que abrió.
+- Aprobada sigue siendo el cierre: a partir de ahí no se edita.
+
+---
+
+## D-008 — El enlace al material es obligatorio para entregar, salvo en Coordinación y Operación
+
+**Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+| Tipo | Enlace para pasar a Entregada |
+|---|---|
+| Grabación | Obligatorio |
+| Edición | Obligatorio |
+| Creatividad | Obligatorio |
+| Coordinación | Opcional |
+| Operación | Opcional |
+
+**Consecuencias**
+
+- En los tres tipos que producen material, «Entregada» significa siempre lo mismo: existe algo y se
+  sabe dónde está.
+- Coordinación y Operación pueden entregar sin archivo, porque no siempre producen uno.
+- La validación ocurre **al cambiar a Entregada**, no al crear la actividad: nadie tiene el enlace
+  cuando registra una grabación que aún no hizo.
+
+---
+
+## D-009 — Solo supervisión puede cancelar
+
+**Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+Cancelar es una acción exclusiva de Supervisión / Administración, en cualquier estado salvo Aprobada.
+Un colaborador no cancela ni siquiera una actividad suya que nunca empezó.
+
+**Consecuencias**
+
+- Ninguna actividad comprometida desaparece sin que supervisión lo sepa.
+- Cuando una cobertura se cae en campo, el colaborador tiene que avisar por fuera del sistema. Si eso
+  resulta incómodo en el uso real, se revisa; por ahora prima el control.
+- Una actividad Aprobada no puede cancelarla nadie.
+
+---
+
+## D-010 — Entregar exige avance 100
+
+**Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+El avance se escribe a mano y es independiente del estado durante el trabajo, con dos reglas: pasar a
+**Entregada** exige avance 100, y **Aprobada** lo mantiene en 100.
+
+**Consecuencias**
+
+- Se conserva el matiz de «voy por la mitad» mientras la actividad está En proceso o Por subir.
+- No existen actividades Entregadas al 60 %, que es lo que confundiría a quien lee la lista, incluido
+  AUNOR.
+- El formulario debe explicar por qué no deja entregar cuando el avance no llegó a 100, en vez de
+  fallar en silencio.

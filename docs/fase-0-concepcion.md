@@ -37,6 +37,15 @@ depender de decisiones técnicas de backend.
 
 Los perfiles son roles; una persona ocupa uno o varios (D-001).
 
+**Colaborador** es el término que este documento usa —siguiendo a `CLAUDE.md`— para cualquier persona
+con un **rol de trabajo**: Grabación, Edición, Coordinación, Operación o Creatividad. Es quien ejecuta
+y registra actividades. Los otros dos grupos son **Supervisión / Administración**, que revisa y
+aprueba, y **AUNOR**, que solo consulta.
+
+Coordinación es un rol de trabajo, no supervisión: quien coordina es un colaborador más, aunque además
+pueda programar actividades para otros. Una misma persona puede tener rol de trabajo y de supervisión a
+la vez, y entonces tiene las dos capacidades.
+
 | Rol | Lo que necesita hacer |
 |---|---|
 | Grabación | Registrar coberturas y grabaciones desde el campo, casi siempre en celular y con señal irregular. Necesita que llenar la actividad sea rápido y que la ubicación no cueste. |
@@ -70,10 +79,10 @@ que cambia entre ellos es qué campos son obligatorios.
 | responsable | Persona a cargo de ejecutarla | Sí |
 | descripción | Qué hay que hacer o qué se hizo | No |
 | estado | Uno de los siete (§5) | Sí, con valor inicial |
-| avance | 0 a 100 | Sí, empieza en 0 |
+| avance | 0 a 100, se escribe a mano | Sí, empieza en 0; debe ser 100 para entregar |
 | fecha prevista de entrega | Compromiso | No |
 | fecha real de entrega | Cuándo se entregó de verdad | No hasta entregar |
-| enlace al material | Dónde está lo producido | No (ver D-008) |
+| enlace al material | Dónde está lo producido | Al entregar, según tipo |
 | notas | Texto libre interno | No |
 | ubicación | §4 | Según tipo |
 
@@ -82,13 +91,16 @@ responsable** por separado, porque con creación mixta pueden ser personas disti
 
 ### Obligatoriedad por tipo
 
-| Tipo | `ubicacion_nombre` |
-|---|---|
-| Grabación | Obligatoria |
-| Operación | Obligatoria |
-| Edición | Opcional |
-| Coordinación | Opcional |
-| Creatividad | Opcional |
+| Tipo | `ubicacion_nombre` | Enlace al material para entregar |
+|---|---|---|
+| Grabación | Obligatoria | Obligatorio |
+| Operación | Obligatoria | Opcional |
+| Edición | Opcional | Obligatorio |
+| Coordinación | Opcional | Opcional |
+| Creatividad | Opcional | Obligatorio |
+
+La ubicación se exige **al guardar**. El enlace se exige **al pasar a Entregada**, no antes: nadie
+tiene el enlace cuando registra una grabación que todavía no ha hecho (D-008).
 
 ---
 
@@ -134,9 +146,16 @@ Siete estados. Descritos aquí por lo que significan para la persona, no por có
 - Al observar, el sistema recuerda el estado anterior. Al resolver la observación, la actividad vuelve
   **exactamente** a ese estado, no a uno por defecto.
 - Solo una actividad **Entregada** y **sin observaciones abiertas** puede pasar a **Aprobada**.
+- **Cancelar es exclusivo de supervisión** (D-009). Un colaborador no cancela ni siquiera una actividad
+  suya que nunca empezó: avisa por fuera del sistema.
 - Una actividad **Aprobada no puede cancelarse**.
 - Dar de baja **no borra** el registro: deja de mostrarse donde corresponda, pero sigue existiendo.
 - Cada cambio de estado registra **quién** y **cuándo**.
+- **Pasar a Entregada exige avance 100** y enlace al material en Grabación, Edición y Creatividad
+  (D-008, D-010). Si falta algo, la pantalla dice qué falta; no falla en silencio.
+- **El responsable puede editar su actividad hasta que se apruebe** (D-007), incluso después de
+  entregarla. A cambio, el detalle debe mostrar cuándo se modificó por última vez, para que supervisión
+  no apruebe a ciegas una ficha que cambió mientras la revisaba.
 
 Los tres recorridos que el sistema debe soportar sin ambigüedad:
 
@@ -219,7 +238,8 @@ colaborador.
 
 **P-6 · Vista mensual de AUNOR.** §8.
 
-**P-7 · Módulo Burson.** Pendiente de D-005.
+**P-7 · Módulo Burson.** §9. Tablero interno, separado del de actividades, que distingue lo que espera
+a Rhino de lo que espera a Burson.
 
 **P-8 · Administración de cuentas.** Alta, asignación de rol, desactivación y reactivación.
 
@@ -259,11 +279,40 @@ el servidor, no solo en la pantalla: no basta con no dibujar un campo si el dato
 
 ## 9. Burson
 
-Pendiente de D-005. El módulo existe y sus campos están fijados en `CLAUDE.md` —solicitud o comisión,
-fecha, responsable, material solicitado, estado, pendientes de Rhino, pendientes de Burson, fechas de
-entrega y aprobación, comentarios—, pero su alcance depende de si Burson entra o no al sistema.
+**Burson no entra al sistema** (D-005). El módulo es un tablero **interno de Rhino** para seguir lo que
+se coordina con Burson en redes sociales, separado de las actividades para AUNOR.
 
-Esta sección se completa cuando Marco resuelva esa entrada de la cola.
+Que sea interno cambia el significado de dos campos: los *pendientes de Burson* son una anotación de
+Rhino sobre lo que está esperando del otro lado, no una declaración de Burson. Sirven para saber a
+quién le toca mover la pelota, no para exigirle nada a nadie dentro del sistema.
+
+### Qué registra cada entrada
+
+| Campo | Qué es |
+|---|---|
+| solicitud o comisión | Qué pidió Burson |
+| fecha | Cuándo se pidió |
+| responsable | Quién de Rhino lo lleva |
+| material solicitado | Qué hay que producir o entregar |
+| estado | Ver D-012 |
+| pendientes de Rhino | Lo que falta de nuestro lado |
+| pendientes de Burson | Lo que estamos esperando del suyo |
+| fecha de entrega | Cuándo se entregó |
+| fecha de aprobación | Cuándo lo dieron por bueno |
+| comentarios u observaciones | Texto libre |
+
+### Pantalla
+
+Una lista donde se vea de un golpe qué está esperando a Rhino y qué está esperando a Burson, porque esa
+distinción es el motivo de existir del tablero. Cada entrada abre su ficha para editarla.
+
+Es un módulo separado del de actividades: una solicitud de Burson no es una actividad de AUNOR y no
+aparece en la vista mensual de AUNOR.
+
+### Abierto
+
+- **D-011** — quién mantiene el tablero.
+- **D-012** — qué estados usa una solicitud.
 
 ---
 
@@ -294,34 +343,41 @@ Comprobables sin conocer la implementación.
 3. Un colaborador solo ve actividades de las que es responsable, y no alcanza las de otro ni
    escribiendo su dirección directa.
 4. Un colaborador no puede llevar una actividad más allá de Entregada.
-5. Un colaborador no puede observar ni aprobar, ni ve esas acciones.
+5. Un colaborador no puede observar, aprobar ni cancelar, ni ve esas acciones.
 6. Observar solo es posible desde En proceso, Por subir o Entregada.
 7. Resolver una observación devuelve la actividad exactamente al estado previo, en los tres recorridos
    de §5.
 8. Aprobar solo es posible desde Entregada y sin observaciones abiertas.
-9. Una actividad Aprobada no puede cancelarse.
+9. Una actividad Aprobada no puede cancelarse, ni por supervisión.
 10. Dar de baja retira el registro de la vista sin borrarlo.
 11. Cada cambio de estado queda con autor y fecha, y puede verse en el detalle.
-12. Coordinación puede crear una actividad para otra persona, y esa persona la ve entre las suyas.
-13. AUNOR ve el mes con última actualización, totales agrupados y la lista con fecha, tipo, título,
+12. No se puede pasar a Entregada con avance menor que 100, y la pantalla explica por qué.
+13. No se puede pasar a Entregada sin enlace al material en Grabación, Edición y Creatividad; en
+    Coordinación y Operación sí se puede.
+14. El responsable puede editar su actividad después de entregarla y hasta que se apruebe, y el detalle
+    muestra cuándo se modificó por última vez.
+15. Coordinación puede crear una actividad para otra persona, y esa persona la ve entre las suyas.
+16. AUNOR ve el mes con última actualización, totales agrupados y la lista con fecha, tipo, título,
     ubicación y estado.
-14. AUNOR no recibe observaciones, respuestas, pendientes internos, actividades dadas de baja ni campos
+17. AUNOR no recibe observaciones, respuestas, pendientes internos, actividades dadas de baja ni campos
     no autorizados, tampoco en la respuesta del servidor.
-15. Un formulario a medio llenar sobrevive a una recarga y a una pérdida de conexión.
-16. Enviar dos veces el mismo formulario crea una sola actividad.
-17. La pantalla distingue lo guardado en el teléfono de lo confirmado por el servidor.
-18. Una cuenta desactivada no puede entrar.
-19. La importación permite simular antes de confirmar, separa cargadas de rechazadas con motivo, y
+18. Una entrada de Burson no aparece nunca en la vista de AUNOR.
+19. Un formulario a medio llenar sobrevive a una recarga y a una pérdida de conexión.
+20. Enviar dos veces el mismo formulario crea una sola actividad.
+21. La pantalla distingue lo guardado en el teléfono de lo confirmado por el servidor.
+22. Una cuenta desactivada no puede entrar.
+23. La importación permite simular antes de confirmar, separa cargadas de rechazadas con motivo, y
     permite anular un lote sin borrar su historial.
-20. Los recorridos R-1 a R-10 se completan en celular sin quedar bloqueados.
+24. Los recorridos R-1 a R-10 se completan en celular sin quedar bloqueados.
 
 ---
 
 ## 12. Lo que esta fase deja abierto a propósito
 
-- **D-005** — si Burson entra al sistema (§9).
-- **D-006** — columnas reales del Excel histórico.
-- **D-007 a D-010** — detalles de la máquina de estados y de edición que afectan a las pantallas, en
-  `docs/decisiones-pendientes.md`.
+- **D-006** — columnas reales del Excel histórico. No condiciona ninguna pantalla; condiciona la Fase 7.
+- **D-011** — quién mantiene el tablero de Burson (§9).
+- **D-012** — qué estados usa una solicitud de Burson (§9).
 
-Nada de esto impide explicar el producto pantalla por pantalla, que es lo que pide la puerta de salida.
+Las tres están en `docs/decisiones-pendientes.md` con opciones, consecuencias y recomendación. Ninguna
+impide explicar el producto pantalla por pantalla, que es lo que pide la puerta de salida; las dos de
+Burson afectan al detalle de una sola pantalla, no a su existencia.

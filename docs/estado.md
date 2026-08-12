@@ -26,17 +26,15 @@ decisiones técnicas de backend.
 
 ## Siguiente acción
 
-`docs/fase-0-concepcion.md` está redactado, salvo la sección de Burson (§9), que depende de D-005.
+`docs/fase-0-concepcion.md` está completo: doce secciones, diez recorridos, nueve pantallas y
+veinticuatro criterios de aceptación, con las nueve decisiones cerradas ya incorporadas.
 
-Faltan dos cosas para cerrar la fase:
+Falta una sola cosa para cerrar la fase: **Marco lee la concepción y confirma que el producto que
+describe es el que quiere**. Se derivó de `CLAUDE.md`, no de observar cómo trabajan de verdad Johann,
+Eduardo, Chiara y Martín; corregirla aquí es barato y corregirla en la Fase 2 no lo es.
 
-1. Marco resuelve la cola: D-005 a D-010 en `docs/decisiones-pendientes.md`. Seis entradas, cada una
-   con opciones, consecuencias y recomendación.
-2. Marco lee la concepción y confirma que el producto que describe es el que quiere. Si algo no
-   coincide con la operación real, se corrige el documento antes de diseñar nada.
-
-Con eso se completa §9, se incorporan las decisiones a los criterios de aceptación y la fase queda en
-condiciones de pasar su puerta.
+Quedan tres decisiones abiertas que no bloquean la puerta: D-006 (Excel, bloquea la Fase 7), D-011 y
+D-012 (detalle del módulo Burson).
 
 ## Contrato vigente
 
