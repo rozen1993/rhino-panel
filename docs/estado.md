@@ -31,11 +31,15 @@ diseño, no código de producto.
 `docs/fase-1-ux.md` tiene el inventario de pantallas, la arquitectura de información por rol, la
 navegación decidida y los patrones transversales.
 
-**Unidad en curso:** E-001, dirección visual. El contrato está en
-`docs/encargos/E-001-direccion-visual.md` y lo ejecuta Codex: dos direcciones distintas sobre las mismas
-tres pantallas, en `diseno/`, para que Marco compare en su celular y elija.
+**E-001 entregado y verificado.** `diseno/direccion-a.html` (operativa) y `diseno/direccion-b.html`
+(editorial).
 
-Después: wireframes de las nueve pantallas en la dirección elegida, y sistema de diseño.
+**Unidad en curso:** E-002. Marco pide tres direcciones más para elegir entre cinco. Contrato en
+`docs/encargos/E-002-direcciones-adicionales.md`: institucional, campo en oscuro y señalética vial, con
+el mismo contenido literal que la dirección A para que la comparación sea válida.
+
+Después: Marco elige dirección, Codex hace los wireframes de las nueve pantallas en ese lenguaje, y el
+sistema de diseño se congela en `docs/sistema-diseno.md`.
 
 ## Contrato vigente
 
