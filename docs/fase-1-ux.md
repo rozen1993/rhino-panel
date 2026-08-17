@@ -9,6 +9,26 @@ una mano.
 **Puerta de salida:** Marco aprueba la dirección visual y entiende todos los recorridos principales
 desde las pantallas.
 
+> ## ⚠ Fase suspendida el 2026-08-17
+>
+> **Todo este documento está en revisión.** Describe navegación, permisos y nueve pantallas derivadas de
+> una versión de la Fase 0 que el requerimiento v2 del cliente puso en duda.
+>
+> Concretamente, quedan sin base firme:
+>
+> - **El inventario de pantallas**, porque el requerimiento v2 añade al menos dos —el *roster* de acceso
+>   y el historial mensual en tabla— y porque no se sabe si cada perfil necesita su propia pantalla
+>   (D-030).
+> - **La columna «quién la ve»**, porque el catálogo de roles está en revisión (D-022) y porque la
+>   lectura global de Coordinación puede desaparecer (D-016).
+> - **Todo lo que dependa de los siete estados** (D-019) y **de que AUNOR sea solo lectura** (D-033).
+>
+> Lo que **no** está en duda: mobile-first, que esta fase no instala nada, y D-017 (barra inferior en
+> móvil, lateral en escritorio), que los mockups del cliente confirman en su variante de escritorio.
+>
+> **Las ocho maquetas de `diseno/` se conservan.** No se retocan ni se encarga una novena mientras
+> D-031 esté abierta. Ver `docs/impacto-requerimiento-v2.md` y `docs/incidentes.md` → INC-001.
+
 ---
 
 ## 1. Inventario de pantallas

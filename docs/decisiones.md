@@ -3,11 +3,35 @@
 Decisiones de producto y arquitectura que deben sobrevivir al chat. Una decisión aquí solo cambia si
 Marco la cambia expresamente, y el cambio se escribe en este archivo.
 
+Cerradas: **dieciséis** — D-001 a D-005 y D-007 a D-017. D-006 nunca se cerró; su entrada es un
+marcador que apunta a la cola de pendientes.
+
+> ## Estado de la revisión abierta el 2026-08-17
+>
+> El requerimiento v2 del cliente dejó once decisiones en revisión. **Marco resolvió D-019, D-023,
+> D-024 y D-033 el 2026-08-17**, y con ello **siete salieron de revisión**.
+>
+> **Siguen en revisión: D-001, D-005, D-011, D-016** — todas por el catálogo de roles y por si Burson
+> participa. Las resuelven D-020, D-021, D-022 y D-035.
+>
+> **Salieron de revisión:** D-007, D-008, D-009, D-010, D-013, D-014, D-015 — al confirmarse que la
+> plataforma es un sistema de supervisión con ciclo de observación (D-019) y que el material va por
+> enlace (D-023).
+>
+> **Intactas todo el tiempo:** D-002, D-003, D-004, D-012, D-017.
+>
+> Contexto: `docs/impacto-requerimiento-v2.md` · Pendientes: `docs/decisiones-pendientes.md`
+
 ---
 
 ## D-001 — Los perfiles son roles, no personas
 
 **Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+> **EN REVISIÓN (2026-08-17) — la resuelve D-022.** Lo que está en duda es el **catálogo de roles**: el
+> requerimiento v2 introduce «Locuciones», y puede dejar sin titular a Operación y a Coordinación. El
+> **principio** de esta decisión —se modelan roles, no personas— no está en discusión y sobrevive
+> cualquiera que sea el catálogo.
 
 El sistema modela **roles**, y una persona ocupa uno o varios. Johann no es un perfil: es un usuario
 con el rol *Grabación*.
@@ -39,6 +63,11 @@ Roles derivados del requerimiento:
 ## D-002 — La actividad la crea tanto el colaborador como coordinación
 
 **Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+> **Intacta.** El formulario del mockup no muestra campo «responsable», pero eso **no elimina esta
+> decisión**: es el panel personal de Johann, donde el responsable es obvio, y la ficha v2 llama
+> «mínimos» a los campos que lista. Solo cambia el nombre del actor si Coordinación desaparece del
+> catálogo (D-022); la regla de fondo —creador y responsable son datos distintos— no está en discusión.
 
 Ambas vías conviven: el colaborador registra lo suyo, y coordinación/supervisión puede además
 programar y asignar actividades a otros.
@@ -78,6 +107,11 @@ administración ven todo.
 
 **Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
 
+> **Intacta, con dos preguntas colgando.** El requerimiento v2 no contradice que AUNOR tenga cuenta
+> individual. Queda por decidir **por dónde entra** —¿aparece en la pantalla roster junto al equipo
+> interno, o por una puerta separada? (D-026)— y **qué puede hacer una vez dentro**, porque la v2 habla
+> de «vista de supervisión» y no de consulta de solo lectura (D-033).
+
 AUNOR accede con cuenta individual y rol de solo lectura. No se usa un enlace público.
 
 **Consecuencias**
@@ -95,6 +129,11 @@ AUNOR accede con cuenta individual y rol de solo lectura. No se usa un enlace p�
 ## D-005 — Burson no tiene cuenta
 
 **Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+> **EN REVISIÓN (2026-08-17) — la resuelve D-035.** El requerimiento v2 describe la plataforma como
+> «canal de comunicación […] entre el equipo, los colaboradores operativos, Autopista del Norte y
+> **Burson**». Esa frase admite leer que Burson participa directamente, que es justo lo que esta
+> decisión descarta.
 
 El módulo Burson es un tablero **interno de Rhino** sobre lo que se coordina con Burson. Nadie de
 Burson entra al sistema.
@@ -120,6 +159,9 @@ Pendiente. Ver `docs/decisiones-pendientes.md`.
 
 **Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
 
+> **Confirmada el 2026-08-17 por D-019.** El estado Aprobada se mantiene, así que la frontera de esta
+> decisión sigue existiendo tal cual.
+
 Entregar no bloquea la ficha. El responsable sigue pudiendo editarla mientras no esté Aprobada.
 
 **Consecuencias**
@@ -135,6 +177,10 @@ Entregar no bloquea la ficha. El responsable sigue pudiendo editarla mientras no
 ## D-008 — El enlace al material es obligatorio para entregar, salvo en Coordinación y Operación
 
 **Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+> **Confirmada y precisada el 2026-08-17 por D-019 y D-023.** El estado Entregada se mantiene, y el
+> «enlace al material» queda definido como **el enlace a la carpeta de OneDrive con las fotos y vídeos
+> de esa actividad**. La obligatoriedad por tipo de la tabla de abajo no cambia.
 
 | Tipo | Enlace para pasar a Entregada |
 |---|---|
@@ -158,6 +204,9 @@ Entregar no bloquea la ficha. El responsable sigue pudiendo editarla mientras no
 
 **Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
 
+> **Confirmada el 2026-08-17 por D-019.** Cancelada se mantiene aunque no aparezca en los mockups del
+> cliente.
+
 Cancelar es una acción exclusiva de Supervisión / Administración, en cualquier estado salvo Aprobada.
 Un colaborador no cancela ni siquiera una actividad suya que nunca empezó.
 
@@ -173,6 +222,10 @@ Un colaborador no cancela ni siquiera una actividad suya que nunca empezó.
 ## D-010 — Entregar exige avance 100
 
 **Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+> **Confirmada el 2026-08-17 por D-019.** Entregada se mantiene, así que la regla sigue enganchada
+> donde estaba. Queda un detalle menor en D-028: si el avance se pide en todos los perfiles o solo en
+> los que lo usan de verdad. El requerimiento v2 lo conserva expresamente para Eduardo.
 
 El avance se escribe a mano y es independiente del estado durante el trabajo, con dos reglas: pasar a
 **Entregada** exige avance 100, y **Aprobada** lo mantiene en 100.
@@ -190,6 +243,10 @@ El avance se escribe a mano y es independiente del estado durante el trabajo, co
 ## D-011 — El tablero de Burson lo mantienen Coordinación y Supervisión
 
 **Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+> **EN REVISIÓN (2026-08-17) — la resuelven D-022 y D-035.** Esta decisión **se queda sin sujeto** si
+> Coordinación deja de existir: los mockups mueven a Chiara/Kiara a Locuciones y no muestran a nadie en
+> Coordinación. Hay que decidir quién mantiene el módulo entonces.
 
 **Consecuencias**
 
@@ -222,6 +279,9 @@ Una solicitud de Burson no recorre los siete estados de una actividad. Usa un co
 
 **Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
 
+> **Confirmada el 2026-08-17 por D-019.** «Por subir» se mantiene aunque no aparezca en los mockups del
+> cliente.
+
 | Tipo | Camino hasta Entregada |
 |---|---|
 | Grabación, Edición, Creatividad | En proceso → **Por subir** → Entregada |
@@ -240,6 +300,8 @@ Una solicitud de Burson no recorre los siete estados de una actividad. Usa un co
 
 **Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
 
+> **Confirmada el 2026-08-17 por D-019.** Los estados sobre los que se define la regla se mantienen.
+
 El responsable puede volver a un estado anterior mientras trabaja —de Por subir a En proceso, de En
 proceso a Programada—. Desde **Entregada no puede retroceder**: ahí el control pasa a supervisión.
 
@@ -255,6 +317,12 @@ proceso a Programada—. Desde **Entregada no puede retroceder**: ahí el contro
 ## D-015 — Supervisión resuelve las observaciones
 
 **Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
+
+> **Confirmada el 2026-08-17 por D-019.** El ciclo de observación se mantiene entero: supervisión
+> observa, el colaborador responde, supervisión cierra, y la actividad vuelve al estado exacto previo.
+>
+> **Ojo con D-033:** el feedback de AUNOR **no** usa este mecanismo. Esta decisión gobierna la
+> observación **interna** de Rhino sobre sus operarios.
 
 El colaborador responde y corrige; **supervisión lee y decide** si la observación queda resuelta. Al
 resolverse, la actividad vuelve exactamente al estado que tenía antes de ser observada.
@@ -274,6 +342,11 @@ resolverse, la actividad vuelve exactamente al estado que tenía antes de ser ob
 ## D-016 — Coordinación ve todas las actividades, sin poder observar, aprobar ni cancelar
 
 **Fecha:** 2026-08-12 · **Fase:** 1 · **Decide:** Marco
+
+> **EN REVISIÓN (2026-08-17) — la resuelven D-021 y D-022.** Dos frentes: **se queda sin sujeto** si
+> Coordinación desaparece del catálogo de roles; y el requerimiento v2 reserva la vista general
+> explícitamente a «administradores y supervisores», limitando al resto a «la información que le
+> corresponda», que es lo contrario de la lectura global que esta decisión concede.
 
 Coordinación es un rol de trabajo con **lectura global**. Ve todas las actividades del equipo, pero
 sus acciones siguen siendo las de un colaborador: no observa, no aprueba y no cancela.
@@ -296,6 +369,11 @@ Operación y Creatividad ven solo las suyas.
 
 **Fecha:** 2026-08-12 · **Fase:** 1 · **Decide:** Marco
 
+> **Intacta, sin confirmar del todo.** Los mockups del requerimiento v2 muestran exactamente la barra
+> **lateral de escritorio** que esta decisión prevé, así que no la contradicen. Pero los tres mockups
+> son de escritorio: **ninguno confirma la barra inferior en móvil**, que es la mitad importante de
+> esta decisión y la que responde al mandato mobile-first.
+
 Los destinos del rol viven en una **barra inferior fija**, siempre visible. En escritorio, esa misma
 barra pasa a un lateral y el contenido gana el ancho.
 
@@ -307,3 +385,151 @@ barra pasa a un lateral y el contenido gana el ancho.
 - Como el número de destinos cambia por rol (D-011, D-016), la barra tiene entre dos y cinco entradas
   según quién entre. No se diseña una barra fija de contenido fijo.
 - El acceso (P-1) y la vista de AUNOR (P-6) no llevan barra: no tienen a dónde navegar.
+
+---
+
+## D-019 — La plataforma es un sistema de supervisión: se mantienen los siete estados
+
+**Fecha:** 2026-08-17 · **Fase:** 0 · **Decide:** Marco
+
+Frente a los cuatro modelos que circulaban —dos estados en la ficha original, tres en cada uno de los
+dos mockups, y siete en la Fase 0—, Marco decide que **la plataforma es un sistema de supervisión**, no
+una bitácora.
+
+**Confirmado expresamente por Marco el 2026-08-17:** *«que se conserven los 7 estados»*. Se descarta el
+modelo híbrido con menos estados visibles. La sección §5 de `docs/fase-0-concepcion.md` queda firme tal
+como está, con sus siete estados, sus reglas y sus tres recorridos de ida y vuelta.
+
+**Consecuencias**
+
+- Sobreviven íntegras D-007, D-008, D-009, D-010, D-013, D-014 y D-015, que salen de revisión.
+- Los quince criterios de aceptación que dependían del modelo vuelven a ser válidos sin tocar.
+- «Por subir» y «Cancelada» se mantienen **aunque no aparezcan en ningún mockup del cliente**.
+- Los mockups muestran tres etiquetas de estado y el sistema tendrá siete. Al diseñar hay que decidir
+  cómo se presentan siete estados sin que la pantalla se sienta más pesada que la que el cliente vio.
+  Es un problema de diseño, no de modelo.
+- El cliente **no ha visto** el ciclo de observación en ningún mockup. Conviene enseñárselo antes de
+  construirlo, para que no le llegue de sorpresa lo que es el corazón del producto.
+
+---
+
+## D-023 — El material va por enlace: la plataforma no almacena archivos
+
+**Fecha:** 2026-08-17 · **Fase:** 0 · **Decide:** Marco
+
+Cada operario sube sus fotos y vídeos donde ya los sube hoy, y **en la plataforma pega un enlace** a esa
+carpeta. La plataforma no recibe archivos.
+
+Queda descartada la subida directa que mostraban los mockups (arrastrar y soltar, PDF/JPG/PNG/MP4,
+máximo 50 MB).
+
+**Consecuencias**
+
+- **Simplifica mucho el proyecto.** Desaparecen almacenamiento propio, cuotas, límites de tamaño,
+  validación de formatos, respaldo y restauración de binarios. Eso quita trabajo de las Fases 5, 8 y 9.
+- **D-036 deja de existir**: no hay que resolver cómo se sube un vídeo de 50 MB desde la berma, porque
+  no se sube nada. La protección de mala señal vuelve a ser lo que era: un formulario de texto.
+- El «contador de archivos» que muestran los mockups **no puede existir**: la plataforma no sabe qué hay
+  dentro de una carpeta ajena. Como mucho puede mostrar si hay enlace o no.
+- El precio, que hay que asumir a conciencia: **el material no está bajo control de la plataforma**. Si
+  alguien mueve, renombra o borra la carpeta, el enlace muere y el sistema no se entera. Y el acceso
+  depende de permisos que reparte Lenin a mano, fuera de la plataforma (D-025).
+- Nada impide añadir almacenamiento propio más adelante. El camino inverso habría sido más caro.
+
+---
+
+## D-024 — Descargar es ir a OneDrive
+
+**Fecha:** 2026-08-17 · **Fase:** 0 · **Decide:** Marco · **Consecuencia de:** D-023
+
+Al no haber archivos en la plataforma, no hay nada que descargar desde ella. La acción de descarga que
+muestran los mockups **es redirigir a la carpeta**, igual que «Ver».
+
+Queda por decidir al diseñar si tiene sentido mantener dos botones que hacen lo mismo.
+
+---
+
+## D-033 — AUNOR ve y deja su opinión, pero no manda sobre los operarios
+
+**Fecha:** 2026-08-17 · **Fase:** 0 · **Decide:** Marco
+
+AUNOR deja de ser un lector mudo: **puede dejar su feedback u opinión** sobre lo que ve. La razón que da
+Marco es explícita y define el límite: *la plataforma la usa Rhino para controlar a sus operarios; de
+AUNOR se quiere su opinión, porque importa que estén contentos*.
+
+**Confirmado expresamente por Marco el 2026-08-17:** *«sobre el feedback, eso pasa siempre primero por
+supervisión»*. El comentario de AUNOR **nunca llega directo al operario**. Entra en una bandeja de
+supervisión, y es supervisión quien lo descarta, lo responde, o lo convierte en una observación interna.
+
+```
+AUNOR comenta  →  bandeja de supervisión  →  supervisión descarta, responde,
+                                             o lo convierte en observación interna
+```
+
+Eso cierra el agujero que la auditoría había señalado: un mensaje directo del cliente a un operario
+—con notificación y con el nombre del cliente encima— habría funcionado en la práctica como una orden,
+aunque formalmente no cambiara ningún estado.
+
+De ahí sale la regla que separa las dos cosas:
+
+| | Observación interna | Feedback de AUNOR |
+|---|---|---|
+| Quién la escribe | Supervisión de Rhino | AUNOR |
+| Sobre quién recae | El operario responsable | Rhino como empresa |
+| ¿Cambia el estado? | Sí, pasa a Observada y detiene | **No** |
+| ¿Obliga a alguien? | Sí, hay que corregir y supervisión cierra | No, es una opinión |
+| ¿Quién la ve? | Rhino, nunca AUNOR | Rhino; AUNOR ve la suya |
+
+**Consecuencias**
+
+- **El cliente nunca da órdenes directas a un operario.** Si el feedback de AUNOR merece corrección, es
+  **supervisión de Rhino** quien lo convierte en una observación interna. La cadena de mando no se
+  rompe: Rhino sigue siendo quien controla a su gente.
+- La vista de AUNOR deja de ser de solo lectura: **escribe**. Sigue sin recibir observaciones internas,
+  respuestas internas, pendientes internos ni actividades dadas de baja — pero eso ya no basta.
+  **Ahora hacen falta las dos direcciones:**
+  - **Confidencialidad**, como hasta ahora: que no le llegue nada interno.
+  - **Integridad**, que es nueva: una cuenta de AUNOR debe poder crear feedback **solo sobre lo que ya
+    puede ver**, y no debe poder alterar la actividad, su estado, su autor, sus campos internos ni el
+    identificador al que se engancha el comentario. El feedback externo y la nota interna tienen que ser
+    dos objetos distintos, no el mismo con una bandera.
+  - La Fase 8 solo tenía previsto probar que AUNOR no recibe campos internos. Ahora tiene que probar
+    también que **no puede escribir donde no debe**.
+- Aparece trabajo nuevo que no estaba en el alcance: alguien de Rhino tiene que **ver que AUNOR opinó**.
+  Un comentario del cliente que nadie lee es peor que no tener comentarios.
+- La mecánica exacta queda abierta en **D-041**.
+
+---
+
+## D-036 — Subir archivos con mala señal
+
+**Fecha:** 2026-08-17 · **Cerrada sin objeto por D-023.**
+
+No aplica: la plataforma no recibe archivos. La protección de mala señal cubre el formulario de texto,
+como estaba definido en `docs/fase-0-concepcion.md` §10.
+
+---
+
+## D-042 — El diseño se hace primero en escritorio
+
+**Fecha:** 2026-08-17 · **Fase:** 1 · **Decide:** Marco
+
+Las piezas visuales se producen **primero en escritorio** y el móvil viene después.
+
+**Esto invierte el orden que fijaba `CLAUDE.md`**, que dice «la plataforma es mobile-first» y que el caso
+que manda es una persona en vía con el teléfono en una mano. La inversión es deliberada y tiene razones:
+los mockups del cliente son de escritorio, la supervisión y la edición se hacen sentados, y Marco
+necesita algo que enseñarle a César.
+
+**Consecuencias**
+
+- **El móvil no se abandona, se pospone.** Sigue siendo obligatorio, porque quien graba en vía es quien
+  más usa el sistema. Lo que cambia es en qué orden se dibuja.
+- **El riesgo hay que decirlo:** diseñar primero en escritorio y adaptar después suele producir
+  pantallas móviles que son la versión estrecha de una tabla, no una pantalla pensada para el pulgar. El
+  formulario de grabación y la lista de actividades son los dos sitios donde eso se nota, y son
+  justamente los que usa Johann en la berma.
+- **D-017 sigue vigente** y ahora se lee al revés: barra lateral en escritorio, que en móvil pasa a barra
+  inferior fija.
+- Cuando exista la versión de escritorio aprobada, **hay que producir la de móvil antes de cerrar la
+  Fase 1**. La puerta de salida no cambia.

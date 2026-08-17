@@ -1,5 +1,35 @@
 # CONTEXTO Y OBJETIVO
 
+> ## ⚠ Partes de este archivo son línea base EN REVISIÓN desde el 2026-08-17
+>
+> El cliente entregó una versión 2 completa del requerimiento que **contradice varias definiciones de
+> este archivo**. Como `CLAUDE.md` está por encima de `docs/` en la jerarquía, sus contratos no pueden
+> quedar neutralizados en silencio desde abajo: quedan marcados aquí.
+>
+> **Esta anotación no resuelve nada.** Todo lo que dice este archivo sigue siendo lo acordado y nada se
+> ha sustituido. Lo que cambia es que **no se construye encima de las secciones marcadas** hasta que
+> Marco cierre las decisiones correspondientes.
+>
+> **Marco resolvió cuatro el 2026-08-17** y esas secciones vuelven a ser firmes:
+>
+> - **Estados** — se mantienen los siete y el ciclo de observación: la plataforma es un sistema de
+>   supervisión (D-019).
+> - **Celular y mala señal** — sigue como está: el material va por enlace y **no se suben archivos**
+>   (D-023), así que solo se envía texto.
+> - **AUNOR** — cambia en un punto: **puede dejar su opinión**, pero su feedback no cambia estados ni
+>   manda sobre los operarios (D-033). Todo lo demás de esa sección sigue igual.
+>
+> | Sección todavía en duda | Qué está en duda | Decisiones |
+> |---|---|---|
+> | Perfiles funcionales | El catálogo de roles: aparece «Locuciones», y Operación y Coordinación pueden quedarse sin titular | D-020, D-021, D-022 |
+> | Actividades — campos comunes | Se añade «tipo de servicio»; falta fijar para quién aplica el avance | D-027, D-028 |
+> | Ubicación | Los mockups usan un solo campo «Lugar» | D-029 |
+> | Burson | La v2 lo nombra como parte de un «canal de comunicación» | D-035 |
+> | Seguridad esencial | El acceso propuesto publica el equipo antes de autenticar | D-026, D-039 |
+>
+> Contexto: `docs/impacto-requerimiento-v2.md` · Decisiones: `docs/decisiones-pendientes.md` ·
+> Incidente: `docs/incidentes.md` → INC-001 · Fuente: `actualizacion_del_requerimiento/`
+
 ## Proyecto
 Construir una plataforma web para Rhino Audiovisuales que centralice el registro, seguimiento, supervisión y consulta de las actividades realizadas para Autopista del Norte (AUNOR).
 
@@ -72,7 +102,10 @@ Reglas:
 - Cada cambio de estado registra autor y fecha.
 
 ## AUNOR
-Debe tener una vista propia, separada de la interfaz interna y de solo lectura.
+Debe tener una vista propia, separada de la interfaz interna, **de solo lectura sobre las actividades y
+con escritura limitada a su propio feedback** (D-033, 2026-08-17). AUNOR no puede cambiar ninguna
+actividad ni su estado; solo puede dejar su opinión, y esa opinión no manda sobre los operarios de
+Rhino. La mecánica exacta está en D-041.
 
 Por mes debe mostrar como mínimo:
 - última actualización

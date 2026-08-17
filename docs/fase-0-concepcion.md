@@ -8,6 +8,30 @@ Se apoya en `CLAUDE.md` (qué se construye) y en las decisiones cerradas de `doc
 **Puerta de salida:** el producto puede explicarse pantalla por pantalla y recorrido por recorrido sin
 depender de decisiones técnicas de backend.
 
+> ## ⚠ Reabierta el 2026-08-17
+>
+> Esta fase se cerró el 2026-08-12 y **Marco la reabrió el 2026-08-17**, tras recibir el cliente una
+> versión 2 completa del requerimiento con mockups de referencia.
+>
+> **Este documento sigue siendo la descripción vigente del producto**, pero varias de sus secciones
+> están **en revisión** y llevan un aviso al principio. Una sección en revisión no está derogada: sigue
+> siendo lo acordado, pero **no se construye encima de ella** hasta que Marco resuelva la decisión
+> pendiente que la afecta.
+>
+> - Qué cambió y por qué: `docs/impacto-requerimiento-v2.md`
+> - Las veintidós decisiones abiertas (D-019 a D-040): `docs/decisiones-pendientes.md`
+> - El incidente que lo originó: `docs/incidentes.md` → INC-001
+> - Fuente: `actualizacion_del_requerimiento/` — ficha v2 en PDF y tres mockups
+>
+> **Marco cerró cuatro decisiones el 2026-08-17** y con ellas §5, §8, §10 y §11 dejaron de estar en
+> revisión: la plataforma es un **sistema de supervisión** con los siete estados intactos (D-019); el
+> material va **por enlace** y no se suben archivos (D-023); y **AUNOR puede dejar su opinión**, sin que
+> eso mande sobre los operarios (D-033).
+>
+> Siguen en revisión: **§2** (roles), **§3** (campos), **§4** (ubicación), **§7** (pantallas) y **§9**
+> (Burson, solo permisos). Todo lo que queda depende de saber **quién es quién en el equipo** — D-020,
+> D-021 y D-022.
+
 ---
 
 ## 1. Alcance
@@ -22,6 +46,12 @@ depender de decisiones técnicas de backend.
 - Migración del histórico en Excel, trazable y reversible.
 - Cuentas individuales por rol, desactivables.
 - Uso cómodo desde celular, con protección del formulario ante mala señal.
+- *(requerimiento v2)* Historial mensual en tabla, con buscador, filtro y paginación.
+- *(requerimiento v2)* Exportar un reporte mensual — formato, contenido y permisos por decidir (D-037).
+- *(requerimiento v2)* Enlace directo a la carpeta de OneDrive del material de cada actividad.
+- *(requerimiento v2)* Línea gráfica alineada a la identidad visual de AUNOR (aunor.pe), bajo el nombre
+  correcto **Rhino Audiovisuales** — los mockups del cliente usan «Midnight & RAS Audiovisuales», que es
+  un error suyo y no debe llegar al producto.
 
 ### Fuera
 
@@ -31,9 +61,22 @@ depender de decisiones técnicas de backend.
 - Mapas. La ubicación se registra como datos, no se dibuja.
 - Facturación, control de horas, inventario de equipos y cualquier función que no esté en `CLAUDE.md`.
 
+**Sin clasificar todavía:** el requerimiento v2 promete «un seguimiento autónomo y **en tiempo real**».
+Si eso significa «actualizado al día», no cuesta nada y ya está dentro. Si significa que la pantalla se
+refresca sola cuando otro escribe, es infraestructura de realtime, que `CLAUDE.md` prohíbe añadir sin
+necesidad demostrada. Ver D-038.
+
 ---
 
 ## 2. Roles y qué necesita cada uno
+
+> **EN REVISIÓN — D-020, D-021, D-022, D-034.** El requerimiento v2 cambia el rol de casi todo el
+> equipo, introduce **Locuciones**, puede dejar sin titular a Operación y a Coordinación, y añade un
+> actor nuevo, **Lenin**, que administra los permisos de OneDrive desde fuera de la plataforma. La tabla
+> de abajo describe el reparto acordado en agosto, no necesariamente el real.
+>
+> **Confirmado y nuevo:** las personas tienen **sede** (Chimbote, Lima). Quién está en cuál es parte de
+> D-021.
 
 Los perfiles son roles; una persona ocupa uno o varios (D-001).
 
@@ -65,6 +108,21 @@ un rol solo pueda registrar su tipo homónimo; eso queda sin decidir y no urge (
 ---
 
 ## 3. Tipos de actividad y campos
+
+> **EN REVISIÓN — D-022, D-027, D-028.** El requerimiento v2 añade **tipo de servicio** (foto, vídeo)
+> como eje que puede convivir con los cinco tipos o reemplazarlos (D-027), y deja abierto para qué
+> perfiles aplica el **avance** (D-028).
+>
+> **Ya resuelto (D-023):** el «enlace al material» es **el enlace a la carpeta de OneDrive** con las
+> fotos y vídeos de esa actividad. La plataforma **no recibe archivos adjuntos**.
+>
+> **Precisión que corrige una lectura fácil:** el requerimiento v2 **no elimina el avance ni la fecha
+> prevista de entrega**. Los conserva expresamente para Eduardo. Solo faltan en el formulario del
+> mockup, que es el panel de Johann. Los campos que la ficha lista son, en sus propias palabras,
+> **mínimos**.
+>
+> **Confirmado y nuevo:** la descripción tiene un **límite de caracteres** (la ficha propone 500 como
+> ejemplo, no como valor cerrado).
 
 Cinco tipos: **Grabación, Edición, Coordinación, Operación, Creatividad**. Comparten la misma ficha; lo
 que cambia entre ellos es qué campos son obligatorios.
@@ -106,6 +164,10 @@ tiene el enlace cuando registra una grabación que todavía no ha hecho (D-008).
 
 ## 4. Ubicación
 
+> **EN REVISIÓN — D-029.** Los mockups muestran un único campo **Lugar**, con valores como «Chimbote» o
+> «Plaza de Armas». Lo descrito abajo —`ubicacion_nombre` prominente y el resto plegado y opcional— ya
+> es una posición intermedia entre los seis campos y el campo único, y sigue siendo una opción válida.
+
 Dato importante, sobre todo para grabación y operación. Se registra como texto y números, no en un
 mapa.
 
@@ -125,6 +187,18 @@ coordenadas nunca son obligatorias.
 ---
 
 ## 5. Estados, vistos por el usuario
+
+> **CONFIRMADA el 2026-08-17 — D-019.** Marco decidió que la plataforma es un **sistema de supervisión**
+> y no una bitácora: **esta sección entera sigue vigente sin cambios**, con sus siete estados, su ciclo
+> de observación y los tres recorridos de ida y vuelta.
+>
+> Se mantienen «Por subir» y «Cancelada» **aunque no aparezcan en ningún mockup del cliente**, y se
+> descartan los modelos de dos y tres estados que circulaban.
+>
+> **Queda una tarea de diseño, no de modelo:** los mockups muestran tres etiquetas y el sistema tiene
+> siete. La Fase 1 tiene que presentarlas sin que la pantalla pese más que la que el cliente vio. Y
+> conviene enseñarle el ciclo de observación antes de construirlo: **no lo ha visto en ningún mockup**,
+> y es el corazón del producto.
 
 Siete estados. Descritos aquí por lo que significan para la persona, no por cómo se implementan.
 
@@ -240,13 +314,55 @@ la vista sin borrarlo.
 
 ## 7. Pantallas y qué muestra cada una
 
+> **EN REVISIÓN — D-026, D-030, D-032, D-037, D-039.** El requerimiento v2 añade pantallas y elementos
+> que abajo se recogen, y pone en duda el flujo de acceso. Además, **falta saber si el patrón de
+> pantalla vale igual para todos los perfiles** (D-030): los tres mockups solo muestran el panel de
+> Johann, y de esa respuesta depende cuántas pantallas hay que diseñar.
+
 **P-1 · Acceso.** Entrada con cuenta individual. Mensaje claro cuando las credenciales no sirven o la
 cuenta está desactivada, sin revelar cuál de las dos cosas ocurre.
+
+> **EN REVISIÓN — D-026, D-039.** El requerimiento v2 propone en su lugar un **flujo en dos pasos**: una
+> pantalla *roster* con una tarjeta por colaborador —foto, nombre, rol, sede, estado Activo, número de
+> actividades y última actualización— y un modal donde la persona escribe solo su clave, con nombre y
+> rol ya precargados, casilla «Recordar este equipo» y enlace «¿Olvidaste tu clave?».
+>
+> Ese flujo **contradice directamente el párrafo de arriba**: la pantalla roster no solo revela que la
+> cuenta existe, sino quién trabaja aquí, quién está activo y cuánto ha hecho cada uno, todo antes de
+> autenticar a nadie. Y reduce el acceso a un único secreto, sin usuario. Las opciones y su coste están
+> en D-026. La recuperación de clave y la duración del «recordar» no existen todavía en el modelo
+> (D-039).
 
 **P-2 · Mis actividades** (rol de trabajo, pantalla de inicio). Lista de las actividades de las que la
 persona es responsable, pensada para el pulgar. Por actividad: fecha, tipo, título, estado y avance.
 Debe destacar lo que requiere acción, en especial lo Observado. Botón de crear siempre alcanzable.
 Incluye estados vacío, de carga y de error.
+
+> **Confirmado y nuevo (requerimiento v2):** la pantalla incorpora una **navegación por meses que
+> muestra bajo cada mes cuántas actividades tiene** (ABR 6, MAY 8, JUN 10…), con el mes elegido
+> resaltado, y un **selector de año**. Incorpora también **tarjetas de resumen por estado**, sobre los
+> siete estados confirmados en D-019.
+
+**P-10 · Historial mensual.** *(pantalla nueva, requerimiento v2)* El historial del mes en **tabla**,
+con buscador, filtro por estado, paginación y **exportar reporte mensual**. Columnas: fecha, actividad
+o proyecto, lugar, estado, **si tiene enlace al material o no**, y acciones.
+
+> **El «contador de archivos» de los mockups no puede existir** (D-023): la plataforma no almacena
+> archivos y no puede saber cuántos hay dentro de una carpeta ajena de OneDrive. Lo máximo que puede
+> mostrar es si la actividad tiene enlace o no.
+
+Por fila, dos acciones: **Ver**, que abre la carpeta de OneDrive del material de esa cobertura concreta
+—no una vista genérica—; y **Editar**.
+
+> **El botón «Descargar» de los mockups desaparece** (D-024): no hay nada que descargar desde la
+> plataforma. Si se quiere conservar, es un segundo botón que hace lo mismo que «Ver» y debería llamarse
+> «Abrir carpeta».
+
+> El botón «Ver» introduce algo que la Fase 0 no contemplaba: **una dependencia externa que la
+> plataforma no controla**. Si la persona no tiene permiso en esa carpeta de OneDrive, el enlace falla y
+> la plataforma no puede arreglarlo — solo explicarlo bien. Hoy esos permisos los reparte Lenin a mano
+> (D-025). El formato, el contenido y quién puede exportar están sin decidir (D-037), y un archivo
+> exportado sale del sistema y de sus permisos.
 
 **P-3 · Detalle de actividad.** Toda la ficha, la ubicación cuando existe, el enlace al material, el
 historial de cambios de estado con autor y fecha, y las observaciones con sus respuestas. Las acciones
@@ -277,7 +393,24 @@ cargadas y rechazadas con motivo, y anulación de lote.
 
 ## 8. AUNOR
 
-Vista propia, separada de la interfaz interna, de solo lectura y organizada por mes.
+> **CAMBIADA el 2026-08-17 — D-033.** **AUNOR ya no solo lee: puede dejar su opinión.** El resto de esta
+> sección sigue siendo válido, incluida la tabla de agrupación —los siete estados se mantienen (D-019)—
+> y la lista de lo que AUNOR nunca recibe.
+>
+> Lo que cambia es que la vista deja de ser estrictamente de solo lectura: AUNOR **escribe comentarios**.
+> El límite lo fija D-033 y es el que da sentido al producto: *Rhino usa la plataforma para controlar a
+> sus operarios; de AUNOR se quiere su opinión.* Por eso el feedback del cliente **no cambia el estado
+> de nada y no obliga a ningún operario**. Si merece corrección, es supervisión de Rhino quien lo
+> convierte en observación interna.
+>
+> La mecánica —sobre qué se opina, quién lo ve y si el comentario tiene ciclo— está abierta en **D-041**.
+> Y aparece trabajo que no estaba en el alcance: alguien de Rhino tiene que **enterarse de que AUNOR
+> opinó**, o un comentario del cliente se queda sin respuesta y nadie lo nota.
+>
+> Sigue abierto quién es Lenin y de qué lado está (D-034).
+
+Vista propia, separada de la interfaz interna y organizada por mes. **De solo lectura sobre las
+actividades**: AUNOR no puede cambiar nada de ellas. Lo único que aporta es su propio feedback (D-033).
 
 Muestra, como mínimo:
 
@@ -305,6 +438,15 @@ el servidor, no solo en la pantalla: no basta con no dibujar un campo si el dato
 ---
 
 ## 9. Burson
+
+> **EN REVISIÓN, solo en dos puntos — D-035, D-022.** Los **campos** de esta sección coinciden
+> exactamente con los del requerimiento v2 y no están en discusión; tampoco los estados propios (D-012
+> sigue intacta).
+>
+> Lo que sí está en duda es: (a) si Burson participa directamente, porque la v2 llama a la plataforma
+> «canal de comunicación […] entre el equipo, los colaboradores operativos, Autopista del Norte y
+> **Burson**»; y (b) **quién mantiene el módulo** si desaparece el rol Coordinación, al que hoy se lo
+> asigna D-011.
 
 **Burson no entra al sistema** (D-005). El módulo es un tablero **interno de Rhino** para seguir lo que
 se coordina con Burson en redes sociales, separado de las actividades para AUNOR.
@@ -354,6 +496,13 @@ aparece en la vista mensual de AUNOR.
 
 ## 10. Celular y mala señal
 
+> **CONFIRMADA el 2026-08-17 — D-023.** La plataforma **no recibe archivos**: el operario pega el enlace
+> a la carpeta donde ya subió sus fotos y vídeos. Por tanto esta sección sigue vigente tal cual, escrita
+> para un formulario de texto, que es lo único que se envía.
+>
+> Queda descartada la subida directa de hasta 50 MB que mostraban los mockups, y con ella desaparece el
+> problema de subir un vídeo desde la berma.
+
 La plataforma es mobile-first: el caso difícil es una persona en vía, con el teléfono en una mano y
 señal intermitente.
 
@@ -371,6 +520,16 @@ No se construye modo offline completo: se protege el formulario en curso, no tod
 ---
 
 ## 11. Criterios de aceptación funcionales
+
+> **RESTABLECIDOS el 2026-08-17.** Al confirmarse el modelo de siete estados (D-019), **los veintinueve
+> criterios vuelven a ser válidos tal como están**, incluidos los quince que dependían de él.
+>
+> Falta **añadir** criterios para lo que el requerimiento v2 trae y ya está decidido: que el enlace al
+> material sea obligatorio y lleve a la carpeta correcta, el historial en tabla con su exportación, y
+> —lo más importante— que **el feedback de AUNOR no cambie el estado de ninguna actividad ni llegue al
+> operario como una orden** (D-033).
+>
+> Los criterios del acceso en dos pasos esperan a D-026.
 
 Comprobables sin conocer la implementación.
 
@@ -416,15 +575,25 @@ Comprobables sin conocer la implementación.
 
 ---
 
-## 12. Lo que esta fase deja abierto a propósito
+## 12. Lo que esta fase deja abierto
 
-Una sola entrada: **D-006**, las columnas reales del Excel histórico. No condiciona ninguna pantalla;
-condiciona la Fase 7. Está en `docs/decisiones-pendientes.md`.
+**Hasta el 2026-08-16** quedaba abierta una sola entrada: **D-006**, las columnas reales del Excel
+histórico, que no condiciona ninguna pantalla sino la Fase 7. Las otras dieciséis decisiones estaban
+cerradas en `docs/decisiones.md` e incorporadas a este documento.
 
-Las quince decisiones restantes están cerradas en `docs/decisiones.md` y ya incorporadas a este
-documento.
+**Desde el 2026-08-17**, el requerimiento v2 abre **veintidós decisiones más** (D-019 a D-040) y deja
+**once de las cerradas en revisión**. Todas están en `docs/decisiones-pendientes.md`, que además dice
+cuáles puede resolver Marco por su cuenta y cuáles necesitan respuesta del cliente.
+
+D-006 gana urgencia: el requerimiento v2 añade campos que el histórico probablemente no tiene —enlace de
+OneDrive por fila, tipo de servicio, sede—, así que sin ver el Excel no se sabe qué puede migrarse
+(D-040).
 
 ### Lo que la Fase 1 hereda como obligación de diseño
+
+> **EN REVISIÓN.** Las tres obligaciones de abajo se derivan de D-007, D-015 y D-011, y **las tres
+> decisiones están en revisión**. Siguen siendo lo acordado, pero no se diseña contra ellas hasta
+> resolver D-019 y D-022.
 
 Tres consecuencias de las decisiones tomadas no son opinables al diseñar:
 
@@ -434,3 +603,9 @@ Tres consecuencias de las decisiones tomadas no son opinables al diseñar:
    las actividades se quedan detenidas sin que nadie lo note.
 3. La navegación **no es idéntica para todos los colaboradores**: el módulo Burson solo existe para
    Coordinación y Supervisión (D-011).
+
+A esas tres, el requerimiento v2 añade una cuarta que sí es firme:
+
+4. La línea gráfica se alinea a la identidad visual de **AUNOR** (aunor.pe) y usa el nombre **Rhino
+   Audiovisuales**. Esto es lo que suspende D-018: las ocho direcciones se produjeron sin esta
+   restricción.
