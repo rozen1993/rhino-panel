@@ -96,3 +96,69 @@ archivos con mala señal, y el histórico sin enlaces de OneDrive.
 
 Eso confirma el valor de la revisión independiente del protocolo §11: el derivador no puede auditarse a
 sí mismo.
+
+---
+
+## INC-002 — El diseño se alejó de la dirección aprobada, tanda a tanda
+
+- **Proyecto:** Sistema_R
+- **Fecha:** 2026-08-17
+- **Fase:** 1 (UX y desarrollo visual)
+
+### Qué ocurrió
+
+Marco aprobó una dirección visual concreta —`diseno/piezas-png/pieza-2.png`— y a partir de ahí se
+produjeron **veintinueve pantallas** en dos tandas: catorce de móvil (E-007) y quince de escritorio
+(E-008). Al comparar el resultado con la imagen original, Marco detectó que **ambas tandas se habían
+alejado del diseño que aprobó**.
+
+Las desviaciones concretas:
+
+| | La imagen aprobada | Lo que se dibujó |
+|---|---|---|
+| Etiquetas de estado | Píldoras **sólidas**, color saturado, texto blanco | Etiquetas con **contorno** y fondo pálido |
+| Tarjetas de resumen | Icono grande en cuadro de color, cifra, etiqueta y detalle | Solo la cifra y su etiqueta |
+| Fila de meses | **Los doce** meses del año | Cinco meses |
+| Tarjetas | Planas, borde fino, sin sombra | **Sombra dura desplazada** |
+
+### Impacto
+
+Veintinueve pantallas dibujadas que no representan del todo la dirección aprobada. No se tiran —el
+contenido, las reglas y la estructura son correctos— pero hay que rehacer su capa visual.
+
+### Causa raíz
+
+Dos causas, y la primera es la de fondo:
+
+1. **El sistema de diseño se extrajo del archivo equivocado.** `docs/sistema-diseno.md` se derivó
+   leyendo el CSS de `diseno/escritorio/pieza-2.html`, dando por hecho que era la misma dirección que
+   el PNG. **No lo era:** el HTML y la imagen renderizan la misma idea de forma distinta, y Marco
+   aprobó **la imagen**. De ahí salieron dos reglas equivocadas —la sombra dura y las etiquetas con
+   contorno— que se propagaron a todo lo dibujado después.
+2. **La deriva se midió contra la entrega anterior, no contra el original.** Cada tanda tomaba como
+   referencia el resultado de la previa. Un desvío pequeño cada vez, acumulado dos veces.
+
+### Regla existente que falló o faltó
+
+El sistema de diseño existía desde E-008 y aun así no evitó el problema, porque **el propio sistema
+estaba mal derivado**. Faltaba una regla anterior a él: **cuál es la referencia autorizada**.
+
+### ¿Local o universal?
+
+**Universal.** Cualquier proyecto donde una dirección visual exista en más de un formato —una imagen
+aprobada y una maqueta— puede derivar el sistema del formato equivocado sin notarlo.
+
+### Cambio aplicado
+
+- `docs/sistema-diseno.md` declara ahora que **la fuente es la imagen que Marco aprobó**, y que la
+  maqueta HTML solo sirve para leer hexadecimales concretos, no para forma ni composición.
+- Se corrigieron las reglas equivocadas: píldoras sólidas, tarjetas planas, doce meses, tarjetas de
+  resumen con icono.
+- **Instrucción permanente de Marco:** todo encargo a Codex que toque diseño lleva **adjunta la imagen
+  del diseño aprobado**, además del OCRAV. No basta con nombrarla ni describirla.
+
+### Evidencia de que el cambio habría evitado el incidente
+
+Las dos reglas equivocadas —sombra dura y etiquetas con contorno— salieron literalmente del CSS del
+HTML. Ninguna de las dos está en la imagen aprobada. Con la imagen delante al escribir el sistema, o
+adjunta en cada encargo, la contradicción se habría visto en el primer vistazo.
