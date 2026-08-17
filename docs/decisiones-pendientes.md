@@ -5,7 +5,7 @@ consecuencias tiene cada una.
 
 Marco resuelve en lote. Lo resuelto pasa a `docs/decisiones.md` y desaparece de esta cola.
 
-**Cerradas: veintiséis.** Quedan **dieciséis** abiertas, las de este archivo.
+**Cerradas: treinta.** Quedan **trece** abiertas, las de este archivo.
 
 **Lo que Marco cerró el 2026-08-17**, todo en `docs/decisiones.md`:
 
@@ -22,9 +22,13 @@ Marco resuelve en lote. Lo resuelto pasa a `docs/decisiones.md` y desaparece de 
   en el servidor. Desbloquea P-1.
 - **D-042** — las piezas para elegir estética fueron de escritorio, pero **el producto se diseña
   mobile-first**.
+- **D-043** — la plataforma tiene **portada pública** y el acceso va detrás.
+- **D-041** — AUNOR opina **sobre cada actividad**, no sobre el mes.
+- **D-029** — la **ubicación se queda como está**: nombre del lugar obligatorio, el resto plegado.
+- **D-028** — el **avance solo se pide en Edición y Creatividad**. Modifica D-010.
 
-**Atención:** de las dieciséis que quedan, **once necesitan respuesta del cliente**. Están agrupadas al
-final por quién tiene que contestarlas.
+**Atención:** de las trece que quedan, **once necesitan respuesta del cliente**. Solo D-037 y D-039 las
+puede resolver Marco por su cuenta.
 
 ---
 
@@ -140,29 +144,6 @@ etiqueta secundaria sin consecuencias en reglas.
 
 ---
 
-## D-028 — Campo avance: para quién y con qué relación al estado
-
-**Ojo:** el requerimiento v2 **no elimina el avance**. El cuerpo de la ficha lo conserva expresamente
-para Eduardo («porcentaje de avance»), junto con «fecha estimada de entrega». Lo que ocurre es que el
-formulario del mockup, que es el panel de Johann, no lo muestra.
-
-**La pregunta correcta no es si se conserva, sino para qué perfiles y tipos aplica**, y si sigue
-gobernando el paso a Entregada como decidió D-010.
-
----
-
-## D-029 — Ubicación: qué campos sobreviven
-
-`CLAUDE.md` dice **«considerar»** seis campos y solo hace obligatorio `ubicacion_nombre` para grabación
-y operación. Los mockups muestran un único campo **Lugar**, con valores como «Chimbote» o «Plaza de
-Armas».
-
-**Opciones:** dejarlo como está hoy —`ubicacion_nombre` prominente y el resto plegado y opcional, que ya
-es una posición intermedia—; reducir a un solo campo de texto; o mantener los seis y hacer obligatorios
-kilómetro y sentido para grabación y operación, que son los que justifican el dato en una autopista.
-
----
-
 ## D-032 — Notificaciones
 
 La campana aparece en el mockup con un punto verde, pero **el texto de la ficha no la menciona**. No se
@@ -220,36 +201,6 @@ que la cuenta puede desactivarse mientras el recuerdo sigue vivo.
 
 ---
 
-## D-041 — Cómo funciona el feedback de AUNOR
-
-**Nace de:** D-033, que decidió que AUNOR puede opinar pero no mandar sobre los operarios.
-
-> **La pregunta principal ya está resuelta.** Marco confirmó el 2026-08-17 que **el feedback de AUNOR
-> pasa siempre primero por supervisión** y nunca llega directo al operario. Está cerrado en D-033.
-
-Queda la mecánica de detalle:
-
-1. **¿Sobre qué opina AUNOR?** ¿Una actividad concreta, el mes entero, o las dos cosas? Comentar el mes
-   es más natural para un cliente que revisa un resumen; comentar la actividad llega pegado a lo que lo
-   motivó.
-2. **¿El comentario tiene ciclo?** ¿Queda marcado como leído, contestado o cerrado? Sin eso, un
-   comentario del cliente puede quedarse sin respuesta y nadie se entera — **lo contrario exacto de «me
-   importa que estén contentos»**.
-3. **¿Quién de AUNOR puede comentar**, y sobre qué actividades o meses?
-4. **¿Quién recibe el aviso** cuando AUNOR comenta, y en cuánto tiempo debería atenderse?
-5. **¿AUNOR puede editar o borrar su comentario?** ¿Qué queda en la auditoría si lo hace?
-6. **¿Puede comentar actividades aprobadas, canceladas o históricas?** Una actividad aprobada está
-   cerrada para todo lo demás.
-7. **¿AUNOR ve las respuestas de Rhino?** Si el objetivo es que se sienta escuchado, probablemente sí; y
-   entonces hay que decidir qué se le puede contestar sin filtrar nada interno.
-8. **¿Los distintos usuarios de AUNOR ven los comentarios de los otros?**
-9. **¿Cómo se redacta y se vincula la conversión** de un comentario en observación interna, para que se
-   sepa que esa observación nació de una queja del cliente?
-
-**Marco decide esta**, no el cliente: es diseño de producto y de permisos.
-
----
-
 ## D-040 — Migrar el Excel bajo el requerimiento v2
 
 **Depende de:** D-006, D-027. *(D-019 y D-023 ya resueltas.)*
@@ -273,14 +224,13 @@ y no están en discusión.
 
 # Quién tiene que contestar cada una
 
-Quedan **dieciséis** abiertas.
+Quedan **trece** abiertas.
 
 **El cliente (César / AUNOR)** — once. Marco no puede resolverlas solo:
-D-006, D-020, D-021, D-022, D-025, D-027, D-032, D-034, D-035, D-038, y la parte de D-037 sobre quién
-puede exportar.
+D-006, D-020, D-021, D-022, D-025, D-027, D-032, D-034, D-035, D-038, D-040.
 
-**Marco, por su cuenta** — cinco. Son de diseño o de reglas internas:
-D-028, D-029, D-037, D-039, D-040, D-041.
+**Marco, por su cuenta** — dos:
+D-037 (formato y permisos de la exportación) y D-039 (recuperar la clave y cuánto dura el «recordar»).
 
 ## Por dónde conviene empezar
 

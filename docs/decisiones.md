@@ -3,8 +3,8 @@
 Decisiones de producto y arquitectura que deben sobrevivir al chat. Una decisión aquí solo cambia si
 Marco la cambia expresamente, y el cambio se escribe en este archivo.
 
-Cerradas: **dieciséis** — D-001 a D-005 y D-007 a D-017. D-006 nunca se cerró; su entrada es un
-marcador que apunta a la cola de pendientes.
+Cerradas: **treinta**. D-006 nunca se cerró; su entrada es un marcador que apunta a la cola de
+pendientes, donde quedan **trece** decisiones abiertas.
 
 > ## Estado de la revisión abierta el 2026-08-17
 >
@@ -12,7 +12,10 @@ marcador que apunta a la cola de pendientes.
 > D-024 y D-033 el 2026-08-17**, y con ello **siete salieron de revisión**.
 >
 > **Siguen en revisión: D-001, D-005, D-011, D-016** — todas por el catálogo de roles y por si Burson
-> participa. Las resuelven D-020, D-021, D-022 y D-035.
+> participa. Las resuelven D-020, D-021, D-022 y D-035, que necesitan respuesta del cliente.
+>
+> **D-010 quedó modificada por D-028:** el avance solo se pide en Edición y Creatividad, así que la
+> regla de «avance 100 para entregar» ya no aplica a los cinco tipos.
 >
 > **Salieron de revisión:** D-007, D-008, D-009, D-010, D-013, D-014, D-015 — al confirmarse que la
 > plataforma es un sistema de supervisión con ciclo de observación (D-019) y que el material va por
@@ -638,3 +641,105 @@ Elegida la dirección   →  diseño completo: MÓVIL → laptop → escritorio
   acabe siendo una tabla apretada para alguien que está en la berma con una mano ocupada.
 - **D-017 sigue vigente** tal como se escribió: barra inferior fija en móvil, que pasa a lateral en
   escritorio.
+
+---
+
+## D-043 — La plataforma tiene portada pública, y el acceso va detrás
+
+**Fecha:** 2026-08-17 · **Fase:** 1 · **Decide:** Marco
+
+La plataforma abre con una **portada pública** de presentación —lo que la ficha del cliente llamaba
+«tipo landing page»— con un botón que lleva al acceso de D-026.
+
+Recupera la sensación de llegar a un sitio que el cliente buscaba con su pantalla roster, **sin publicar
+nada del equipo**.
+
+**Consecuencias**
+
+- **Dos pantallas nuevas**, en móvil y en escritorio.
+- Es una **página pública de verdad**: la ve cualquiera, sin cuenta. Eso obliga a cuidar dos cosas que
+  no existían hasta ahora:
+  - **Qué se cuenta de AUNOR.** Decir que Rhino trabaja para Autopista del Norte es un hecho comercial
+    normal, pero es información de un cliente y conviene que él lo sepa antes de publicarla.
+  - **Que no se filtre nada.** Ni nombres del equipo, ni número de actividades, ni capturas reales de la
+    aplicación. Justo lo que D-026 acaba de decidir no exponer no puede reaparecer aquí por la puerta de
+    atrás.
+- Hay que escribir su texto. Una portada con relleno se nota, y esta la puede ver el cliente.
+- Es lo más parecido a lo que pidió César, así que ayuda a explicarle por qué se descartó su roster.
+
+---
+
+## D-041 — AUNOR opina sobre cada actividad
+
+**Fecha:** 2026-08-17 · **Fase:** 1 · **Decide:** Marco
+
+El feedback de AUNOR se deja **sobre una actividad concreta**, no sobre el mes. El comentario llega
+pegado a lo que lo motivó.
+
+Sigue vigente lo decidido en D-033: **pasa siempre primero por supervisión** y nunca llega directo al
+operario.
+
+**Consecuencias**
+
+- El comentario es útil de verdad: supervisión sabe exactamente de qué cobertura habla el cliente.
+- **Multiplica los hilos.** Un mes con doce actividades puede tener doce conversaciones abiertas con
+  AUNOR, y todas necesitan que alguien las atienda. Por eso el comentario **queda marcado como pendiente
+  hasta que supervisión lo atiende**: un comentario del cliente sin respuesta es lo contrario de lo que
+  Marco busca con esto.
+- La bandeja de feedback de P-5 se ordena por actividad, no por mes.
+
+**Sigue abierto en la cola:** quién de AUNOR puede comentar, si puede editar o borrar, si puede comentar
+actividades ya aprobadas o canceladas, si ve las respuestas de Rhino, y si los usuarios de AUNOR se ven
+los comentarios entre sí.
+
+---
+
+## D-029 — La ubicación se queda como está
+
+**Fecha:** 2026-08-17 · **Fase:** 1 · **Decide:** Marco
+
+Se mantiene lo que ya describía `docs/fase-0-concepcion.md` §4 y lo que dibuja `m-10`: **nombre del
+lugar obligatorio y prominente**, y referencia, kilómetro, sentido, latitud y longitud **plegados y
+opcionales**.
+
+Se descarta reducirlo al campo único «Lugar» de los mockups, y también hacer obligatorios el kilómetro y
+el sentido.
+
+**Consecuencias**
+
+- Llenar una actividad en la berma sigue costando **un solo campo** de ubicación.
+- Quien quiera precisar el kilómetro y el sentido puede, pero nadie está obligado. **El riesgo asumido**
+  es que en la práctica casi nadie despliegue esa sección, y el histórico acabe sin kilómetros. Si eso
+  ocurre y a AUNOR le importa, se revisa.
+
+---
+
+## D-028 — El avance solo se pide donde el trabajo tiene proceso
+
+**Fecha:** 2026-08-17 · **Fase:** 1 · **Decide:** Marco
+
+El campo **avance de 0 a 100 se pide en Edición y Creatividad**, donde el trabajo dura días y tiene
+etapas. **No se pide en Grabación, Operación ni Coordinación**, donde el estado ya dice en qué punto
+está la cosa y el campo solo estorba en el celular.
+
+Coincide con lo que el requerimiento v2 pedía expresamente para Eduardo: «porcentaje de avance».
+
+**Esta decisión modifica D-010.**
+
+| Tipo | ¿Pide avance? | ¿Qué hace falta para pasar a Entregada? |
+|---|---|---|
+| Edición, Creatividad | Sí | Avance 100 y enlace al material |
+| Grabación | No | Enlace al material |
+| Operación, Coordinación | No | Nada más que el cambio de estado |
+
+**Consecuencias**
+
+- El formulario de Johann pierde un campo, y es el que más lo agradece: es quien lo llena de pie en la
+  vía.
+- **Lo que D-010 protegía se conserva donde importa.** La regla existía para que no hubiera actividades
+  «entregadas al 60 %» confundiendo a quien lee la lista, incluido AUNOR. En los tres tipos que pierden
+  el campo no hay porcentaje que contradiga nada: Entregada significa entregada.
+- Hay que **reescribir D-010 y el criterio de aceptación 12** de `docs/fase-0-concepcion.md` §11, que
+  hoy dan por hecho que el avance existe siempre.
+- En la lista de actividades, las de Grabación, Operación y Coordinación **no muestran barra de avance**.
+  La pantalla tiene que verse bien con y sin ella.
