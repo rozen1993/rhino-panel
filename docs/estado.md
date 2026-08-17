@@ -8,153 +8,117 @@ Quien abra solo este archivo debe poder retomar el trabajo sin leer ninguna conv
 
 ---
 
-## Lo que pasó el 2026-08-17
-
-El cliente entregó una **versión 2 completa del requerimiento**, con mockups de referencia. Contradice
-parte de lo que ya estaba cerrado. Marco ordenó revisarlo y ejecutar los cambios en la Fase 0.
-
-Consecuencia: **la Fase 1 queda suspendida y la Fase 0 vuelve a estar activa.**
-
-| Para entender qué pasó | Archivo |
-|---|---|
-| El análisis completo y qué se ejecutó | `docs/impacto-requerimiento-v2.md` |
-| Las veintidós decisiones que abre | `docs/decisiones-pendientes.md` |
-| Por qué ocurrió y qué evitarlo la próxima vez | `docs/incidentes.md` → INC-001 |
-| La fuente original | `actualizacion_del_requerimiento/` |
-
----
-
 ## Fase activa
 
-**Situación mixta, y conviene saberlo.** La Fase 0 se reabrió el 2026-08-17 y **formalmente no se ha
-vuelto a cerrar**. Pero desde entonces Marco cerró las decisiones que la bloqueaban y ordenó producir el
-diseño móvil, que es trabajo de Fase 1. En la práctica se está trabajando en Fase 1.
+**Fase 2 — Construcción frontend.** Abierta por decisión de Marco (D-044): la Fase 1 se da por cumplida
+con la dirección visual elegida, aunque imperfecta, y la corrección se hace sobre el frontend en código
+en vez de regenerando imágenes.
 
-**Pendiente de Marco:** dar la Fase 0 por cerrada otra vez, o declarar expresamente que se trabaja en
-paralelo. Declarar la fase activa es decisión suya, no de Claude.
+**Quedan autorizadas las tecnologías de STACK — Frontend:** Next.js (App Router), React, TypeScript
+estricto, Tailwind, Zod, Vitest, Playwright, Git, npm. Todo con datos simulados: nada de Supabase, Auth
+ni persistencia real hasta la Fase 4.
 
-Lo que sí está claro es qué falta para poder cerrar la Fase 0: las decisiones que siguen abiertas,
-sobre todo las del catálogo de roles —D-020, D-021, D-022—, que necesitan al cliente.
+**Riesgo asumido y explícito:** la Fase 0 sigue con **trece decisiones abiertas**, once esperando a
+César, sobre todo el catálogo de roles (D-020, D-021, D-022). Se construye sobre el catálogo documentado
+hoy en D-001. Si el cliente lo cambia, la navegación y los permisos del frontend se ajustan después.
 
 ## Objetivo actual
 
-Producir el diseño móvil completo en PNG, sobre la dirección visual ya elegida. **No se programa nada
-todavía**: la programación viene cuando el diseño no tenga dudas.
+Levantar el cimiento del frontend: el proyecto Next.js, el sistema de diseño llevado a código (Tailwind
++ componentes base), y una página interna de verificación que se compara directamente contra
+`diseno/piezas-png/pieza-2.png` — la imagen que Marco aprobó — antes de construir ninguna pantalla de
+producto encima.
 
-## Puerta de salida de la Fase 1
+## Puerta de salida de la Fase 2
 
-Marco aprueba la dirección visual y entiende todos los recorridos principales desde las pantallas.
-La dirección visual ya está aprobada (D-031); falta el resto de las pantallas y el sistema de diseño.
-
-## Reglas de la fase
-
-No se instala backend, no se crea base de datos, no se configura Supabase y no se implementa
-autenticación real. **No se instala ni se andamia la aplicación.** Nada de esto cambió.
+La aplicación puede recorrerse de principio a fin con mocks y coincide con el diseño aprobado.
 
 ---
 
-## Lo que Marco decidió el 2026-08-17
+## Lo que Marco decidió el 2026-08-17 — en orden
 
-Cuatro de las bifurcaciones grandes están cerradas:
+1. **D-019 — sistema de supervisión.** Se mantienen los siete estados y el ciclo de observación
+   completo.
+2. **D-023 — el material va por enlace.** La plataforma no almacena archivos. Cierra D-024 y D-036.
+3. **D-030 — un solo patrón de pantalla** para los cinco roles, con variantes internas.
+4. **D-031 y D-018 — dirección visual: la pieza 2**, «planilla de rodaje». Cierra la elección que llevaba
+   parada desde el 12 de agosto.
+5. **D-026 — se entra con usuario y clave.** El atajo de «toca tu cara» vive en el dispositivo, no en el
+   servidor. Se descarta el roster del cliente.
+6. **D-042 — las piezas de escritorio fueron solo para elegir estética.** El producto se sigue
+   diseñando mobile-first: móvil primero, luego laptop y escritorio.
+7. **D-043 — portada pública antes del acceso.** Recupera la sensación de llegada del cliente sin
+   publicar el equipo.
+8. **D-041 — AUNOR opina sobre cada actividad**, no sobre el mes. Pasa siempre por supervisión (D-033).
+9. **D-029 — la ubicación se queda como está**: nombre del lugar obligatorio, el resto plegado.
+10. **D-028 — el avance solo se pide en Edición y Creatividad.** Modifica D-010.
+11. **D-044 — se abre la Fase 2** con el diseño imperfecto, a corregir en código.
 
-- **D-019 — es un sistema de supervisión.** Se mantienen los siete estados y el ciclo de observación
-  completo. Se descartan los modelos de dos y tres estados de los mockups.
-- **D-023 — el material va por enlace.** El operario pega el enlace a la carpeta con sus fotos y
-  vídeos; la plataforma no almacena archivos. **Simplifica mucho el proyecto** y cierra D-024 y D-036.
-- **D-033 — AUNOR ve y opina.** Su feedback **pasa siempre primero por supervisión** y nunca llega
-  directo al operario. Supervisión lo descarta, lo responde, o lo convierte en observación interna. La
-  plataforma la usa Rhino para controlar a su gente; de AUNOR se quiere que esté contento.
-- **D-042 — las piezas para elegir estética son de escritorio.** **Mobile-first no cambia**: elegido el
-  lenguaje visual, el diseño completo del producto se hace móvil primero, luego laptop y escritorio.
-
-Con eso, siete decisiones salieron de revisión y §5, §8, §10 y §11 de la Fase 0 vuelven a estar firmes.
+Con D-019, D-023, D-030, D-031, D-026 y D-033 cerradas, siete decisiones salieron de revisión y §5, §8,
+§10 y §11 de `docs/fase-0-concepcion.md` volvieron a estar firmes.
 
 ---
 
-## Entregado en la Fase 1
+## Entregado en la Fase 1 (visual)
 
 | Encargo | Qué produjo | Dónde |
 |---|---|---|
-| E-001 a E-004 | Ocho direcciones visuales de móvil. **Obsoletas** por el requerimiento v2, se conservan como archivo | `diseno/direccion-a.html` … `-h.html` |
+| E-001 a E-004 | Ocho direcciones visuales de móvil. **Obsoletas**, se conservan como archivo | `diseno/direccion-a.html` … `-h.html` |
 | E-005 | Cinco direcciones de escritorio en HTML, con contenido exacto | `diseno/escritorio/pieza-1.html` … `-5.html` |
-| E-006 | Las mismas cinco en PNG. **Marco eligió la pieza 2** (D-031) | `diseno/piezas-png/` |
-| E-007 | Bloque 1 del diseño móvil: catorce pantallas del trabajo diario | `diseno/movil/` |
+| E-006 | Las mismas cinco en PNG. **Marco eligió la pieza 2** (D-031) | `diseno/piezas-png/pieza-2.png` |
+| E-007 | Bloque 1 del diseño móvil: 14 pantallas del trabajo diario | `diseno/movil/` |
+| E-008 | 15 pantallas de escritorio | `diseno/escritorio-png/` |
+
+**Las 29 pantallas de E-007 y E-008 tienen deriva visual respecto de `pieza-2.png` — ver INC-002.** No se
+tiran: el contenido, las reglas y la estructura son correctos. Sirven de referencia de **contenido** para
+construir el frontend; para **forma**, la única referencia es la imagen aprobada.
 
 ---
 
-## Lo que falta para cerrar la Fase 1
+## INC-002, resumen
 
-1. **`docs/sistema-diseno.md`, que no existe.** `CLAUDE.md` lo exige y es la causa de fondo del defecto
-   principal del bloque 1: sin él, cada pantalla inventa sus propias marcas de estado, sus cabeceras y
-   sus formularios.
-2. **Corregir el bloque 1.** Las catorce están hechas y su contenido es correcto, pero **no parecen el
-   mismo producto**. Detalle en la sección siguiente.
-3. **El bloque 2 del diseño móvil:** once vistas — P-5 supervisión con sus dos bandejas, P-6 AUNOR, P-7
-   Burson, P-8 cuentas y P-9 importación.
-4. **P-1, el acceso.** Bloqueada por D-026, que solo depende de Marco.
-5. **El diseño de escritorio**, después del móvil (D-042). Unas catorce vistas.
+`docs/sistema-diseno.md` se derivó por error del CSS de una maqueta HTML, no de la imagen que Marco
+aprobó. Produjo dos reglas equivocadas —sombra dura desplazada, etiquetas de estado con contorno— que se
+propagaron a las 29 pantallas. Ya corregido en el propio archivo. Detalle completo en
+`docs/incidentes.md` → INC-002.
 
-## Defectos abiertos del bloque 1
-
-Revisados por Claude y por Codex de forma independiente, y coincidieron en el principal.
-
-| # | Defecto | De quién es | Alcance |
-|---|---|---|---|
-| 1 | **No parecen el mismo producto**: cambian cabeceras, avatares, navegación, iconos, radios, sombras, formularios y **las marcas de los siete estados** | Contrato: falta el sistema de diseño | 14 de 14 |
-| 2 | **`m-09` ofrece «Aprobar» sobre una actividad Observada**, y eso viola la regla de `fase-0-concepcion.md`:222 — solo se aprueba desde Entregada y sin observaciones abiertas | **Contrato: el encargo E-007 lo pidió mal** | 1 |
-| 3 | Los tres formularios —`m-10`, `m-11`, `m-12`— usan tres estructuras distintas, y `m-10` aprieta etiqueta y campo en dos columnas | Ejecución | 3 |
-| 4 | `m-07`, `m-08` y `m-09` muestran un solo paso del historial de estado en vez del recorrido completo | Ejecución | 3 |
-| 5 | El texto de la observación y su respuesta son marcadores de posición | Contrato: no se dieron las palabras | 2 |
-| 6 | `m-04` convierte la fila de cinco meses en siete esqueletos | Ejecución | 1 |
-
-El defecto 2 es el más grave pese a afectar a una sola pantalla: **es una regla de negocio dibujada al
-revés**, y si se construye así queda en el producto.
+**Regla permanente que dejó el incidente:** todo encargo a Codex que toque diseño lleva **adjunta la
+imagen del diseño aprobado**, además del contrato en formato OCRAV.
 
 ---
 
-## Siguiente acción
+## Cómo se escriben los encargos a Codex — OCRAV
 
-**Decisión de Marco: en qué orden se sigue.** Las opciones y su coste están abajo. Claude y Codex
-recomiendan la tercera.
+Desde el 2026-08-17, todo encargo a Codex sigue esta estructura, por instrucción expresa de Marco:
 
-| Camino | Regeneraciones | Nuevas | Riesgo |
-|---|---:|---:|---|
-| Escribir el sistema, corregir las catorce, luego el bloque 2 | 14 | 11 | Se puede descubrir tarde que el sistema escrito no funciona en pantalla |
-| Hacer ya el bloque 2 y corregir todo al final | ~25 | 11 | El menos reversible. Repite el patrón de INC-001 |
-| **Sistema mínimo → dos pilotos → Marco valida → el resto** | 14 | 11 | Solo dos imágenes quedan expuestas antes de validar |
+```
+O — Objetivo       ¿Qué queremos conseguir?
+C — Contexto       ¿Qué necesita saber?
+R — Restricciones  ¿Qué NO debe hacer?
+A — Aceptación     ¿Cómo sabemos que funciona?
+V — Verificación   ¿Cómo debe comprobarlo?
+```
 
-Los pilotos serían **`m-01`** —lista y marcas de estado— y **`m-10`** —formulario mobile-first—, que
-entre las dos fijan todo lo que se repite en las demás.
-
-Además, **Marco tiene pendiente D-026**, el flujo de acceso, que no depende de nadie más y desbloquea
-P-1.
-
-Ahora que los estados están decididos, lo que más cosas tiene paradas es **saber quién es quién**:
-
-1. **Marco pregunta al cliente por el equipo — D-020, D-021 y D-022.** ¿Chiara y Kiara son la misma
-   persona? ¿Martín deja Operaciones? ¿César pasa a Supervisión? ¿Existe «Locuciones»? De esto dependen
-   las cuatro decisiones que siguen en revisión: D-001, D-005, D-011 y D-016.
-2. **Marco resuelve D-031 (identidad visual)**, que es lo único que desbloquea la Fase 1.
-3. **Marco resuelve D-026 (flujo de acceso)** y **D-041 (mecánica del feedback de AUNOR)**. Ninguna de
-   las dos espera al cliente.
-4. Se añaden a la Fase 0 los criterios de aceptación de lo ya decidido — sobre todo que el feedback de
-   AUNOR no cambie estados ni llegue al operario como orden.
-5. Se vuelve a cerrar la Fase 0.
-
-**Las demás preguntas para el cliente** siguen en `docs/impacto-requerimiento-v2.md` §7. Dos de ellas ya
-no hacen falta: los archivos de 50 MB (resuelto por D-023) y qué mockup vale en los estados (resuelto
-por D-019).
+Cuando el encargo toca diseño, se adjunta además la imagen de `diseno/piezas-png/pieza-2.png`.
 
 ---
 
 ## Estado de las decisiones
 
-- **Cerradas: 21** — D-001 a D-005, D-007 a D-017, y D-019, D-023, D-024, D-033 y D-036.
-- **En revisión: 4** — D-001, D-005, D-011, D-016. Todas por el catálogo de roles y por Burson.
-- **Abiertas: 20** — D-006, D-018, D-020, D-021, D-022, D-025, D-026, D-027, D-028, D-029, D-030,
-  D-031, D-032, D-034, D-035, D-037, D-038, D-039, D-040, D-041. Once necesitan al cliente; nueve las
-  resuelve Marco.
-- **Suspendida: 1** — D-018, la dirección visual, hasta cerrar D-031.
+- **Cerradas: 30.**
+- **En revisión: 4** — D-001, D-005, D-011, D-016. Todas por el catálogo de roles y por si Burson
+  participa.
+- **Abiertas: 13** — D-006, D-020, D-021, D-022, D-025, D-027, D-032, D-034, D-035, D-037, D-038, D-039,
+  D-040. Once necesitan a César; D-037 y D-039 los resuelve Marco solo.
+
+## Por dónde conviene seguir
+
+1. **Levantar el cimiento del frontend** (en curso, ver abajo).
+2. **Enviar a César las preguntas de `docs/impacto-requerimiento-v2.md` §7** — sobre todo el equipo real
+   (D-020, D-021, D-022), que es lo que mantiene en revisión a D-001, D-005, D-011 y D-016.
+3. Construir las pantallas de producto sobre los componentes base, con datos mock.
+4. Cuando lleguen las respuestas del cliente, ajustar navegación y permisos.
+5. Fase 3: validar en dispositivo real, escribir el contrato de handoff, congelar.
 
 ---
 
@@ -162,63 +126,37 @@ por D-019).
 
 | Documento | Qué contiene |
 |---|---|
-| `docs/impacto-requerimiento-v2.md` | Qué cambió con el requerimiento v2, qué se ejecutó y qué corrigió la auditoría |
-| `docs/fase-0-concepcion.md` | Qué es el producto. **Reabierta**: nueve secciones marcadas en revisión |
-| `docs/fase-1-ux.md` | Pantallas, navegación y patrones. **Suspendida** |
-| `docs/decisiones.md` | Las veintiuna cerradas, cuatro de ellas marcadas en revisión |
-| `docs/decisiones-pendientes.md` | Las veinte abiertas, con quién debe contestar cada una |
-| `docs/incidentes.md` | INC-001 |
-| `docs/encargos/` | Los contratos que ejecuta Codex |
-| `diseno/` | Las ocho maquetas de dirección visual |
+| `docs/sistema-diseno.md` | El lenguaje visual llevado a valores concretos. Corregido tras INC-002 |
+| `docs/impacto-requerimiento-v2.md` | Qué cambió con el requerimiento v2 y qué se ejecutó |
+| `docs/fase-0-concepcion.md` | Qué es el producto. Nueve secciones históricamente marcadas; la mayoría ya confirmadas |
+| `docs/fase-1-ux.md` | Pantallas, navegación y el recuento real de vistas por dibujar |
+| `docs/decisiones.md` | Las treinta cerradas |
+| `docs/decisiones-pendientes.md` | Las trece abiertas, con quién debe contestar cada una |
+| `docs/incidentes.md` | INC-001 y INC-002 |
+| `docs/encargos/` | Los contratos que ejecuta Codex, en OCRAV desde E-006 |
+| `diseno/` | Maquetas y pantallas de referencia (contenido correcto, forma en corrección) |
+| `frontend/` | El proyecto Next.js. Se crea en esta fase |
 | `actualizacion_del_requerimiento/` | Ficha v2 en PDF y los tres mockups del cliente |
-
----
-
-## La Fase 1, suspendida
-
-**El trabajo no se tira.** Las ocho direcciones visuales se conservan enteras y verificadas. Lo que se
-suspende es **elegir entre ellas**, porque se encargaron sin saber que la marca ya estaba restringida a
-la identidad visual de AUNOR.
-
-La dirección **D · Nocturna** es la más cercana al lenguaje de los mockups del cliente —azul marino muy
-oscuro, color solo como señal—, así que adaptarla es una salida real y no hay que darla por perdida.
-
-**No se retoca ninguna maqueta ni se encarga una novena mientras D-031 esté abierta.**
-
-### Las ocho direcciones
-
-| | Dirección | Archivo | Enlace publicado |
-|---|---|---|---|
-| A | Operativa — tipografía de sistema, bordes duros, ámbar sobre azul marino | `diseno/direccion-a.html` | https://claude.ai/code/artifact/c46869ef-01f6-460b-aa2b-567def7da17d |
-| B | Editorial — Georgia serif, crema y coral, formas asimétricas | `diseno/direccion-b.html` | https://claude.ai/code/artifact/d34b8d4a-2939-46d6-a398-b8d8a4335364 |
-| C | Institucional — Arial, azul y gris, casi tabular | `diseno/direccion-c.html` | https://claude.ai/code/artifact/c10b26b6-38f6-4667-96c2-e560d800c020 |
-| D | Nocturna — oscura, color solo como señal de atención | `diseno/direccion-d.html` | https://claude.ai/code/artifact/e4493509-56e2-488b-8f8b-d4ae69f10149 |
-| E | Señalética — Arial Narrow, amarillo y negro, franjas | `diseno/direccion-e.html` | https://claude.ai/code/artifact/67982198-9488-4a56-98b2-7b10a82bc7b8 |
-| F | Minimalista, calma — mucho aire, esquinas redondeadas, acento índigo único | `diseno/direccion-f.html` | https://claude.ai/code/artifact/b6d27a51-3eec-4ff3-9a54-2da0e2445027 |
-| G | Cálida, humana — tonos tierra, formas orgánicas, sin negro puro | `diseno/direccion-g.html` | https://claude.ai/code/artifact/8f690e99-3dd0-40f3-8169-811d47bf32bd |
-| H | Técnica, densa — monoespaciada, grilla apretada, acento verde de señal | `diseno/direccion-h.html` | https://claude.ai/code/artifact/5ae7a8e3-a274-4355-a2a9-dea3d74a8db9 |
-
-Las páginas son privadas. Para republicar una tras cambiar su HTML hay que regenerar la copia sin
-`<!doctype>`, `<html>`, `<head>` ni `<body>` y volver a publicarla con la misma ruta de archivo, que es
-lo que conserva el enlace.
 
 ---
 
 ## Contrato vigente
 
-Ninguno. La Fase 0 no produce código.
+Ninguno todavía en código. El primero será el contrato de handoff de la Fase 3, cuando el frontend esté
+construido y validado.
 
 ## Estado de las instalaciones
 
-Nada instalado y nada andamiado. El stack de **STACK — Frontend** queda autorizado al abrir la Fase 2.
-El de **STACK — Backend**, al abrir la Fase 4.
+**Recién autorizado.** STACK — Frontend queda habilitado con la apertura de la Fase 2. STACK — Backend
+sigue esperando a la Fase 4.
 
 ---
 
 ## Fases cerradas
 
-Ninguna. La Fase 0 se cerró el 2026-08-12 y **se reabrió el 2026-08-17**.
+**Fase 0 — Concepción funcional.** Cerrada el 2026-08-12, reabierta el 2026-08-17 por el requerimiento
+v2. No se ha vuelto a cerrar formalmente: quedan trece decisiones abiertas. Se sigue trabajando en
+paralelo con la Fase 2 por decisión de Marco.
 
-Su cierre original ya llevaba la advertencia de que el documento se había derivado de `CLAUDE.md` y no
-de observar cómo trabajan Johann, Eduardo, Chiara y Martín. El requerimiento v2 confirmó ese riesgo:
-ver `docs/incidentes.md` → INC-001.
+**Fase 1 — UX y desarrollo visual.** Dada por cumplida el 2026-08-17 (D-044) con dirección visual
+elegida e imperfecciones conocidas, a corregir en código durante la Fase 2.
