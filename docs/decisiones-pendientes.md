@@ -65,20 +65,26 @@ cuerpo de la ficha describe seis perfiles.
 **Bloquea:** permisos, navegación por rol, pantalla roster.
 **Depende de:** D-020, D-022.
 
-| Persona | Cuerpo de la ficha v2 | Mockups |
-|---|---|---|
-| Johann | Grabaciones (Chimbote) | Grabaciones · Chimbote |
-| Eduardo | Edición y postproducción | Edición y grabación · Lima |
-| Chiara / Kiara | Coordinación y seguimiento | Locuciones |
-| Martín | Operaciones | Supervisión general |
-| César | Producción y desarrollo creativo | Supervisión general |
+> **Confirmado por Marco (2026-08-17), parcial:** **Martín tiene el rol Supervisión general.**
+>
+> **Corrección tras auditoría de Codex:** la primera versión de esta nota añadía «No Operación», que
+> **Marco no dijo**. D-001 permite que una persona tenga varios roles a la vez, así que Martín podría
+> conservar Operación además de Supervisión — eso sigue sin confirmar, no descartado.
 
-Tres cambios con consecuencias: **Martín** deja Operaciones, con lo que ese rol se queda sin nadie;
-**César** pasa a Supervisión siendo además el solicitante; y **Chiara/Kiara** deja Coordinación, lo que
-deja sin titular las decisiones D-011 y D-016.
+| Persona | Cuerpo de la ficha v2 | Mockups | Confirmado |
+|---|---|---|---|
+| Johann | Grabaciones (Chimbote) | Grabaciones · Chimbote | — |
+| Eduardo | Edición y postproducción | Edición y grabación · Lima | — |
+| Chiara / Kiara | Coordinación y seguimiento | Locuciones | — |
+| **Martín** | Operaciones | Supervisión general | **Supervisión general** (¿solo ese, o también Operación?) |
+| César | Producción y desarrollo creativo | Supervisión general | — |
 
-**Qué hace falta:** que el cliente confirme quién hace qué hoy, no quién lo hacía cuando se escribió la
-ficha original.
+**Pregunta nueva, más precisa que la anterior:** ¿Martín tiene únicamente Supervisión general, o
+conserva además Operación? De la respuesta depende si puede seguir apareciendo como responsable
+seleccionable en actividades operativas — hoy `frontend/lib/activities.ts` lo tiene así, con datos de
+ejemplo que no representan ninguna asignación real todavía.
+
+**Sigue faltando:** el rol real de Eduardo, de Chiara/Kiara (depende de D-020) y de César.
 
 ---
 
@@ -86,12 +92,32 @@ ficha original.
 
 **Bloquea:** D-001 (en revisión), la matriz de permisos, la navegación.
 
-Tres preguntas separadas:
+> **Confirmado por Marco (2026-08-17):**
+> - **Existe el rol Locuciones.**
+> - **Coordinación sigue existiendo** como rol.
 
-1. ¿Se añade **Locuciones** como rol y como tipo de actividad? No existe en el modelo actual.
-2. ¿Sobrevive **Operación** si Martín se va a Supervisión?
-3. ¿Sobrevive **Coordinación** si Chiara/Kiara se va a Locuciones? Si no, D-011 (quién mantiene Burson)
-   y D-016 (lectura global de Coordinación) se quedan sin sujeto.
+Con eso, dos de las tres preguntas originales quedan resueltas en su mitad «¿existe el rol?». Queda
+abierto lo que no se tocó:
+
+1. ~~¿Se añade Locuciones como rol?~~ **Sí.** Falta la otra mitad: **¿es también un tipo de actividad
+   nuevo**, junto a Grabación, Edición, Coordinación, Operación y Creatividad? No es lo mismo un rol que
+   un tipo — ver D-001. Y falta lo que hace falta para cualquier rol nuevo: **¿es un rol de trabajo** —
+   crea y es responsable de actividades, como los otros cinco — **o algo distinto? ¿Qué ve, qué acciones
+   tiene, entra al módulo Burson o no?**
+2. **¿Sobrevive Operación en el catálogo?** Sigue sin respuesta directa. Que Martín tenga Supervisión no
+   dice por sí solo si además conserva Operación (D-001 permite varios roles a la vez) ni si el rol
+   sigue existiendo para alguien más — ver la nota de más abajo.
+3. ~~¿Sobrevive Coordinación?~~ **Sí, confirmado.** Su permiso —lectura global sin observar, aprobar ni
+   cancelar (D-016)— **no necesita esperar a saber quién lo ocupa**: es una propiedad del rol, no de la
+   persona. Lo que sí sigue abierto es quién lo tiene asignado, y por tanto quién mantiene Burson
+   (D-011) mientras tanto — si Chiara/Kiara se fue a Locuciones (D-020 sin resolver), Coordinación
+   existe pero **nadie confirmado la tiene asignada todavía**.
+
+**Una lectura posible, todavía no confirmada por Marco:** que un rol exista en el catálogo no depende de
+que alguien lo tenga asignado hoy — el equipo va a crecer y a esas personas también se les asignarán
+roles (D-001 ya lo preveía: "entra o sale gente sin tocar el sistema"). Si esa lectura es correcta,
+**Operación puede seguir en el catálogo aunque hoy nadie lo tenga**, a la espera de quien lo ocupe. Esto
+es una interpretación pendiente de confirmar, no una decisión cerrada.
 
 Conviene no confundir esto con D-021: **una persona puede cambiar de rol sin que el catálogo de roles
 cambie.** Solo si el catálogo cambia hay que tocar D-001.
@@ -235,8 +261,22 @@ D-037 (formato y permisos de la exportación) y D-039 (recuperar la clave y cuá
 ## Por dónde conviene empezar
 
 1. **D-020, D-021 y D-022** — quiénes son, qué hacen y qué roles existen. Es lo que más cosas tiene
-   paradas ahora que los estados están decididos: de aquí dependen D-001, D-011 y D-016, que son las
-   cuatro decisiones que siguen en revisión.
-2. **D-031** — la identidad visual, que es lo único que desbloquea la Fase 1 y las ocho maquetas.
-3. **D-026** — el flujo de acceso. Solo depende de Marco y no espera a nadie.
-4. **D-041** — cómo funciona el feedback de AUNOR, ahora que se decidió que existe.
+   paradas ahora que los estados están decididos: de aquí dependen D-001, D-011 y D-016.
+2. **D-041** — cómo funciona el feedback de AUNOR, ahora que se decidió que existe.
+
+## Preguntas nuevas del 2026-08-17, tras confirmar Locuciones, Coordinación y Martín
+
+Encontradas por una auditoría de Codex sobre lo que Marco acababa de confirmar. Se suman a D-021 y
+D-022, no las reemplazan:
+
+1. **¿Martín tiene únicamente Supervisión general, o conserva también Operación?** D-001 permite los
+   dos roles a la vez.
+2. **¿Locuciones es un rol de trabajo?** ¿Crea y es responsable de actividades, como los otros cinco?
+   ¿Qué ve, qué acciones tiene, entra al módulo Burson?
+3. **¿Una persona que solo tenga Supervisión puede figurar como responsable operativo de una
+   actividad?** Hoy el dato de ejemplo de Martín en el frontend asume que sí; no está decidido.
+
+**Aclaración, no pregunta:** hoy **no existe ninguna cuenta real**. Lo construido en `frontend/` son
+pantallas con datos simulados — nombres reales sobre datos ficticios, para poder ver el diseño en
+funcionamiento. Ninguna asignación de responsable que aparezca ahí es una decisión de quién hace qué;
+eso se decide aquí, en esta cola, y se aplica al frontend después.
