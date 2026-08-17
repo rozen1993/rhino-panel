@@ -743,3 +743,29 @@ Coincide con lo que el requerimiento v2 pedía expresamente para Eduardo: «porc
   hoy dan por hecho que el avance existe siempre.
 - En la lista de actividades, las de Grabación, Operación y Coordinación **no muestran barra de avance**.
   La pantalla tiene que verse bien con y sin ella.
+
+---
+
+## D-044 — Se cierra la Fase 1 con diseño imperfecto y se abre la Fase 2
+
+**Fecha:** 2026-08-17 · **Fase:** 1 → 2 · **Decide:** Marco
+
+Marco da por cumplida la puerta de la Fase 1 —tiene dirección visual y entiende los recorridos—
+**aunque las 29 pantallas producidas tengan la deriva registrada en INC-002**. La corrección no se hace
+regenerando imágenes: se hace **sobre el frontend en código**, una vez construido.
+
+Esto no salta ningún paso del proyecto: en `CLAUDE.md`, la Fase 2 (Construcción frontend) es
+exactamente la que sigue a la Fase 1, y la Fase 3 (validación y contrato de handoff) va **después** de
+construir, no antes.
+
+**Consecuencias**
+
+- **Se abre la Fase 2.** Quedan autorizadas las tecnologías de **STACK — Frontend**: Next.js (App
+  Router), React, TypeScript estricto, Tailwind, Zod, Vitest, Playwright, Git, npm.
+- **La referencia de corrección visual sigue siendo `diseno/piezas-png/pieza-2.png`**, la imagen que
+  Marco aprobó — no las pantallas ya dibujadas, que son justamente las que se desviaron.
+- **Riesgo asumido y explícito:** la Fase 0 sigue con **once decisiones abiertas esperando a César**,
+  sobre todo el catálogo de roles (D-020, D-021, D-022). Se construye sobre el catálogo documentado hoy
+  en D-001. Si el cliente cambia los roles, la navegación y los permisos del frontend tendrán que
+  ajustarse — es el mismo trato que ya se hizo con el diseño: avanzar y corregir después.
+- Todos los datos son simulados. Nada de Supabase, Auth ni persistencia real hasta la Fase 4.
