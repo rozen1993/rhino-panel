@@ -26,17 +26,25 @@ Consecuencia: **la Fase 1 queda suspendida y la Fase 0 vuelve a estar activa.**
 
 ## Fase activa
 
-**Fase 0 — Concepción funcional**, reabierta el 2026-08-17.
+**Situación mixta, y conviene saberlo.** La Fase 0 se reabrió el 2026-08-17 y **formalmente no se ha
+vuelto a cerrar**. Pero desde entonces Marco cerró las decisiones que la bloqueaban y ordenó producir el
+diseño móvil, que es trabajo de Fase 1. En la práctica se está trabajando en Fase 1.
+
+**Pendiente de Marco:** dar la Fase 0 por cerrada otra vez, o declarar expresamente que se trabaja en
+paralelo. Declarar la fase activa es decisión suya, no de Claude.
+
+Lo que sí está claro es qué falta para poder cerrar la Fase 0: las decisiones que siguen abiertas,
+sobre todo las del catálogo de roles —D-020, D-021, D-022—, que necesitan al cliente.
 
 ## Objetivo actual
 
-Cerrar las decisiones que el requerimiento v2 dejó abiertas, para que exista otra vez un producto que
-pueda explicarse pantalla por pantalla sin contradecirse.
+Producir el diseño móvil completo en PNG, sobre la dirección visual ya elegida. **No se programa nada
+todavía**: la programación viene cuando el diseño no tenga dudas.
 
-## Puerta de salida
+## Puerta de salida de la Fase 1
 
-El producto puede explicarse pantalla por pantalla y recorrido por recorrido sin depender de decisiones
-técnicas de backend, y sin decisiones en revisión abiertas.
+Marco aprueba la dirección visual y entiende todos los recorridos principales desde las pantallas.
+La dirección visual ya está aprobada (D-031); falta el resto de las pantallas y el sistema de diseño.
 
 ## Reglas de la fase
 
@@ -63,25 +71,63 @@ Con eso, siete decisiones salieron de revisión y §5, §8, §10 y §11 de la Fa
 
 ---
 
-## En curso
+## Entregado en la Fase 1
 
-**E-005 — cinco direcciones visuales en escritorio**, encargado a Codex el 2026-08-17.
+| Encargo | Qué produjo | Dónde |
+|---|---|---|
+| E-001 a E-004 | Ocho direcciones visuales de móvil. **Obsoletas** por el requerimiento v2, se conservan como archivo | `diseno/direccion-a.html` … `-h.html` |
+| E-005 | Cinco direcciones de escritorio en HTML, con contenido exacto | `diseno/escritorio/pieza-1.html` … `-5.html` |
+| E-006 | Las mismas cinco en PNG. **Marco eligió la pieza 2** (D-031) | `diseno/piezas-png/` |
+| E-007 | Bloque 1 del diseño móvil: catorce pantallas del trabajo diario | `diseno/movil/` |
 
-Contrato en `docs/encargos/E-005-piezas-visuales-escritorio.md`. Produce `diseno/escritorio/pieza-1.html`
-… `pieza-5.html`. La pieza 1 es el lenguaje de los mockups del cliente bien ejecutado; las otras cuatro
-son alternativas, y al menos una es de fondo claro.
+---
 
-Cada una muestra cuatro secciones: muestrario con los siete estados, P-2 Mi panel, P-3 detalle de una
-actividad Observada, y P-5 panel de supervisión con **las dos bandejas** —observaciones respondidas
-pendientes de cerrar, y feedback de AUNOR pendiente de atender—.
+## Lo que falta para cerrar la Fase 1
 
-**Cuando llegue: Marco elige una, y eso cierra D-031 y D-018 a la vez.**
+1. **`docs/sistema-diseno.md`, que no existe.** `CLAUDE.md` lo exige y es la causa de fondo del defecto
+   principal del bloque 1: sin él, cada pantalla inventa sus propias marcas de estado, sus cabeceras y
+   sus formularios.
+2. **Corregir el bloque 1.** Las catorce están hechas y su contenido es correcto, pero **no parecen el
+   mismo producto**. Detalle en la sección siguiente.
+3. **El bloque 2 del diseño móvil:** once vistas — P-5 supervisión con sus dos bandejas, P-6 AUNOR, P-7
+   Burson, P-8 cuentas y P-9 importación.
+4. **P-1, el acceso.** Bloqueada por D-026, que solo depende de Marco.
+5. **El diseño de escritorio**, después del móvil (D-042). Unas catorce vistas.
+
+## Defectos abiertos del bloque 1
+
+Revisados por Claude y por Codex de forma independiente, y coincidieron en el principal.
+
+| # | Defecto | De quién es | Alcance |
+|---|---|---|---|
+| 1 | **No parecen el mismo producto**: cambian cabeceras, avatares, navegación, iconos, radios, sombras, formularios y **las marcas de los siete estados** | Contrato: falta el sistema de diseño | 14 de 14 |
+| 2 | **`m-09` ofrece «Aprobar» sobre una actividad Observada**, y eso viola la regla de `fase-0-concepcion.md`:222 — solo se aprueba desde Entregada y sin observaciones abiertas | **Contrato: el encargo E-007 lo pidió mal** | 1 |
+| 3 | Los tres formularios —`m-10`, `m-11`, `m-12`— usan tres estructuras distintas, y `m-10` aprieta etiqueta y campo en dos columnas | Ejecución | 3 |
+| 4 | `m-07`, `m-08` y `m-09` muestran un solo paso del historial de estado en vez del recorrido completo | Ejecución | 3 |
+| 5 | El texto de la observación y su respuesta son marcadores de posición | Contrato: no se dieron las palabras | 2 |
+| 6 | `m-04` convierte la fila de cinco meses en siete esqueletos | Ejecución | 1 |
+
+El defecto 2 es el más grave pese a afectar a una sola pantalla: **es una regla de negocio dibujada al
+revés**, y si se construye así queda en el producto.
 
 ---
 
 ## Siguiente acción
 
-**Bloqueado esperando dos cosas**: que llegue E-005, y las respuestas del cliente sobre el equipo.
+**Decisión de Marco: en qué orden se sigue.** Las opciones y su coste están abajo. Claude y Codex
+recomiendan la tercera.
+
+| Camino | Regeneraciones | Nuevas | Riesgo |
+|---|---:|---:|---|
+| Escribir el sistema, corregir las catorce, luego el bloque 2 | 14 | 11 | Se puede descubrir tarde que el sistema escrito no funciona en pantalla |
+| Hacer ya el bloque 2 y corregir todo al final | ~25 | 11 | El menos reversible. Repite el patrón de INC-001 |
+| **Sistema mínimo → dos pilotos → Marco valida → el resto** | 14 | 11 | Solo dos imágenes quedan expuestas antes de validar |
+
+Los pilotos serían **`m-01`** —lista y marcas de estado— y **`m-10`** —formulario mobile-first—, que
+entre las dos fijan todo lo que se repite en las demás.
+
+Además, **Marco tiene pendiente D-026**, el flujo de acceso, que no depende de nadie más y desbloquea
+P-1.
 
 Ahora que los estados están decididos, lo que más cosas tiene paradas es **saber quién es quién**:
 

@@ -229,3 +229,21 @@ cada imagen en una línea, cuáles tuviste que regenerar y por qué, y qué pant
 
 Si falta una decisión bloqueante, detente y pregunta. Si es un detalle local y reversible cubierto por
 este contrato, elige lo más simple y anótalo en el reporte. **No inventes reglas de producto.**
+
+---
+
+## Errata — 2026-08-17
+
+**El bloque 2 de este contrato pedía mal la pantalla `m-09`.** Decía que la ficha Observada vista por
+supervisión debía ofrecer «resolver la observación, aprobar, cancelar».
+
+**«Aprobar» no puede aparecer ahí.** La regla está en `docs/fase-0-concepcion.md`:222 y en su tabla de
+transiciones: *solo una actividad **Entregada** y **sin observaciones abiertas** puede pasar a
+Aprobada*. Sobre una actividad Observada, supervisión puede **resolver** la observación o **cancelar**
+la actividad, y nada más.
+
+Codex ejecutó el contrato tal como estaba escrito, así que **el fallo es de contrato, no de ejecución**.
+Lo detectó una revisión independiente de Codex sobre las imágenes ya entregadas, no la propia revisión
+de Claude.
+
+Al regenerar `m-09` hay que quitar «Aprobar».
