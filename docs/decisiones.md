@@ -58,8 +58,9 @@ Roles derivados del requerimiento:
 - Los permisos se escriben una sola vez por rol, no por persona.
 - Hace falta una pantalla de administración de cuentas que asigne y revoque roles.
 - Los cinco roles de trabajo coinciden con los cinco tipos de actividad, pero **no son lo mismo**: el
-  rol dice qué puede hacer una persona; el tipo dice qué es la actividad. No se asume que un rol solo
-  pueda registrar actividades de su tipo homónimo mientras Marco no lo decida.
+  rol dice qué puede hacer una persona; el tipo dice qué es la actividad. **Decidido en D-045
+  (2026-08-17): un rol solo puede registrar actividades de su tipo homónimo**, salvo que la persona
+  tenga además otro rol asignado.
 
 ---
 
@@ -769,3 +770,29 @@ construir, no antes.
   en D-001. Si el cliente cambia los roles, la navegación y los permisos del frontend tendrán que
   ajustarse — es el mismo trato que ya se hizo con el diseño: avanzar y corregir después.
 - Todos los datos son simulados. Nada de Supabase, Auth ni persistencia real hasta la Fase 4.
+
+---
+
+## D-045 — Cada rol actúa estrictamente dentro de lo que ese rol permite
+
+**Fecha:** 2026-08-17 · **Fase:** 2 · **Decide:** Marco
+
+Cita textual: *«supervisión solo se encarga de lo que admite su rol y nada más, así como el resto de
+roles»*. Es una regla general, no solo para Supervisión: **ningún rol hace nada fuera de lo que ese rol
+tiene definido**, y eso vale para los siete roles por igual.
+
+Esto cierra una nota que llevaba abierta desde D-001: *«no se asume que un rol solo pueda registrar
+actividades de su tipo homónimo mientras Marco no lo decida»*. Ya está decidido: **sí se asume.**
+
+**Consecuencias**
+
+- Un rol de trabajo (Grabación, Edición, Coordinación, Operación, Creatividad, Locución) solo registra y
+  es responsable de actividades de **su propio tipo**.
+- **Supervisión / Administración no ejecuta actividades de campo.** Su alcance es exactamente el
+  descrito en D-001: ver todo, observar, responder, resolver, aprobar, administrar cuentas, importar el
+  histórico. Nada más.
+- **Una persona con varios roles asignados puede actuar dentro de la suma de esos roles**, no solo de
+  uno. Es la única forma de hacer más de una cosa: tener más de un rol, no que un rol se estire.
+- **Consecuencia inmediata en los datos:** Martín, con Supervisión como único rol confirmado, no puede
+  ser responsable operativo de una actividad. El dato de ejemplo que lo tenía así en
+  `frontend/lib/activities.ts` queda desactualizado y se corrige.

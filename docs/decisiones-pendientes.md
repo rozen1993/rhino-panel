@@ -65,24 +65,17 @@ cuerpo de la ficha describe seis perfiles.
 **Bloquea:** permisos, navegación por rol, pantalla roster.
 **Depende de:** D-020, D-022.
 
-> **Confirmado por Marco (2026-08-17), parcial:** **Martín tiene el rol Supervisión general.**
->
-> **Corrección tras auditoría de Codex:** la primera versión de esta nota añadía «No Operación», que
-> **Marco no dijo**. D-001 permite que una persona tenga varios roles a la vez, así que Martín podría
-> conservar Operación además de Supervisión — eso sigue sin confirmar, no descartado.
+> **Confirmado por Marco (2026-08-17):** **Martín es Supervisión, solamente.** No Operación. Consecuencia
+> directa de D-045: como su único rol es Supervisión, **no puede ser responsable operativo de una
+> actividad** — eso está fuera de lo que ese rol admite.
 
 | Persona | Cuerpo de la ficha v2 | Mockups | Confirmado |
 |---|---|---|---|
 | Johann | Grabaciones (Chimbote) | Grabaciones · Chimbote | — |
 | Eduardo | Edición y postproducción | Edición y grabación · Lima | — |
 | Chiara / Kiara | Coordinación y seguimiento | Locuciones | — |
-| **Martín** | Operaciones | Supervisión general | **Supervisión general** (¿solo ese, o también Operación?) |
+| **Martín** | Operaciones | Supervisión general | **Supervisión, solamente** |
 | César | Producción y desarrollo creativo | Supervisión general | — |
-
-**Pregunta nueva, más precisa que la anterior:** ¿Martín tiene únicamente Supervisión general, o
-conserva además Operación? De la respuesta depende si puede seguir apareciendo como responsable
-seleccionable en actividades operativas — hoy `frontend/lib/activities.ts` lo tiene así, con datos de
-ejemplo que no representan ninguna asignación real todavía.
 
 **Sigue faltando:** el rol real de Eduardo, de Chiara/Kiara (depende de D-020) y de César.
 
@@ -99,11 +92,12 @@ ejemplo que no representan ninguna asignación real todavía.
 Con eso, dos de las tres preguntas originales quedan resueltas en su mitad «¿existe el rol?». Queda
 abierto lo que no se tocó:
 
-1. ~~¿Se añade Locuciones como rol?~~ **Sí.** Falta la otra mitad: **¿es también un tipo de actividad
-   nuevo**, junto a Grabación, Edición, Coordinación, Operación y Creatividad? No es lo mismo un rol que
-   un tipo — ver D-001. Y falta lo que hace falta para cualquier rol nuevo: **¿es un rol de trabajo** —
-   crea y es responsable de actividades, como los otros cinco — **o algo distinto? ¿Qué ve, qué acciones
-   tiene, entra al módulo Burson o no?**
+1. ~~¿Se añade Locuciones como rol?~~ **Sí, y es un rol de trabajo estándar** — confirmado por Marco:
+   «simplemente un rol estándar», igual que los otros cinco. Crea y es responsable de sus propias
+   actividades, dentro de lo que ese rol admite (D-045).
+   **Asunción de construcción, no confirmada por Marco todavía:** los cinco roles de trabajo existentes
+   tienen un tipo de actividad homónimo, así que para construir se asume que Locución existe también
+   como **sexto tipo de actividad**. Si no es así, se corrige — es un cambio local y barato.
 2. **¿Sobrevive Operación en el catálogo?** Sigue sin respuesta directa. Que Martín tenga Supervisión no
    dice por sí solo si además conserva Operación (D-001 permite varios roles a la vez) ni si el rol
    sigue existiendo para alguien más — ver la nota de más abajo.
