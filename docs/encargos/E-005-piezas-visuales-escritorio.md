@@ -122,8 +122,10 @@ Aquí sí aparecen las acciones de supervisión: observar, aprobar, cancelar.
 
 ### Reglas que no se pueden romper
 
-- **Escritorio primero**, ancho de referencia **1280 px**. No debe romperse hasta 1024 px. El móvil es
-  un encargo posterior: **no lo dibujes**, pero no diseñes nada que sea imposible de estrechar después.
+- **Escritorio**, ancho de referencia **1280 px**. No debe romperse hasta 1024 px. **No dibujes móvil.**
+  Estas piezas existen solo para elegir un lenguaje visual; el diseño real del producto se hará después
+  **mobile-first**, empezando por el móvil (D-042). Por eso no diseñes nada que sea imposible de
+  replantear en una pantalla estrecha.
 - **HTML y CSS puros, un solo archivo por dirección.** Sin dependencias, sin CDN, sin fuentes remotas,
   sin imágenes externas, sin framework. JavaScript solo si es imprescindible; preferible ninguno.
 - **Sin fotografías.** Los mockups usan una foto de autopista; tú no puedes incrustar imágenes externas.

@@ -53,32 +53,35 @@ Cuatro de las bifurcaciones grandes están cerradas:
   completo. Se descartan los modelos de dos y tres estados de los mockups.
 - **D-023 — el material va por enlace.** El operario pega el enlace a la carpeta con sus fotos y
   vídeos; la plataforma no almacena archivos. **Simplifica mucho el proyecto** y cierra D-024 y D-036.
-- **D-033 — AUNOR ve y opina.** Puede dejar su feedback, pero **no manda sobre los operarios**: si su
-  opinión merece corrección, es supervisión de Rhino quien la convierte en observación interna. La
+- **D-033 — AUNOR ve y opina.** Su feedback **pasa siempre primero por supervisión** y nunca llega
+  directo al operario. Supervisión lo descarta, lo responde, o lo convierte en observación interna. La
   plataforma la usa Rhino para controlar a su gente; de AUNOR se quiere que esté contento.
+- **D-042 — las piezas para elegir estética son de escritorio.** **Mobile-first no cambia**: elegido el
+  lenguaje visual, el diseño completo del producto se hace móvil primero, luego laptop y escritorio.
 
 Con eso, siete decisiones salieron de revisión y §5, §8, §10 y §11 de la Fase 0 vuelven a estar firmes.
 
 ---
 
-## Dos confirmaciones de una línea que Marco debe dar
+## En curso
 
-La segunda auditoría de Codex detectó que D-019 y D-033 registraban como decisión de Marco cosas que
-Claude había **deducido** de sus respuestas. Las deducciones son coherentes y quedan como línea base,
-pero necesitan una confirmación expresa:
+**E-005 — cinco direcciones visuales en escritorio**, encargado a Codex el 2026-08-17.
 
-1. **¿Se conservan exactamente los siete estados y sus transiciones?** «Es un sistema de supervisión»
-   descarta la bitácora plana, pero no distingue entre los siete estados actuales y el modelo híbrido
-   —menos estados visibles, la observación como marca aparte— que la propia D-019 ofrecía.
-2. **¿El feedback de AUNOR pasa siempre primero por supervisión, o puede llegar directo al operario?**
-   Aunque no cambie ningún estado, un mensaje directo del cliente a un operario funciona en la práctica
-   como una orden. Ver D-041.
+Contrato en `docs/encargos/E-005-piezas-visuales-escritorio.md`. Produce `diseno/escritorio/pieza-1.html`
+… `pieza-5.html`. La pieza 1 es el lenguaje de los mockups del cliente bien ejecutado; las otras cuatro
+son alternativas, y al menos una es de fondo claro.
+
+Cada una muestra cuatro secciones: muestrario con los siete estados, P-2 Mi panel, P-3 detalle de una
+actividad Observada, y P-5 panel de supervisión con **las dos bandejas** —observaciones respondidas
+pendientes de cerrar, y feedback de AUNOR pendiente de atender—.
+
+**Cuando llegue: Marco elige una, y eso cierra D-031 y D-018 a la vez.**
 
 ---
 
 ## Siguiente acción
 
-**Bloqueado esperando respuestas del cliente sobre el equipo**, y las dos confirmaciones de arriba.
+**Bloqueado esperando dos cosas**: que llegue E-005, y las respuestas del cliente sobre el equipo.
 
 Ahora que los estados están decididos, lo que más cosas tiene paradas es **saber quién es quién**:
 

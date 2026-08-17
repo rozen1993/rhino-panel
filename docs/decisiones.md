@@ -510,26 +510,30 @@ como estaba definido en `docs/fase-0-concepcion.md` §10.
 
 ---
 
-## D-042 — El diseño se hace primero en escritorio
+## D-042 — Las piezas para elegir estética son de escritorio; el producto se sigue diseñando mobile-first
 
 **Fecha:** 2026-08-17 · **Fase:** 1 · **Decide:** Marco
 
-Las piezas visuales se producen **primero en escritorio** y el móvil viene después.
+Las cinco piezas del encargo E-005 se dibujan **solo en escritorio**, porque su único trabajo es
+**dejar elegir un lenguaje visual**. No son el diseño del producto.
 
-**Esto invierte el orden que fijaba `CLAUDE.md`**, que dice «la plataforma es mobile-first» y que el caso
-que manda es una persona en vía con el teléfono en una mano. La inversión es deliberada y tiene razones:
-los mockups del cliente son de escritorio, la supervisión y la edición se hacen sentados, y Marco
-necesita algo que enseñarle a César.
+**Mobile-first no se toca.** Marco lo dejó explícito: *«no estamos contradiciéndolo; cuando escoja el
+diseño visual, te voy a pedir el diseño completo primero en móviles y luego en laptop y desktop, o sea
+full mobile-first»*.
+
+```
+E-005 (ahora)          →  5 piezas de escritorio, solo para elegir estética
+Elegida la dirección   →  diseño completo: MÓVIL → laptop → escritorio
+```
 
 **Consecuencias**
 
-- **El móvil no se abandona, se pospone.** Sigue siendo obligatorio, porque quien graba en vía es quien
-  más usa el sistema. Lo que cambia es en qué orden se dibuja.
-- **El riesgo hay que decirlo:** diseñar primero en escritorio y adaptar después suele producir
-  pantallas móviles que son la versión estrecha de una tabla, no una pantalla pensada para el pulgar. El
-  formulario de grabación y la lista de actividades son los dos sitios donde eso se nota, y son
-  justamente los que usa Johann en la berma.
-- **D-017 sigue vigente** y ahora se lee al revés: barra lateral en escritorio, que en móvil pasa a barra
-  inferior fija.
-- Cuando exista la versión de escritorio aprobada, **hay que producir la de móvil antes de cerrar la
-  Fase 1**. La puerta de salida no cambia.
+- **No hay contradicción con `CLAUDE.md`.** La regla mobile-first sigue vigente entera y gobierna el
+  diseño real del producto. Lo de escritorio es un artefacto de decisión, no el producto.
+- El escritorio es además donde el cliente dibujó sus mockups, así que comparar en escritorio es
+  comparar en el mismo terreno que su propuesta.
+- Cuando se elija la dirección, **la primera pantalla que se dibuja de verdad es la de móvil**, no la
+  adaptación estrecha de la de escritorio. Esa distinción es lo que evita que el formulario de grabación
+  acabe siendo una tabla apretada para alguien que está en la berma con una mano ocupada.
+- **D-017 sigue vigente** tal como se escribió: barra inferior fija en móvil, que pasa a lateral en
+  escritorio.
