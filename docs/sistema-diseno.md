@@ -78,6 +78,56 @@ Tiene que encontrarse sin buscarla — es la señal de «esto te está esperando
 
 ---
 
+## 3 bis. Las otras dos familias de estado, y el feedback del cliente
+
+Tres huecos que aparecieron al dibujar las pantallas de escritorio (E-008) y que el sistema no cubría.
+Se fijan aquí para que no vuelvan a improvisarse.
+
+### Lo que ve AUNOR: cinco grupos, no siete estados
+
+AUNOR **nunca ve los siete estados internos**. Ve cinco grupos, y esa es la razón de que exista la
+agrupación de `docs/fase-0-concepcion.md` §8:
+
+| AUNOR ve | Recoge los estados internos | Marca |
+|---|---|---|
+| Programada | Programada | círculo `○`, gris azulado |
+| **En trabajo** | En proceso · Por subir · **Observada** | triángulo `▶`, azul |
+| Entregada | Entregada | check `✓`, verde azulado |
+| Aprobada | Aprobada | estrella `★`, verde |
+| Cancelada | Cancelada | aspa `×`, gris, tachado |
+
+**«En trabajo» usa la marca de En proceso**, en azul. Que *Observada* se esconda ahí dentro es
+deliberado: AUNOR debe saber que algo sigue en curso, no que hubo una observación interna. **Nunca se
+dibuja la marca roja de Observada en una pantalla de AUNOR.**
+
+### Los cinco estados de Burson
+
+Burson tiene su **propia máquina de estados** (D-012) y no se mezcla con la de actividades. Se dibujan
+más compactos que los siete, para que nadie los confunda de un vistazo:
+
+**Solicitado · En proceso · Entregado · Aprobado · Cancelado**
+
+Usan la misma paleta pero **sin los signos** de los siete estados. En el tablero de Burson lo que manda
+visualmente no es el estado: son las columnas **pendientes de Rhino** y **pendientes de Burson**, que
+son el motivo de existir del módulo.
+
+### El feedback de AUNOR no se parece a una observación
+
+Son dos cosas distintas y **no pueden confundirse nunca** (D-033, D-041):
+
+| | Observación interna | Feedback de AUNOR |
+|---|---|---|
+| Color | **Rojo** `#c83b4d` | **Azul** `#155eef` |
+| Etiqueta | «Observación» con el nombre de quien la escribió | **«AUNOR · opinión del cliente»** |
+| ¿Cambia el estado? | Sí, la actividad pasa a Observada | **No** |
+| Acciones | Resolver | **Descartar · Responder · Convertir en observación interna** |
+
+En la bandeja de feedback va además **un aviso permanente**: *el feedback de AUNOR no cambia el estado
+de las actividades y no llega directo al colaborador*. Es la regla que sostiene que Rhino siga siendo
+quien controla a sus operarios, y conviene que esté escrita en la pantalla, no solo en un documento.
+
+---
+
 ## 4. Elementos que se repiten y no pueden cambiar entre pantallas
 
 | Elemento | Cómo es |
