@@ -510,7 +510,39 @@ como estaba definido en `docs/fase-0-concepcion.md` §10.
 
 ---
 
-## D-030 — Los cinco roles comparten el patrón de pantalla
+## D-026 — Se entra con usuario y clave; el atajo vive en el dispositivo
+
+**Fecha:** 2026-08-17 · **Fase:** 1 · **Decide:** Marco
+
+El acceso es **usuario y clave**. Se descarta la pantalla *roster* que proponían los mockups del
+cliente, que mostraba el equipo entero antes de autenticar a nadie.
+
+Para no perder la comodidad que buscaba el cliente, se añade un **atajo local**: en un dispositivo donde
+alguien ya entró con éxito, la pantalla ofrece esas cuentas para tocarlas directamente. **La lista se
+construye en el propio teléfono, no en el servidor.** Quien abra la dirección por primera vez, o desde
+un dispositivo desconocido, no ve a nadie.
+
+**Por qué**
+
+El roster del cliente publicaba, sin pedir nada, cuatro cosas: quién trabaja en Rhino, con qué rol,
+**cuántas actividades lleva cada uno** y **cuándo trabajó por última vez**. Las dos últimas son datos de
+desempeño de los operarios, expuestos a cualquiera con la dirección. Además contradecía la P-1 de la
+Fase 0, que exige que el error de acceso no revele siquiera si una cuenta existe.
+
+Una precisión que salió de la revisión de Codex y que conviene no repetir mal: el problema **no** es que
+el roster «regale medio secreto» —el nombre de usuario casi nunca es secreto—. El problema es que
+**entrega gratis la lista completa de cuentas válidas**, que es lo que habilita el phishing dirigido y
+la suplantación.
+
+**Consecuencias**
+
+- **P-1 queda desbloqueada** y puede diseñarse en móvil y en escritorio.
+- El atajo local es un dato del dispositivo, no del servidor. Cuando llegue la Fase 5 hay que tratarlo
+  como tal: se borra al cerrar sesión y no sobrevive a que la cuenta se desactive.
+- Hay que resolver además cómo se recupera una clave y cuánto dura el «recordar» (**D-039**), sabiendo
+  que un teléfono puede ser compartido.
+- **Hay que explicárselo al cliente.** Pidió expresamente esa portada y no la va a ver. El argumento es
+  el de arriba, y es defendible.
 
 **Fecha:** 2026-08-17 · **Fase:** 1 · **Decide:** Marco
 

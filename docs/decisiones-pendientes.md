@@ -5,23 +5,26 @@ consecuencias tiene cada una.
 
 Marco resuelve en lote. Lo resuelto pasa a `docs/decisiones.md` y desaparece de esta cola.
 
-Resueltas: **veintiuna** — D-001 a D-005, D-007 a D-017, y D-019, D-023, D-024, D-033 y D-036, cerradas
-el 2026-08-17. Todas en `docs/decisiones.md`.
+**Cerradas: veintiséis.** Quedan **dieciséis** abiertas, las de este archivo.
 
-**Lo que Marco cerró el 2026-08-17**, y que quita de esta cola cinco entradas y saca de revisión otras
-siete:
+**Lo que Marco cerró el 2026-08-17**, todo en `docs/decisiones.md`:
 
 - **D-019** — la plataforma es un **sistema de supervisión**: se mantienen los siete estados y el ciclo
   de observación completo.
-- **D-023** — el material va **por enlace**; la plataforma no almacena archivos.
-- **D-024** — descargar es ir a OneDrive, consecuencia de la anterior.
-- **D-033** — **AUNOR ve y deja su opinión**, pero su feedback no manda sobre los operarios: quien
-  convierte una opinión del cliente en corrección es supervisión de Rhino.
-- **D-036** — cerrada sin objeto: si no se suben archivos, no hay problema de subir 50 MB con mala
-  señal.
+- **D-023** — el material va **por enlace**; la plataforma no almacena archivos. **D-024** y **D-036**
+  se cierran con ella.
+- **D-033** — **AUNOR ve y deja su opinión**, y ese feedback **pasa siempre primero por supervisión**:
+  nunca llega directo al operario.
+- **D-030** — los cinco roles **comparten el patrón de pantalla**, con variantes internas.
+- **D-031 y D-018** — la dirección visual es la **pieza 2**, «planilla de rodaje». Cierra la decisión que
+  llevaba parada desde el 12 de agosto.
+- **D-026** — se entra con **usuario y clave**, y el atajo de «toca tu cara» vive en el dispositivo, no
+  en el servidor. Desbloquea P-1.
+- **D-042** — las piezas para elegir estética fueron de escritorio, pero **el producto se diseña
+  mobile-first**.
 
-**Atención:** la mayoría de lo que queda **no lo puede resolver Marco solo**: necesita respuesta del
-cliente. Están agrupadas al final por quién tiene que contestarlas.
+**Atención:** de las dieciséis que quedan, **once necesitan respuesta del cliente**. Están agrupadas al
+final por quién tiene que contestarlas.
 
 ---
 
@@ -40,30 +43,6 @@ qué de todo eso puede llenarse para el histórico. Ver también D-040.
 de ejemplo.
 
 ---
-
-## D-018 — Dirección visual — **suspendida**
-
-**Fase:** 1
-**Estado:** suspendida el 2026-08-17. No se resuelve hasta cerrar D-031.
-
-Planteada como una elección libre entre ocho direcciones (A–H) producidas en E-001, E-002 y E-004. El
-requerimiento v2 introduce una restricción de marca que no existía cuando se encargaron: la línea
-gráfica debe alinearse a la identidad visual de AUNOR (aunor.pe), y los mockups del cliente ya proponen
-un lenguaje concreto — azul marino muy oscuro, cian, verde lima y fotografía de autopista.
-
-Elegir hoy entre las ocho sería elegir ignorando esa restricción.
-
-**Las ocho maquetas se conservan.** No se descartan: siguen sirviendo como catálogo y como prueba de que
-las pantallas se pueden dibujar. La dirección **D · Nocturna** es, de las ocho, la más cercana al
-lenguaje de los mockups, así que adaptarla es una salida real y no hay que darla por perdida.
-
-Los enlaces de las ocho están en `docs/estado.md`.
-
----
-
-# Decisiones abiertas por el requerimiento v2
-
-Todas nacen el 2026-08-17. Contexto completo en `docs/impacto-requerimiento-v2.md`.
 
 ## D-020 — Identidad de las personas del equipo
 
@@ -150,45 +129,6 @@ o en un reporte exportado, y comprobar que un usuario no recibe enlaces de activ
 
 ---
 
-## D-026 — Flujo de acceso: roster + modal
-
-**Bloquea:** P-1, y toca el bloque de seguridad de `CLAUDE.md`.
-
-El flujo propuesto muestra, **antes de autenticar a nadie**, la lista completa del equipo con nombre,
-rol, sede, estado, cuántas actividades tiene cada uno y cuándo actualizó por última vez. Después pide
-solo una clave, sin usuario.
-
-**Lo que cuesta, dicho sin adornos:** publica quién trabaja ahí, quién está activo y quién está flojo;
-convierte el acceso en adivinar un solo secreto en vez de dos; y contradice P-1 de la Fase 0, que exige
-que el error no revele siquiera si la cuenta existe.
-
-**Opciones**
-
-- **A · Tal cual el mockup.** Lo más cómodo y lo que pidió el cliente. Se asumen los tres costes.
-- **B · Roster sin los números.** Tarjetas con nombre y rol, sin contador de actividades ni última
-  actualización. Quita el dato de desempeño, pero **sigue publicando la lista de cuentas válidas**. Y si
-  además se pide usuario, el roster ya no ahorra escribir nada y pierde su razón de ser.
-- **C · Roster después de entrar.** Acceso clásico, y el roster pasa a ser la pantalla de equipo ya
-  autenticado. No es gratis: hay que construir la pantalla y decidir qué roles pueden ver a todo el
-  equipo.
-- **D · Acceso clásico** *(recomendada)*, con una variante que recupera casi toda la comodidad: en el
-  propio dispositivo, ofrecer un selector con **las cuentas que ya han entrado con éxito en ese
-  teléfono**. Da el gesto de «toca tu cara» sin publicarle nada a un desconocido, porque la lista se
-  construye localmente y solo con quien ya demostró tener la clave.
-
-**Sobre el argumento de que publicar los nombres «hace poco daño»:** hace menos daño que publicar las
-métricas, pero no es inocuo. Revela quién trabaja aquí, para quién, con qué rol, y **qué cuentas son
-válidas**. Eso habilita phishing dirigido y suplantación, y no hay una necesidad funcional que lo
-compense.
-
-**Y una precisión:** usuario y clave no son «dos secretos» — el usuario casi nunca es secreto. El
-problema real del roster no es que regale medio secreto, sino que **entrega gratis la lista completa de
-cuentas**, que es justo lo que P-1 de la Fase 0 se propuso no revelar.
-
-Esta decisión es de Marco, no del cliente: es él quien responde por la seguridad del sistema.
-
----
-
 ## D-027 — «Tipo de servicio» frente a los cinco tipos de actividad
 
 El formulario nuevo pide **tipo de servicio** (foto, video). El modelo actual ya clasifica por **tipo de
@@ -220,29 +160,6 @@ Armas».
 **Opciones:** dejarlo como está hoy —`ubicacion_nombre` prominente y el resto plegado y opcional, que ya
 es una posición intermedia—; reducir a un solo campo de texto; o mantener los seis y hacer obligatorios
 kilómetro y sentido para grabación y operación, que son los que justifican el dato en una autopista.
-
----
-
-## D-030 — ¿El patrón de pantalla vale igual para todos los perfiles?
-
-Pregunta de la propia ficha. Los mockups solo muestran el panel de Johann. ¿Eduardo, Chiara/Kiara,
-Martín y César ven lo mismo, o cada trabajo necesita su pantalla?
-
-De la respuesta depende cuántas pantallas hay que diseñar.
-
----
-
-## D-031 — Identidad visual y qué pasa con las ocho direcciones
-
-**Bloquea:** D-018 y toda la Fase 1.
-
-La ficha exige alinearse a la identidad visual de AUNOR (aunor.pe). Los mockups proponen azul marino
-muy oscuro, cian, verde lima y fotografía de autopista, bajo un nombre de marca equivocado
-(«Midnight & RAS Audiovisuales»; el correcto es **Rhino Audiovisuales**).
-
-**Opciones:** adaptar una de las ocho —**D · Nocturna** es la más cercana—; derivar una dirección nueva
-de aunor.pe y de los mockups; o tomar los mockups como dirección definitiva y limitarse a corregirles la
-marca y los problemas de accesibilidad.
 
 ---
 
@@ -356,13 +273,14 @@ y no están en discusión.
 
 # Quién tiene que contestar cada una
 
-Quedan **veinte** abiertas.
+Quedan **dieciséis** abiertas.
 
 **El cliente (César / AUNOR)** — once. Marco no puede resolverlas solo:
-D-006, D-020, D-021, D-022, D-025, D-027, D-030, D-032, D-034, D-035, D-038.
+D-006, D-020, D-021, D-022, D-025, D-027, D-032, D-034, D-035, D-038, y la parte de D-037 sobre quién
+puede exportar.
 
-**Marco, por su cuenta** — nueve. Son de arquitectura, seguridad o diseño:
-D-018, D-026, D-028, D-029, D-031, D-037, D-039, D-040, D-041.
+**Marco, por su cuenta** — cinco. Son de diseño o de reglas internas:
+D-028, D-029, D-037, D-039, D-040, D-041.
 
 ## Por dónde conviene empezar
 
