@@ -212,5 +212,18 @@ rompen al diseñar.
 | Laptop | 1280 px | |
 | Escritorio | 1440 px | |
 
+---
+
+## 7. Componentes de trabajo diario
+
+Tres composiciones reutilizables se incorporan con E-010. No añaden una estética nueva: ensamblan las
+piezas anteriores para que las pantallas móviles mantengan la misma estructura.
+
+| Componente | Uso y regla |
+|---|---|
+| `MobileShell` | Limita el contenido al ancho móvil de referencia, coloca `TopBar` arriba y la `NavBar` fija abajo. Admite regreso y la variante de Coordinación. |
+| `ActivityCard` | Ficha compacta de actividad. Reutiliza `Card` y `StatusPill`; solo dibuja avance para Edición y Creatividad. Observada añade barra roja y fondo rosado. |
+| `DraftNotice` | Aviso ámbar para contenido que permanece en el teléfono y todavía no llegó al servidor. Incluye siempre una acción de reintento. |
+
 El orden de diseño lo fija **D-042**: primero móvil, luego laptop y escritorio. Cuando se diseñe primero
 en escritorio por conveniencia, la versión móvil **no es la estrecha**: se replantea.

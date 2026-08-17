@@ -1,0 +1,27 @@
+import type { ReactNode } from "react";
+import { NavBar } from "@/components/nav-bar";
+import { TopBar } from "@/components/top-bar";
+
+export function MobileShell({
+  children,
+  user = "Johann",
+  initials = "JV",
+  active = "Actividades",
+  coordination = false,
+  backHref,
+}: {
+  children: ReactNode;
+  user?: string;
+  initials?: string;
+  active?: "Actividades" | "Historial" | "Perfil" | "Burson";
+  coordination?: boolean;
+  backHref?: string;
+}) {
+  return (
+    <div className="mx-auto min-h-screen w-full max-w-[390px] bg-paper pb-[4.75rem]">
+      <TopBar backHref={backHref} initials={initials} name={user} />
+      {children}
+      <NavBar active={active} coordination={coordination} presentation="mobile" />
+    </div>
+  );
+}

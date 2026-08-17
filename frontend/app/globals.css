@@ -38,5 +38,6 @@ body {
   color: var(--ink);
   font-family: Arial, "Helvetica Neue", sans-serif;
 }
-button, input { font: inherit; }
+button, input, select, textarea { font: inherit; }
+a { color: inherit; text-decoration: none; }
 :focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
