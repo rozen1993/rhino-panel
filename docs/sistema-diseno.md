@@ -107,13 +107,15 @@ Se fijan aquí para que no vuelvan a improvisarse.
 AUNOR **nunca ve los siete estados internos**. Ve cinco grupos, y esa es la razón de que exista la
 agrupación de `docs/fase-0-concepcion.md` §8:
 
-| AUNOR ve | Recoge los estados internos | Marca |
-|---|---|---|
-| Programada | Programada | círculo `○`, gris azulado |
-| **En trabajo** | En proceso · Por subir · **Observada** | triángulo `▶`, azul |
-| Entregada | Entregada | check `✓`, verde azulado |
-| Aprobada | Aprobada | estrella `★`, verde |
-| Cancelada | Cancelada | aspa `×`, gris, tachado |
+| AUNOR ve | Recoge los estados internos | Fondo | Texto | Signo |
+|---|---|---|---|---|
+| Programada | Programada | `#536879` (tinta apagada) | blanco | `○` |
+| **En trabajo** | En proceso · Por subir · **Observada** | `#155eef` (azul) | blanco | `▶` |
+| Entregada | Entregada | `#2bb3ac` (turquesa) | blanco | `✓` |
+| Aprobada | Aprobada | `#7ac143` (verde) | tinta `#12213a` | `★` |
+| Cancelada | Cancelada | `#9aa5ac` (gris) | blanco, tachado | `×` |
+
+**Fijado en código** en `frontend/components/aunor-status-pill.tsx`. No redefinir con otros valores.
 
 **«En trabajo» usa la marca de En proceso**, en azul. Que *Observada* se esconda ahí dentro es
 deliberado: AUNOR debe saber que algo sigue en curso, no que hubo una observación interna. **Nunca se
@@ -129,6 +131,16 @@ más compactos que los siete, para que nadie los confunda de un vistazo:
 Usan la misma paleta pero **sin los signos** de los siete estados. En el tablero de Burson lo que manda
 visualmente no es el estado: son las columnas **pendientes de Rhino** y **pendientes de Burson**, que
 son el motivo de existir del módulo.
+
+| Estado de Burson | Fondo | Texto |
+|---|---|---|
+| Solicitado | `#c83b4d` (rojo) | blanco |
+| En proceso | `#2bb3ac` (turquesa) | blanco |
+| Entregado | `#155eef` (azul) | blanco |
+| Aprobado | `#7ac143` (verde) | tinta `#12213a` |
+| Cancelado | `#9aa5ac` (gris) | blanco |
+
+**Fijado en código** en `frontend/components/burson-status-pill.tsx`. No redefinir con otros valores.
 
 ### El feedback de AUNOR no se parece a una observación
 
