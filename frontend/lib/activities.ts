@@ -34,7 +34,7 @@ export const activities: readonly Activity[] = [
     dateTime: "2026-08-13T06:00",
     type: "Operación",
     title: "Cierre de carril por instalación de señal",
-    responsible: "Martín",
+    responsible: "Sin asignar",
     status: "Programada",
     place: "Panamericana Norte",
     hasLink: false,

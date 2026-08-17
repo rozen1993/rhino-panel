@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { AunorStatusPill, aunorStatuses } from "@/components/aunor-status-pill";
 import { BursonStatusPill, bursonStatuses } from "@/components/burson-status-pill";
 import { MonthStrip, months } from "@/components/month-strip";
+import { NavBar } from "@/components/nav-bar";
 import { StatusPill, internalStatuses } from "@/components/status-pill";
 
 describe("familias de estado", () => {
@@ -19,10 +20,21 @@ describe("familias de estado", () => {
   });
 });
 
+describe("navegación por rol", () => {
+  it("reserva Burson a Coordinación y Supervisión", () => {
+    const { rerender } = render(<NavBar presentation="mobile" />);
+    expect(screen.queryByText("Burson")).toBeNull();
+    rerender(<NavBar coordination presentation="mobile" />);
+    expect(screen.getByText("Burson")).toBeDefined();
+    rerender(<NavBar presentation="mobile" supervision />);
+    expect(screen.getByText("Burson")).toBeDefined();
+  });
+});
+
 describe("MonthStrip", () => {
   it("muestra siempre los doce meses y marca el activo", () => {
     render(<MonthStrip activeMonth="AGO" counts={[5, 7, 6, 6, 8, 10, 9, 12, 0, 0, 0, 0]} />);
-    expect(screen.getByRole("list").children).toHaveLength(12);
+    expect(screen.getByRole("list", { name: "Actividades por mes" }).children).toHaveLength(12);
     months.forEach((month) => expect(screen.getByText(month)).toBeDefined());
     expect(screen.getByText("AGO").parentElement?.getAttribute("aria-current")).toBe("date");
   });

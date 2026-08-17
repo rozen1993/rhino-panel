@@ -8,20 +8,22 @@ export function MobileShell({
   initials = "JV",
   active = "Actividades",
   coordination = false,
+  supervision = false,
   backHref,
 }: {
   children: ReactNode;
   user?: string;
   initials?: string;
-  active?: "Actividades" | "Historial" | "Perfil" | "Burson";
+  active?: "Actividades" | "Historial" | "Perfil" | "Burson" | "Cuentas" | "Importar";
   coordination?: boolean;
+  supervision?: boolean;
   backHref?: string;
 }) {
   return (
     <div className="mx-auto min-h-screen w-full max-w-[390px] bg-paper pb-[4.75rem]">
       <TopBar backHref={backHref} initials={initials} name={user} />
       {children}
-      <NavBar active={active} coordination={coordination} presentation="mobile" />
+      <NavBar active={active} coordination={coordination} presentation="mobile" supervision={supervision} />
     </div>
   );
 }

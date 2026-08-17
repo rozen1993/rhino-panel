@@ -1,18 +1,20 @@
 import { SystemIcon, type IconName } from "@/components/system-icon";
 
-const destinations: readonly { label: "Actividades" | "Historial" | "Perfil" | "Burson"; icon: IconName; href: string; coordinationOnly?: boolean }[] = [
+const destinations: readonly { label: "Actividades" | "Historial" | "Perfil" | "Burson" | "Cuentas" | "Importar"; icon: IconName; href: string; coordinationOnly?: boolean; supervisionOnly?: boolean }[] = [
   { label: "Actividades", icon: "activities", href: "/actividades" },
   { label: "Historial", icon: "history", href: "/historial" },
-  { label: "Burson", icon: "burson", href: "#", coordinationOnly: true },
+  { label: "Burson", icon: "burson", href: "/burson", coordinationOnly: true },
+  { label: "Cuentas", icon: "accounts", href: "/cuentas", supervisionOnly: true },
+  { label: "Importar", icon: "import", href: "/importacion", supervisionOnly: true },
   { label: "Perfil", icon: "profile", href: "#" },
 ];
 
-type NavBarProps = { presentation: "mobile" | "desktop"; active?: (typeof destinations)[number]["label"]; contained?: boolean; coordination?: boolean };
+type NavBarProps = { presentation: "mobile" | "desktop"; active?: (typeof destinations)[number]["label"]; contained?: boolean; coordination?: boolean; supervision?: boolean };
 
-export function NavBar({ presentation, active = "Actividades", contained = false, coordination = false }: NavBarProps) {
+export function NavBar({ presentation, active = "Actividades", contained = false, coordination = false, supervision = false }: NavBarProps) {
   const mobile = presentation === "mobile";
   const placement = mobile ? (contained ? "absolute inset-x-0 bottom-0" : "fixed inset-x-0 bottom-0 z-50") : "h-full w-full";
-  const visibleDestinations = destinations.filter((destination) => coordination || !destination.coordinationOnly);
+  const visibleDestinations = destinations.filter((destination) => (!destination.coordinationOnly || coordination || supervision) && (!destination.supervisionOnly || supervision));
   return (
     <nav aria-label={`Navegación ${mobile ? "móvil" : "de escritorio"}`} className={`${placement} border-line bg-panel ${mobile ? "border-t" : "border-r"}`}>
       <ul className={mobile ? "mx-auto grid max-w-[390px] grid-flow-col auto-cols-fr" : "flex flex-col py-5"}>
