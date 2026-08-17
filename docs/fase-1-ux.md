@@ -46,9 +46,59 @@ Nueve pantallas, heredadas de la concepción (§7) y agrupadas aquí por a quié
 | P-7 | Módulo Burson | Coordinación, Supervisión |
 | P-8 | Administración de cuentas | Administración |
 | P-9 | Importación del histórico | Administración |
+| P-10 | Historial mensual *(requerimiento v2)* | Roles de trabajo |
 
 P-6 vive en una interfaz aparte. No comparte navegación, ni cabecera, ni menú con el resto: AUNOR no
 debe ver siquiera que existe una aplicación interna detrás.
+
+---
+
+## 1 bis. Cuántas pantallas hay que dibujar de verdad
+
+Diez pantallas de producto **no son diez dibujos**. Cada una se multiplica por tres cosas: el ancho, el
+rol que la mira, y el estado en que está. Este es el recuento real del trabajo que queda en la Fase 1.
+
+### Vistas de móvil — el bloque obligatorio, y el primero
+
+| Pantalla | Vistas | Por qué más de una |
+|---|---|---|
+| P-1 · Acceso | 1 | *Su forma depende de D-026, aún abierta* |
+| P-2 · Mis actividades | 5 | Colaborador y Coordinación son distintas (D-016), más vacío, carga y error |
+| P-3 · Detalle | 4 | Normal, **Observada**, Aprobada (bloqueada), y la vista de supervisión con sus acciones |
+| P-4 · Formulario | 3 | Con ubicación obligatoria y sin ella (D-008), más el aviso de borrador sin enviar |
+| P-5 · Supervisión | 2 | Bandeja de observaciones y **bandeja de feedback de AUNOR** (D-033) |
+| P-6 · AUNOR | 2 | La consulta del mes, y cómo deja su comentario |
+| P-7 · Burson | 2 | El tablero y la ficha de una solicitud |
+| P-8 · Cuentas | 2 | La lista y el alta o edición |
+| P-9 · Importación | 3 | Cargar, simular, y el resultado separado en cargadas y rechazadas |
+| P-10 · Historial | 2 | La tabla y su estado vacío |
+| | **26** | |
+
+### Vistas de escritorio
+
+No todas cambian de verdad. Un formulario ancho es el mismo formulario. Las que **sí** cambian de forma
+son las que muestran muchas filas o mucha comparación:
+
+**P-2, P-5, P-6, P-7, P-9 y P-10** — unas **14 vistas** más.
+
+El **laptop** casi nunca es un dibujo nuevo: es el punto intermedio entre los dos anteriores. Solo se
+dibuja donde se rompa algo.
+
+### Total
+
+**Alrededor de 40 pantallas dibujadas**, sobre 10 pantallas de producto. El orden es el de D-042:
+**móvil primero**, luego laptop, luego escritorio.
+
+### Tres decisiones abiertas mueven este número
+
+- **D-030 — ¿el patrón de pantalla vale igual para todos los perfiles?** Es la que más pesa con
+  diferencia. Si cada perfil necesita su propio panel, **P-2 se multiplica por cinco** y el total pasa
+  de 40 a más de 60. Los mockups del cliente solo enseñan el panel de Johann, así que no se sabe.
+- **D-026 — el flujo de acceso.** Define si P-1 es una pantalla o dos (roster más modal).
+- **D-022 — el catálogo de roles.** Si desaparece Coordinación, P-2 pierde su segunda variante y P-7 se
+  queda sin dueño. Si aparece Locuciones, hay un tipo de actividad más que representar.
+
+**Conviene cerrar D-030 antes de empezar**, porque es la única que puede cambiar el alcance en un 50 %.
 
 ---
 

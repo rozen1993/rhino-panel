@@ -510,6 +510,71 @@ como estaba definido en `docs/fase-0-concepcion.md` §10.
 
 ---
 
+## D-030 — Los cinco roles comparten el patrón de pantalla
+
+**Fecha:** 2026-08-17 · **Fase:** 1 · **Decide:** Marco
+
+Los cinco roles de trabajo comparten el patrón de **panel mensual, historial y acciones**. La pantalla
+adapta el alcance, la identificación del responsable, los campos relevantes y las acciones según rol,
+tipo y estado. Coordinación conserva una variante global mientras D-016 esté vigente. **No se diseñan
+cinco pantallas independientes.**
+
+**Por qué**
+
+La pregunta estaba mal planteada: compartir pantalla no significa mostrar lo mismo. Lo que cambia entre
+perfiles son campos, alcance y acciones, no la arquitectura de la información. Y eso ya estaba decidido
+en `docs/fase-0-concepcion.md` §3: *«Comparten la misma ficha; lo que cambia entre ellos es qué campos
+son obligatorios»*. Cinco pantallas separadas contradirían esa decisión.
+
+Además, D-001 establece que **una persona ocupa uno o varios roles**. Con pantallas separadas, quien
+tuviera dos roles necesitaría un mecanismo para cambiar de identidad de trabajo que no existe en el
+requerimiento y habría que inventar.
+
+**Consecuencias**
+
+- El alcance de diseño de la Fase 1 se queda en **unas 40 pantallas** en vez de pasar de 60.
+- **Es la opción reversible.** Si aparece un flujo genuinamente exclusivo de un rol, se añade esa
+  variante sin tirar el patrón común. Al revés habría que reconciliar cinco diseños ya divergentes.
+- **Sobrevive a lo que decida el cliente sobre los roles.** Si Coordinación desaparece con D-022, se
+  borra esa variante y P-2 no se rediseña. Por eso D-030 **sale de la lista de preguntas para el
+  cliente**: se pudo cerrar sin él.
+- **El riesgo que hay que vigilar:** que el patrón común esconda algo crítico para un trabajo concreto
+  —el responsable en Coordinación, la ubicación en vía, o el avance y los pendientes de Eduardo—. Se
+  detecta recorriendo los cinco perfiles **en móvil** antes de congelar el diseño.
+
+**Cómo se decidió.** Claude y Codex derivaron la respuesta por separado, sin verse, según el
+`protocolo-universal-v4.md` §11. Coincidieron, lo que sitúa esta decisión entre las de riesgo bajo.
+
+---
+
+## D-031 y D-018 — La dirección visual es la pieza 2, «planilla de rodaje»
+
+**Fecha:** 2026-08-17 · **Fase:** 1 · **Decide:** Marco
+
+De las cinco piezas de E-006, Marco elige **`diseno/piezas-png/pieza-2.png`**: fondo claro, blanco y
+azul, muy ordenada y casi documental, con el aire de una planilla de producción audiovisual.
+
+Esto **cierra las dos decisiones a la vez**: D-031, que preguntaba qué lenguaje visual adopta el
+proyecto, y D-018, que llevaba desde el 12 de agosto esperando a que Marco eligiera entre las ocho
+direcciones de móvil. Las ocho quedan descartadas como opción; se conservan en `diseno/` como archivo.
+
+**Consecuencias**
+
+- Es una dirección **clara**, no oscura. Se aleja de la propuesta del cliente —azul marino, cian y
+  lima— y hay que estar dispuesto a defenderla ante César. A favor: se lee mejor a pleno sol, que es la
+  condición real de quien graba en vía.
+- Encaja con la exigencia de alinearse a la identidad de AUNOR mejor que las alternativas de más
+  carácter: es sobria y corporativa, del registro que una concesionaria reconoce.
+- **Queda por extraer el sistema de diseño** —paleta con sus hexadecimales, escala tipográfica, formas
+  de los estados, espaciados— y fijarlo en `docs/sistema-diseno.md`. La imagen no es un sistema: es una
+  referencia. La maqueta HTML `diseno/escritorio/pieza-2.html` sirve de puente, porque tiene los valores
+  reales.
+- La imagen tiene tres errores de contenido conocidos —falta el estado Observada, las actividades son
+  operaciones viales en vez de trabajo audiovisual, y dos tarjetas de resumen están inventadas—. **Se
+  elige el lenguaje visual, no el contenido.** Ver `docs/encargos/E-006-piezas-visuales-png.md`.
+
+---
+
 ## D-042 — Las piezas para elegir estética son de escritorio; el producto se sigue diseñando mobile-first
 
 **Fecha:** 2026-08-17 · **Fase:** 1 · **Decide:** Marco
