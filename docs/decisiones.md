@@ -544,6 +544,10 @@ la suplantación.
 - **Hay que explicárselo al cliente.** Pidió expresamente esa portada y no la va a ver. El argumento es
   el de arriba, y es defendible.
 
+---
+
+## D-030 — Los cinco roles comparten el patrón de pantalla
+
 **Fecha:** 2026-08-17 · **Fase:** 1 · **Decide:** Marco
 
 Los cinco roles de trabajo comparten el patrón de **panel mensual, historial y acciones**. La pantalla
