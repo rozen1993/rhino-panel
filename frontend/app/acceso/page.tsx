@@ -11,9 +11,9 @@ export default function AccessPage() {
   const localAccounts: readonly LocalAccount[] = [];
 
   return (
-    <div className="mx-auto min-h-screen w-full max-w-[390px] bg-paper">
+    <div className="mx-auto min-h-screen w-full max-w-[390px] bg-paper md:max-w-[768px] lg:max-w-none">
       <header className="flex min-h-16 items-center justify-between border-b border-line bg-panel px-4"><Link aria-label="Volver a la portada" className="text-2xl leading-none" href="/">←</Link><span className="text-base font-bold tracking-tight">Rhino Audiovisuales</span><span aria-hidden="true" className="w-5" /></header>
-      <main className="space-y-5 px-3 py-5">
+      <main className="mx-auto max-w-2xl space-y-5 px-3 py-5 md:px-7 md:py-8 lg:py-12">
         <header><p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-blue">Acceso privado</p><h1 className="mt-1 text-2xl font-bold tracking-tight">Entra a tu cuenta</h1><p className="mt-1 text-sm text-ink-muted">Usa el usuario y la clave que te asignaron.</p></header>
 
         <Card className="p-4">

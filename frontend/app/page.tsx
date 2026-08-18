@@ -3,11 +3,11 @@ import { Card } from "@/components/card";
 
 export default function HomePage() {
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col bg-paper">
+    <div className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col bg-paper md:max-w-[768px] lg:max-w-none">
       <header className="flex min-h-16 items-center border-b border-line bg-panel px-4">
         <span className="text-base font-bold tracking-tight">Rhino Audiovisuales</span>
       </header>
-      <main className="flex flex-1 flex-col justify-between gap-8 px-3 py-5">
+      <main className="flex flex-1 flex-col justify-between gap-8 px-3 py-5 md:px-7 md:py-8 lg:mx-auto lg:w-full lg:max-w-5xl lg:py-16">
         <section className="space-y-5">
           <div className="border-l-[3px] border-blue pl-4">
             <p className="text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-blue">Plataforma de producción</p>

@@ -27,12 +27,13 @@ export default async function ActivityDetailPage({ params }: PageProps<"/activid
 
   return (
     <MobileShell backHref="/actividades">
-      <main className="space-y-3 px-3 py-4">
+      <main className="space-y-3 px-3 py-4 md:px-6 md:py-6 lg:px-7">
         <header><p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-blue">Ficha de producción</p><h1 className="mt-1 text-2xl font-bold tracking-tight">Detalle de actividad</h1></header>
 
         {observed && <div className="border-l-4 border-observed bg-red/10 p-3 text-sm font-bold text-observed">! Esta actividad espera tu corrección.</div>}
         {approved && <div className="rounded-[5px] bg-ink p-4 text-white"><p className="text-sm font-bold uppercase tracking-[0.14em]">★ Actividad aprobada</p><p className="mt-1 text-xs">Cerrada · sin edición</p></div>}
 
+        <div className="space-y-3 lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-5 lg:space-y-0 lg:[&>section:last-of-type]:col-start-2 lg:[&>section:last-of-type]:row-start-1 lg:[&>section:last-of-type]:row-span-4">
         <Card className="p-4">
           <div className="flex items-start justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.12em] text-blue">{activity.type}</p><h2 className="mt-1 text-lg font-bold leading-6">{activity.title}</h2></div><StatusPill status={activity.status} /></div>
           <dl className="mt-4 grid grid-cols-[7.25rem_1fr] gap-x-2 gap-y-2 border-t border-line pt-4 text-sm">
@@ -53,6 +54,7 @@ export default async function ActivityDetailPage({ params }: PageProps<"/activid
         <Card className="p-3 text-xs text-ink-muted">Última modificación: <strong className="text-ink">hoy 10:42 por Johann</strong></Card>
 
         {!approved && <div className="grid grid-cols-2 gap-2"><Link className="flex min-h-11 items-center justify-center rounded-[5px] border border-line bg-panel text-sm font-bold text-blue" href={`/actividades/nueva?editar=${activity.id}`}>Editar</Link><button className="min-h-11 rounded-[5px] border border-amber bg-amber px-3 text-sm font-bold">Avanzar de estado</button></div>}
+        </div>
       </main>
     </MobileShell>
   );
