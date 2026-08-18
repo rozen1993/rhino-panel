@@ -11,8 +11,14 @@ pendientes, donde quedan **trece** decisiones abiertas.
 > El requerimiento v2 del cliente dejó once decisiones en revisión. **Marco resolvió D-019, D-023,
 > D-024 y D-033 el 2026-08-17**, y con ello **siete salieron de revisión**.
 >
-> **Siguen en revisión: D-001, D-005, D-011, D-016** — todas por el catálogo de roles y por si Burson
-> participa. Las resuelven D-020, D-021, D-022 y D-035, que necesitan respuesta del cliente.
+> **Ya no queda ninguna en revisión.** El 2026-08-17 por la tarde se cerró el catálogo de roles (D-022,
+> D-048) y la cuestión de Burson (D-051), que era lo único que las mantenía abiertas:
+>
+> - **D-001** — catálogo fijado: ocho roles (ver D-053). Sale de revisión.
+> - **D-005** — **revertida por D-051**: Burson sí tiene cuenta ahora.
+> - **D-011** — el tablero de Burson lo mantienen Coordinación y Supervisión; qué puede hacer el propio
+>   Burson sobre él está en **D-052**, abierta.
+> - **D-016** — Coordinación existe y conserva su lectura global. Sale de revisión.
 >
 > **D-010 quedó modificada por D-028:** el avance solo se pide en Edición y Creatividad, así que la
 > regla de «avance 100 para entregar» ya no aplica a los cinco tipos.
@@ -155,7 +161,8 @@ Burson entra al sistema.
 
 ## D-006 — Excel histórico
 
-Pendiente. Ver `docs/decisiones-pendientes.md`.
+**Cerrada sin objeto el 2026-08-17 por D-049.** El Excel se registra como un enlace, no se importa fila
+por fila. Ya no hace falta conocer sus columnas.
 
 ---
 
@@ -821,3 +828,199 @@ que no se pierda por qué se saltó la regla — el archivo es la interfaz, no e
   prohibidos hasta la Fase 4. Vercel se adelanta solo como herramienta de despliegue de vista previa.
 - La URL resultante es de un frontend con mocks, no del sistema en producción. No debe confundirse con
   el despliegue real de la Fase 9, que tendrá dominio, HTTPS y datos reales.
+
+---
+
+## D-047 — Solo roles, sin nombres. Marco asigna las personas
+
+**Fecha:** 2026-08-17 · **Fase:** 2 · **Decide:** Marco
+
+Cita: *«deja de pensar en nombres, solo en roles, olvídate de todos los nombres que hay. Tú solo
+preocúpate de crear los roles, yo Marco me voy a encargar los roles para cada persona»*.
+
+**El sistema no conoce personas concretas.** Construye roles y sus permisos. Quién ocupa cada rol es
+trabajo de Marco en la pantalla de cuentas, no del diseño ni del código.
+
+**Consecuencias**
+
+- **D-020 y D-021 dejan de existir como preguntas.** Ya no hay que averiguar si Chiara y Kiara son la
+  misma persona, ni qué rol tiene hoy cada uno. Desaparecen de la cola.
+- Los nombres que hay hoy en `frontend/lib/activities.ts` y en las demás pantallas son **datos de
+  ejemplo y nada más**. No representan asignaciones y no hay que mantenerlos fieles a nadie.
+- **Para probar el sistema hacen falta usuarios de prueba, uno por rol** — ver D-053.
+
+---
+
+## D-048 — El rol Operación no existe
+
+**Fecha:** 2026-08-17 · **Fase:** 2 · **Decide:** Marco
+
+Se elimina del catálogo. **Cierra la pregunta 2 de D-022.**
+
+**Consecuencias**
+
+- Los tipos de actividad pasan de cinco a cinco, pero no los mismos: sale **Operación**, entra
+  **Locución** (D-022).
+- Hay que quitar Operación de los datos de ejemplo, los filtros y los desplegables del formulario.
+- `docs/fase-0-concepcion.md` §3 y la tabla de obligatoriedad por tipo mencionan Operación en varios
+  sitios; hay que reescribirlos.
+
+---
+
+## D-049 — Todo es un enlace, incluido el Excel histórico
+
+**Fecha:** 2026-08-17 · **Fase:** 2 · **Decide:** Marco
+
+Cita: *«tanto el Excel como todo el material, sea video/foto/edición etc., en la plataforma será un
+simple link»*.
+
+Extiende D-023 al histórico: **el Excel tampoco se importa fila por fila.** Se registra como un enlace,
+igual que cualquier otro material.
+
+**Consecuencias — es la mayor reducción de alcance del proyecto**
+
+- **La Fase 7 completa (Migración del histórico) desaparece.** No hay que analizar, mapear, limpiar,
+  simular, importar a staging, comprobar ni anular lotes. Eran ocho pasos y una puerta de salida entera.
+- **D-006 y D-040 se cierran sin objeto.** Ya no hace falta ver las columnas del Excel ni decidir en qué
+  estado entran las filas históricas: no entran filas.
+- **La pantalla P-9 (Importación del histórico) sobra.** Ya está construida en
+  `frontend/app/importacion/`. Hay que decidir si se retira o se deja como acceso al enlace del Excel.
+- **Cambia la Meta Final de `CLAUDE.md`**, cuyo punto 7 exige *«contiene el histórico del Excel migrado
+  y comprobado»*. Con esta decisión ya no habrá migración que comprobar. Ese punto hay que reescribirlo.
+- **El precio, que conviene tener presente:** el histórico deja de ser consultable dentro de la
+  plataforma. No se podrá filtrar, buscar ni contar sobre las coberturas antiguas de Johann — solo abrir
+  el Excel. Si algún día hace falta explotar ese histórico, habrá que migrarlo de verdad.
+
+---
+
+## D-050 — Sin notificaciones
+
+**Fecha:** 2026-08-17 · **Fase:** 2 · **Decide:** Marco
+
+Cita: *«olvídate de las notificaciones por el momento»*. **Cierra D-032.**
+
+La campana que aparecía en los mockups del cliente no se construye. Si más adelante hace falta, se
+decide entonces.
+
+---
+
+## D-051 — Burson pasa a ser un rol con cuenta
+
+**Fecha:** 2026-08-17 · **Fase:** 2 · **Decide:** Marco
+
+Cita: *«Burson pasa a ser un personaje que también tiene un rol, que en el futuro yo le voy a asignar»*.
+
+**Esto revierte D-005**, que decía que Burson no entra al sistema y que el módulo era un tablero
+puramente interno de Rhino. Ahora Burson es un rol más del catálogo, con su cuenta.
+
+**Consecuencias**
+
+- **Aparece un segundo actor externo**, junto a AUNOR. Hasta ahora AUNOR era el único, y esa era la
+  razón por la que D-005 se consideraba la opción segura.
+- **Los «pendientes de Burson» cambian de naturaleza.** Eran una anotación de Rhino sobre lo que
+  esperaba del otro lado; si Burson entra y los ve, pasan a ser algo que se le está reclamando
+  directamente. El tono del tablero cambia.
+- **D-011 queda sin sujeto claro:** decía que el tablero lo mantienen Coordinación y Supervisión. Ahora
+  hay que decidir qué puede hacer Burson sobre él.
+- **Queda abierto y es importante: ¿qué ve exactamente el rol Burson?** Presumiblemente solo el módulo
+  Burson y nada de las actividades de AUNOR — pero eso no está decidido y es una frontera de seguridad.
+  Ver D-052.
+
+---
+
+## D-052 — ¿Qué ve y qué puede hacer el rol Burson?
+
+**Fecha:** 2026-08-17 · **Fase:** 2 · **Estado: ABIERTA** · **Decide:** Marco
+
+Nace de D-051. No la decide Claude porque es una frontera de seguridad con un tercero.
+
+Lo que hay que fijar antes de construir la pantalla de Burson con su cuenta:
+
+- ¿Ve **solo** el módulo Burson, o algo más?
+- ¿Ve las actividades que Rhino hace para AUNOR? *(lo esperable es que no)*
+- ¿Puede **escribir** —marcar sus pendientes como resueltos, comentar— o solo leer?
+- ¿Ve los «pendientes de Rhino», es decir, lo que Rhino se debe a sí mismo?
+
+Hasta que se decida, la pantalla de Burson se construye como está: tablero interno, sin cuenta de
+Burson.
+
+---
+
+## D-053 — Un usuario de prueba por rol
+
+**Fecha:** 2026-08-17 · **Fase:** 2 · **Decide:** Marco
+
+Para poder recorrer la plataforma como cada rol y comprobar qué ve y qué puede hacer cada uno, se crea
+**un usuario y contraseña de prueba por rol**.
+
+**El catálogo de roles queda así, tras D-022, D-048 y D-051:**
+
+| Rol | Tipo |
+|---|---|
+| Grabación | Trabajo |
+| Edición | Trabajo |
+| Coordinación | Trabajo, con lectura global (D-016) |
+| Creatividad | Trabajo |
+| **Locución** | Trabajo *(nuevo, D-022)* |
+| Supervisión / Administración | Gobierno |
+| AUNOR | Externo, consulta y opinión |
+| **Burson** | Externo *(nuevo, D-051)* |
+
+Ocho roles. **Operación queda eliminado** (D-048).
+
+**Consecuencias**
+
+- Son credenciales **simuladas, de Fase 2**: no hay servidor ni autenticación real. Sirven para recorrer
+  la aplicación, no para proteger nada.
+- **No pueden sobrevivir a producción.** `CLAUDE.md`, Fase 9, ya exige *«eliminación de credenciales
+  temporales»*; esto es exactamente eso.
+- La pantalla de acceso tiene que aceptarlas y llevar a cada rol a lo que le corresponde, con su
+  navegación y sus permisos.
+
+---
+
+## Decisiones cerradas por consecuencia el 2026-08-17
+
+Siete entradas que salieron de la cola sin necesitar una decisión propia: otra decisión de Marco las
+dejó sin objeto. Se registran para que quien busque su número lo encuentre.
+
+## D-020 — Identidad de las personas del equipo
+
+**Cerrada sin objeto por D-047.** El sistema no modela personas, solo roles. Ya no importa si Chiara y
+Kiara son la misma persona.
+
+## D-021 — Qué rol tiene hoy cada persona
+
+**Cerrada sin objeto por D-047.** Marco asigna los roles a las personas en la pantalla de cuentas; no es
+una decisión de diseño.
+
+## D-022 — Taxonomía de roles
+
+**Cerrada el 2026-08-17.** El catálogo definitivo son **ocho roles**, listados en D-053: Grabación,
+Edición, Coordinación, Creatividad, **Locución**, Supervisión/Administración, AUNOR y **Burson**.
+**Operación queda eliminado** (D-048).
+
+Esto **saca a D-001 de revisión**: el catálogo ya está fijado.
+
+## D-032 — Notificaciones
+
+**Cerrada por D-050.** No se construyen.
+
+## D-034 — Lenin: de qué lado está y qué ve
+
+**Cerrada sin objeto por D-047.** Ya no se modelan personas concretas. Si Lenin necesita entrar, se le
+asigna uno de los ocho roles.
+
+## D-035 — Burson: ¿cambia D-005?
+
+**Cerrada por D-051: sí, la revierte.** Burson pasa a ser un rol con cuenta. Lo que queda abierto es qué
+ve exactamente, y eso vive en **D-052**.
+
+## D-038 — «Seguimiento en tiempo real»
+
+**Cerrada el 2026-08-17.** Marco: *«actualizado»*. Es lenguaje comercial, no infraestructura de realtime.
+No se añade nada.
+
+## D-040 — Migrar el Excel bajo el requerimiento v2
+
+**Cerrada sin objeto por D-049.** No hay migración: el Excel es un enlace.
