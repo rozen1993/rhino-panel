@@ -796,3 +796,28 @@ actividades de su tipo homónimo mientras Marco no lo decida»*. Ya está decidi
 - **Consecuencia inmediata en los datos:** Martín, con Supervisión como único rol confirmado, no puede
   ser responsable operativo de una actividad. El dato de ejemplo que lo tenía así en
   `frontend/lib/activities.ts` queda desactualizado y se corrige.
+
+---
+
+## D-046 — Excepción explícita: Vercel se adelanta a la Fase 2
+
+**Fecha:** 2026-08-17 · **Fase:** 2 · **Decide:** Marco
+
+Vercel está en **STACK — Backend** de `CLAUDE.md`, autorizado *«únicamente cuando termine y se congele
+el frontend»* — es decir, al cerrar la Fase 3. Estamos en Fase 2, con la Fase 3 (validar en dispositivo
+real, contrato de handoff, congelamiento) todavía sin empezar.
+
+**Marco decide adelantarlo de todos modos**, explícitamente, para tener una URL de vista previa del
+frontend ya construido. Es una decisión suya como único decisor del proyecto, y queda escrita aquí para
+que no se pierda por qué se saltó la regla — el archivo es la interfaz, no el chat.
+
+**Consecuencias**
+
+- Se despliega **solo el frontend**, con datos simulados. Ningún secreto real, ninguna variable de
+  entorno de Supabase — no existen todavía.
+- El proyecto de Vercel apunta a `frontend/` como raíz, no a la raíz del repositorio, porque el
+  Next.js vive en ese subdirectorio junto a `diseno/`, `docs/` y `actualizacion_del_requerimiento/`.
+- **Esto no adelanta el resto del stack de backend.** Supabase, Auth, RLS y migraciones siguen
+  prohibidos hasta la Fase 4. Vercel se adelanta solo como herramienta de despliegue de vista previa.
+- La URL resultante es de un frontend con mocks, no del sistema en producción. No debe confundirse con
+  el despliegue real de la Fase 9, que tendrá dominio, HTTPS y datos reales.
