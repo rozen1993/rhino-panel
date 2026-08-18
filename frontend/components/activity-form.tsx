@@ -6,19 +6,22 @@ import { Card } from "@/components/card";
 import { DraftNotice } from "@/components/draft-notice";
 import { FormField } from "@/components/form-field";
 import { activityTypes, type ActivityType, showsProgress } from "@/lib/activities";
+import type { Role } from "@/lib/roles";
 
 const controlClass = "min-h-11 w-full rounded-[5px] border border-line bg-panel px-3 py-2 text-sm text-ink";
 
-function SelectField({ id, label, required, children, value, onChange }: { id: string; label: string; required?: boolean; children: React.ReactNode; value?: string; onChange?: React.ChangeEventHandler<HTMLSelectElement> }) {
-  return <div className="flex flex-col gap-2"><label className="text-sm font-bold" htmlFor={id}>{label}{required && <span className="ml-1 text-red">*</span>}</label><select className={controlClass} id={id} onChange={onChange} required={required} value={value}>{children}</select></div>;
+function SelectField({ id, label, required, children, value, onChange, disabled, hint }: { id: string; label: string; required?: boolean; children: React.ReactNode; value?: string; onChange?: React.ChangeEventHandler<HTMLSelectElement>; disabled?: boolean; hint?: string }) {
+  return <div className="flex flex-col gap-2"><label className="text-sm font-bold" htmlFor={id}>{label}{required && <span className="ml-1 text-red">*</span>}</label><select className={`${controlClass} ${disabled ? "cursor-not-allowed bg-panel-secondary text-ink-muted" : ""}`} disabled={disabled} id={id} onChange={onChange} required={required} value={value}>{children}</select>{hint && <p className="text-xs text-ink-muted">{hint}</p>}</div>;
 }
 
 function TextAreaField({ id, label, placeholder }: { id: string; label: string; placeholder: string }) {
   return <div className="flex flex-col gap-2"><label className="text-sm font-bold" htmlFor={id}>{label}</label><textarea className={`${controlClass} min-h-24 resize-y`} id={id} placeholder={placeholder} /></div>;
 }
 
-export function ActivityForm({ editing = false }: { editing?: boolean }) {
-  const [type, setType] = useState<ActivityType>(editing ? "Grabación" : "Grabación");
+export function ActivityForm({ editing = false, role }: { editing?: boolean; role: Role }) {
+  // D-045: un rol de trabajo solo registra actividades de su propio tipo.
+  const fixedType = (role.activityType ?? "Grabación") as ActivityType;
+  const [type, setType] = useState<ActivityType>(fixedType);
   const [draft, setDraft] = useState(false);
   const [retrying, setRetrying] = useState(false);
   const sendTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -43,9 +46,9 @@ export function ActivityForm({ editing = false }: { editing?: boolean }) {
       <Card className="space-y-4 p-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
         <div className="lg:col-span-2"><p className="text-xs font-bold uppercase tracking-[0.14em] text-blue">Obligatorios</p><p className="mt-1 text-xs text-ink-muted">Completa primero lo necesario para programar el trabajo.</p></div>
         <FormField defaultValue={editing ? "2026-08-17T08:30" : undefined} id="activity-date" label="Fecha" required type="datetime-local" />
-        <SelectField id="activity-type" label="Tipo" onChange={(event) => setType(event.target.value as ActivityType)} required value={type}>{activityTypes.map((item) => <option key={item}>{item}</option>)}</SelectField>
+        <SelectField disabled hint={`Tu rol registra actividades de tipo ${fixedType}.`} id="activity-type" label="Tipo" onChange={(event) => setType(event.target.value as ActivityType)} required value={type}>{activityTypes.map((item) => <option key={item}>{item}</option>)}</SelectField>
         <div className="lg:col-span-2"><FormField defaultValue={editing ? "Cobertura de mantenimiento en peaje Chillón" : undefined} id="activity-title" label="Título" placeholder="Escribe el título de la actividad" required /></div>
-        <SelectField id="activity-responsible" label="Responsable" required><option value="">Selecciona una persona</option><option>Johann</option><option>Martín</option><option>Eduardo</option><option>Chiara</option></SelectField>
+        <SelectField hint="Las personas se asignan en Cuentas; aquí solo se elige entre quienes tienen este rol." id="activity-responsible" label="Responsable" required><option value="">Selecciona una persona</option><option>Sin asignar</option></SelectField>
         <SelectField id="activity-status" label="Estado inicial" required><option value="">Selecciona un estado</option><option>Programada</option><option>En proceso</option></SelectField>
         {showsProgress(type) && <SelectField id="activity-progress" label="Avance" required><option>0%</option><option>25%</option><option>50%</option><option>55%</option><option>75%</option><option>100%</option></SelectField>}
       </Card>

@@ -1,13 +1,14 @@
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
-import { MobileShell } from "@/components/mobile-shell";
+import { MobileShell, requireRole } from "@/components/mobile-shell";
 import { importSimulation } from "@/lib/import-simulation";
 
-export default function ImportPage() {
+export default async function ImportPage() {
+  const role = await requireRole((r) => r.administers);
   const total = importSimulation.accepted.length + importSimulation.rejected.length;
 
   return (
-    <MobileShell active="Importar" initials="MV" supervision user="Martín">
+    <MobileShell active="Importar" role={role}>
       <main className="space-y-5 px-3 py-4 md:px-6 md:py-6 lg:px-7">
         <header><p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-blue">Administración</p><h1 className="mt-1 text-2xl font-bold tracking-tight">Importar histórico</h1><p className="mt-1 text-sm text-ink-muted">Revisa la simulación antes de confirmar el lote.</p></header>
 

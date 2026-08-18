@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { Avatar } from "@/components/avatar";
-import { Button } from "@/components/button";
 import { Card } from "@/components/card";
-import { FormField } from "@/components/form-field";
+import { LoginForm } from "@/app/acceso/login-form";
+import { roles } from "@/lib/roles";
+import { testUsers } from "@/lib/session";
 
 type LocalAccount = { name: string; initials: string };
 
@@ -16,14 +17,26 @@ export default function AccessPage() {
       <main className="mx-auto max-w-2xl space-y-5 px-3 py-5 md:px-7 md:py-8 lg:py-12">
         <header><p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-blue">Acceso privado</p><h1 className="mt-1 text-2xl font-bold tracking-tight">Entra a tu cuenta</h1><p className="mt-1 text-sm text-ink-muted">Usa el usuario y la clave que te asignaron.</p></header>
 
-        <Card className="p-4">
-          <form className="space-y-4">
-            <FormField autoComplete="username" id="username" label="Usuario" placeholder="Tu usuario" required />
-            <FormField autoComplete="current-password" id="password" label="Clave" placeholder="Tu clave" required type="password" />
-            <div className="text-right"><a className="text-xs font-bold text-blue underline underline-offset-4" href="#">¿Olvidaste tu clave?</a></div>
-            <Button className="w-full" type="button">Entrar</Button>
-          </form>
-        </Card>
+        <Card className="p-4"><LoginForm /></Card>
+
+        <section aria-labelledby="test-users-title" className="space-y-2">
+          <div><p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-blue">Solo en pruebas</p><h2 className="mt-1 text-base font-bold" id="test-users-title">Un usuario por rol</h2></div>
+          <aside className="rounded-[5px] border border-amber bg-amber/15 p-3 text-xs font-semibold leading-5 text-ink">
+            Credenciales simuladas de Fase 2 para recorrer la plataforma como cada rol. No hay servidor
+            ni autenticación real: esto no protege nada y se elimina antes de producción.
+          </aside>
+          <ul className="grid gap-2 md:grid-cols-2">
+            {testUsers.map(({ roleId, user, password }) => (
+              <li key={roleId}>
+                <Card className="p-3">
+                  <p className="text-sm font-bold">{roles[roleId].label}</p>
+                  <p className="mt-1 font-mono text-xs text-ink-muted">{user} · {password}</p>
+                  <p className="mt-2 text-xs leading-5 text-ink-muted">{roles[roleId].summary}</p>
+                </Card>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <section aria-labelledby="device-title" className="space-y-2">
           <div><p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-blue">Atajo local</p><h2 className="mt-1 text-base font-bold" id="device-title">En este dispositivo</h2></div>

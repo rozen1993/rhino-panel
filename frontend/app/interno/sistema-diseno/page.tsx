@@ -5,6 +5,7 @@ import { Button } from "@/components/button";
 import { Card } from "@/components/card";
 import { FormField } from "@/components/form-field";
 import { MonthStrip } from "@/components/month-strip";
+import { roles } from "@/lib/roles";
 import { NavBar } from "@/components/nav-bar";
 import { StatusPill, internalStatuses } from "@/components/status-pill";
 import { SummaryTile } from "@/components/summary-tile";
@@ -55,8 +56,8 @@ export default function DesignSystemPage() {
         <Card className="p-4 sm:p-5">
           <SectionTitle eyebrow="04 · Navegación">Un componente, dos presentaciones</SectionTitle>
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(240px,0.6fr)]">
-            <div><h3 className="mb-2 text-sm font-bold">Móvil · barra inferior</h3><div className="relative h-44 overflow-hidden rounded-[5px] border border-line bg-paper"><div className="p-4 text-xs text-ink-muted">Vista de contenido a 390 px</div><NavBar contained presentation="mobile" /></div></div>
-            <div><h3 className="mb-2 text-sm font-bold">Escritorio · barra lateral</h3><div className="h-80 overflow-hidden rounded-[5px] border border-line bg-paper"><div className="h-full w-60 max-w-full"><NavBar contained presentation="desktop" /></div></div></div>
+            <div><h3 className="mb-2 text-sm font-bold">Móvil · barra inferior</h3><div className="relative h-44 overflow-hidden rounded-[5px] border border-line bg-paper"><div className="p-4 text-xs text-ink-muted">Vista de contenido a 390 px</div><NavBar contained presentation="mobile" role={roles.supervision} /></div></div>
+            <div><h3 className="mb-2 text-sm font-bold">Escritorio · barra lateral</h3><div className="h-80 overflow-hidden rounded-[5px] border border-line bg-paper"><div className="h-full w-60 max-w-full"><NavBar contained presentation="desktop" role={roles.supervision} /></div></div></div>
           </div>
         </Card>
 

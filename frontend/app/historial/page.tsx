@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
-import { MobileShell } from "@/components/mobile-shell";
+import { MobileShell, requireRole } from "@/components/mobile-shell";
 import { StatusPill } from "@/components/status-pill";
 import { SystemIcon } from "@/components/system-icon";
 import { activities } from "@/lib/activities";
 
-export default function HistoryPage() {
+export default async function HistoryPage() {
+  const role = await requireRole((r) => r.kind === "trabajo" || r.supervises);
   return (
-    <MobileShell active="Historial" coordination initials="CH" user="Chiara">
+    <MobileShell active="Historial" role={role}>
       <main className="space-y-4 px-3 py-4 md:px-6 md:py-6 lg:px-7">
         <header><p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-blue">Agosto 2026</p><h1 className="mt-1 text-2xl font-bold tracking-tight">Historial mensual</h1></header>
         <section aria-label="Filtros" className="space-y-2 lg:grid lg:grid-cols-[minmax(18rem,1fr)_minmax(18rem,auto)] lg:gap-3 lg:space-y-0">

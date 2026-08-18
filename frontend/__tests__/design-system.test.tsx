@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { AunorStatusPill, aunorStatuses } from "@/components/aunor-status-pill";
 import { BursonStatusPill, bursonStatuses } from "@/components/burson-status-pill";
 import { MonthStrip, months } from "@/components/month-strip";
+import { roles } from "@/lib/roles";
 import { NavBar } from "@/components/nav-bar";
 import { StatusPill, internalStatuses } from "@/components/status-pill";
 
@@ -21,13 +22,26 @@ describe("familias de estado", () => {
 });
 
 describe("navegación por rol", () => {
-  it("reserva Burson a Coordinación y Supervisión", () => {
-    const { rerender } = render(<NavBar presentation="mobile" />);
+  it("reserva Burson a quien lo tiene en su rol", () => {
+    const { rerender } = render(<NavBar presentation="mobile" role={roles.grabacion} />);
     expect(screen.queryByText("Burson")).toBeNull();
-    rerender(<NavBar coordination presentation="mobile" />);
+    rerender(<NavBar presentation="mobile" role={roles.coordinacion} />);
     expect(screen.getByText("Burson")).toBeDefined();
-    rerender(<NavBar presentation="mobile" supervision />);
+    rerender(<NavBar presentation="mobile" role={roles.supervision} />);
     expect(screen.getByText("Burson")).toBeDefined();
+  });
+
+  it("solo Supervisión ve Cuentas e Importar", () => {
+    const { rerender } = render(<NavBar presentation="mobile" role={roles.edicion} />);
+    expect(screen.queryByText("Cuentas")).toBeNull();
+    rerender(<NavBar presentation="mobile" role={roles.supervision} />);
+    expect(screen.getByText("Cuentas")).toBeDefined();
+    expect(screen.getByText("Importar")).toBeDefined();
+  });
+
+  it("un rol de trabajo no ve el panel de Supervisión", () => {
+    render(<NavBar presentation="mobile" role={roles.locucion} />);
+    expect(screen.queryByText("Supervisión")).toBeNull();
   });
 });
 

@@ -1,7 +1,8 @@
 import type { InternalStatus } from "@/components/status-pill";
+import { type ActivityType, activityTypes } from "@/lib/roles";
 
-export const activityTypes = ["Grabación", "Operación", "Edición", "Creatividad", "Coordinación"] as const;
-export type ActivityType = (typeof activityTypes)[number];
+export { activityTypes };
+export type { ActivityType };
 
 export type Activity = {
   id: string;
@@ -32,11 +33,11 @@ export const activities: readonly Activity[] = [
     id: "cierre-carril",
     date: "13 ago 06:00",
     dateTime: "2026-08-13T06:00",
-    type: "Operación",
-    title: "Cierre de carril por instalación de señal",
+    type: "Locución",
+    title: "Locución para spot de seguridad vial",
     responsible: "Sin asignar",
     status: "Programada",
-    place: "Panamericana Norte",
+    place: "Cabina de locución",
     hasLink: false,
   },
   {

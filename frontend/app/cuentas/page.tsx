@@ -1,12 +1,13 @@
 import { Avatar } from "@/components/avatar";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
-import { MobileShell } from "@/components/mobile-shell";
+import { MobileShell, requireRole } from "@/components/mobile-shell";
 import { accounts } from "@/lib/accounts";
 
-export default function AccountsPage() {
+export default async function AccountsPage() {
+  const role = await requireRole((r) => r.administers);
   return (
-    <MobileShell active="Cuentas" initials="MV" supervision user="Martín">
+    <MobileShell active="Cuentas" role={role}>
       <main className="space-y-5 px-3 py-4 md:px-6 md:py-6 lg:px-7">
         <header className="flex items-end justify-between gap-3"><div><p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-blue">Administración</p><h1 className="mt-1 text-2xl font-bold tracking-tight">Cuentas</h1><p className="mt-1 text-sm text-ink-muted">Gestiona el acceso y los roles confirmados.</p></div><Button className="shrink-0 px-3">Dar de alta</Button></header>
 

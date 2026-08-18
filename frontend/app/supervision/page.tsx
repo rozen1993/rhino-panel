@@ -1,15 +1,16 @@
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
-import { MobileShell } from "@/components/mobile-shell";
+import { MobileShell, requireRole } from "@/components/mobile-shell";
 import { StatusPill } from "@/components/status-pill";
 import { activities } from "@/lib/activities";
 import { getSupervisionActions } from "@/lib/supervision";
 
 const filterClass = "min-h-11 w-full rounded-[5px] border border-line bg-panel px-3 text-sm text-ink";
 
-export default function SupervisionPage() {
+export default async function SupervisionPage() {
+  const role = await requireRole((r) => r.supervises);
   return (
-    <MobileShell initials="MV" supervision user="Martín">
+    <MobileShell active="Supervisión" role={role}>
       <main className="space-y-5 px-3 py-4 md:px-6 md:py-6 lg:px-7">
         <header>
           <p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-blue">Agosto 2026</p>
@@ -51,8 +52,8 @@ export default function SupervisionPage() {
         <section aria-labelledby="team-title" className="space-y-3">
           <div><p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-blue">Vista completa</p><h2 className="mt-1 text-base font-bold" id="team-title">Actividades del equipo</h2></div>
           <div aria-label="Filtros" className="grid gap-2 lg:grid-cols-3">
-            <label><span className="sr-only">Filtrar por tipo</span><select className={filterClass}><option>Todos los tipos</option><option>Grabación</option><option>Operación</option><option>Edición</option><option>Creatividad</option><option>Coordinación</option></select></label>
-            <div className="grid grid-cols-2 gap-2"><label><span className="sr-only">Filtrar por estado</span><select className={filterClass}><option>Todos los estados</option><option>Programada</option><option>En proceso</option><option>Por subir</option><option>Entregada</option><option>Observada</option><option>Aprobada</option><option>Cancelada</option></select></label><label><span className="sr-only">Filtrar por responsable</span><select className={filterClass}><option>Responsable</option><option>Johann</option><option>Eduardo</option><option>Chiara</option><option>Sin asignar</option></select></label></div>
+            <label><span className="sr-only">Filtrar por tipo</span><select className={filterClass}><option>Todos los tipos</option><option>Grabación</option><option>Edición</option><option>Coordinación</option><option>Creatividad</option><option>Locución</option></select></label>
+            <div className="grid grid-cols-2 gap-2"><label><span className="sr-only">Filtrar por estado</span><select className={filterClass}><option>Todos los estados</option><option>Programada</option><option>En proceso</option><option>Por subir</option><option>Entregada</option><option>Observada</option><option>Aprobada</option><option>Cancelada</option></select></label><label><span className="sr-only">Filtrar por responsable</span><select className={filterClass}><option>Responsable</option><option>Sin asignar</option></select></label></div>
           </div>
 
           <div className="space-y-2 lg:grid lg:grid-cols-2 lg:gap-3 lg:space-y-0">

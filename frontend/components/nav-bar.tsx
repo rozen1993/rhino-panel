@@ -1,20 +1,29 @@
 import { SystemIcon, type IconName } from "@/components/system-icon";
+import type { Role } from "@/lib/roles";
 
-const destinations: readonly { label: "Actividades" | "Historial" | "Perfil" | "Burson" | "Cuentas" | "Importar"; icon: IconName; href: string; coordinationOnly?: boolean; supervisionOnly?: boolean }[] = [
-  { label: "Actividades", icon: "activities", href: "/actividades" },
-  { label: "Historial", icon: "history", href: "/historial" },
-  { label: "Burson", icon: "burson", href: "/burson", coordinationOnly: true },
-  { label: "Cuentas", icon: "accounts", href: "/cuentas", supervisionOnly: true },
-  { label: "Importar", icon: "import", href: "/importacion", supervisionOnly: true },
-  { label: "Perfil", icon: "profile", href: "#" },
+type Label = "Actividades" | "Historial" | "Perfil" | "Burson" | "Cuentas" | "Importar" | "Supervisión";
+
+const allDestinations: readonly { label: Label; icon: IconName; href: string; when: (role: Role) => boolean }[] = [
+  { label: "Actividades", icon: "activities", href: "/actividades", when: (role) => role.kind === "trabajo" },
+  { label: "Supervisión", icon: "activities", href: "/supervision", when: (role) => role.supervises },
+  { label: "Historial", icon: "history", href: "/historial", when: (role) => role.kind === "trabajo" || role.supervises },
+  { label: "Burson", icon: "burson", href: "/burson", when: (role) => role.seesBurson },
+  { label: "Cuentas", icon: "accounts", href: "/cuentas", when: (role) => role.administers },
+  { label: "Importar", icon: "import", href: "/importacion", when: (role) => role.administers },
+  { label: "Perfil", icon: "profile", href: "/perfil", when: () => true },
 ];
 
-type NavBarProps = { presentation: "mobile" | "desktop"; active?: (typeof destinations)[number]["label"]; contained?: boolean; coordination?: boolean; supervision?: boolean };
+/** Los destinos que ve este rol (D-011, D-016, D-045). */
+export function destinationsFor(role: Role) {
+  return allDestinations.filter((destination) => destination.when(role));
+}
 
-export function NavBar({ presentation, active = "Actividades", contained = false, coordination = false, supervision = false }: NavBarProps) {
+type NavBarProps = { presentation: "mobile" | "desktop"; active?: Label; contained?: boolean; role: Role };
+
+export function NavBar({ presentation, active = "Actividades", contained = false, role }: NavBarProps) {
   const mobile = presentation === "mobile";
   const placement = mobile ? (contained ? "absolute inset-x-0 bottom-0" : "fixed inset-x-0 bottom-0 z-50") : "h-full w-full";
-  const visibleDestinations = destinations.filter((destination) => (!destination.coordinationOnly || coordination || supervision) && (!destination.supervisionOnly || supervision));
+  const visibleDestinations = destinationsFor(role);
   return (
     <nav aria-label={`Navegación ${mobile ? "móvil" : "de escritorio"}`} className={`${placement} border-line bg-panel ${mobile ? "border-t" : "border-r"}`}>
       <ul className={mobile ? "mx-auto grid max-w-[390px] grid-flow-col auto-cols-fr" : "flex flex-col py-5"}>

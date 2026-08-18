@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/card";
-import { MobileShell } from "@/components/mobile-shell";
+import { MobileShell, requireRole } from "@/components/mobile-shell";
 import { StatusPill } from "@/components/status-pill";
 import { SystemIcon } from "@/components/system-icon";
 import { activities, getActivity } from "@/lib/activities";
@@ -18,6 +18,7 @@ export function generateStaticParams() {
 }
 
 export default async function ActivityDetailPage({ params }: PageProps<"/actividades/[id]">) {
+  const role = await requireRole((r) => r.kind === "trabajo" || r.supervises);
   const { id } = await params;
   const base = id === "aprobada" ? getActivity("peaje-chillon") : getActivity(id);
   if (!base) notFound();
@@ -26,7 +27,7 @@ export default async function ActivityDetailPage({ params }: PageProps<"/activid
   const observed = activity.status === "Observada";
 
   return (
-    <MobileShell backHref="/actividades">
+    <MobileShell backHref="/actividades" role={role}>
       <main className="space-y-3 px-3 py-4 md:px-6 md:py-6 lg:px-7">
         <header><p className="text-[0.6875rem] font-bold uppercase tracking-[0.16em] text-blue">Ficha de producción</p><h1 className="mt-1 text-2xl font-bold tracking-tight">Detalle de actividad</h1></header>
 

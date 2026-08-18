@@ -1,34 +1,45 @@
 import type { ReactNode } from "react";
+import { redirect } from "next/navigation";
 import { NavBar } from "@/components/nav-bar";
 import { TopBar } from "@/components/top-bar";
+import type { Role } from "@/lib/roles";
+import { currentRole } from "@/lib/session";
 
-export function MobileShell({
+type ShellActive = "Actividades" | "Historial" | "Perfil" | "Burson" | "Cuentas" | "Importar" | "Supervisión";
+
+/**
+ * Devuelve el rol de la sesión simulada, o manda al acceso si no hay ninguna.
+ * Si se pasa `allow`, el rol además tiene que estar en esa lista (D-045).
+ */
+export async function requireRole(allow?: (role: Role) => boolean): Promise<Role> {
+  const role = await currentRole();
+  if (!role) redirect("/acceso");
+  if (allow && !allow(role)) redirect("/acceso");
+  return role;
+}
+
+export async function MobileShell({
   children,
-  user = "Johann",
-  initials = "JV",
+  role,
   active = "Actividades",
-  coordination = false,
-  supervision = false,
   backHref,
 }: {
   children: ReactNode;
-  user?: string;
-  initials?: string;
-  active?: "Actividades" | "Historial" | "Perfil" | "Burson" | "Cuentas" | "Importar";
-  coordination?: boolean;
-  supervision?: boolean;
+  role: Role;
+  active?: ShellActive;
   backHref?: string;
 }) {
+  const initials = role.label.slice(0, 2).toUpperCase();
   return (
     <div className="mx-auto min-h-screen w-full max-w-[390px] bg-paper pb-[4.75rem] md:max-w-[768px] lg:grid lg:max-w-none lg:grid-rows-[4rem_1fr] lg:pb-0">
-      <TopBar backHref={backHref} initials={initials} name={user} />
+      <TopBar backHref={backHref} initials={initials} name={role.label} />
       <div className="min-w-0 lg:grid lg:grid-cols-[14rem_minmax(0,1fr)]">
         <aside className="hidden min-h-[calc(100vh-4rem)] lg:block">
-          <NavBar active={active} coordination={coordination} presentation="desktop" supervision={supervision} />
+          <NavBar active={active} presentation="desktop" role={role} />
         </aside>
         <div className="min-w-0">{children}</div>
       </div>
-      <div className="lg:hidden"><NavBar active={active} coordination={coordination} presentation="mobile" supervision={supervision} /></div>
+      <div className="lg:hidden"><NavBar active={active} presentation="mobile" role={role} /></div>
     </div>
   );
 }
