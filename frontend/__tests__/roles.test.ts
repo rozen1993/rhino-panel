@@ -7,9 +7,8 @@ describe("catálogo de roles (D-022, D-048, D-051, D-053)", () => {
     expect(roleIds).toHaveLength(8);
   });
 
-  it("Operación ya no existe (D-048)", () => {
-    expect(roleIds).not.toContain("operacion");
-    expect(activityTypes).not.toContain("Operación");
+  it("conserva exactamente los cinco tipos decididos", () => {
+    expect(activityTypes).toEqual(["Grabación", "Edición", "Coordinación", "Creatividad", "Locución"]);
   });
 
   it("Locución existe como rol de trabajo y como tipo (D-022)", () => {
@@ -20,6 +19,12 @@ describe("catálogo de roles (D-022, D-048, D-051, D-053)", () => {
   it("Burson es un rol externo (D-051)", () => {
     expect(roles.burson.kind).toBe("externo");
     expect(roles.burson.externalView).toBe("burson");
+    expect(roles.burson.seesBurson).toBe(true);
+    expect(roles.burson.writesBurson).toBe(false);
+  });
+
+  it("solo Coordinación y Supervisión escriben en el tablero de Burson (D-052)", () => {
+    expect(roleList.filter((role) => role.writesBurson).map((role) => role.id).sort()).toEqual(["coordinacion", "supervision"]);
   });
 
   it("solo Supervisión supervisa y administra (D-045)", () => {

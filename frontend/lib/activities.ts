@@ -86,3 +86,8 @@ export function getActivity(id: string) {
 export function showsProgress(type: ActivityType) {
   return type === "Edición" || type === "Creatividad";
 }
+
+/** D-056: solo el trabajo de campo de Grabación exige ubicación. */
+export function requiresLocation(type: ActivityType) {
+  return type === "Grabación";
+}

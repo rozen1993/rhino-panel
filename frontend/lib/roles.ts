@@ -37,6 +37,8 @@ export type Role = {
   supervises: boolean;
   /** Ve el tablero de Burson (D-011). */
   seesBurson: boolean;
+  /** Mantiene solicitudes y pendientes del tablero; Burson solo los consulta (D-052). */
+  writesBurson: boolean;
   /** Administra cuentas (D-001). */
   administers: boolean;
   /** Vive fuera de la interfaz interna de Rhino (D-004, D-051). */
@@ -54,6 +56,7 @@ export const roles: Record<RoleId, Role> = {
     seesAllActivities: false,
     supervises: false,
     seesBurson: false,
+    writesBurson: false,
     administers: false,
     summary: "Registra coberturas desde el campo. Ve solo las suyas. La ubicación es obligatoria.",
   },
@@ -65,6 +68,7 @@ export const roles: Record<RoleId, Role> = {
     seesAllActivities: false,
     supervises: false,
     seesBurson: false,
+    writesBurson: false,
     administers: false,
     summary: "Mueve el avance de postproducción y deja el enlace al material. Ve solo las suyas.",
   },
@@ -76,6 +80,7 @@ export const roles: Record<RoleId, Role> = {
     seesAllActivities: true,
     supervises: false,
     seesBurson: true,
+    writesBurson: true,
     administers: false,
     summary: "Ve las actividades de todo el equipo y mantiene el tablero de Burson, pero no observa ni aprueba.",
   },
@@ -87,6 +92,7 @@ export const roles: Record<RoleId, Role> = {
     seesAllActivities: false,
     supervises: false,
     seesBurson: false,
+    writesBurson: false,
     administers: false,
     summary: "Registra producción y desarrollo creativo. Ve solo las suyas.",
   },
@@ -98,6 +104,7 @@ export const roles: Record<RoleId, Role> = {
     seesAllActivities: false,
     supervises: false,
     seesBurson: false,
+    writesBurson: false,
     administers: false,
     summary: "Registra locuciones. Ve solo las suyas. Rol estándar, como los otros de trabajo.",
   },
@@ -108,6 +115,7 @@ export const roles: Record<RoleId, Role> = {
     seesAllActivities: true,
     supervises: true,
     seesBurson: true,
+    writesBurson: true,
     administers: true,
     summary: "Ve todo, observa, resuelve, aprueba y cancela. Administra cuentas. No registra trabajo de campo.",
   },
@@ -119,6 +127,7 @@ export const roles: Record<RoleId, Role> = {
     seesAllActivities: false,
     supervises: false,
     seesBurson: false,
+    writesBurson: false,
     administers: false,
     summary: "Consulta el mes en su propia interfaz y deja su opinión. Nunca ve nada interno.",
   },
@@ -130,8 +139,9 @@ export const roles: Record<RoleId, Role> = {
     seesAllActivities: false,
     supervises: false,
     seesBurson: true,
+    writesBurson: false,
     administers: false,
-    summary: "Rol externo nuevo (D-051). Qué ve exactamente está SIN DECIDIR: ver D-052.",
+    summary: "Consulta solo su tablero, incluidas las dos columnas de pendientes, sin acciones de escritura.",
   },
 };
 

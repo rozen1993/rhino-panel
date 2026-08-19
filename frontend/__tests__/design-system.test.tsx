@@ -4,7 +4,7 @@ import { AunorStatusPill, aunorStatuses } from "@/components/aunor-status-pill";
 import { BursonStatusPill, bursonStatuses } from "@/components/burson-status-pill";
 import { MonthStrip, months } from "@/components/month-strip";
 import { roles } from "@/lib/roles";
-import { NavBar } from "@/components/nav-bar";
+import { destinationsFor, NavBar } from "@/components/nav-bar";
 import { StatusPill, internalStatuses } from "@/components/status-pill";
 
 describe("familias de estado", () => {
@@ -31,12 +31,18 @@ describe("navegación por rol", () => {
     expect(screen.getByText("Burson")).toBeDefined();
   });
 
-  it("solo Supervisión ve Cuentas e Importar", () => {
+  it("solo Supervisión ve Cuentas e Histórico", () => {
     const { rerender } = render(<NavBar presentation="mobile" role={roles.edicion} />);
     expect(screen.queryByText("Cuentas")).toBeNull();
     rerender(<NavBar presentation="mobile" role={roles.supervision} />);
     expect(screen.getByText("Cuentas")).toBeDefined();
-    expect(screen.getByText("Importar")).toBeDefined();
+    expect(screen.getByText("Histórico")).toBeDefined();
+  });
+
+  it("Burson solo navega a su tablero", () => {
+    expect(destinationsFor(roles.burson).map(({ label, href }) => ({ label, href }))).toEqual([
+      { label: "Burson", href: "/burson" },
+    ]);
   });
 
   it("un rol de trabajo no ve el panel de Supervisión", () => {

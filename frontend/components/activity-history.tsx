@@ -1,0 +1,37 @@
+"use client";
+
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { Button } from "@/components/button";
+import { Card } from "@/components/card";
+import { StatusPill, internalStatuses } from "@/components/status-pill";
+import { SystemIcon } from "@/components/system-icon";
+import { activityTypes } from "@/lib/activities";
+import { useActivityStoreHealth, useSimulatedActivities } from "@/lib/activity-simulation";
+import type { Role } from "@/lib/roles";
+
+const control = "min-h-11 w-full rounded-[5px] border border-line bg-panel px-3 text-sm";
+const pageSize = 4;
+function formatMoment(value: string) { const date = new Date(value); return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat("es-PE", { dateStyle: "medium", timeStyle: "short" }).format(date); }
+
+export function ActivityHistory({ role }: { role: Role }) {
+  const stored = useSimulatedActivities();
+  const { corrupt } = useActivityStoreHealth();
+  const allowed = role.seesAllActivities ? stored : stored.filter((activity) => activity.type === role.activityType);
+  const [query, setQuery] = useState(""); const [month, setMonth] = useState("2026-08"); const [type, setType] = useState(""); const [status, setStatus] = useState(""); const [order, setOrder] = useState<"newest" | "oldest">("newest"); const [page, setPage] = useState(1);
+  const months = useMemo(() => Array.from(new Set(allowed.map((activity) => activity.dateTime.slice(0, 7)).filter(Boolean))).sort().reverse(), [allowed]);
+  const filtered = useMemo(() => allowed.filter((activity) => {
+    const text = `${activity.title} ${activity.place} ${activity.responsible} ${activity.type}`.toLocaleLowerCase("es");
+    return (!query.trim() || text.includes(query.trim().toLocaleLowerCase("es"))) && (!month || activity.dateTime.startsWith(month)) && (!type || activity.type === type) && (!status || activity.status === status);
+  }).sort((a, b) => order === "newest" ? b.dateTime.localeCompare(a.dateTime) : a.dateTime.localeCompare(b.dateTime)), [allowed, month, order, query, status, type]);
+  const pages = Math.max(1, Math.ceil(filtered.length / pageSize)); const safePage = Math.min(page, pages); const visible = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
+  const resetPage = () => setPage(1);
+
+  return <>
+    {corrupt && <p role="alert" className="rounded-[5px] border border-red bg-red/5 p-3 text-sm font-bold text-red">No pudimos leer el historial local. Se muestran datos iniciales de recuperación.</p>}
+    <section aria-label="Filtros del historial" className="space-y-2"><label className="relative block"><span className="sr-only">Buscar actividad</span><SystemIcon className="absolute left-3 top-3 size-5 text-ink-muted" name="search" /><input className="min-h-11 w-full rounded-[5px] border border-line bg-panel py-2 pl-10 pr-3 text-sm" onChange={(event) => { setQuery(event.target.value); resetPage(); }} placeholder="Buscar por actividad, lugar o responsable…" type="search" value={query} /></label><div className="grid grid-cols-2 gap-2 lg:grid-cols-5"><label><span className="sr-only">Filtrar por mes</span><select className={control} onChange={(event) => { setMonth(event.target.value); resetPage(); }} value={month}><option value="">Todos los meses</option>{months.map((item) => <option key={item} value={item}>{item}</option>)}</select></label><label><span className="sr-only">Filtrar por tipo</span><select className={control} onChange={(event) => { setType(event.target.value); resetPage(); }} value={type}><option value="">Todos los tipos</option>{activityTypes.map((item) => <option key={item}>{item}</option>)}</select></label><label><span className="sr-only">Filtrar por estado</span><select className={control} onChange={(event) => { setStatus(event.target.value); resetPage(); }} value={status}><option value="">Todos los estados</option>{internalStatuses.map((item) => <option key={item}>{item}</option>)}</select></label><label><span className="sr-only">Ordenar actividades</span><select className={control} onChange={(event) => { setOrder(event.target.value as "newest" | "oldest"); resetPage(); }} value={order}><option value="newest">Más recientes</option><option value="oldest">Más antiguas</option></select></label><Button disabled title="Formato y permisos pendientes de la decisión D-037" variant="secondary">Exportar próximamente</Button></div></section>
+    <div className="flex items-center justify-between text-xs text-ink-muted"><span>{filtered.length} resultados</span><span>Página {safePage} de {pages}</span></div>
+    <section aria-label="Resultados del historial" className="space-y-2">{visible.length === 0 ? <Card className="p-6 text-center"><p className="font-bold">No encontramos actividades</p><p className="mt-1 text-sm text-ink-muted">Prueba con otros filtros o un mes diferente.</p></Card> : visible.map((activity) => <Card className={`${activity.status === "Observada" ? "border-observed bg-red/5" : ""} p-3`} key={activity.id}><div className="flex items-start justify-between gap-3"><div><p className="text-[0.6875rem] font-bold uppercase tracking-[0.12em] text-blue">{formatMoment(activity.dateTime)} · {activity.type}</p><h2 className="mt-1 text-sm font-bold">{activity.title}</h2><p className="mt-1 text-xs text-ink-muted">{activity.place} · {activity.responsible}</p></div><StatusPill status={activity.status} /></div><dl className="mt-3 grid grid-cols-2 gap-2 border-t border-line pt-3 text-xs"><div><dt className="font-bold">Enlace</dt><dd>{activity.hasLink ? "Sí" : "No"}</dd></div><div><dt className="font-bold">Último cambio</dt><dd>{formatMoment(activity.updatedAt)}</dd></div></dl><details className="mt-3 border-t border-line pt-3"><summary className="cursor-pointer text-xs font-bold text-blue">Ver trazabilidad ({activity.history.length} cambios)</summary><div className="mt-2 divide-y divide-line rounded-[5px] border border-line bg-panel">{activity.history.map((entry, index) => <div className="flex items-center justify-between gap-3 p-2 text-xs" key={`${entry.moment}-${index}`}><StatusPill status={entry.status} /><span className="text-right text-ink-muted">{entry.actor}<br />{formatMoment(entry.moment)}</span></div>)}</div>{activity.observations.filter((item) => !item.deletedAt).length > 0 && <p className="mt-2 text-xs text-ink-muted">Observaciones registradas: <strong className="text-ink">{activity.observations.filter((item) => !item.deletedAt).length}</strong></p>}</details><div className="mt-3 flex gap-2"><Link className="flex min-h-10 flex-1 items-center justify-center rounded-[5px] border border-line bg-panel text-xs font-bold text-blue" href={`/actividades/${activity.id}`}>Ver detalle</Link>{role.kind === "trabajo" && role.activityType === activity.type && activity.status !== "Aprobada" && <Link className="flex min-h-10 flex-1 items-center justify-center rounded-[5px] border border-line bg-panel text-xs font-bold text-blue" href={`/actividades/nueva?editar=${activity.id}`}>Editar</Link>}</div></Card>)}</section>
+    {pages > 1 && <nav aria-label="Paginación del historial" className="grid grid-cols-[1fr_auto_1fr] items-center gap-3"><Button disabled={safePage === 1} onClick={() => setPage((current) => Math.max(1, current - 1))} variant="secondary">Anterior</Button><span className="text-xs font-bold tabular-nums">{safePage} / {pages}</span><Button disabled={safePage === pages} onClick={() => setPage((current) => Math.min(pages, current + 1))} variant="secondary">Siguiente</Button></nav>}
+  </>;
+}

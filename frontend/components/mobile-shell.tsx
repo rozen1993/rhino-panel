@@ -5,7 +5,7 @@ import { TopBar } from "@/components/top-bar";
 import type { Role } from "@/lib/roles";
 import { currentRole } from "@/lib/session";
 
-type ShellActive = "Actividades" | "Historial" | "Perfil" | "Burson" | "Cuentas" | "Importar" | "Supervisión";
+type ShellActive = "Actividades" | "Historial" | "Burson" | "Cuentas" | "Histórico" | "Supervisión";
 
 /**
  * Devuelve el rol de la sesión simulada, o manda al acceso si no hay ninguna.
@@ -14,7 +14,7 @@ type ShellActive = "Actividades" | "Historial" | "Perfil" | "Burson" | "Cuentas"
 export async function requireRole(allow?: (role: Role) => boolean): Promise<Role> {
   const role = await currentRole();
   if (!role) redirect("/acceso");
-  if (allow && !allow(role)) redirect("/acceso");
+  if (allow && !allow(role)) redirect("/sin-acceso");
   return role;
 }
 
