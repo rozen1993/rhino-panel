@@ -3,31 +3,25 @@
 Decisiones de producto y arquitectura que deben sobrevivir al chat. Una decisión aquí solo cambia si
 Marco la cambia expresamente, y el cambio se escribe en este archivo.
 
-Cerradas: **treinta**. D-006 nunca se cerró; su entrada es un marcador que apunta a la cola de
-pendientes, donde quedan **trece** decisiones abiertas.
+Cerradas: **cuarenta y tres**. Abiertas: **cuatro** — D-025, D-027, D-037 y D-039, en
+`docs/decisiones-pendientes.md`.
 
-> ## Estado de la revisión abierta el 2026-08-17
+> ## Ninguna decisión queda en revisión
 >
-> El requerimiento v2 del cliente dejó once decisiones en revisión. **Marco resolvió D-019, D-023,
-> D-024 y D-033 el 2026-08-17**, y con ello **siete salieron de revisión**.
+> El requerimiento v2 del cliente dejó once decisiones en revisión el 2026-08-17. Todas se resolvieron
+> ese mismo día.
 >
-> **Ya no queda ninguna en revisión.** El 2026-08-17 por la tarde se cerró el catálogo de roles (D-022,
-> D-048) y la cuestión de Burson (D-051), que era lo único que las mantenía abiertas:
+> - **D-001** — catálogo de roles fijado: **ocho**, ver D-053.
+> - **D-005** — **revertida por D-051**: Burson sí tiene cuenta. Qué ve lo fija **D-052**.
+> - **D-010** — **modificada por D-028**: el avance solo se pide en Edición y Creatividad.
+> - **D-011, D-016** — Coordinación existe y conserva su lectura global.
 >
-> - **D-001** — catálogo fijado: ocho roles (ver D-053). Sale de revisión.
-> - **D-005** — **revertida por D-051**: Burson sí tiene cuenta ahora.
-> - **D-011** — el tablero de Burson lo mantienen Coordinación y Supervisión; qué puede hacer el propio
->   Burson sobre él está en **D-052**, abierta.
-> - **D-016** — Coordinación existe y conserva su lectura global. Sale de revisión.
+> **Dos decisiones recortaron el alcance del proyecto:**
 >
-> **D-010 quedó modificada por D-028:** el avance solo se pide en Edición y Creatividad, así que la
-> regla de «avance 100 para entregar» ya no aplica a los cinco tipos.
->
-> **Salieron de revisión:** D-007, D-008, D-009, D-010, D-013, D-014, D-015 — al confirmarse que la
-> plataforma es un sistema de supervisión con ciclo de observación (D-019) y que el material va por
-> enlace (D-023).
->
-> **Intactas todo el tiempo:** D-002, D-003, D-004, D-012, D-017.
+> - **D-049** — todo es un enlace, incluido el Excel. **Elimina la Fase 7** (migración del histórico) y
+>   obliga a reescribir el punto 7 de la Meta Final (**D-054**).
+> - **D-048** — el rol Operación no existe. Los cinco tipos de trabajo pasan a ser Grabación, Edición,
+>   Coordinación, Creatividad y **Locución**.
 >
 > Contexto: `docs/impacto-requerimiento-v2.md` · Pendientes: `docs/decisiones-pendientes.md`
 
@@ -37,25 +31,26 @@ pendientes, donde quedan **trece** decisiones abiertas.
 
 **Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
 
-> **EN REVISIÓN (2026-08-17) — la resuelve D-022.** Lo que está en duda es el **catálogo de roles**: el
-> requerimiento v2 introduce «Locuciones», y puede dejar sin titular a Operación y a Coordinación. El
-> **principio** de esta decisión —se modelan roles, no personas— no está en discusión y sobrevive
-> cualquiera que sea el catálogo.
+> **Catálogo actualizado el 2026-08-17** por D-022, D-048 y D-051. Sale de revisión. El principio —se
+> modelan roles, no personas— se refuerza con **D-047**: el sistema no conoce personas concretas, Marco
+> asigna quién ocupa cada rol.
 
-El sistema modela **roles**, y una persona ocupa uno o varios. Johann no es un perfil: es un usuario
-con el rol *Grabación*.
+El sistema modela **roles**, y una persona ocupa uno o varios.
 
-Roles derivados del requerimiento:
+Los **ocho** roles del sistema:
 
 | Rol | Alcance |
 |---|---|
 | Grabación | Grabaciones y coberturas |
 | Edición | Edición y postproducción |
-| Coordinación | Coordinación y seguimiento |
-| Operación | Operaciones |
+| Coordinación | Coordinación y seguimiento, con lectura global (D-016) |
 | Creatividad | Producción y desarrollo creativo |
-| Supervisión / Administración | Vista global, observaciones, aprobaciones, cuentas e importación |
-| AUNOR | Consulta mensual de solo lectura |
+| **Locución** | Locuciones *(D-022)* |
+| Supervisión / Administración | Vista global, observaciones, aprobaciones y cuentas |
+| AUNOR | Consulta mensual y opinión (D-033) |
+| **Burson** | Externo, solo su módulo y solo lectura *(D-051, D-052)* |
+
+**Operación se eliminó** del catálogo (D-048).
 
 **Consecuencias**
 
@@ -140,13 +135,14 @@ AUNOR accede con cuenta individual y rol de solo lectura. No se usa un enlace p�
 
 **Fecha:** 2026-08-11 · **Fase:** 0 · **Decide:** Marco
 
-> **EN REVISIÓN (2026-08-17) — la resuelve D-035.** El requerimiento v2 describe la plataforma como
-> «canal de comunicación […] entre el equipo, los colaboradores operativos, Autopista del Norte y
-> **Burson**». Esa frase admite leer que Burson participa directamente, que es justo lo que esta
-> decisión descarta.
+> **REVERTIDA el 2026-08-17 por D-051.** Burson **sí tiene cuenta**: es un rol más del catálogo. Lo que
+> ve y lo que puede hacer lo fija **D-052** — solo su módulo, y solo lectura.
+>
+> Lo que sigue describe la situación anterior y se conserva porque explica por qué esta era la opción
+> segura, y qué se asume al revertirla: aparece un **segundo actor externo** junto a AUNOR.
 
-El módulo Burson es un tablero **interno de Rhino** sobre lo que se coordina con Burson. Nadie de
-Burson entra al sistema.
+El módulo Burson era un tablero **interno de Rhino** sobre lo que se coordina con Burson. Nadie de
+Burson entraba al sistema.
 
 **Consecuencias**
 
@@ -1024,3 +1020,92 @@ No se añade nada.
 ## D-040 — Migrar el Excel bajo el requerimiento v2
 
 **Cerrada sin objeto por D-049.** No hay migración: el Excel es un enlace.
+
+---
+
+## D-052 — El rol Burson ve solo su módulo, y solo lee
+
+**Fecha:** 2026-08-17 · **Fase:** 2 · **Decide:** Marco
+
+Resuelve la pregunta que dejó abierta D-051. Cuando Burson entra con su cuenta:
+
+| Ve | No ve |
+|---|---|
+| El tablero de Burson | Actividades de AUNOR |
+| Las solicitudes y su estado | Observaciones internas |
+| Pendientes de Burson | Historial, cuentas, importación |
+| Pendientes de Rhino | Cualquier cosa interna de Rhino |
+
+**No escribe nada.** Solo lectura.
+
+**Consecuencias**
+
+- Es la opción **más segura y la reversible**: abrir permisos después no obliga a rehacer nada; cerrarlos
+  tras haberlos abierto, sí.
+- El tablero que ya está construido sirve tal cual. No hay pantalla nueva.
+- **Los «pendientes de Rhino» sí los ve.** Era una anotación interna sobre lo que Rhino se debe a sí
+  mismo; a partir de ahora Burson la lee, así que conviene redactarla sabiendo que el tercero la ve.
+- Como no escribe, **marcar un pendiente de Burson como resuelto sigue siendo trabajo de Rhino**. El
+  tablero no se actualiza solo porque Burson haga algo por su lado.
+
+---
+
+## D-054 — La Meta Final ya no exige migrar el Excel
+
+**Fecha:** 2026-08-17 · **Fase:** 2 · **Decide:** Marco
+
+El punto 7 de la Meta Final de `CLAUDE.md` decía *«contiene el histórico del Excel migrado y
+comprobado»*. Con D-049 eso es imposible: no hay migración. Se sustituye por:
+
+> **el histórico del Excel queda enlazado y accesible desde la plataforma**
+
+**Consecuencias**
+
+- El proyecto puede darse por terminado sin migrar nada, y el criterio de cierre deja de contener un
+  punto imposible de cumplir.
+- **La pantalla P-9 cambia de oficio** (D-055): deja de simular una importación y pasa a ser el sitio
+  donde vive el enlace al Excel.
+- Queda dicho, para que no se pierda: el histórico **no será consultable dentro de la plataforma**. No
+  se podrá buscar, filtrar ni contar sobre las coberturas antiguas — solo abrir el Excel.
+
+---
+
+## D-055 — P-9 pasa a ser «el enlace al histórico»
+
+**Fecha:** 2026-08-17 · **Fase:** 2 · **Decide:** Marco
+
+La pantalla `frontend/app/importacion/` deja de simular una importación por lotes —que ya no ocurrirá
+nunca (D-049)— y pasa a mostrar **el enlace al Excel histórico**: abrirlo y cambiarlo.
+
+**Consecuencias**
+
+- Sigue siendo un destino de Supervisión, así que el enlace al Excel **tiene un sitio propio y evidente**
+  en vez de quedar suelto.
+- Se retiran los datos simulados de importación: filas aceptadas, rechazadas y sus motivos.
+- Conviene renombrar el destino: «Importar» ya no describe lo que hace. Pasa a **«Histórico»**.
+
+---
+
+## D-056 — Locución se comporta como Edición y Creatividad
+
+**Fecha:** 2026-08-17 · **Fase:** 2 · **Decide:** Marco
+
+Locución ocupa el hueco que dejó Operación (D-048), pero **no hereda sus reglas**: Operación era trabajo
+en vía —ubicación obligatoria, sin material que subir— y Locución es trabajo de cabina que **sí produce
+un archivo de audio**.
+
+| | Ubicación obligatoria | Enlace al entregar | Pasa por «Por subir» | En proceso → Entregada directo |
+|---|---|---|---|---|
+| Grabación | **Sí** | Obligatorio | Sí | No |
+| Edición | No | Obligatorio | Sí | No |
+| Creatividad | No | Obligatorio | Sí | No |
+| **Locución** | **No** | **Obligatorio** | **Sí** | **No** |
+| Coordinación | No | Opcional | No | **Sí** |
+
+**Consecuencias**
+
+- **Grabación queda como el único tipo con ubicación obligatoria.** Antes eran dos.
+- **Coordinación queda como el único tipo que puede entregar sin pasar por «Por subir»**, porque es el
+  único que no produce material. Eso simplifica D-013: la regla pasa a ser «todos menos Coordinación».
+- Hay que reescribir la tabla de obligatoriedad de `docs/fase-0-concepcion.md` §3, la regla de D-013 en
+  §5, la tabla de transiciones, y los criterios de aceptación 2, 13 y 21.

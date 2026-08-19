@@ -43,7 +43,7 @@ depender de decisiones técnicas de backend.
 - Supervisión: observar, responder, resolver y aprobar, con trazabilidad.
 - Vista mensual de solo lectura para AUNOR, separada de la interfaz interna.
 - Módulo de seguimiento de Burson.
-- Migración del histórico en Excel, trazable y reversible.
+- **El histórico del Excel queda enlazado y accesible** desde la plataforma (D-049, D-054). No se importa fila por fila.
 - Cuentas individuales por rol, desactivables.
 - Uso cómodo desde celular, con protección del formulario ante mala señal.
 - *(requerimiento v2)* Historial mensual en tabla, con buscador, filtro y paginación.
@@ -70,18 +70,14 @@ necesidad demostrada. Ver D-038.
 
 ## 2. Roles y qué necesita cada uno
 
-> **EN REVISIÓN — D-020, D-021, D-022, D-034.** El requerimiento v2 cambia el rol de casi todo el
-> equipo, introduce **Locuciones**, puede dejar sin titular a Operación y a Coordinación, y añade un
-> actor nuevo, **Lenin**, que administra los permisos de OneDrive desde fuera de la plataforma. La tabla
-> de abajo describe el reparto acordado en agosto, no necesariamente el real.
->
-> **Confirmado y nuevo:** las personas tienen **sede** (Chimbote, Lima). Quién está en cuál es parte de
-> D-021.
+> **RESUELTA el 2026-08-17.** El catálogo son **ocho roles** (D-022, D-048, D-051): sale Operación,
+> entran Locución y Burson. Y por **D-047**, el sistema **no modela personas**: Marco asigna quién ocupa
+> cada rol, así que ya no hay que averiguar quién es quién.
 
 Los perfiles son roles; una persona ocupa uno o varios (D-001).
 
 **Colaborador** es el término que este documento usa —siguiendo a `CLAUDE.md`— para cualquier persona
-con un **rol de trabajo**: Grabación, Edición, Coordinación, Operación o Creatividad. Es quien ejecuta
+con un **rol de trabajo**: Grabación, Edición, Coordinación, Creatividad o Locución. Es quien ejecuta
 y registra actividades. Los otros dos grupos son **Supervisión / Administración**, que revisa y
 aprueba, y **AUNOR**, que solo consulta.
 
@@ -94,7 +90,7 @@ la vez, y entonces tiene las dos capacidades.
 | Grabación | Registrar coberturas y grabaciones desde el campo, casi siempre en celular y con señal irregular. Necesita que llenar la actividad sea rápido y que la ubicación no cueste. |
 | Edición | Recibir lo grabado, mover el avance de la postproducción y dejar el enlace al material terminado. Trabaja sobre todo en escritorio. |
 | Coordinación | Programar y asignar actividades, y ver que lo comprometido avanza. |
-| Operación | Registrar operaciones en vía, con ubicación obligatoria. |
+| Locución | Registrar locuciones. Trabajo de cabina, sin ubicación. |
 | Creatividad | Registrar producción y desarrollo creativo, sin ubicación en la mayoría de los casos. |
 | Supervisión / Administración | Ver todo, observar, responder, resolver, aprobar, administrar cuentas e importar el histórico. |
 | AUNOR | Consultar el mes, solo lectura, sin ver nada interno. |
@@ -102,8 +98,9 @@ la vez, y entonces tiene las dos capacidades.
 Un rol de trabajo ve únicamente las actividades de las que es responsable (D-003). Supervisión y
 administración ven todo.
 
-Que los cinco roles de trabajo coincidan en nombre con los cinco tipos de actividad no significa que
-un rol solo pueda registrar su tipo homónimo; eso queda sin decidir y no urge (ver D-001).
+**Un rol solo registra actividades de su tipo homónimo** (D-045), salvo que la persona tenga además
+otro rol asignado. Y **cada rol actúa estrictamente dentro de lo que su rol permite**: Supervisión no
+ejecuta trabajo de campo.
 
 ---
 
@@ -124,7 +121,7 @@ un rol solo pueda registrar su tipo homónimo; eso queda sin decidir y no urge (
 > **Confirmado y nuevo:** la descripción tiene un **límite de caracteres** (la ficha propone 500 como
 > ejemplo, no como valor cerrado).
 
-Cinco tipos: **Grabación, Edición, Coordinación, Operación, Creatividad**. Comparten la misma ficha; lo
+Cinco tipos: **Grabación, Edición, Coordinación, Creatividad, Locución**. Comparten la misma ficha; lo
 que cambia entre ellos es qué campos son obligatorios.
 
 ### Campos comunes
@@ -151,11 +148,14 @@ responsable** por separado, porque con creación mixta pueden ser personas disti
 
 | Tipo | `ubicacion_nombre` | Enlace al material para entregar |
 |---|---|---|
-| Grabación | Obligatoria | Obligatorio |
-| Operación | Obligatoria | Opcional |
+| Grabación | **Obligatoria** | Obligatorio |
 | Edición | Opcional | Obligatorio |
-| Coordinación | Opcional | Opcional |
 | Creatividad | Opcional | Obligatorio |
+| Locución | Opcional | Obligatorio |
+| Coordinación | Opcional | Opcional |
+
+**Grabación es el único tipo con ubicación obligatoria** (D-056). **Coordinación es el único que no
+tiene que dejar enlace**, porque es el único que no produce material.
 
 La ubicación se exige **al guardar**. El enlace se exige **al pasar a Entregada**, no antes: nadie
 tiene el enlace cuando registra una grabación que todavía no ha hecho (D-008).
@@ -230,8 +230,9 @@ Siete estados. Descritos aquí por lo que significan para la persona, no por có
 - **El responsable puede editar su actividad hasta que se apruebe** (D-007), incluso después de
   entregarla. A cambio, el detalle debe mostrar cuándo se modificó por última vez, para que supervisión
   no apruebe a ciegas una ficha que cambió mientras la revisaba.
-- **«Por subir» es obligatorio en Grabación, Edición y Creatividad**, y opcional en Coordinación y
-  Operación (D-013). Los mismos tres tipos que deben dejar un enlace son los que tienen algo que subir.
+- **«Por subir» es obligatorio en todos los tipos menos Coordinación** (D-013, ajustada por D-056). Los
+  mismos cuatro tipos que deben dejar un enlace son los que tienen algo que subir; Coordinación no
+  produce material y por eso se salta ese paso.
 - **El responsable puede retroceder mientras trabaja, pero no desde Entregada** (D-014). Ahí el control
   pasa a supervisión.
 - **La observación la resuelve supervisión**, no el colaborador (D-015). El colaborador responde y
@@ -245,7 +246,7 @@ Siete estados. Descritos aquí por lo que significan para la persona, no por có
 | Programada | En proceso | Responsable |
 | En proceso | Por subir | Responsable |
 | Por subir | Entregada | Responsable, con avance 100 y enlace según tipo |
-| En proceso | Entregada | Responsable, solo en Coordinación y Operación |
+| En proceso | Entregada | Responsable, **solo en Coordinación** |
 | En proceso · Por subir | estado anterior | Responsable |
 | En proceso · Por subir · Entregada | Observada | Solo supervisión |
 | Observada | el estado exacto previo | Solo supervisión, al resolver |
@@ -386,8 +387,9 @@ idéntica para todos los colaboradores.
 
 **P-8 · Administración de cuentas.** Alta, asignación de rol, desactivación y reactivación.
 
-**P-9 · Importación del histórico.** Carga del archivo, simulación previa, resultado separado en
-cargadas y rechazadas con motivo, y anulación de lote.
+**P-9 · Histórico.** *(cambió de oficio — D-055)* Muestra el **enlace al Excel histórico**: abrirlo y
+cambiarlo. Ya no importa nada fila por fila, porque con D-049 el Excel es un enlace como cualquier otro
+material. Destino de Supervisión.
 
 ---
 
@@ -534,7 +536,7 @@ No se construye modo offline completo: se protege el formulario en curso, no tod
 Comprobables sin conocer la implementación.
 
 1. Se puede registrar una actividad de cada uno de los cinco tipos.
-2. Grabación y Operación no se pueden guardar sin `ubicacion_nombre`; los otros tres sí.
+2. Grabación no se puede guardar sin `ubicacion_nombre`; los otros cuatro sí.
 3. Un colaborador solo ve actividades de las que es responsable, y no alcanza las de otro ni
    escribiendo su dirección directa.
 4. Un colaborador no puede llevar una actividad más allá de Entregada.
@@ -547,8 +549,8 @@ Comprobables sin conocer la implementación.
 10. Dar de baja retira el registro de la vista sin borrarlo.
 11. Cada cambio de estado queda con autor y fecha, y puede verse en el detalle.
 12. No se puede pasar a Entregada con avance menor que 100, y la pantalla explica por qué.
-13. No se puede pasar a Entregada sin enlace al material en Grabación, Edición y Creatividad; en
-    Coordinación y Operación sí se puede.
+13. No se puede pasar a Entregada sin enlace al material en Grabación, Edición, Creatividad ni
+    Locución; en Coordinación sí se puede.
 14. El responsable puede editar su actividad después de entregarla y hasta que se apruebe, y el detalle
     muestra cuándo se modificó por última vez.
 15. Coordinación puede crear una actividad para otra persona, y esa persona la ve entre las suyas.
@@ -560,8 +562,8 @@ Comprobables sin conocer la implementación.
 19. Una solicitud de Burson usa sus cinco estados propios y no los siete de una actividad.
 20. Un colaborador que no sea de Coordinación ni de Supervisión no ve el módulo Burson, ni su entrada
     en la navegación, ni alcanza sus datos escribiendo la dirección directa.
-21. Grabación, Edición y Creatividad no pueden pasar de En proceso a Entregada sin atravesar Por subir;
-    Coordinación y Operación sí pueden.
+21. Grabación, Edición, Creatividad y Locución no pueden pasar de En proceso a Entregada sin atravesar
+    Por subir; Coordinación sí puede.
 22. El responsable puede volver de Por subir a En proceso, y no puede retroceder desde Entregada.
 23. Un colaborador no puede cerrar una observación, ni siquiera respondiéndola; solo supervisión la
     resuelve.

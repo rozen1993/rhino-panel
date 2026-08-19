@@ -1,4 +1,4 @@
-# PROTOCOLO UNIVERSAL DE TRABAJO — v4.0
+# PROTOCOLO UNIVERSAL DE TRABAJO — v4.1
 
 Metodología reusable de Marco Vargas para trabajar con Claude como arquitecto/orquestador y Codex como ejecutante/revisor, manteniendo a Marco como único decisor.
 
@@ -197,6 +197,36 @@ Cada encargo usa estos bloques:
 **Regla de cierre:**
 
 Si falta una decisión bloqueante, detente y pregunta. No inventes requisitos. Si es un detalle local, reversible y cubierto por el contrato, usa la solución más simple.
+
+### Formato OCRAV
+
+Todo encargo se escribe con estos cinco bloques, en este orden:
+
+| | Bloque | La pregunta que responde |
+|---|---|---|
+| **O** | Objetivo | ¿Qué queremos conseguir? |
+| **C** | Contexto | ¿Qué necesita saber? |
+| **R** | Restricciones | ¿Qué NO debe hacer? |
+| **A** | Aceptación | ¿Cómo sabemos que funciona? |
+| **V** | Verificación | ¿Cómo debe comprobarlo? |
+
+El principio detrás: **cada cosa que el encargo no diga es una decisión que se cede al agente**. Si un bloque queda vago —sobre todo Restricciones y Aceptación— la tarea todavía no está bien acotada.
+
+Cuando el encargo toque diseño, **se adjunta la imagen del diseño aprobado**. No basta con nombrar el archivo ni describirlo con palabras.
+
+### El encargo se audita antes de ejecutarse
+
+**Ningún encargo va directo a ejecución.** El orden es obligatorio:
+
+1. Se escribe el encargo en OCRAV.
+2. **Se manda al ejecutante en modo lectura para que lo audite**, con la imagen del diseño aprobado si corresponde.
+3. Quien escribió el encargo **verifica** la auditoría: no la acepta sin comprobar lo comprobable.
+4. Se corrige el encargo con lo que la auditoría encontró.
+5. **Solo entonces** se manda a ejecutar.
+
+El motivo es empírico: varios encargos han fallado **por defectos del contrato, no de la ejecución**. Un contrato pidió dibujar una acción que violaba una regla del propio producto, y el ejecutante obedeció porque el contrato lo decía. Otro no fijó el contenido y el resultado inventó el negocio equivocado. Auditar el encargo cuesta una fracción de lo que cuesta rehacer el trabajo.
+
+El ejecutante **arranca en blanco en cada llamada**: no recuerda la conversación ni encargos previos. Tanto la auditoría como la ejecución necesitan un prompt autosuficiente.
 
 ---
 
@@ -460,4 +490,5 @@ Automejorarse no significa autoeditarse sin control: Claude y Codex pueden detec
 | 1.0 | 2026-08-11 | SistemaRhino | Versión inicial: roles, archivo como interfaz, encargos, economía de contexto, ciclo estándar y /claudex. |
 | 2.0 | 2026-08-11 | Incidentes reales | Se añadieron fronteras estrictas entre diseño/construcción, autorización de instalaciones, artefacto mínimo para decidir y tratamiento temprano de fallos de entorno. |
 | 3.0 | 2026-08-11 | Refactor estructural solicitado por Marco | Se separan las fases del proyecto del protocolo universal; el stack aprobado pasa a funcionar como autorización explícita de dependencias núcleo; se distinguen dudas bloqueantes de decisiones locales reversibles; se formalizan estado durable, fallo de producto y ciclo de automejora sin alterar el principio de aprender de incidentes reales. |
+| 4.1 | 2026-08-17 | Decisión de Marco | Se formaliza el formato **OCRAV** para los encargos, la obligación de **adjuntar la imagen del diseño aprobado** cuando el encargo toca diseño, y la **doble pasada**: el ejecutante audita el encargo en lectura antes de ejecutarlo. Origen: encargos que fallaron por defectos de contrato, no de ejecución (ver `docs/incidentes.md` INC-002 y la errata de E-007). |
 | 4.0 | 2026-08-11 | Revisión estructural solicitada por Marco | Se cierran cinco huecos del proceso: el registro de incidentes pasa a ser archivo durable que alimenta §12; el bucle de fallo de contrato recibe un techo de tres intentos con reversión y re-alcance; se fijan las condiciones que hacen que la segunda revisión de Codex sea evidencia y no trámite; las dudas bloqueantes pasan a una cola que evita que Marco sea cuello de botella; y el ciclo estándar gana una vía corta habilitada por riesgo. |

@@ -9,25 +9,17 @@ una mano.
 **Puerta de salida:** Marco aprueba la dirección visual y entiende todos los recorridos principales
 desde las pantallas.
 
-> ## ⚠ Fase suspendida el 2026-08-17
+> ## Fase cumplida el 2026-08-17
 >
-> **Todo este documento está en revisión.** Describe navegación, permisos y nueve pantallas derivadas de
-> una versión de la Fase 0 que el requerimiento v2 del cliente puso en duda.
+> Todas las dudas que suspendieron esta fase están resueltas: el catálogo de roles (D-022, D-048,
+> D-051), los siete estados (D-019), el patrón compartido de pantalla (D-030), la dirección visual
+> (D-031, la pieza 2) y el flujo de acceso (D-026).
 >
-> Concretamente, quedan sin base firme:
+> **Marco dio la fase por cumplida con D-044**, con las imperfecciones visuales conocidas de INC-002, y
+> la corrección se hizo sobre el frontend en código durante la Fase 2.
 >
-> - **El inventario de pantallas**, porque el requerimiento v2 añade al menos dos —el *roster* de acceso
->   y el historial mensual en tabla— y porque no se sabe si cada perfil necesita su propia pantalla
->   (D-030).
-> - **La columna «quién la ve»**, porque el catálogo de roles está en revisión (D-022) y porque la
->   lectura global de Coordinación puede desaparecer (D-016).
-> - **Todo lo que dependa de los siete estados** (D-019) y **de que AUNOR sea solo lectura** (D-033).
->
-> Lo que **no** está en duda: mobile-first, que esta fase no instala nada, y D-017 (barra inferior en
-> móvil, lateral en escritorio), que los mockups del cliente confirman en su variante de escritorio.
->
-> **Las ocho maquetas de `diseno/` se conservan.** No se retocan ni se encarga una novena mientras
-> D-031 esté abierta. Ver `docs/impacto-requerimiento-v2.md` y `docs/incidentes.md` → INC-001.
+> Este documento se conserva porque su inventario de pantallas, su arquitectura de información y sus
+> patrones transversales siguen siendo la referencia de lo que hay construido.
 
 ---
 
@@ -45,7 +37,7 @@ Nueve pantallas, heredadas de la concepción (§7) y agrupadas aquí por a quié
 | P-6 | Vista mensual de AUNOR | AUNOR |
 | P-7 | Módulo Burson | Coordinación, Supervisión |
 | P-8 | Administración de cuentas | Administración |
-| P-9 | Importación del histórico | Administración |
+| P-9 | Histórico *(enlace al Excel, D-055)* | Administración |
 | P-10 | Historial mensual *(requerimiento v2)* | Roles de trabajo |
 
 P-6 vive en una interfaz aparte. No comparte navegación, ni cabecera, ni menú con el resto: AUNOR no
@@ -70,7 +62,7 @@ rol que la mira, y el estado en que está. Este es el recuento real del trabajo 
 | P-6 · AUNOR | 2 | La consulta del mes, y cómo deja su comentario |
 | P-7 · Burson | 2 | El tablero y la ficha de una solicitud |
 | P-8 · Cuentas | 2 | La lista y el alta o edición |
-| P-9 · Importación | 3 | Cargar, simular, y el resultado separado en cargadas y rechazadas |
+| P-9 · Histórico | 1 | Solo el enlace al Excel: abrirlo y cambiarlo (D-055) |
 | P-10 · Historial | 2 | La tabla y su estado vacío |
 | | **26** | |
 
@@ -122,10 +114,11 @@ Coordinación y Supervisión (D-011).
 
 | Rol | Destinos |
 |---|---|
-| Grabación, Edición, Operación, Creatividad | Mis actividades · Perfil |
+| Grabación, Edición, Creatividad, Locución | Mis actividades · Perfil |
 | Coordinación | Actividades · Burson · Perfil |
-| Supervisión / Administración | Supervisión · Burson · Cuentas · Importar · Perfil |
+| Supervisión / Administración | Supervisión · Historial · Burson · Cuentas · Histórico · Perfil |
 | AUNOR | Ninguno. Una sola pantalla |
+| Burson | Ninguno. Solo su tablero, y solo lectura (D-052) |
 
 En Coordinación el destino se llama **Actividades**, no «Mis actividades», porque con D-016 ve las de
 todo el equipo. Es la misma pantalla P-2 con otro alcance: muestra actividades ajenas, así que necesita

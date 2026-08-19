@@ -21,7 +21,7 @@
 >
 > | Sección todavía en duda | Qué está en duda | Decisiones |
 > |---|---|---|
-> | Perfiles funcionales | El catálogo de roles: aparece «Locuciones», y Operación y Coordinación pueden quedarse sin titular | D-020, D-021, D-022 |
+> | ~~Perfiles funcionales~~ | **Resuelto (D-022, D-048, D-051):** ocho roles. Sale Operación, entra Locución y Burson | — |
 > | Actividades — campos comunes | Se añade «tipo de servicio»; falta fijar para quién aplica el avance | D-027, D-028 |
 > | Ubicación | Los mockups usan un solo campo «Lugar» | D-029 |
 > | Burson | La v2 lo nombra como parte de un «canal de comunicación» | D-035 |
@@ -52,8 +52,8 @@ Tipos:
 - Grabación
 - Edición
 - Coordinación
-- Operación
 - Creatividad
+- Locución
 
 Campos comunes mínimos:
 - fecha
@@ -184,7 +184,7 @@ El proyecto termina únicamente cuando existe una **plataforma publicada y utili
 4. permite a supervisión observar, responder, resolver y aprobar con trazabilidad;
 5. ofrece a AUNOR una vista mensual segura y de solo lectura;
 6. incorpora el seguimiento de Burson definido en el requerimiento;
-7. contiene el histórico del Excel migrado y comprobado;
+7. el histórico del Excel queda enlazado y accesible desde la plataforma (D-054);
 8. cuenta con backups restaurables y pruebas de seguridad y permisos;
 9. ha superado QA integral realizado por Marco utilizando todos los perfiles;
 10. queda desplegada, documentada, respaldada y cerrada sin problemas críticos o altos abiertos.

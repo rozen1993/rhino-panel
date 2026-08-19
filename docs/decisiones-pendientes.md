@@ -5,7 +5,10 @@ consecuencias tiene cada una.
 
 Marco resuelve en lote. Lo resuelto pasa a `docs/decisiones.md` y desaparece de esta cola.
 
-**Cerradas: cuarenta.** Quedan **cuatro** abiertas, las de este archivo: D-025, D-027, D-037 y D-039.
+**Cerradas: cuarenta y tres.** Quedan **cuatro** abiertas: D-025, D-027, D-037 y D-039.
+
+El 2026-08-17 se cerraron además **D-052** (Burson ve solo su módulo y solo lee), **D-054** (la Meta
+Final ya no exige migrar el Excel) y **D-055** (P-9 pasa a ser el enlace al histórico).
 
 **Lo que Marco cerró el 2026-08-17**, todo en `docs/decisiones.md`:
 
