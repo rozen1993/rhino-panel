@@ -4,7 +4,7 @@ import type { SimulatedActivity } from "@/lib/activity-simulation";
 export type AunorActivity = { id: string; date: string; type: string; title: string; place: string; status: AunorStatus };
 
 export function aunorStatus(status: SimulatedActivity["status"]): AunorStatus {
-  if (status === "En proceso" || status === "Por subir" || status === "Observada") return "En trabajo";
+  if (status === "En proceso" || status === "Por subir" || status === "Observada" || status === "Rechazada") return "En trabajo";
   return status;
 }
 

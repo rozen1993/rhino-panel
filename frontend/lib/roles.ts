@@ -21,7 +21,7 @@ export const roleIds = [
 export type RoleId = (typeof roleIds)[number];
 
 /** Los tipos de actividad, homónimos de los cinco roles de trabajo (D-045). */
-export const activityTypes = ["Grabación", "Edición", "Coordinación", "Creatividad", "Locución"] as const;
+export const activityTypes = ["Grabación", "Edición", "Creatividad", "Locución"] as const;
 export type ActivityType = (typeof activityTypes)[number];
 
 export type Role = {
@@ -41,6 +41,10 @@ export type Role = {
   writesBurson: boolean;
   /** Administra cuentas (D-001). */
   administers: boolean;
+  createsOrders: boolean;
+  accountId?: string;
+  accountName?: string;
+  availableRoleIds?: readonly RoleId[];
   /** Vive fuera de la interfaz interna de Rhino (D-004, D-051). */
   externalView?: "aunor" | "burson";
   /** Qué ve y qué no, en una línea, para la pantalla de prueba. */
@@ -58,6 +62,7 @@ export const roles: Record<RoleId, Role> = {
     seesBurson: false,
     writesBurson: false,
     administers: false,
+    createsOrders: false,
     summary: "Registra coberturas desde el campo. Ve solo las suyas. La ubicación es obligatoria.",
   },
   edicion: {
@@ -70,18 +75,19 @@ export const roles: Record<RoleId, Role> = {
     seesBurson: false,
     writesBurson: false,
     administers: false,
+    createsOrders: false,
     summary: "Mueve el avance de postproducción y deja el enlace al material. Ve solo las suyas.",
   },
   coordinacion: {
     id: "coordinacion",
     label: "Coordinación",
     kind: "trabajo",
-    activityType: "Coordinación",
     seesAllActivities: true,
     supervises: false,
     seesBurson: true,
     writesBurson: true,
     administers: false,
+    createsOrders: true,
     summary: "Ve las actividades de todo el equipo y mantiene el tablero de Burson, pero no observa ni aprueba.",
   },
   creatividad: {
@@ -94,6 +100,7 @@ export const roles: Record<RoleId, Role> = {
     seesBurson: false,
     writesBurson: false,
     administers: false,
+    createsOrders: false,
     summary: "Registra producción y desarrollo creativo. Ve solo las suyas.",
   },
   locucion: {
@@ -106,6 +113,7 @@ export const roles: Record<RoleId, Role> = {
     seesBurson: false,
     writesBurson: false,
     administers: false,
+    createsOrders: false,
     summary: "Registra locuciones. Ve solo las suyas. Rol estándar, como los otros de trabajo.",
   },
   supervision: {
@@ -117,6 +125,7 @@ export const roles: Record<RoleId, Role> = {
     seesBurson: true,
     writesBurson: true,
     administers: true,
+    createsOrders: false,
     summary: "Ve todo, observa, resuelve, aprueba y cancela. Administra cuentas. No registra trabajo de campo.",
   },
   aunor: {
@@ -129,6 +138,7 @@ export const roles: Record<RoleId, Role> = {
     seesBurson: false,
     writesBurson: false,
     administers: false,
+    createsOrders: false,
     summary: "Consulta el mes en su propia interfaz y deja su opinión. Nunca ve nada interno.",
   },
   burson: {
@@ -141,6 +151,7 @@ export const roles: Record<RoleId, Role> = {
     seesBurson: true,
     writesBurson: false,
     administers: false,
+    createsOrders: false,
     summary: "Consulta solo su tablero, incluidas las dos columnas de pendientes, sin acciones de escritura.",
   },
 };

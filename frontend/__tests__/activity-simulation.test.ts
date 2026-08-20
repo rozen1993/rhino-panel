@@ -1,86 +1,322 @@
 import { describe, expect, it } from "vitest";
-import { advanceActivity, approveActivity, cancelActivity, deleteObservationText, editObservationText, nextActivityStatus, observeActivity, readActivities, resolveObservation, respondToObservation, upsertActivity } from "@/lib/activity-simulation";
+import {
+  actorFromRole,
+  addInternalComment,
+  advanceActivity,
+  approveActivity,
+  cancelActivity,
+  deleteInternalComment,
+  observeActivity,
+  readActivities,
+  rejectActivity,
+  softDeleteActivity,
+  updateDelivery,
+  upsertActivity,
+} from "@/lib/activity-simulation";
 import type { ActivityDraftFields } from "@/lib/activity-draft";
-import { roles } from "@/lib/roles";
+import { activityTypes, roles } from "@/lib/roles";
 
 const fields: ActivityDraftFields = {
-  date: "2026-08-18T10:00", type: "Grabación", title: "Nueva cobertura", responsible: "Grabación",
-  status: "Programada", progress: "0%", placeName: "Peaje", placeReference: "", placeKm: "",
-  placeDirection: "", placeLatitude: "", placeLongitude: "", description: "Prueba", deliveryDate: "",
-  materialLink: "", notes: "",
+  date: "2026-08-20T10:00",
+  type: activityTypes[0],
+  title: "Nueva cobertura",
+  responsible: "Grabacion",
+  responsibleAccountId: "test-grabacion",
+  status: "Programada",
+  progress: "0%",
+  placeName: "Peaje",
+  placeReference: "",
+  placeKm: "",
+  placeDirection: "",
+  placeLatitude: "",
+  placeLongitude: "",
+  description: "Prueba",
+  deliveryDate: "",
+  materialLink: "",
+  notes: "",
 };
+const coordinator = actorFromRole(roles.coordinacion);
+const worker = actorFromRole(roles.grabacion);
+const supervisor = actorFromRole(roles.supervision);
 
-describe("simulación de actividades", () => {
-  it("guarda una actividad y luego permite editarla sin duplicarla", () => {
-    const created = upsertActivity(localStorage, fields, roles.grabacion);
-    upsertActivity(localStorage, { ...fields, title: "Cobertura editada" }, roles.grabacion, created.id);
-    const matches = readActivities(localStorage).filter((item) => item.id === created.id);
-    expect(matches).toHaveLength(1);
-    expect(matches[0].title).toBe("Cobertura editada");
+describe("dominio de actividades", () => {
+  it("deduplica una creacion reintentada con la misma llave", () => {
+    const first = upsertActivity(
+      localStorage,
+      fields,
+      roles.coordinacion,
+      undefined,
+      "same-key",
+    );
+    const second = upsertActivity(
+      localStorage,
+      fields,
+      roles.coordinacion,
+      undefined,
+      "same-key",
+    );
+    expect(second.id).toBe(first.id);
+    expect(
+      readActivities(localStorage).filter((item) => item.id === first.id),
+    ).toHaveLength(1);
   });
-
-  it("avanza el estado y registra el historial", () => {
-    const created = upsertActivity(localStorage, fields, roles.grabacion);
-    const advanced = advanceActivity(localStorage, created.id, "Grabación");
-    expect(advanced?.status).toBe("En proceso");
-    expect(advanced?.history[0]).toMatchObject({ status: "En proceso", actor: "Grabación" });
+  it("aísla la orden por cuenta responsable", () => {
+    const created = upsertActivity(localStorage, fields, roles.coordinacion);
+    const other = { ...worker, accountId: "otra-cuenta", name: "Otra" };
+    expect(advanceActivity(localStorage, created.id, other)).toMatchObject({
+      ok: false,
+    });
+    expect(advanceActivity(localStorage, created.id, worker)).toMatchObject({
+      ok: true,
+      activity: { status: "En proceso" },
+    });
   });
-
-  it("omite Por subir para Coordinación", () => {
-    expect(nextActivityStatus("Coordinación", "En proceso")).toBe("Entregada");
-    expect(nextActivityStatus("Grabación", "En proceso")).toBe("Por subir");
-    expect(nextActivityStatus("Grabación", "Entregada")).toBeNull();
+  it("no entrega sin enlace y revalida al aprobar", () => {
+    const created = upsertActivity(
+      localStorage,
+      { ...fields, status: "Por subir" },
+      roles.coordinacion,
+    );
+    expect(advanceActivity(localStorage, created.id, worker)).toMatchObject({
+      ok: false,
+    });
+    const updated = updateDelivery(
+      localStorage,
+      created.id,
+      {
+        materialLink: "https://onedrive.live.com/abc",
+        progress: "0%",
+        notes: "Listo",
+      },
+      worker,
+      created.version,
+    );
+    if (!updated.ok) throw new Error(updated.error);
+    const delivered = advanceActivity(localStorage, created.id, worker);
+    expect(delivered).toMatchObject({
+      ok: true,
+      activity: { status: "Entregada" },
+    });
+    if (!delivered.ok) return;
+    expect(
+      approveActivity(
+        localStorage,
+        created.id,
+        supervisor,
+        delivered.activity.version,
+      ),
+    ).toMatchObject({ ok: true });
   });
-
-  it("observa, recibe respuesta y vuelve exactamente al estado anterior", () => {
-    const created = upsertActivity(localStorage, { ...fields, status: "En proceso" }, roles.grabacion);
-    expect(observeActivity(localStorage, created.id, "Corrige el audio", "Supervisión").ok).toBe(true);
-    expect(readActivities(localStorage).find((item) => item.id === created.id)?.preObservationStatus).toBe("En proceso");
-    expect(resolveObservation(localStorage, created.id, "Supervisión")).toMatchObject({ ok: false });
-    expect(respondToObservation(localStorage, created.id, "Audio corregido", "Grabación").ok).toBe(true);
-    const resolved = resolveObservation(localStorage, created.id, "Supervisión");
-    expect(resolved.ok && resolved.activity.status).toBe("En proceso");
-    expect(resolved.ok && resolved.activity.observations[0].resolvedBy).toBe("Supervisión");
+  it("exige avance 100 para Edicion y Creatividad", () => {
+    const created = upsertActivity(
+      localStorage,
+      {
+        ...fields,
+        type: activityTypes[1],
+        responsible: "Edicion",
+        responsibleAccountId: "test-edicion",
+        status: "Por subir",
+        materialLink: "https://onedrive.live.com/abc",
+        progress: "75%",
+      },
+      roles.coordinacion,
+    );
+    expect(
+      advanceActivity(localStorage, created.id, actorFromRole(roles.edicion)),
+    ).toMatchObject({ ok: false });
   });
-
-  it("solo aprueba entregadas y nunca cancela una aprobada", () => {
-    const created = upsertActivity(localStorage, { ...fields, status: "En proceso" }, roles.grabacion);
-    expect(approveActivity(localStorage, created.id, "Supervisión")).toMatchObject({ ok: false });
-    const delivered = upsertActivity(localStorage, { ...fields, status: "Entregada" }, roles.grabacion, created.id);
-    expect(approveActivity(localStorage, delivered.id, "Supervisión").ok).toBe(true);
-    expect(cancelActivity(localStorage, delivered.id, "Supervisión")).toMatchObject({ ok: false });
+  it("detecta decisiones sobre una version obsoleta", () => {
+    const created = upsertActivity(
+      localStorage,
+      {
+        ...fields,
+        status: "Entregada",
+        materialLink: "https://onedrive.live.com/v1",
+      },
+      roles.coordinacion,
+    );
+    const changed = updateDelivery(
+      localStorage,
+      created.id,
+      {
+        materialLink: "https://onedrive.live.com/v2",
+        progress: "0%",
+        notes: "Nueva version",
+      },
+      worker,
+      created.version,
+    );
+    expect(changed.ok).toBe(true);
+    expect(
+      observeActivity(
+        localStorage,
+        created.id,
+        "Revisar",
+        supervisor,
+        created.version,
+      ),
+    ).toMatchObject({ ok: false });
   });
-
-  it("edita mensajes abiertos con trazabilidad pero bloquea los resueltos", () => {
-    const created = upsertActivity(localStorage, { ...fields, status: "En proceso" }, roles.grabacion);
-    const observed = observeActivity(localStorage, created.id, "Texto con eror", "Supervisión");
+  it("observa o rechaza y permite ciclos de reenvio", () => {
+    const observedBase = upsertActivity(
+      localStorage,
+      {
+        ...fields,
+        status: "Entregada",
+        materialLink: "https://onedrive.live.com/v1",
+      },
+      roles.coordinacion,
+    );
+    const observed = observeActivity(
+      localStorage,
+      observedBase.id,
+      "Corrige audio",
+      supervisor,
+      observedBase.version,
+    );
+    expect(observed).toMatchObject({
+      ok: true,
+      activity: { status: "Observada" },
+    });
     if (!observed.ok) throw new Error(observed.error);
-    const observationId = observed.activity.observations[0].id;
-    const edited = editObservationText(localStorage, created.id, observationId, "message", "Texto sin error", "Supervisión");
-    expect(edited.ok && edited.activity.observations[0].messageEditedAt).toBeTruthy();
-    respondToObservation(localStorage, created.id, "Respuesta con eror", "Grabación");
-    expect(editObservationText(localStorage, created.id, observationId, "response", "Respuesta corregida", "Grabación").ok).toBe(true);
-    resolveObservation(localStorage, created.id, "Supervisión");
-    expect(editObservationText(localStorage, created.id, observationId, "message", "Cambio tardío", "Supervisión")).toMatchObject({ ok: false });
+    const resubmitted = advanceActivity(
+      localStorage,
+      observedBase.id,
+      worker,
+      observed.activity.version,
+    );
+    expect(resubmitted).toMatchObject({
+      ok: true,
+      activity: { status: "Entregada" },
+    });
+    if (!resubmitted.ok) throw new Error(resubmitted.error);
+    expect(
+      approveActivity(
+        localStorage,
+        observedBase.id,
+        supervisor,
+        resubmitted.activity.version,
+      ),
+    ).toMatchObject({ ok: true, activity: { status: "Aprobada" } });
+    const rejectedBase = upsertActivity(
+      localStorage,
+      {
+        ...fields,
+        title: "Rechazo",
+        status: "Entregada",
+        materialLink: "https://onedrive.live.com/v1",
+      },
+      roles.coordinacion,
+    );
+    const rejected = rejectActivity(
+      localStorage,
+      rejectedBase.id,
+      "Material inutilizable",
+      false,
+      supervisor,
+      rejectedBase.version,
+    );
+    expect(rejected).toMatchObject({
+      ok: true,
+      activity: { status: "Rechazada" },
+    });
+    expect(
+      advanceActivity(localStorage, rejectedBase.id, worker),
+    ).toMatchObject({ ok: false });
   });
-
-  it("elimina una respuesta y permite reemplazarla", () => {
-    const created = upsertActivity(localStorage, { ...fields, status: "Por subir" }, roles.grabacion);
-    const observed = observeActivity(localStorage, created.id, "Revisa el material", "Supervisión");
-    if (!observed.ok) throw new Error(observed.error);
-    const observationId = observed.activity.observations[0].id;
-    respondToObservation(localStorage, created.id, "Primera respuesta", "Grabación");
-    const removed = deleteObservationText(localStorage, created.id, observationId, "response", "Grabación");
-    expect(removed.ok && removed.activity.observations[0].response).toBeUndefined();
-    expect(respondToObservation(localStorage, created.id, "Respuesta definitiva", "Grabación").ok).toBe(true);
+  it("aplica permisos en el dominio aunque se invoquen acciones directamente", () => {
+    const created = upsertActivity(
+      localStorage,
+      {
+        ...fields,
+        status: "Entregada",
+        materialLink: "https://onedrive.live.com/v1",
+      },
+      roles.coordinacion,
+    );
+    expect(
+      observeActivity(localStorage, created.id, "No autorizado", worker),
+    ).toMatchObject({ ok: false });
+    expect(
+      rejectActivity(localStorage, created.id, "No autorizado", true, coordinator),
+    ).toMatchObject({ ok: false });
+    expect(approveActivity(localStorage, created.id, worker)).toMatchObject({
+      ok: false,
+    });
+    expect(() => upsertActivity(localStorage, fields, roles.grabacion)).toThrow(
+      /Coordinación/,
+    );
   });
-
-  it("retira una observación y restaura el estado anterior", () => {
-    const created = upsertActivity(localStorage, { ...fields, status: "Entregada" }, roles.grabacion);
-    const observed = observeActivity(localStorage, created.id, "Observación equivocada", "Supervisión");
-    if (!observed.ok) throw new Error(observed.error);
-    const removed = deleteObservationText(localStorage, created.id, observed.activity.observations[0].id, "message", "Supervisión");
-    expect(removed.ok && removed.activity.status).toBe("Entregada");
-    expect(removed.ok && removed.activity.observations[0].deletedAt).toBeTruthy();
+  it("Coordinacion no altera el reporte operativo al editar datos administrativos", () => {
+    const created = upsertActivity(
+      localStorage,
+      {
+        ...fields,
+        status: "Entregada",
+        progress: "100%",
+        materialLink: "https://onedrive.live.com/original",
+        notes: "Mensaje del operario",
+      },
+      roles.coordinacion,
+    );
+    const edited = upsertActivity(
+      localStorage,
+      {
+        ...fields,
+        title: "Título administrativo actualizado",
+        status: "Programada",
+        progress: "0%",
+        materialLink: "https://onedrive.live.com/sobrescrito",
+        notes: "Mensaje sobrescrito",
+      },
+      roles.coordinacion,
+      created.id,
+    );
+    expect(edited).toMatchObject({
+      title: "Título administrativo actualizado",
+      status: "Entregada",
+      progress: 100,
+      materialLink: "https://onedrive.live.com/original",
+      deliveryMessage: "Mensaje del operario",
+    });
+  });
+  it("solo Coordinacion cancela y elimina logicamente antes de iniciar", () => {
+    const created = upsertActivity(localStorage, fields, roles.coordinacion);
+    expect(
+      cancelActivity(localStorage, created.id, "Motivo", supervisor),
+    ).toMatchObject({ ok: false });
+    expect(
+      cancelActivity(localStorage, created.id, "Cambio de plan", coordinator),
+    ).toMatchObject({ ok: true });
+    const removable = upsertActivity(
+      localStorage,
+      { ...fields, title: "Retirable" },
+      roles.coordinacion,
+    );
+    expect(
+      softDeleteActivity(
+        localStorage,
+        removable.id,
+        "Orden duplicada",
+        coordinator,
+      ),
+    ).toMatchObject({ ok: true });
+  });
+  it("solo el autor elimina su comentario", () => {
+    const created = upsertActivity(localStorage, fields, roles.coordinacion);
+    const added = addInternalComment(
+      localStorage,
+      created.id,
+      "Coordinar horario",
+      coordinator,
+    );
+    if (!added.ok) throw new Error(added.error);
+    const id = added.activity.comments[0].id;
+    expect(
+      deleteInternalComment(localStorage, created.id, id, worker),
+    ).toMatchObject({ ok: false });
+    expect(
+      deleteInternalComment(localStorage, created.id, id, coordinator),
+    ).toMatchObject({ ok: true });
   });
 });

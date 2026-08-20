@@ -22,9 +22,9 @@ describe("seguridad defensiva del frontend", () => {
     expect(screen.queryByText("Resumen semanal de seguridad vial")).toBeNull();
   });
 
-  it("impide editar por URL una actividad de otro tipo", () => {
+  it("impide editar por URL una actividad de otra cuenta", async () => {
     render(<ActivityForm activityId="resumen-seguridad" editing role={roles.grabacion} />);
-    expect(screen.getByText("No puedes editar esta actividad")).toBeDefined();
+    await waitFor(() => expect(screen.getByText("No puedes editar esta actividad")).toBeDefined());
     expect(screen.queryByLabelText(/^Título/)).toBeNull();
   });
 

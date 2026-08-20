@@ -585,8 +585,9 @@ requerimiento y habría que inventar.
   —el responsable en Coordinación, la ubicación en vía, o el avance y los pendientes de Eduardo—. Se
   detecta recorriendo los cinco perfiles **en móvil** antes de congelar el diseño.
 
-**Cómo se decidió.** Claude y Codex derivaron la respuesta por separado, sin verse, según el
-`protocolo-universal-v4.md` §11. Coincidieron, lo que sitúa esta decisión entre las de riesgo bajo.
+**Cómo se decidió.** Claude y Codex derivaron la respuesta por separado, sin verse, mediante el
+mecanismo hoy formalizado en `protocolo-doble-derivacion-v1.md`. Coincidieron, lo que sitúa esta
+decisión entre las de riesgo bajo.
 
 ---
 

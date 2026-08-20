@@ -17,7 +17,7 @@ function formatMoment(value: string) { const date = new Date(value); return Numb
 export function ActivityHistory({ role }: { role: Role }) {
   const stored = useSimulatedActivities();
   const { corrupt } = useActivityStoreHealth();
-  const allowed = role.seesAllActivities ? stored : stored.filter((activity) => activity.type === role.activityType);
+  const allowed = (role.seesAllActivities ? stored : stored.filter((activity) => activity.responsibleAccountId === role.accountId)).filter((activity) => !activity.deletedAt);
   const [query, setQuery] = useState(""); const [month, setMonth] = useState("2026-08"); const [type, setType] = useState(""); const [status, setStatus] = useState(""); const [order, setOrder] = useState<"newest" | "oldest">("newest"); const [page, setPage] = useState(1);
   const months = useMemo(() => Array.from(new Set(allowed.map((activity) => activity.dateTime.slice(0, 7)).filter(Boolean))).sort().reverse(), [allowed]);
   const filtered = useMemo(() => allowed.filter((activity) => {

@@ -4,8 +4,8 @@ Registro de incidentes reales que causaron retrabajo, fallo de una puerta de sal
 inesperado, gasto significativo de contexto o tiempo, conflicto entre Claude y Codex, o riesgo de
 seguridad o datos.
 
-Alimenta el ciclo de automejora del `protocolo-universal-v4.md` §12. Una regla sin incidente detrás es
-una regla sin evidencia.
+Alimenta la mejora del flujo definido en `CLAUDE.md` y del protocolo de doble derivación. Una regla
+sin incidente detrás es una regla sin evidencia.
 
 ---
 

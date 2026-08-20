@@ -10,7 +10,7 @@ import { StatusPill, internalStatuses } from "@/components/status-pill";
 describe("familias de estado", () => {
   it("renderiza los siete estados internos con signo", () => {
     const { container } = render(<>{internalStatuses.map((status) => <StatusPill key={status} status={status} />)}</>);
-    expect(container.querySelectorAll("span > span")).toHaveLength(7);
+    expect(container.querySelectorAll("span > span")).toHaveLength(8);
     internalStatuses.forEach((status) => expect(screen.getByText(status)).toBeDefined());
   });
 

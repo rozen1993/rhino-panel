@@ -193,14 +193,15 @@ El proyecto termina únicamente cuando existe una **plataforma publicada y utili
 
 # FLUJO DE TRABAJO
 
-Este proyecto se rige por `protocolo-universal-v4.md`. Este archivo define **qué hay que construir**; el protocolo universal define **cómo trabajan Marco, Claude y Codex**.
+Este archivo define qué construir y cómo trabajar en este proyecto. Claude y Codex son familias distintas y pares funcionales: ninguna tiene jerarquía permanente sobre la otra. El liderazgo se asigna según la tarea y Marco conserva la decisión final.
+
+Para decisiones difíciles o trabajos que necesiten ejecución o revisión cruzada se activa Claudex: `/claudex` en Claude Code y `$claudex` en Codex. Ambas habilidades locales aplican `protocolo-doble-derivacion-v1.md`.
 
 ## Jerarquía
 1. Decisión explícita de Marco.
-2. `protocolo-universal-v4.md`.
-3. Este `CLAUDE.md`.
-4. Documentos de `docs/`.
-5. Código existente.
+2. Este `CLAUDE.md`.
+3. Documentos de `docs/`.
+4. Código existente.
 
 Una decisión nueva de Marco debe trasladarse al archivo correspondiente para que no dependa del chat.
 
@@ -218,14 +219,14 @@ No crear todos por anticipado: cada archivo nace cuando su fase lo necesita.
 
 ## Ciclo de cada unidad de trabajo
 1. Marco fija objetivo y fase activa.
-2. Claude lee las fuentes de verdad necesarias.
-3. Claude convierte el objetivo en contrato, criterios de aceptación y prueba.
+2. Se asigna el agente principal según la tarea, capacidad necesaria, contexto y costo.
+3. El agente principal lee las fuentes de verdad y convierte el objetivo en contrato, criterios de aceptación y prueba. Si la decisión cumple las condiciones de doble derivación, se activa el protocolo antes de elegir solución.
 4. Marco aprueba cuando la tarea implica una decisión de producto/diseño/alcance.
 5. El árbol queda limpio y el contrato se guarda.
-6. Codex ejecuta dentro de las fronteras autorizadas.
+6. El agente designado ejecuta dentro de las fronteras autorizadas; solo un agente escribe cada superficie.
 7. Se ejecuta la verificación mecánica.
-8. Codex hace una segunda revisión contra el contrato.
-9. Claude revisa solo riesgo concentrado: autenticación, permisos, RLS, migraciones, datos, estados y fallos reportados.
+8. Una sesión independiente revisa contrato, diff y evidencia sin editar en la primera pasada.
+9. La otra familia interviene cuando aporte contraste real, especialmente en autenticación, permisos, RLS, migraciones, datos, estados y fallos reportados.
 10. Marco realiza la prueba de la puerta de salida.
 11. Se actualizan estado y decisiones.
 12. Solo entonces se abre la siguiente unidad o fase.
@@ -585,7 +586,7 @@ Realizar:
 - repositorio limpio;
 - documentación final;
 - registro de mejoras futuras;
-- revisión de incidentes que puedan mejorar `protocolo-universal-v4.md`.
+- revisión de incidentes que puedan mejorar este flujo de trabajo o `protocolo-doble-derivacion-v1.md`.
 
 Marco realiza los recorridos finales utilizando el frontend ya congelado como interfaz del sistema.
 

@@ -1,4 +1,4 @@
-export const internalStatuses = ["Programada", "En proceso", "Por subir", "Entregada", "Observada", "Aprobada", "Cancelada"] as const;
+export const internalStatuses = ["Programada", "En proceso", "Por subir", "Entregada", "Observada", "Rechazada", "Aprobada", "Cancelada"] as const;
 export type InternalStatus = (typeof internalStatuses)[number];
 
 const config: Record<InternalStatus, { sign: string; className: string }> = {
@@ -7,6 +7,7 @@ const config: Record<InternalStatus, { sign: string; className: string }> = {
   "Por subir": { sign: "↑", className: "bg-amber text-ink" },
   Entregada: { sign: "✓", className: "bg-blue text-white" },
   Observada: { sign: "!", className: "bg-observed text-white" },
+  Rechazada: { sign: "x", className: "bg-red text-white" },
   Aprobada: { sign: "★", className: "bg-green text-ink" },
   Cancelada: { sign: "×", className: "bg-status-gray text-white" },
 };

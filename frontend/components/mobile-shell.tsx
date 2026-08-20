@@ -32,7 +32,7 @@ export async function MobileShell({
   const initials = role.label.slice(0, 2).toUpperCase();
   return (
     <div className="mx-auto min-h-screen w-full max-w-[390px] bg-paper pb-[4.75rem] md:max-w-[768px] lg:grid lg:max-w-none lg:grid-rows-[4rem_1fr] lg:pb-0">
-      <TopBar backHref={backHref} initials={initials} name={role.label} />
+      <TopBar backHref={backHref} initials={initials} name={role.accountName ?? role.label} role={role} />
       <div className="min-w-0 lg:grid lg:grid-cols-[14rem_minmax(0,1fr)]">
         <aside className="hidden min-h-[calc(100vh-4rem)] lg:block">
           <NavBar active={active} presentation="desktop" role={role} />

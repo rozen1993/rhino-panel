@@ -1,15 +1,11 @@
 import type { InternalStatus } from "@/components/status-pill";
 
-export type SupervisionAction = "Observar" | "Aprobar" | "Cancelar";
+export type SupervisionAction = "Observar" | "Rechazar" | "Aprobar";
 
 export function getSupervisionActions(status: InternalStatus): readonly SupervisionAction[] {
-  if (status === "Aprobada" || status === "Cancelada") return [];
+  if (status !== "Entregada") return [];
 
   const actions: SupervisionAction[] = [];
-  if (status === "En proceso" || status === "Por subir" || status === "Entregada") {
-    actions.push("Observar");
-  }
-  if (status === "Entregada") actions.push("Aprobar");
-  actions.push("Cancelar");
+  actions.push("Observar", "Rechazar", "Aprobar");
   return actions;
 }

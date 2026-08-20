@@ -2,10 +2,14 @@ import { ActivityForm } from "@/components/activity-form";
 import { MobileShell, requireRole } from "@/components/mobile-shell";
 
 export default async function NewActivityPage({ searchParams }: PageProps<"/actividades/nueva">) {
-  const role = await requireRole((r) => r.kind === "trabajo");
+  const role = await requireRole((r) => r.createsOrders || r.kind === "trabajo");
   const editParam = (await searchParams).editar;
   const activityId = Array.isArray(editParam) ? editParam[0] : editParam;
   const editing = Boolean(activityId);
+  if (!editing && !role.createsOrders) {
+    const { redirect } = await import("next/navigation");
+    redirect("/sin-acceso");
+  }
   return (
     <MobileShell backHref={editing ? `/actividades/${activityId}` : "/actividades"} role={role}>
       <main className="space-y-4 px-3 py-4 md:px-6 md:py-6 lg:px-7">

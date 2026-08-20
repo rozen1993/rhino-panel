@@ -6,6 +6,7 @@ export type ActivityDraftFields = {
   type: ActivityType;
   title: string;
   responsible: string;
+  responsibleAccountId?: string;
   status: string;
   progress: string;
   placeName: string;

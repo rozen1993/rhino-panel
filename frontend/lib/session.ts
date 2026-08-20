@@ -16,12 +16,15 @@ import { accountsCookieName, parseAccountsCookie } from "@/lib/accounts";
 
 export const SESSION_COOKIE = "rhino_rol_prueba";
 export const SESSION_ACCOUNT_COOKIE = "rhino_cuenta_prueba";
+export const SESSION_ACTIVE_ROLE_COOKIE = "rhino_rol_activo_prueba";
 
 /** Un usuario de prueba por rol (D-053). Credenciales simuladas, no secretas. */
-export const testUsers: readonly { roleId: RoleId; user: string; password: string }[] = roleIds.map((id) => ({
+export const testUsers: readonly { roleId: RoleId; roleIds: readonly RoleId[]; user: string; password: string; accountId: string }[] = roleIds.map((id) => ({
   roleId: id,
+  roleIds: [id],
   user: id,
   password: `${id}2026`,
+  accountId: `test-${id}`,
 }));
 
 export function findTestUser(user: string, password: string, accountsCookie?: string) {
@@ -30,7 +33,7 @@ export function findTestUser(user: string, password: string, accountsCookie?: st
     let decoded = accountsCookie;
     try { decoded = decodeURIComponent(accountsCookie); } catch { /* cookie inválida: el parser devolverá vacío */ }
     const account = parseAccountsCookie(decoded).find((candidate) => candidate.u.toLowerCase() === clean && candidate.p === password && candidate.a && candidate.r.length > 0);
-    return account ? { roleId: account.r[0], user: account.u, password: account.p, accountId: account.i } : undefined;
+    return account ? { roleId: account.r[0], roleIds: account.r, user: account.u, password: account.p, accountId: account.i } : undefined;
   }
   return testUsers.find((candidate) => candidate.user === clean && candidate.password === password);
 }
@@ -44,12 +47,17 @@ export async function currentRole(): Promise<Role | null> {
   const store = await cookies();
   const accountId = store.get(SESSION_ACCOUNT_COOKIE)?.value;
   const accountsCookie = store.get(accountsCookieName)?.value;
+  let accountName: string | undefined;
+  let availableRoleIds: RoleId[] | undefined;
   if (accountId && accountsCookie) {
     let decoded = accountsCookie;
     try { decoded = decodeURIComponent(accountsCookie); } catch { return null; }
     const account = parseAccountsCookie(decoded).find((candidate) => candidate.i === accountId);
     if (!account?.a) return null;
+    availableRoleIds = account.r;
+    accountName = account.u;
   }
-  const value = store.get(SESSION_COOKIE)?.value;
-  return isRoleId(value) ? roles[value] : null;
+  const value = store.get(SESSION_ACTIVE_ROLE_COOKIE)?.value ?? store.get(SESSION_COOKIE)?.value;
+  if (!isRoleId(value) || (availableRoleIds && !availableRoleIds.includes(value))) return null;
+  return { ...roles[value], accountId, accountName, availableRoleIds };
 }
