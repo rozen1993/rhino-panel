@@ -1,37 +1,27 @@
 # Estado
 
-**Actualizado:** 2026-08-19
+**Actualizado:** 2026-08-20
 
 ## Fase activa
 
-**Fase 3 — Validación y handoff del frontend.** La construcción funcional de la Fase 2 está completa con datos simulados. Aún no se congela ni se considera aprobada: falta la revisión de Marco en dispositivo real.
+El frontend simulado implementa el modelo operativo acordado de tres roles: **Operario**, **Admin** y **Burson**. El modelo anterior de Coordinación, Supervisión y AUNOR quedó retirado de las rutas activas.
 
-La aplicación cubre los ocho perfiles definidos: Grabación, Edición, Coordinación, Creatividad, Locución, Supervisión/Administración, AUNOR y Burson. Incluye actividades, borradores, edición y eliminación de mensajes propios, observaciones internas, aprobación/cancelación, feedback AUNOR, tablero Burson, historial, cuentas y protección de rutas.
+El Histórico es ahora un calendario anual de doce meses basado en la dirección visual `01-malla-anual-clasica`. Soporta días individuales, rangos continuos y varios rangos discontinuos por actividad. Al seleccionar una fecha muestra responsable, estado, fechas, descripción, opinión y enlace seguro de OneDrive.
 
 ## Validación automatizada
 
-- `npm run verify`: TypeScript estricto, ESLint, 59 pruebas unitarias y build de producción.
-- `npm run test:e2e`: 11 recorridos de Playwright sobre roles, permisos, persistencia de borradores, supervisión, AUNOR, Burson, 404 y viewports móvil/tablet/escritorio.
-- La persistencia y autenticación siguen siendo simuladas mediante navegador/cookies; no son aptas para producción.
+- TypeScript estricto: aprobado.
+- ESLint: aprobado.
+- Vitest: 5 pruebas del nuevo contrato aprobadas.
+- Build de producción: aprobado.
+- Playwright: 2 recorridos aprobados, incluidos los viewports 390×844, 768×1024, 1366×900 y 1920×1080.
 
-## Puerta de salida
+La persistencia y autenticación siguen siendo simuladas mediante navegador y cookies. Antes de producción deben sustituirse por autorización de servidor, base de datos y auditoría persistente.
 
-Marco debe recorrer `http://localhost:3000` en al menos un teléfono real y un equipo de escritorio, confirmar contenido, diseño y flujos por rol, y registrar correcciones. Con esa aprobación se congela el frontend y se inicia la integración backend.
+## Referencias visuales
 
-## Pendientes externos o de producto
-
-- Definir proveedor y estructura definitiva del enlace de material (OneDrive u otro).
-- Confirmar catálogo de servicios/roles con César si difiere del mock actual.
-- Definir exportación del historial.
-- Definir recuperación de contraseña.
-- Sustituir mocks, `localStorage` y cookies de prueba por autenticación, base de datos, autorización en servidor y auditoría real durante la Fase 4.
-
-## Documentos vigentes
-
-- `docs/handoff-frontend.md`: contrato técnico y funcional para backend.
-- `docs/validacion-frontend.md`: alcance de pruebas y lista de aprobación manual.
-- `docs/decisiones.md` y `docs/decisiones-pendientes.md`: decisiones cerradas y abiertas.
-- `docs/fase-0-concepcion.md`, `docs/fase-1-ux.md` y `docs/sistema-diseno.md`: definición funcional y visual.
+- `diseno/historico-calendario-opciones/01-malla-anual-clasica.png`
+- `diseno/historico-calendario-responsive/`
 
 ## Ejecución local
 

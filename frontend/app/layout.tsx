@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Rhino Audiovisuales",
-  description: "Plataforma de producción y supervisión de Rhino Audiovisuales",
+  description: "Plataforma de gestión de actividades de Rhino Audiovisuales",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -1,51 +1,29 @@
 # Contrato de handoff del frontend
 
-**Versión:** 2026-08-20 — implementado en simulación, pendiente de aprobación de Marco.
+**Versión:** 2026-08-20 — modelo operativo de tres roles.
 
 ## Entidades
 
-- **Cuenta:** id, usuario, nombre visible, roles, rol activo y estado. Desactivar revoca la sesión.
-- **Actividad:** id, tipo operativo, orden administrativa, cuenta responsable, estado, versión,
-  ubicación, avance cuando aplica, enlace, mensaje privado, autor y auditoría.
-- **Versión de entrega:** campo, valor, cuenta, rol, fecha y motivo opcional.
-- **Observación/rechazo:** motivo supervisor, fecha, respuesta, resolución y permiso de reenvío.
-- **Comentario interno:** autor, rol, texto, fechas de creación/edición/eliminación.
+- **Cuenta:** un solo rol (`operario`, `admin` o `burson`), estado activo y marca opcional `bursonLinked` exclusiva de Operario. Debe existir exactamente un operario especial activo.
+- **Actividad:** origen (`operario` o `burson`), responsable, tipo, título, descripción, lugar, uno o más rangos de fechas, estado, enlace, opinión, versión y auditoría.
+- **Conversación privada:** mensajes visibles únicamente para Admin y el operario responsable, con autoría, edición y eliminación lógica auditadas.
 
 ## Permisos
 
-- Solo Coordinación crea, asigna y edita datos administrativos.
-- La cuenta responsable consulta y actualiza únicamente sus órdenes.
-- Coordinación y Supervisión consultan todas.
-- Solo Supervisión observa, rechaza y aprueba.
-- Solo Coordinación cancela, con motivo, salvo una orden ya aprobada.
-- Solo Coordinación elimina lógicamente órdenes no iniciadas.
-- Solo el autor edita o elimina sus mensajes y comentarios.
-- Toda autorización debe repetirse en el servidor; ocultar controles no basta.
+- El Operario registra las actividades comunicadas por teléfono, consulta las propias y las avanza. El operario especial también ve todos los encargos Burson y responde por ellos.
+- Burson crea encargos que se asignan automáticamente al operario especial. Puede editar o eliminar sus encargos mientras estén Programados y consulta estado, enlace y opinión del operario.
+- Admin ve todas las actividades, cuentas e Histórico. No cambia estados ni entregas. Puede iniciar una conversación privada después de la entrega; ese primer mensaje bloquea cambios posteriores al enlace y la opinión.
+- Burson nunca accede a la conversación Admin–Operario.
+- La eliminación de actividades es lógica y conserva motivo, autor y auditoría.
 
-## Estados
+## Estados y fechas
 
-`Programada → En proceso → Por subir → Entregada → Aprobada`.
+La transición única es `Programada → En proceso → Entregada` y solo la ejecuta el operario responsable. La entrega exige un enlace HTTPS de OneDrive o SharePoint. “Atrasada” es un indicador calculado respecto de las fechas, no un estado.
 
-- `Entregada → Observada → Entregada` para correcciones menores.
-- `Entregada → Rechazada → Entregada` cuando se permite reenviar.
-- Un rechazo sin reenvío queda terminal hasta cancelación de Coordinación.
-- Grabación/Locución requieren enlace; Edición/Creatividad requieren enlace y avance 100%.
-- Aprobar vuelve a validar entrega y rechaza una versión obsoleta con `409`.
+Una actividad admite un día, un rango continuo o varios rangos discontinuos. El estado, enlace y opinión son globales para toda la actividad.
 
-## Operaciones del backend
+## Histórico
 
-- Sesión con cuenta y rol activo validado contra los roles asignados.
-- Listados por `responsibleAccountId`, rol, mes, tipo y estado.
-- Creación idempotente de órdenes y actualizaciones con `version`/`updatedAt`.
-- Transiciones atómicas con historial inmutable.
-- Comentarios internos con autoría y eliminación lógica.
-- Histórico de versiones de enlace, avance y mensaje privado.
-- Enlace histórico persistente y restringido a HTTPS de OneDrive/SharePoint.
+Es exclusivo de Admin y muestra los doce meses del año sin filtros. Los tipos se distinguen por color; los rangos se dibujan de forma continua y cualquier fecha marcada abre el detalle. En móvil usa una columna y hoja inferior; en tablet dos columnas y panel lateral; en laptop una malla 4×3 con panel superpuesto; en PC una malla 4×3 con detalle permanente.
 
-## Errores esperados
-
-`401` sin sesión, `403` sin permiso, `404` inexistente, `409` versión/transición en conflicto y `422`
-para datos inválidos. El cliente conserva borradores recuperables y no duplica reintentos.
-
-Los stores y cookies actuales son adaptadores temporales. No deben migrarse contraseñas de demostración
-ni confiarse permisos reales a datos controlados por el navegador.
+Los stores y cookies actuales son adaptadores temporales. Toda autorización deberá repetirse en el backend; ocultar controles en el cliente no constituye seguridad.
