@@ -20,14 +20,14 @@ export default function AccessPage() {
         <Card className="p-4"><LoginForm /></Card>
 
         <section aria-labelledby="test-users-title" className="space-y-2">
-          <div><p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-blue">Solo en pruebas</p><h2 className="mt-1 text-base font-bold" id="test-users-title">Un usuario por rol</h2></div>
+          <div><p className="text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-blue">Solo en pruebas</p><h2 className="mt-1 text-base font-bold" id="test-users-title">Cuentas de prueba</h2></div>
           <aside className="rounded-[5px] border border-amber bg-amber/15 p-3 text-xs font-semibold leading-5 text-ink">
             Credenciales simuladas de Fase 2 para recorrer la plataforma como cada rol. No hay servidor
             ni autenticación real: esto no protege nada y se elimina antes de producción.
           </aside>
           <ul className="grid gap-2 md:grid-cols-2">
-            {testUsers.map(({ roleId, user, password }) => (
-              <li key={roleId}>
+            {testUsers.map(({ roleId, user, password, accountId }) => (
+              <li key={accountId}>
                 <Card className="p-3">
                   <p className="text-sm font-bold">{roles[roleId].label}</p>
                   <p className="mt-1 font-mono text-xs text-ink-muted">{user} · {password}</p>
