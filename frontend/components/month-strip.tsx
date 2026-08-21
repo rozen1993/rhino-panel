@@ -2,17 +2,5 @@ export const months = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "
 
 export function MonthStrip({ counts, activeMonth }: { counts: readonly number[]; activeMonth: (typeof months)[number] }) {
   if (counts.length !== months.length) throw new Error("MonthStrip necesita exactamente doce conteos.");
-  return (
-    <ol aria-label="Actividades por mes" className="grid grid-cols-12 overflow-hidden rounded-[5px] border border-line bg-panel">
-      {months.map((month, index) => {
-        const active = month === activeMonth;
-        return (
-          <li aria-current={active ? "date" : undefined} className={`flex min-w-0 flex-col items-center justify-center border-r border-line px-0.5 py-2 text-center last:border-r-0 sm:min-h-17 sm:px-2 md:min-h-20 md:px-3 ${active ? "bg-blue text-white" : "text-ink"}`} key={month}>
-            <span className="text-[0.5625rem] font-bold sm:text-xs">{month}</span>
-            <span className="mt-0.5 text-sm font-bold tabular-nums sm:text-lg">{counts[index]}</span>
-          </li>
-        );
-      })}
-    </ol>
-  );
+  return <div className="overflow-x-auto rounded-[10px] border border-line bg-panel shadow-[0_8px_24px_rgba(2,19,38,0.05)]"><ol aria-label="Actividades por mes" className="flex min-w-max divide-x divide-line lg:min-w-full">{months.map((month, index) => { const active = month === activeMonth; return <li aria-current={active ? "date" : undefined} className={`flex min-h-16 min-w-[5.25rem] flex-1 flex-col items-center justify-center px-3 text-center transition-colors ${active ? "bg-lime text-night" : "text-ink hover:bg-panel-secondary"}`} key={month}><span className="text-[0.625rem] font-extrabold tracking-[0.12em]">{month}</span><span className="mt-1 text-lg font-extrabold tabular-nums">{counts[index]}</span></li>; })}</ol></div>;
 }

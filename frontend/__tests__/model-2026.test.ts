@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { defaultAccounts } from "@/lib/accounts";
 import { createBursonActivity, createOwnActivity, advanceActivity, actorFromRole, readActivities } from "@/lib/activity-simulation";
 import { activityTypes, roleIds, roles } from "@/lib/roles";
+import { accountStoreKey, readAccounts, upsertAccount } from "@/lib/account-store";
 
 class MemoryStorage {
   private values = new Map<string, string>();
@@ -31,6 +32,18 @@ describe("modelo operativo 2026", () => {
 
   it("mantiene exactamente un operario activo vinculado a Burson", () => {
     expect(defaultAccounts.filter((account) => account.active && account.roleId === "operario" && account.bursonLinked)).toHaveLength(1);
+  });
+
+  it("transfiere atómicamente el vínculo Burson a otro operario", () => {
+    const storage = new MemoryStorage();
+    storage.setItem(accountStoreKey, JSON.stringify(defaultAccounts));
+    const ana = defaultAccounts.find((account) => account.id === "account-ana")!;
+    const result = upsertAccount(storage, { name: ana.name, username: ana.username, password: ana.password, roleId: "operario", bursonLinked: true }, "Marco Admin", ana.id);
+    expect(result.ok).toBe(true);
+    const accounts = readAccounts(storage);
+    expect(accounts.filter((account) => account.active && account.bursonLinked)).toHaveLength(1);
+    expect(accounts.find((account) => account.id === "account-ana")?.bursonLinked).toBe(true);
+    expect(accounts.find((account) => account.id === "account-luis")?.bursonLinked).toBe(false);
   });
 
   it("crea una actividad propia programada con fechas discontinuas", () => {

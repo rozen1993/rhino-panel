@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/.verificacion/current-*.png
+/.verificacion/playwright-existing-results/
 
 # next.js
 /.next/

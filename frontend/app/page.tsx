@@ -1,32 +1,9 @@
 import Link from "next/link";
-import { Card } from "@/components/card";
 
 export default function HomePage() {
-  return (
-    <div className="mx-auto flex min-h-screen w-full max-w-[390px] flex-col bg-paper md:max-w-[768px] lg:max-w-none">
-      <header className="flex min-h-16 items-center border-b border-line bg-panel px-4">
-        <span className="text-base font-bold tracking-tight">Rhino Audiovisuales</span>
-      </header>
-      <main className="flex flex-1 flex-col justify-between gap-8 px-3 py-5 md:px-7 md:py-8 lg:mx-auto lg:w-full lg:max-w-5xl lg:py-16">
-        <section className="space-y-5">
-          <div className="border-l-[3px] border-blue pl-4">
-            <p className="text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-blue">Plataforma de producción</p>
-            <h1 className="mt-3 max-w-[18rem] text-[2.45rem] font-bold leading-[1.02] tracking-[-0.04em]">El trabajo audiovisual, en orden.</h1>
-            <p className="mt-4 max-w-[20rem] text-base leading-6 text-ink-muted">Planifica, entrega y supervisa cada actividad desde un solo lugar.</p>
-          </div>
-
-          <Card className="overflow-hidden">
-            <div className="grid grid-cols-[4rem_1fr] border-b border-line"><span className="bg-blue px-3 py-4 text-center text-xs font-bold text-white">01</span><span className="px-4 py-4 text-sm font-bold">Planificar el trabajo</span></div>
-            <div className="grid grid-cols-[4rem_1fr] border-b border-line"><span className="bg-panel-secondary px-3 py-4 text-center text-xs font-bold tabular-nums">02</span><span className="px-4 py-4 text-sm font-bold">Compartir el material por enlace</span></div>
-            <div className="grid grid-cols-[4rem_1fr]"><span className="bg-panel-secondary px-3 py-4 text-center text-xs font-bold tabular-nums">03</span><span className="px-4 py-4 text-sm font-bold">Cerrar cada entrega con claridad</span></div>
-          </Card>
-        </section>
-
-        <div>
-          <Link className="flex min-h-12 w-full items-center justify-center rounded-[5px] border border-amber bg-amber px-5 py-2 text-sm font-bold text-ink" href="/acceso">Entrar a la plataforma</Link>
-          <p className="mt-3 text-center text-xs text-ink-muted">Acceso para personas autorizadas.</p>
-        </div>
-      </main>
-    </div>
-  );
+  return <main className="technical-surface flex min-h-screen flex-col px-5 py-6 text-white sm:px-10 lg:px-16">
+    <header className="relative z-10 flex items-center justify-between"><span className="brand-condensed text-xl">CONTROL DE ACTIVIDADES<small className="mt-1 block font-sans text-[0.55rem] tracking-[0.2em] text-blue">RHINO AUDIOVISUALES</small></span><span className="text-xs text-white/65">Acceso privado</span></header>
+    <section className="relative z-10 my-auto max-w-4xl py-16"><p className="text-xs font-extrabold tracking-[0.2em] text-blue">GESTIÓN AUDIOVISUAL</p><h1 className="brand-condensed mt-4 max-w-4xl text-5xl leading-[.95] drop-shadow-xl sm:text-7xl lg:text-8xl">EL TRABAJO AUDIOVISUAL, BAJO CONTROL.</h1><span className="mt-6 block h-1 w-16 bg-amber" /><p className="mt-6 max-w-xl text-base leading-7 text-white/70 sm:text-lg">Programa, registra y entrega cada actividad desde una plataforma creada para el ritmo real del equipo.</p><Link className="mt-8 inline-flex min-h-12 items-center rounded-md bg-amber px-7 font-extrabold text-[#173000] shadow-[0_8px_24px_rgba(132,214,0,.22)]" href="/acceso">Entrar a la plataforma&nbsp; ›</Link></section>
+    <p className="relative z-10 text-xs text-white/45">Rhino Audiovisuales · 2026</p>
+  </main>;
 }

@@ -8,7 +8,7 @@ import { toggleAccount, upsertAccount, useAccounts } from "@/lib/account-store";
 import type { Account, AccountFields } from "@/lib/accounts";
 import { roleIds, roles, type Role } from "@/lib/roles";
 
-const control = "min-h-11 w-full rounded-[5px] border border-line bg-panel px-3 py-2 text-sm";
+const control = "min-h-11 w-full rounded-md border border-line bg-panel px-3 py-2 text-sm outline-none transition focus:border-cyan focus:ring-2 focus:ring-cyan/15";
 const emptyFields: AccountFields = { name: "", username: "", password: "", roleId: "operario", bursonLinked: false };
 
 export function AccountsDashboard({ role }: { role: Role }) {
