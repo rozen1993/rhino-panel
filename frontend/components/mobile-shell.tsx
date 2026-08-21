@@ -9,7 +9,7 @@ export async function requireRole(allow?: (role: Role) => boolean): Promise<Role
 
 export async function MobileShell({ children, role, active = "Actividades", backHref }: { children: ReactNode; role: Role; active?: NavLabel; backHref?: string }) {
   const initials = (role.accountName ?? role.label).split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
-  return <div className="min-h-screen bg-paper pb-[4.25rem] md:grid md:grid-rows-[4.5rem_1fr] md:pb-0">
+  return <div className="app-surface min-h-screen bg-paper pb-[4.25rem] md:grid md:grid-rows-[4.5rem_1fr] md:pb-0">
     <TopBar backHref={backHref} initials={initials} name={role.accountName ?? role.label} roleLabel={role.bursonLinked ? "Operario especial · encargos Burson" : role.label} />
     <div className="min-w-0 md:grid md:grid-cols-[5.125rem_minmax(0,1fr)] lg:grid-cols-[13.625rem_minmax(0,1fr)]">
       <aside className="hidden min-h-[calc(100vh-4.5rem)] md:block"><NavBar active={active} presentation="desktop" role={role} /></aside>
