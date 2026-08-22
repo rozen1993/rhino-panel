@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { salir } from "@/app/acceso/actions";
 import { Avatar } from "@/components/avatar";
 
 export function TopBar({ name, initials, backHref, roleLabel }: { name: string; initials: string; backHref?: string; roleLabel?: string }) {
@@ -10,7 +11,7 @@ export function TopBar({ name, initials, backHref, roleLabel }: { name: string; 
     <div className="flex items-center gap-3">
       <Avatar initials={initials} size="sm" />
       <span className="hidden leading-tight sm:block"><strong className="block text-sm">{name}</strong><small className="text-[0.6875rem] text-white/65">{roleLabel}</small></span>
-      <Link className="hidden min-h-10 items-center rounded-md border border-white/30 bg-white/[.03] px-4 text-sm font-bold transition hover:border-lime hover:bg-white/[.06] hover:text-lime md:flex" href="/acceso">Cerrar sesión</Link>
+      <form action={salir}><button aria-label="Cerrar sesión" className="flex min-h-10 items-center rounded-md border border-white/30 bg-white/[.03] px-3 text-xs font-bold transition hover:border-lime hover:bg-white/[.06] hover:text-lime sm:px-4 sm:text-sm" type="submit"><span className="sm:hidden">Salir</span><span className="hidden sm:inline">Cerrar sesión</span></button></form>
     </div>
   </header>;
 }

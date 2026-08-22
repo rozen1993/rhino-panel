@@ -16,7 +16,7 @@ describe("contrato visual Aunor", () => {
   });
 
   it("permite recorrer los meses con los controles laterales", () => {
-    render(createElement(MonthStrip, { activeMonth: "AGO", counts: Array(12).fill(0) }));
+    render(createElement(MonthStrip, { activeMonth: "AGO", counts: Array(12).fill(0), onSelect: () => undefined }));
     expect(screen.queryByText("NOV")).toBeNull();
     fireEvent.click(screen.getAllByRole("button", { name: "Meses siguientes" })[0]);
     expect(screen.getAllByText("NOV").length).toBeGreaterThan(0);

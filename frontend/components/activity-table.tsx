@@ -4,10 +4,142 @@ import type { Activity } from "@/lib/activities";
 import { formatActivityDates } from "@/components/activity-card";
 import { safeMaterialUrl } from "@/lib/external-link";
 
-const rails: Record<InternalStatus, string> = { Programada: "border-l-cyan", "En proceso": "border-l-orange", Entregada: "border-l-green" };
-function EyeIcon() { return <svg aria-hidden="true" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" /><circle cx="12" cy="12" r="2.7" /></svg>; }
-function LinkIcon() { return <svg aria-hidden="true" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8" /><path d="M19 13v6H5V5h6" /></svg>; }
+const rails: Record<InternalStatus, string> = {
+  Programada: "border-l-cyan",
+  "En proceso": "border-l-orange",
+  Entregada: "border-l-green",
+};
+function EyeIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+      <circle cx="12" cy="12" r="2.7" />
+    </svg>
+  );
+}
+function LinkIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      className="size-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      viewBox="0 0 24 24"
+    >
+      <path d="M14 5h5v5M19 5l-8 8" />
+      <path d="M19 13v6H5V5h6" />
+    </svg>
+  );
+}
 
-export function ActivityTable({ activities, showResponsible = false, selectedId, onSelect }: { activities: readonly Activity[]; showResponsible?: boolean; selectedId?: string; onSelect?: (activity: Activity) => void }) {
-  return <div className="hidden overflow-x-auto lg:block"><table className="w-full table-fixed border-collapse text-left text-[0.75rem]"><thead className="border-y border-line bg-panel-secondary text-[0.625rem] uppercase tracking-[0.12em] text-ink-muted"><tr><th className="w-[8rem] px-3 py-3">Fechas</th><th className="px-3 py-3">Actividad</th><th className="w-[8rem] px-3 py-3">Lugar</th>{showResponsible && <th className="w-[10rem] px-3 py-3">Responsable</th>}<th className="w-[8.5rem] px-3 py-3">Estado</th><th className="w-[6.5rem] px-3 py-3 text-center">Acciones</th></tr></thead><tbody className="divide-y divide-line">{activities.map((activity) => { const url = safeMaterialUrl(activity.materialLink); return <tr className={`transition-colors hover:bg-cyan/[.035] ${selectedId === activity.id ? "bg-cyan/[.055]" : ""}`} key={activity.id}><td className={`border-l-[3px] px-3 py-3.5 font-bold text-cyan-ink ${rails[activity.status]}`}>{formatActivityDates(activity)}</td><td className="px-3 py-3.5"><strong className="block text-[0.78rem] text-ink">{activity.title}</strong><span className="mt-0.5 block text-[0.6875rem] text-ink-muted">{activity.type}{activity.origin === "burson" ? " · Burson" : ""}</span></td><td className="truncate px-3 py-3.5 text-ink-muted" title={activity.place || "Sin lugar indicado"}>{activity.place || "—"}</td>{showResponsible && <td className="px-3 py-3.5 font-medium">{activity.responsible}</td>}<td className="px-3 py-3.5"><StatusPill status={activity.status} /></td><td className="px-3 py-3.5"><div className="flex justify-center gap-1.5">{onSelect ? <button aria-label={`Vista rápida de ${activity.title}`} className="grid size-9 place-items-center rounded-full border border-line bg-white text-ink transition hover:border-cyan hover:text-cyan" onClick={() => onSelect(activity)} type="button"><EyeIcon /></button> : <Link aria-label={`Ver ${activity.title}`} className="grid size-9 place-items-center rounded-full border border-line bg-white text-ink transition hover:border-cyan hover:text-cyan" href={`/actividades/${activity.id}`}><EyeIcon /></Link>}{url && <a aria-label={`Abrir material de ${activity.title}`} className="grid size-9 place-items-center rounded-full border border-line bg-white text-ink transition hover:border-lime hover:text-[#4b7f00]" href={url} rel="noreferrer" target="_blank"><LinkIcon /></a>}</div></td></tr>; })}</tbody></table></div>;
+export function ActivityTable({
+  activities,
+  showResponsible = false,
+  selectedId,
+  onSelect,
+}: {
+  activities: readonly Activity[];
+  showResponsible?: boolean;
+  selectedId?: string;
+  onSelect?: (activity: Activity) => void;
+}) {
+  return (
+    <div className="hidden overflow-x-auto md:block">
+      <table className="w-full table-fixed border-collapse text-left text-[0.75rem]">
+        <thead className="border-y border-line bg-panel-secondary text-[0.625rem] uppercase tracking-[0.12em] text-ink-muted">
+          <tr>
+            <th className="w-[8rem] px-3 py-3">Fechas</th>
+            <th className="px-3 py-3">Actividad</th>
+            <th className="w-[8rem] px-3 py-3">Lugar</th>
+            {showResponsible && (
+              <th className="w-[10rem] px-3 py-3">Responsable</th>
+            )}
+            <th className="w-[8.5rem] px-3 py-3">Estado</th>
+            <th className="w-[6.5rem] px-3 py-3 text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-line">
+          {activities.map((activity) => {
+            const url = safeMaterialUrl(activity.materialLink);
+            return (
+              <tr
+                className={`transition-colors hover:bg-cyan/[.035] ${selectedId === activity.id ? "bg-cyan/[.055]" : ""}`}
+                key={activity.id}
+              >
+                <td
+                  className={`border-l-[3px] px-3 py-3.5 font-bold text-cyan-ink ${rails[activity.status]}`}
+                >
+                  {formatActivityDates(activity)}
+                </td>
+                <td className="px-3 py-3.5">
+                  <strong className="block text-[0.78rem] text-ink">
+                    {activity.title}
+                  </strong>
+                  <span className="mt-0.5 block text-[0.6875rem] text-ink-muted">
+                    {activity.type}
+                    {activity.origin === "burson" ? " · Burson" : ""}
+                  </span>
+                </td>
+                <td
+                  className="truncate px-3 py-3.5 text-ink-muted"
+                  title={activity.place || "Sin lugar indicado"}
+                >
+                  {activity.place || "—"}
+                </td>
+                {showResponsible && (
+                  <td className="px-3 py-3.5 font-medium">
+                    {activity.responsible}
+                  </td>
+                )}
+                <td className="px-3 py-3.5">
+                  <StatusPill status={activity.status} />
+                </td>
+                <td className="px-3 py-3.5">
+                  <div className="flex justify-center gap-1.5">
+                    {onSelect ? (
+                      <button
+                        aria-label={`Vista rápida de ${activity.title}`}
+                        className="grid size-9 place-items-center rounded-full border border-line bg-white text-ink transition hover:border-cyan hover:text-cyan"
+                        onClick={() => onSelect(activity)}
+                        type="button"
+                      >
+                        <EyeIcon />
+                      </button>
+                    ) : (
+                      <Link
+                        aria-label={`Ver ${activity.title}`}
+                        className="grid size-9 place-items-center rounded-full border border-line bg-white text-ink transition hover:border-cyan hover:text-cyan"
+                        href={`/actividades/${activity.id}`}
+                      >
+                        <EyeIcon />
+                      </Link>
+                    )}
+                    {url && (
+                      <a
+                        aria-label={`Abrir material de ${activity.title}`}
+                        className="grid size-9 place-items-center rounded-full border border-line bg-white text-ink transition hover:border-lime hover:text-[#4b7f00]"
+                        href={url}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        <LinkIcon />
+                      </a>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
 }

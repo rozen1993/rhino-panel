@@ -3,7 +3,11 @@ import { Card } from "@/components/card";
 import { StatusPill } from "@/components/status-pill";
 import { firstDate, lastDate, type Activity } from "@/lib/activities";
 
-export function formatActivityDates(activity: Pick<Activity, "spans">) { const first = firstDate(activity); const last = lastDate(activity); if (!first) return "Sin fecha"; if (activity.spans.length > 1) return `${new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "short" }).format(new Date(`${first}T12:00:00`))} · ${activity.spans.length} jornadas`; return first === last ? new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "short", year: "numeric" }).format(new Date(`${first}T12:00:00`)) : `${new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "short" }).format(new Date(`${first}T12:00:00`))} – ${new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "short" }).format(new Date(`${last}T12:00:00`))}`; }
+const shortDate = new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "short", timeZone: "America/Lima" });
+const fullDate = new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "short", year: "numeric", timeZone: "America/Lima" });
+function asLimaDate(value: string) { return new Date(`${value}T12:00:00-05:00`); }
+export function formatActivityDates(activity: Pick<Activity, "spans">) { const first = firstDate(activity); const last = lastDate(activity); if (!first) return "Sin fecha"; if (activity.spans.length > 1) return `${shortDate.format(asLimaDate(first))} · ${activity.spans.length} jornadas`; return first === last ? fullDate.format(asLimaDate(first)) : `${shortDate.format(asLimaDate(first))} – ${shortDate.format(asLimaDate(last))}`; }
+export function formatActivitySpans(activity: Pick<Activity, "spans">) { if (!activity.spans.length) return "Sin fecha"; return activity.spans.map((span) => span.start === span.end ? fullDate.format(asLimaDate(span.start)) : `${shortDate.format(asLimaDate(span.start))} – ${fullDate.format(asLimaDate(span.end))}`).join(" · "); }
 
 export function ActivityCard({ activity, showResponsible = false }: { activity: Activity; showResponsible?: boolean }) {
   const rail = activity.status === "Programada" ? "border-l-cyan" : activity.status === "En proceso" ? "border-l-orange" : "border-l-green";
