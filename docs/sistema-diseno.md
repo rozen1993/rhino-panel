@@ -1,5 +1,7 @@
 # Sistema de diseño
 
+> **Documento histórico.** Desde agosto de 2026 la fuente visual vigente es `diseno/direccion-final-traducida/CONTRATO-VISUAL.md`. Las reglas siguientes solo explican la evolución anterior y no deben prevalecer sobre ese contrato.
+
 El lenguaje visual del proyecto, extraído de la dirección aprobada en **D-031**: la pieza 2, «planilla
 de rodaje».
 

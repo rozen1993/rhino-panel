@@ -1,6 +1,6 @@
 # Estado
 
-**Actualizado:** 2026-08-20
+**Actualizado:** 2026-08-21
 
 ## Fase activa
 
@@ -12,9 +12,9 @@ El Histórico es ahora un calendario anual de doce meses basado en la dirección
 
 - TypeScript estricto: aprobado.
 - ESLint: aprobado.
-- Vitest: 5 pruebas del nuevo contrato aprobadas.
+- Vitest: 14 pruebas del nuevo contrato aprobadas.
 - Build de producción: aprobado.
-- Playwright: 2 recorridos aprobados, incluidos los viewports 390×844, 768×1024, 1366×900 y 1920×1080.
+- Playwright: 3 recorridos aprobados, incluido el flujo crítico Operario–Admin y los viewports 390×844, 768×1024, 1366×900 y 1920×1080.
 
 La persistencia y autenticación siguen siendo simuladas mediante navegador y cookies. Antes de producción deben sustituirse por autorización de servidor, base de datos y auditoría persistente.
 

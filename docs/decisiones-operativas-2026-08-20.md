@@ -1,5 +1,7 @@
 # Decisiones operativas de la plataforma
 
+> **Documento histórico del modelo anterior.** Fue sustituido por `decisiones-modelo-tres-roles-2026-08-20.md`; no usar sus roles, estados ni permisos para implementar rutas activas.
+
 **Fecha:** 2026-08-20  
 **Decide:** Marco  
 **Estado:** cerrado y ejecutado como extensión aditiva de `docs/decisiones.md`.

@@ -1,5 +1,7 @@
 # Decisiones
 
+> **Archivo acumulativo con decisiones históricas.** Para el modelo implementado vigente prevalecen `decisiones-modelo-tres-roles-2026-08-20.md`, `handoff-frontend.md` y el resumen raíz `CLAUDE.md`.
+
 Decisiones de producto y arquitectura que deben sobrevivir al chat. Una decisión aquí solo cambia si
 Marco la cambia expresamente, y el cambio se escribe en este archivo.
 
