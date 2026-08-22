@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hoja de ruta acordada — Sistema R</title>
+  <style>
+    @page { size: A4; margin: 17mm 16mm 18mm; }
+    :root { --navy:#031d36; --ink:#10233f; --muted:#607389; --line:#d5e1e7; --paper:#f4f7f8; --cyan:#11b7c9; --lime:#84d600; --violet:#8b5cf6; --orange:#ff9f1c; }
+    * { box-sizing: border-box; }
+    html { color: var(--ink); background: white; font-family: "Segoe UI", Arial, sans-serif; font-size: 10.5pt; line-height: 1.48; }
+    body { margin: 0; }
+    h1, h2, h3 { margin: 0; color: var(--navy); line-height: 1.14; }
+    h1 { font-size: 29pt; letter-spacing: -.7pt; }
+    h2 { margin-top: 8mm; padding-bottom: 2mm; border-bottom: 2px solid var(--cyan); font-size: 18pt; }
+    h3 { margin-top: 5mm; font-size: 12.5pt; }
+    p { margin: 2.5mm 0; }
+    ul, ol { margin: 2.5mm 0 3mm; padding-left: 6mm; }
+    li { margin: 1.4mm 0; }
+    code { border-radius: 3px; background: #edf4f6; padding: 1px 4px; color: #006f83; font-family: Consolas, monospace; }
+    table { width: 100%; margin: 4mm 0; border-collapse: collapse; font-size: 9.2pt; }
+    th { background: var(--navy); color: white; text-align: left; }
+    th, td { border: 1px solid var(--line); padding: 2.4mm 2.7mm; vertical-align: top; }
+    tr:nth-child(even) td { background: #f7fafb; }
+    .cover { min-height: 245mm; display: flex; flex-direction: column; justify-content: space-between; background: linear-gradient(145deg, var(--navy), #064464); color: white; margin: -17mm -16mm -18mm; padding: 22mm 20mm 18mm; page-break-after: always; }
+    .cover h1 { max-width: 150mm; color: white; }
+    .cover .eyebrow { color: var(--cyan); font-size: 10pt; font-weight: 800; letter-spacing: 2.2px; text-transform: uppercase; }
+    .cover .line { width: 28mm; height: 4px; margin: 7mm 0; background: var(--lime); }
+    .cover .lead { max-width: 145mm; color: #d8e8ef; font-size: 14pt; }
+    .cover .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8mm; border-top: 1px solid #ffffff3b; padding-top: 8mm; color: #d8e8ef; font-size: 9.5pt; }
+    .badge { display: inline-block; border-radius: 999px; background: #e7f8fa; padding: 1.5mm 3mm; color: #006f83; font-size: 8.5pt; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; }
+    .decision { margin: 5mm 0; border-left: 5px solid var(--lime); border-radius: 4px; background: #f4fae9; padding: 4mm 5mm; font-size: 12pt; }
+    .note { margin: 4mm 0; border: 1px solid #bce9ee; border-radius: 6px; background: #f1fbfc; padding: 3.5mm 4mm; }
+    .warning { border-color: #f5cc8d; background: #fff8eb; }
+    .phase { margin: 4mm 0; border: 1px solid var(--line); border-radius: 7px; padding: 4mm; break-inside: avoid; }
+    .phase strong:first-child { color: #006f83; }
+    .gate { color: #376300; font-weight: 700; }
+    .small { color: var(--muted); font-size: 9pt; }
+    .page-break { page-break-before: always; }
+    .no-break { break-inside: avoid; }
+    footer { margin-top: 10mm; border-top: 1px solid var(--line); padding-top: 3mm; color: var(--muted); font-size: 8.5pt; }
+  </style>
+</head>
+<body>
+  <section class="cover">
+    <div>
+      <p class="eyebrow">Rhino Audiovisuales · Sistema R</p>
+      <div class="line"></div>
+      <h1>Hoja de ruta acordada por Claude y Codex</h1>
+      <p class="lead">Qué sigue después del frontend aprobado y cómo se divide el uso inmediato de enlaces OneDrive de una posible integración avanzada futura.</p>
+    </div>
+    <div class="meta">
+      <div><strong>Modo</strong><br>Claudex · decide · solo lectura</div>
+      <div><strong>Fecha</strong><br>21 de agosto de 2026</div>
+      <div><strong>Estado del repositorio</strong><br>Frontend aprobado y sincronizado con GitHub</div>
+      <div><strong>Decisor final</strong><br>Marco Vargas</div>
+    </div>
+  </section>
+
+  <main>
+    <span class="badge">Conclusión ejecutiva</span>
+    <h2>La decisión principal</h2>
+    <div class="decision"><strong>Primero se completa y valida la plataforma funcional.</strong> En el presente inmediato, OneDrive es solamente un enlace externo que debe guardarse, mostrarse y abrirse correctamente. La organización avanzada, los permisos internos de Microsoft y Microsoft Graph pertenecen a una segunda fase posible, no al alcance actual.</div>
+    <p>Claude y Codex analizaron de manera independiente el estado del repositorio, las pruebas y los contratos vigentes. Ambos llegaron al mismo orden de trabajo. No hubo contradicciones sustantivas; únicamente Codex detalló más la forma incremental de implementar el futuro backend.</p>
+
+    <h2>Evidencia revisada</h2>
+    <ul>
+      <li><code>CLAUDE.md</code>: modelo vigente, límites de la simulación y aplazamiento de la IA.</li>
+      <li><code>docs/estado.md</code>: estado funcional, validaciones aprobadas y persistencia todavía local.</li>
+      <li><code>docs/handoff-frontend.md</code>: contrato de roles, permisos, estados, enlaces e Histórico.</li>
+      <li><code>docs/validacion-frontend.md</code>: pruebas automatizadas y revisión manual recomendada.</li>
+      <li>Resultados confirmados: TypeScript, ESLint, 14 pruebas Vitest, build productivo y 3 recorridos Playwright, incluido el flujo Operario → entrega → Admin → bloqueo y cuatro tamaños de pantalla.</li>
+    </ul>
+
+    <h2>Coincidencias entre Claude y Codex</h2>
+    <table>
+      <thead><tr><th>Punto</th><th>Acuerdo</th><th>Consecuencia</th></tr></thead>
+      <tbody>
+        <tr><td>Paso inmediato</td><td>Realizar una aceptación manual guiada en dispositivos reales.</td><td>No iniciar todavía una fase grande nueva.</td></tr>
+        <tr><td>Cierre del frontend</td><td>Si no quedan bloqueantes, Marco acepta y congela el contrato funcional.</td><td>Los campos y flujos se vuelven la base estable del backend.</td></tr>
+        <tr><td>Producción</td><td>La simulación con <code>localStorage</code> y cookies debe sustituirse por autenticación, permisos y persistencia de servidor.</td><td>El frontend aprobado no debe confundirse con una plataforma productiva segura.</td></tr>
+        <tr><td>Implementación futura</td><td>Conviene avanzar incrementalmente, no mediante una migración monolítica.</td><td>Primero un corte vertical pequeño y comprobable.</td></tr>
+        <tr><td>Asistente IA</td><td>Debe esperar hasta contar con datos confiables y permisos reales.</td><td>La IA no forma parte del presente inmediato.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Diferencias encontradas</h2>
+    <p>No hubo desacuerdo de dirección. Claude agrupó el futuro backend en una fase general. Codex propuso explicitar un documento de decisión arquitectónica y comenzar con un corte vertical de autenticación, cuentas y una actividad. La comparación limpia consideró que este detalle reduce el riesgo y no contradice la evidencia.</p>
+
+    <div class="page-break"></div>
+    <span class="badge">Fase actual</span>
+    <h2>OneDrive ahora: un enlace funcional</h2>
+    <p>En la versión actual, la plataforma no administra archivos ni carpetas de Microsoft. El material permanece fuera de Sistema R. Solo se registra la dirección que permite abrirlo.</p>
+
+    <h3>Contrato inmediato del enlace</h3>
+    <ol>
+      <li>El operario pega una dirección HTTPS de OneDrive o SharePoint.</li>
+      <li>La plataforma valida que el formato y el dominio sean admitidos.</li>
+      <li>El enlace se guarda junto a la actividad y sobrevive a recargas.</li>
+      <li>Solo se muestra a los roles autorizados por el contrato vigente.</li>
+      <li>Se abre en una pestaña nueva sin modificar el contenido.</li>
+      <li>Antes de dar por válida la entrega, una persona comprueba que el enlace abre y que su cuenta tiene acceso.</li>
+    </ol>
+
+    <div class="note warning"><strong>Límite importante:</strong> comprobar el formato y abrir el enlace no garantiza que Microsoft mantenga el archivo disponible para siempre. Si el propietario elimina el archivo, cambia los permisos o el enlace caduca, Sistema R no puede repararlo automáticamente en esta fase.</div>
+
+    <h3>Fuera del alcance inmediato</h3>
+    <ul>
+      <li>Subir fotografías, videos o documentos desde Sistema R.</li>
+      <li>Crear carpetas automáticamente.</li>
+      <li>Leer el contenido del material o descargarlo.</li>
+      <li>Administrar permisos internos de Microsoft 365.</li>
+      <li>Conectarse con Microsoft Graph.</li>
+      <li>Validar automáticamente que cada destinatario pueda abrir el enlace.</li>
+    </ul>
+
+    <h2>Aceptación manual antes de avanzar</h2>
+    <p>El paso siguiente acordado es comprobar la plataforma en dispositivos reales. La prueba debe cubrir:</p>
+    <ul>
+      <li>Ingreso y cierre de sesión de Operario, Admin y Burson.</li>
+      <li>Creación, edición, recarga y entrega de una actividad.</li>
+      <li>Persistencia y apertura del enlace OneDrive.</li>
+      <li>Encargo Burson y asignación al operario especial.</li>
+      <li>Conversación Admin–Operario y bloqueo posterior del enlace y la opinión.</li>
+      <li>Histórico en móvil, tablet, laptop y PC.</li>
+      <li>Ausencia de acceso a información de otros roles.</li>
+    </ul>
+    <p class="gate">Criterio para avanzar: no queda ningún defecto que impida completar un flujo, pierda información, exponga datos a un rol incorrecto o vuelva inutilizable una pantalla.</p>
+
+    <div class="page-break"></div>
+    <span class="badge">Segunda fase posible</span>
+    <h2>OneDrive avanzado, cuando sea necesario</h2>
+    <p>Marco no descarta una integración futura. Cuando la operación real demuestre que manejar enlaces manualmente genera errores o trabajo repetitivo, se podrá evaluar una segunda fase. Esta fase debe decidirse por necesidad comprobada y no construirse por anticipación.</p>
+
+    <div class="phase"><strong>1. Organización de carpetas</strong><p>Definir si existe una biblioteca corporativa, una carpeta por año, cliente o actividad; quién es propietario; cómo se nombran las carpetas; y cuánto tiempo se conserva el material.</p></div>
+    <div class="phase"><strong>2. Permisos internos</strong><p>Definir qué usuarios o grupos de Microsoft 365 pueden leer, editar o compartir; si se permiten invitados; si los enlaces caducan; y qué ocurre cuando una persona deja el equipo.</p></div>
+    <div class="phase"><strong>3. Microsoft Graph</strong><p>Evaluar una conexión mediante la API oficial de Microsoft para crear carpetas, generar enlaces, consultar metadatos o verificar permisos. Esto exigiría registrar una aplicación, gestionar credenciales, solicitar permisos mínimos, manejar consentimiento y registrar auditoría.</p></div>
+    <div class="phase"><strong>4. Ciclo de vida del enlace</strong><p>Definir cómo detectar enlaces revocados, archivos eliminados o permisos cambiados; quién recibe la alerta; y cómo se reemplaza un enlace sin perder trazabilidad.</p></div>
+    <div class="phase"><strong>5. Seguridad y operación</strong><p>Evitar guardar secretos en el navegador, mantener credenciales en servidor, aplicar mínimo privilegio, registrar accesos relevantes, preparar recuperación ante fallos y establecer soporte.</p></div>
+
+    <h3>Señales que justificarían esta segunda fase</h3>
+    <ul>
+      <li>Muchos enlaces rotos o inaccesibles.</li>
+      <li>Errores frecuentes al compartir permisos.</li>
+      <li>Volumen de actividades que vuelve lenta la organización manual.</li>
+      <li>Necesidad de auditoría corporativa sobre archivos y accesos.</li>
+      <li>Necesidad de automatizar carpetas o verificar disponibilidad.</li>
+    </ul>
+    <div class="note"><strong>Decisión conservada:</strong> esta integración futura es posible, pero no está aprobada ni es necesaria para considerar funcional la plataforma actual.</div>
+
+    <h2>Arquitectura productiva posterior</h2>
+    <p>Después de aprobar el frontend, Claude y Codex recomiendan documentar antes de implementar:</p>
+    <ul>
+      <li>Hosting y ambientes de desarrollo, prueba y producción.</li>
+      <li>Identidad, inicio de sesión y recuperación de acceso.</li>
+      <li>Matriz de autorización de servidor para los tres roles.</li>
+      <li>Base de datos, auditoría persistente y respaldos.</li>
+      <li>Migración de los adaptadores actuales de navegador.</li>
+      <li>Tratamiento del enlace OneDrive como texto seguro en la primera versión.</li>
+    </ul>
+    <p>El primer corte vertical recomendado comprende autenticación real, administración de cuentas y una actividad completa. Solo después de probar ese recorrido se migra el resto.</p>
+
+    <div class="page-break"></div>
+    <span class="badge">Secuencia aprobable</span>
+    <h2>Hoja de ruta por etapas</h2>
+    <div class="phase"><strong>Etapa 1 · UAT y cierre funcional</strong><p>Probar dispositivos y roles; corregir bloqueantes; registrar aceptación de Marco.</p><p class="gate">Salida: frontend congelado como contrato.</p></div>
+    <div class="phase"><strong>Etapa 2 · Diseño del backend</strong><p>Crear y aprobar una decisión arquitectónica sobre autenticación, RBAC, base de datos, auditoría, backups, despliegue y tratamiento de enlaces.</p><p class="gate">Salida: arquitectura y plan incremental aprobados.</p></div>
+    <div class="phase"><strong>Etapa 3 · Corte vertical productivo</strong><p>Implementar autenticación, cuentas y una actividad real; probar autorización y persistencia desde el servidor.</p><p class="gate">Salida: recorrido real aprobado sin depender de localStorage.</p></div>
+    <div class="phase"><strong>Etapa 4 · Migración completa</strong><p>Migrar Histórico, Burson, conversaciones y auditoría; preparar operación y despliegue.</p><p class="gate">Salida: plataforma productiva estabilizada.</p></div>
+    <div class="phase"><strong>Etapa 5 · Evoluciones opcionales</strong><p>Evaluar, por separado, Microsoft Graph y el asistente IA. Cada uno requiere su propia decisión de alcance, seguridad y costo.</p><p class="gate">Entrada: datos confiables, permisos reales y necesidad demostrada.</p></div>
+
+    <h2>Riesgos identificados por ambos agentes</h2>
+    <ul>
+      <li>Confundir un prototipo funcional con un producto seguro para producción.</li>
+      <li>Diseñar la base de datos antes de congelar campos y flujos.</li>
+      <li>Intentar migrar todo el sistema en un único cambio.</li>
+      <li>Iniciar IA o Microsoft Graph sin datos, permisos y operación estables.</li>
+      <li>No definir fecha, entorno, responsables y criterio de lanzamiento.</li>
+    </ul>
+
+    <h2>Registro Claudex</h2>
+    <table>
+      <tbody>
+        <tr><th>Modo</th><td><code>decide</code> · solo lectura</td></tr>
+        <tr><th>Tarea</th><td>Determinar qué sigue después del frontend aprobado.</td></tr>
+        <tr><th>Motivo</th><td>Secuenciar aceptación, producción y evoluciones futuras sin ampliar prematuramente el alcance.</td></tr>
+        <tr><th>Coincidencias</th><td>UAT → congelamiento → arquitectura backend → implementación incremental → IA aplazada.</td></tr>
+        <tr><th>Discrepancias</th><td>Ninguna sustantiva; solo diferencia de granularidad.</td></tr>
+        <tr><th>Resultado</th><td>La plataforma funcional y el enlace simple son la prioridad inmediata. OneDrive avanzado y la IA quedan como evoluciones independientes.</td></tr>
+        <tr><th>Quién decide</th><td>Claude y Codex recomendaron; Marco conserva la aprobación de cada etapa.</td></tr>
+        <tr><th>Próximo paso</th><td>Ejecutar la aceptación manual y registrar bloqueantes/no bloqueantes.</td></tr>
+      </tbody>
+    </table>
+
+    <footer>Documento generado a partir de la doble derivación Claudex y la evidencia vigente del repositorio Sistema R. No constituye aprobación de una integración con Microsoft Graph ni del asistente IA.</footer>
+  </main>
+</body>
+</html>
