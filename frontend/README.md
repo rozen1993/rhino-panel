@@ -1,6 +1,6 @@
 # Sistema R — frontend
 
-Simulación responsive de la plataforma de gestión audiovisual con tres roles: Operario, Admin y Burson. Está construida con Next.js 16, React 19 y Tailwind CSS 4.
+Plataforma responsive de gestión audiovisual con tres roles: Operario, Admin y Burson. Está construida con Next.js 16, React 19, Tailwind CSS 4 y un primer corte de backend en Supabase.
 
 ## Ejecución local
 
@@ -16,6 +16,11 @@ npm run verify
 npm run test:e2e
 ```
 
+Sin variables, el entorno local usa `SISTEMA_R_DATA_SOURCE=demo`. Para conectar
+Supabase, copiar `.env.example` a `.env.local`, seleccionar `supabase` y completar
+solo la URL y la publishable key. Ese modo falla explícitamente si falta alguna
+variable; nunca muestra fixtures como respaldo.
+
 ## Cuentas de demostración
 
 | Rol | Usuario | Clave |
@@ -26,6 +31,10 @@ npm run test:e2e
 | Burson | `burson` | `burson2026` |
 | Operario especial | `luis` | `luis2026` |
 
-Los datos se guardan temporalmente en `localStorage` y cookies de prueba. No es una arquitectura de producción ni un sistema de autenticación seguro.
+Estas cuentas existen únicamente en modo `demo`; allí los datos siguen en
+`localStorage` y cookies de prueba. No reutilizar esas claves en staging.
 
-El contrato funcional vigente está en `../docs/handoff-frontend.md` y la dirección visual en `../diseno/direccion-final-traducida/CONTRATO-VISUAL.md`.
+El contrato funcional vigente está en `../docs/handoff-frontend.md`, la decisión
+de backend en `../docs/decision-backend-supabase-2026-08-22.md`, el runbook en
+`../supabase/README.md` y la dirección visual en
+`../diseno/direccion-final-traducida/CONTRATO-VISUAL.md`.

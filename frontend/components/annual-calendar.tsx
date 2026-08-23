@@ -178,7 +178,7 @@ function DetailPanel({
           rel="noreferrer"
           target="_blank"
         >
-          Abrir OneDrive ↗
+          Abrir material ↗
         </a>
       ) : (
         <p className="rounded-md border border-dashed border-cyan/60 bg-cyan/5 p-3 text-center text-sm font-bold text-ink-muted">

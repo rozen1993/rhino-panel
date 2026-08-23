@@ -127,7 +127,7 @@ describe("modelo operativo 2026", () => {
     }
   });
 
-  it("solo entrega con un enlace válido de OneDrive", () => {
+  it("solo entrega con un enlace HTTPS válido", () => {
     const storage = new MemoryStorage();
     const role = {
       ...roles.operario,

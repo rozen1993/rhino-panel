@@ -93,7 +93,7 @@ test("la entrega persiste y Admin bloquea sus campos al iniciar la conversación
   await page.getByLabel("Inicio").fill("2026-08-21");
   await page.getByLabel("Fin").fill("2026-08-21");
   await page
-    .getByLabel("Enlace de OneDrive")
+    .getByLabel("Enlace del material")
     .fill("https://onedrive.live.com/prueba-e2e");
   await page
     .getByLabel("Opinión opcional")
@@ -129,6 +129,6 @@ test("la entrega persiste y Admin bloquea sus campos al iniciar la conversación
   await login(page, "ana");
   await page.goto(activityPath);
   await page.getByRole("link", { name: "Editar" }).click();
-  await expect(page.getByLabel("Enlace de OneDrive")).toBeDisabled();
+  await expect(page.getByLabel("Enlace del material")).toBeDisabled();
   await expect(page.getByLabel("Opinión opcional")).toBeDisabled();
 });

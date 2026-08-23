@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { advanceSupabaseActivityAction } from "@/app/actividades/actions";
 import { formatActivityDates } from "@/components/activity-card";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
@@ -17,7 +18,9 @@ import {
   editThreadMessage,
   softDeleteActivity,
   useSimulatedActivities,
+  type SimulatedActivity,
 } from "@/lib/activity-simulation";
+import type { DataSource } from "@/lib/data-source";
 import { safeMaterialUrl, safeReferenceUrl } from "@/lib/external-link";
 import type { Role } from "@/lib/roles";
 
@@ -29,13 +32,26 @@ function moment(value: string) {
   }).format(new Date(value));
 }
 
-export function ActivityDetail({ id, role }: { id: string; role: Role }) {
-  const item = useSimulatedActivities().find(
+export function ActivityDetail({
+  id,
+  role,
+  dataSource = "demo",
+  initialActivity,
+}: {
+  id: string;
+  role: Role;
+  dataSource?: DataSource;
+  initialActivity?: SimulatedActivity | null;
+}) {
+  const simulatedItem = useSimulatedActivities(dataSource === "demo").find(
     (activity) => activity.id === id && !activity.deletedAt,
   );
+  const [serverItem, setServerItem] = useState(initialActivity ?? null);
+  const item = dataSource === "supabase" ? serverItem : simulatedItem;
   const [notice, setNotice] = useState("");
   const [message, setMessage] = useState("");
   const [reason, setReason] = useState("");
+  const [pending, startTransition] = useTransition();
 
   if (!item) return <Card className="p-6">Actividad no encontrada.</Card>;
   if (!canViewActivity(item, role))
@@ -49,8 +65,9 @@ export function ActivityDetail({ id, role }: { id: string; role: Role }) {
   const responsible =
     role.id === "operario" && item.responsibleAccountId === role.accountId;
   const canEdit = canEditActivity(item, role);
-  const canDelete = role.id === "admin" || canEdit;
-  const canThread = role.id === "admin" || responsible;
+  const canDelete = dataSource === "demo" && (role.id === "admin" || canEdit);
+  const canThread =
+    dataSource === "demo" && (role.id === "admin" || responsible);
   const url = safeMaterialUrl(item.materialLink);
   const referenceUrl = safeReferenceUrl(item.referenceLink);
   const visibleAudit =
@@ -60,7 +77,7 @@ export function ActivityDetail({ id, role }: { id: string; role: Role }) {
         )
       : item.audit;
   const report = (
-    result: ReturnType<typeof advanceActivity>,
+    result: { ok: true } | { ok: false; error: string },
     success: string,
   ) => setNotice(result.ok ? success : result.error);
 
@@ -151,7 +168,7 @@ export function ActivityDetail({ id, role }: { id: string; role: Role }) {
                     rel="noreferrer"
                     target="_blank"
                   >
-                    <SystemIcon className="size-4" name="link" /> Abrir OneDrive
+                    <SystemIcon className="size-4" name="link" /> Abrir material
                     ↗
                   </a>
                 ) : (
@@ -181,21 +198,39 @@ export function ActivityDetail({ id, role }: { id: string; role: Role }) {
                   </Link>
                   {responsible && item.status !== "Entregada" ? (
                     <Button
-                      onClick={() =>
-                        report(
-                          advanceActivity(
-                            window.localStorage,
-                            item.id,
-                            actor,
-                            item.version,
-                          ),
+                      disabled={pending}
+                      onClick={() => {
+                        const success =
                           item.status === "Programada"
                             ? "Actividad iniciada."
-                            : "Actividad entregada.",
-                        )
-                      }
+                            : "Actividad entregada.";
+                        if (dataSource === "supabase") {
+                          startTransition(async () => {
+                            const result = await advanceSupabaseActivityAction(
+                              item.id,
+                              item.version,
+                            );
+                            report(result, success);
+                            if (result.ok) setServerItem(result.activity);
+                          });
+                        } else {
+                          report(
+                            advanceActivity(
+                              window.localStorage,
+                              item.id,
+                              actor,
+                              item.version,
+                            ),
+                            success,
+                          );
+                        }
+                      }}
                     >
-                      {item.status === "Programada" ? "Iniciar" : "Entregar"}
+                      {pending
+                        ? "Actualizando…"
+                        : item.status === "Programada"
+                          ? "Iniciar"
+                          : "Entregar"}
                     </Button>
                   ) : (
                     <span />

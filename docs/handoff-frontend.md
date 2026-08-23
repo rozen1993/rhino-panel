@@ -1,6 +1,6 @@
 # Contrato de handoff del frontend
 
-**Versión:** 2026-08-20 — modelo operativo de tres roles.
+**Versión:** 2026-08-22 — tres roles y primer corte Supabase.
 
 ## Entidades
 
@@ -18,7 +18,7 @@
 
 ## Estados y fechas
 
-La transición única es `Programada → En proceso → Entregada` y solo la ejecuta el operario responsable. La entrega exige un enlace HTTPS de OneDrive o SharePoint. “Atrasada” es un indicador calculado respecto de las fechas, no un estado.
+La transición única es `Programada → En proceso → Entregada` y solo la ejecuta el operario responsable. La entrega exige cualquier enlace HTTPS válido y sin credenciales incrustadas. “Atrasada” es un indicador calculado respecto de las fechas, no un estado.
 
 Una actividad admite un día, un rango continuo o varios rangos discontinuos. El estado, enlace y opinión son globales para toda la actividad.
 
@@ -26,4 +26,4 @@ Una actividad admite un día, un rango continuo o varios rangos discontinuos. El
 
 Es exclusivo de Admin y muestra los doce meses del año sin filtros. Los tipos se distinguen por color; los rangos se dibujan de forma continua y cualquier fecha marcada abre el detalle. En móvil usa una columna y hoja inferior; en tablet dos columnas y panel lateral; en laptop una malla 4×3 con panel superpuesto; en PC una malla 4×3 con detalle permanente.
 
-Los stores y cookies actuales son adaptadores temporales. Toda autorización deberá repetirse en el backend; ocultar controles en el cliente no constituye seguridad.
+Los stores y cookies demo son adaptadores temporales. El modo Supabase ya repite autenticación, sesión, perfil activo y autorización en servidor y RLS; ocultar controles en el cliente nunca constituye seguridad. El alcance exacto del primer corte está en `decision-backend-supabase-2026-08-22.md`.

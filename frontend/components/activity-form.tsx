@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   type ChangeEvent,
   type FormEvent,
@@ -8,7 +9,12 @@ import {
   useMemo,
   useRef,
   useState,
+  useTransition,
 } from "react";
+import {
+  createSupabaseActivityAction,
+  editSupabaseActivityAction,
+} from "@/app/actividades/actions";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
 import { activityTypes, type DateSpan } from "@/lib/activities";
@@ -26,7 +32,9 @@ import {
   createOwnActivity,
   editActivity,
   useSimulatedActivities,
+  type SimulatedActivity,
 } from "@/lib/activity-simulation";
+import type { DataSource } from "@/lib/data-source";
 import { safeMaterialUrl } from "@/lib/external-link";
 import type { Role } from "@/lib/roles";
 
@@ -59,6 +67,8 @@ type Props = {
   role: Role;
   activityId?: string;
   compact?: boolean;
+  dataSource?: DataSource;
+  initialActivity?: SimulatedActivity | null;
 };
 
 export function ActivityForm({
@@ -66,10 +76,14 @@ export function ActivityForm({
   role,
   activityId,
   compact = false,
+  dataSource = "demo",
+  initialActivity,
 }: Props) {
-  const activities = useSimulatedActivities();
+  const activities = useSimulatedActivities(dataSource === "demo");
   const candidate = editing
-    ? activities.find((item) => item.id === activityId && !item.deletedAt)
+    ? dataSource === "supabase"
+      ? initialActivity ?? undefined
+      : activities.find((item) => item.id === activityId && !item.deletedAt)
     : undefined;
   const existing =
     candidate && canEditActivity(candidate, role) ? candidate : undefined;
@@ -94,6 +108,8 @@ export function ActivityForm({
   );
   const [notice, setNotice] = useState("");
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
+  const router = useRouter();
   const actor = actorFromRole(role);
   const deliveryLocked = Boolean(
     existing?.threadOpenedAt && role.id === "operario",
@@ -102,7 +118,7 @@ export function ActivityForm({
   const expectedVersion = useRef<number | null>(null);
   const idempotencyKey = useRef(createIdempotencyKey());
   const draftReady = useRef(false);
-  const draftKey = activityDraftStorageKey(role.id, activityId);
+  const draftKey = activityDraftStorageKey(role.id, activityId, dataSource);
   const padding = compact ? "p-3" : "p-4 md:p-5";
 
   useEffect(() => {
@@ -136,7 +152,7 @@ export function ActivityForm({
     const timer = window.setTimeout(
       () =>
         writeActivityDraft(window.localStorage, draftKey, {
-          version: 2,
+          version: 3,
           idempotencyKey: idempotencyKey.current,
           savedAt: new Date().toISOString(),
           fields,
@@ -169,7 +185,41 @@ export function ActivityForm({
   function submit(event: FormEvent) {
     event.preventDefault();
     if (fields.materialLink && !safeMaterialUrl(fields.materialLink)) {
-      setNotice("Usa un enlace HTTPS válido de OneDrive o SharePoint.");
+      setNotice("Usa un enlace HTTPS válido sin credenciales incrustadas.");
+      return;
+    }
+    if (dataSource === "supabase") {
+      startTransition(async () => {
+        const result =
+          editing && existing
+            ? await editSupabaseActivityAction(
+                existing.id,
+                expectedVersion.current ?? existing.version,
+                fields,
+              )
+            : await createSupabaseActivityAction(
+                fields,
+                idempotencyKey.current,
+              );
+        setNotice(
+          result.ok
+            ? editing
+              ? "Actividad actualizada."
+              : result.replayed
+                ? "La actividad ya había sido registrada."
+                : "Actividad registrada."
+            : result.error,
+        );
+        if (result.ok) {
+          setSavedId(result.activity.id);
+          expectedVersion.current = result.activity.version;
+          if (!editing) {
+            draftReady.current = false;
+            window.localStorage.removeItem(draftKey);
+          }
+          router.refresh();
+        }
+      });
       return;
     }
     const result =
@@ -433,13 +483,13 @@ export function ActivityForm({
               )}
             </div>
             <label className="text-xs font-bold">
-              Enlace de OneDrive
+              Enlace del material
               <input
                 className={`${control} mt-1.5`}
                 disabled={deliveryLocked}
                 name="materialLink"
                 onChange={change}
-                placeholder="https://onedrive.live.com/..."
+                placeholder="https://archivos.ejemplo.pe/..."
                 type="url"
                 value={fields.materialLink}
               />
@@ -467,10 +517,12 @@ export function ActivityForm({
           )}
           <Button
             className="w-full"
-            disabled={Boolean(savedId && !editing)}
+            disabled={pending || Boolean(savedId && !editing)}
             type="submit"
           >
-            {savedId && !editing
+            {pending
+              ? "Guardando…"
+              : savedId && !editing
               ? "Actividad guardada"
               : editing
                 ? "Guardar cambios"

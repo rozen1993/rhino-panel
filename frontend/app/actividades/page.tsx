@@ -1,3 +1,42 @@
 import { ActivityDashboard } from "@/components/activity-dashboard";
 import { MobileShell, requireRole } from "@/components/mobile-shell";
-export default async function ActivitiesPage() { const role = await requireRole((item) => item.id === "operario" || item.id === "admin"); return <MobileShell role={role}><main className="mx-auto max-w-[1700px] space-y-4 px-3 py-4 md:px-5 md:py-5 lg:px-6"><header className="flex flex-wrap items-end justify-between gap-3"><div><h1 className="display-title text-[1.7rem] leading-none md:text-[2rem]">{role.id === "admin" ? "Todas las actividades" : "Mis actividades"}</h1><p className="mt-2 text-xs text-ink-muted">{role.id === "admin" ? "Vista integral del trabajo audiovisual" : "Encargos recibidos por teléfono y registrados por ti"}</p></div>{role.id === "operario" && <span className="hidden items-center gap-2 rounded-full border border-cyan/25 bg-cyan/[.06] px-3 py-2 text-[0.6875rem] font-bold text-[#08718a] md:inline-flex"><i className="size-2 animate-pulse rounded-full bg-cyan" />Panel operativo activo</span>}</header><ActivityDashboard role={role} /></main></MobileShell>; }
+import { resolveDataSource } from "@/lib/data-source";
+import { listSupabaseActivities } from "@/lib/supabase/activities";
+
+export default async function ActivitiesPage() {
+  const role = await requireRole(
+    (item) => item.id === "operario" || item.id === "admin",
+  );
+  const dataSource = resolveDataSource();
+  const activities =
+    dataSource === "supabase" ? await listSupabaseActivities() : [];
+  return (
+    <MobileShell role={role}>
+      <main className="mx-auto max-w-[1700px] space-y-4 px-3 py-4 md:px-5 md:py-5 lg:px-6">
+        <header className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 className="display-title text-[1.7rem] leading-none md:text-[2rem]">
+              {role.id === "admin" ? "Todas las actividades" : "Mis actividades"}
+            </h1>
+            <p className="mt-2 text-xs text-ink-muted">
+              {role.id === "admin"
+                ? "Vista integral del trabajo audiovisual"
+                : "Encargos recibidos por teléfono y registrados por ti"}
+            </p>
+          </div>
+          {role.id === "operario" && (
+            <span className="hidden items-center gap-2 rounded-full border border-cyan/25 bg-cyan/[.06] px-3 py-2 text-[0.6875rem] font-bold text-[#08718a] md:inline-flex">
+              <i className="size-2 animate-pulse rounded-full bg-cyan" />
+              Panel operativo activo
+            </span>
+          )}
+        </header>
+        <ActivityDashboard
+          dataSource={dataSource}
+          initialActivities={activities}
+          role={role}
+        />
+      </main>
+    </MobileShell>
+  );
+}

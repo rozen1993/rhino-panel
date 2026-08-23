@@ -20,11 +20,22 @@ Si se omite el modo, infiérelo de la intención y anúncialo antes de actuar. N
 ## Coordinación con Claude Code
 
 - Antes de pedir una derivación a Claude, termina la derivación de Codex.
-- Invoca una sesión nueva de Claude Code mediante Frenemy, preferiblemente con `claude.cmd --print --permission-mode plan --tools "Read,Glob,Grep" --no-session-persistence`.
+- Usa siempre `scripts/invoke-claude.cmd`; no invoques el `claude.cmd` instalado por npm directamente ni pases el prompt como argumento posicional. El lanzador propio evita depender de la política global de ejecución de PowerShell.
+- El wrapper fija `opus` con esfuerzo `xhigh` y exige `enableWorkflows=true`. Esta combinación es el equivalente no interactivo de la configuración **Ultracode** solicitada por Marco.
+- Codifica el paquete como UTF-8 Base64 y envíalo por la entrada estándar. Esto preserva Unicode, saltos de línea y prompts extensos en Windows. Ejemplo desde la raíz del repositorio:
+
+```powershell
+$paquete = @'
+Describe aquí la consulta neutral para Claude.
+'@
+$paqueteCodificado = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($paquete))
+$paqueteCodificado | & 'claudex/adapters/codex/claudex/scripts/invoke-claude.cmd' -EncodedStdin
+```
+
 - Entrega solo el paquete neutral en la fase ciega. No incluyas la respuesta de Codex.
 - No invoques `/claudex` dentro de la sesión par: solicita únicamente la función acotada de derivar, comparar o revisar para evitar recursión.
 - Si hace falta una síntesis limpia, abre otra sesión nueva y entrégale el paquete neutral más ambas derivaciones.
-- Si Claude falla o no está disponible, informa el fallo. Nunca fabriques una respuesta atribuida al otro agente.
+- Si Claude falla o no está disponible, informa el fallo y conserva el mensaje real. Nunca fabriques una respuesta atribuida al otro agente.
 
 ## Límites por modo
 
@@ -33,4 +44,3 @@ Si se omite el modo, infiérelo de la intención y anúncialo antes de actuar. N
 - `review`: solo lectura; prioriza hallazgos demostrables y se detiene antes de corregir.
 
 La invocación explícita autoriza las llamadas locales al agente par. Solo `execute` autoriza cambios normales dentro del repositorio y del alcance indicado. No amplía permisos para despliegues, operaciones destructivas, secretos, gastos ni acciones externas.
-

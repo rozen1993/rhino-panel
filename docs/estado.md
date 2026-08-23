@@ -1,28 +1,51 @@
 # Estado
 
-**Actualizado:** 2026-08-21
+**Actualizado:** 2026-08-22
 
 ## Fase activa
 
-El frontend simulado implementa el modelo operativo acordado de tres roles: **Operario**, **Admin** y **Burson**. El modelo anterior de Coordinación, Supervisión y AUNOR quedó retirado de las rutas activas.
+El frontend conserva el modelo de tres roles y ahora tiene dos fuentes de datos
+explícitas. `demo` mantiene la simulación aprobada; `supabase` activa el cimiento
+real sin mezclar datos locales.
 
-El Histórico es ahora un calendario anual de doce meses basado en la dirección visual `01-malla-anual-clasica`. Soporta días individuales, rangos continuos y varios rangos discontinuos por actividad. Al seleccionar una fecha muestra responsable, estado, fechas, descripción, opinión y enlace seguro de OneDrive.
+El primer corte Supabase implementa autenticación, perfil, sesión máxima de 12
+horas, RLS, listado de actividades y el recorrido de una actividad ordinaria:
+crear, editar, iniciar y entregar. Las jornadas discontinuas, el enlace HTTPS y
+la auditoría persisten en PostgreSQL.
 
-## Validación automatizada
+## Seguridad del corte
 
-- TypeScript estricto: aprobado.
-- ESLint: aprobado.
-- Vitest: 14 pruebas del nuevo contrato aprobadas.
-- Build de producción: aprobado.
-- Playwright: 3 recorridos aprobados, incluido el flujo crítico Operario–Admin y los viewports 390×844, 768×1024, 1366×900 y 1920×1080.
+- Ninguna contraseña se guarda en tablas propias ni en el navegador.
+- No hay signup público.
+- Las cookies reales son HttpOnly y terminan al cerrar el navegador.
+- Un perfil inactivo o una sesión revocada no supera RLS.
+- Las escrituras directas están retiradas; las RPC derivan el actor del JWT.
+- Hay control optimista, idempotencia con huella y auditoría atómica.
+- Burson no puede leer la auditoría interna.
 
-La persistencia y autenticación siguen siendo simuladas mediante navegador y cookies. Antes de producción deben sustituirse por autorización de servidor, base de datos y auditoría persistente.
+## Alcance pendiente
 
-## Referencias visuales
+Administración real de cuentas, canal Burson, conversaciones, Histórico real,
+carga inicial de 2026 y roster recordado por dispositivo se implementarán en
+cortes posteriores. En modo Supabase sus pantallas no muestran fixtures.
 
-- `diseno/historico-calendario-opciones/01-malla-anual-clasica.png`
-- `diseno/historico-calendario-responsive/`
+## Staging
 
-## Ejecución local
+La configuración y migración están versionadas, pero aún no se aplicaron al
+proyecto remoto ni se desplegaron en Vercel. El procedimiento y la prueba de
+aceptación están en `../supabase/README.md`.
 
-Desde `frontend/`: `npm install`, `npm run dev` para desarrollo o `npm run build && npm start` para producción local.
+## Validación local
+
+- TypeScript, ESLint, 33 pruebas Vitest y build de producción: aprobados.
+- Build con variables equivalentes a Vercel Preview + Supabase: aprobado.
+- Parser real de PostgreSQL sobre la migración: aprobado.
+- Playwright demo: 3 recorridos aprobados.
+- Ejecución de migración y matriz RLS real: pendiente del enlace a staging.
+
+## Referencias
+
+- `decision-backend-supabase-2026-08-22.md`
+- `handoff-frontend.md`
+- `../supabase/migrations/202608220001_backend_foundation.sql`
+- `../diseno/direccion-final-traducida/CONTRATO-VISUAL.md`

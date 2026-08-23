@@ -11,7 +11,7 @@ Construir la plataforma de gestión de actividades de Rhino Audiovisuales. Marco
 - Existen exactamente tres roles: **Operario**, **Admin** y **Burson**.
 - Existen exactamente tres estados: **Programada**, **En proceso** y **Entregada**.
 - Las actividades ordinarias se comunican fuera de la plataforma. El operario responsable las registra y gestiona.
-- El operario puede indicar jornadas individuales, rangos continuos o varios rangos discontinuos; al entregar debe incluir un enlace HTTPS válido de OneDrive/SharePoint y puede dejar una opinión.
+- El operario puede indicar jornadas individuales, rangos continuos o varios rangos discontinuos; al entregar debe incluir un enlace HTTPS válido, sin credenciales incrustadas, y puede dejar una opinión.
 - Admin ve todas las actividades, enlaces e histórico; administra cuentas e inicia conversaciones privadas con el operario responsable. No crea ni ejecuta actividades.
 - Burson crea encargos que quedan Programados y se asignan automáticamente al único operario especial activo. Burson solo ve sus propios encargos y no accede a conversaciones internas de Admin.
 - Al transferir el vínculo especial, los encargos Burson pendientes pasan al nuevo operario; los entregados conservan su responsable histórico.
@@ -25,9 +25,13 @@ Construir la plataforma de gestión de actividades de Rhino Audiovisuales. Marco
 - La dirección visual aprobada está en `diseno/direccion-final-traducida/` y el contrato vigente en `diseno/direccion-final-traducida/CONTRATO-VISUAL.md`.
 - La interfaz debe funcionar en móvil, tablet, laptop y PC, con navegación por teclado, foco visible y contraste legible.
 
-## Límites actuales
+## Backend vigente
 
-La aplicación sigue siendo una simulación local con `localStorage` y cookies de prueba. No debe presentarse como autenticación o persistencia apta para producción. La base de datos, autorización de servidor, almacenamiento definitivo y el posible asistente IA son fases posteriores; el asistente IA está expresamente aplazado hasta completar y estabilizar la plataforma.
+- `SISTEMA_R_DATA_SOURCE=demo` conserva la simulación local.
+- `SISTEMA_R_DATA_SOURCE=supabase` activa Auth, PostgreSQL, RLS y el primer corte real de actividades; nunca debe volver silenciosamente a fixtures.
+- El contrato arquitectónico está en `docs/decision-backend-supabase-2026-08-22.md` y la operación de staging en `supabase/README.md`.
+- El corte real actual cubre login, perfil, lista, creación, edición y transiciones hasta Entregada. Cuentas, Burson, conversaciones e Histórico real continúan en cortes posteriores.
+- Microsoft Graph, carga de archivos y el asistente IA siguen aplazados.
 
 ## Verificación
 

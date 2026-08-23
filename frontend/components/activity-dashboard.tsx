@@ -16,6 +16,7 @@ import {
 } from "@/lib/activity-simulation";
 import { safeMaterialUrl } from "@/lib/external-link";
 import type { Activity } from "@/lib/activities";
+import type { DataSource } from "@/lib/data-source";
 import type { Role } from "@/lib/roles";
 
 function touchesMonth(item: SimulatedActivity, month: number, year = 2026) {
@@ -173,7 +174,7 @@ function ActivityPreview({ item }: { item: SimulatedActivity | undefined }) {
               rel="noreferrer"
               target="_blank"
             >
-              Abrir OneDrive ↗
+              Abrir material ↗
             </a>
           )}
         </div>
@@ -182,8 +183,19 @@ function ActivityPreview({ item }: { item: SimulatedActivity | undefined }) {
   );
 }
 
-export function ActivityDashboard({ role }: { role: Role }) {
-  const allActivities = useSimulatedActivities().filter(
+export function ActivityDashboard({
+  role,
+  dataSource = "demo",
+  initialActivities = [],
+}: {
+  role: Role;
+  dataSource?: DataSource;
+  initialActivities?: SimulatedActivity[];
+}) {
+  const simulatedActivities = useSimulatedActivities(dataSource === "demo");
+  const sourceActivities =
+    dataSource === "supabase" ? initialActivities : simulatedActivities;
+  const allActivities = sourceActivities.filter(
     (item) => !item.deletedAt && canViewActivity(item, role),
   );
   const [selectedMonth, setSelectedMonth] = useState(7);
@@ -243,7 +255,7 @@ export function ActivityDashboard({ role }: { role: Role }) {
       {role.id === "operario" ? (
         <div className="xl:grid xl:grid-cols-[25rem_minmax(0,1fr)] xl:items-start xl:gap-4">
           <div className="md:hidden xl:block">
-            <ActivityForm compact role={role} />
+            <ActivityForm compact dataSource={dataSource} role={role} />
           </div>
           <DashboardTable
             activities={activities}

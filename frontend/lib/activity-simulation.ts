@@ -8,6 +8,7 @@ import {
   type DateSpan,
 } from "@/lib/activities";
 import type { ActivityDraftFields } from "@/lib/activity-draft";
+import { validSpans } from "@/lib/activity-validation";
 import { readAccounts } from "@/lib/account-store";
 import { safeMaterialUrl, safeReferenceUrl } from "@/lib/external-link";
 import { activityTypes, roleIds, type Role, type RoleId } from "@/lib/roles";
@@ -168,17 +169,6 @@ export function actorFromRole(role: Role): ActivityActor {
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object";
 }
-function validDate(value: unknown) {
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value))
-    return false;
-  const [year, month, day] = value.split("-").map(Number);
-  const parsed = new Date(Date.UTC(year, month - 1, day));
-  return (
-    parsed.getUTCFullYear() === year &&
-    parsed.getUTCMonth() === month - 1 &&
-    parsed.getUTCDate() === day
-  );
-}
 function isActor(value: unknown): value is ActivityActor {
   return (
     isRecord(value) &&
@@ -288,26 +278,6 @@ function update(
   );
   return { ok: true, activity: next };
 }
-function validSpans(spans: DateSpan[]) {
-  return (
-    spans.length > 0 &&
-    spans.length <= 100 &&
-    spans.every((span) => {
-      if (
-        !isRecord(span) ||
-        !validDate(span.start) ||
-        !validDate(span.end) ||
-        span.end < span.start
-      )
-        return false;
-      return (
-        Date.parse(`${span.end}T00:00:00Z`) -
-          Date.parse(`${span.start}T00:00:00Z`) <=
-        3660 * 86_400_000
-      );
-    })
-  );
-}
 function slug(title: string) {
   return `${
     title
@@ -379,7 +349,7 @@ export function createOwnActivity(
   if (fields.materialLink && !safeMaterialUrl(fields.materialLink))
     return {
       ok: false as const,
-      error: "Usa un enlace HTTPS válido de OneDrive o SharePoint.",
+      error: "Usa un enlace HTTPS válido sin credenciales incrustadas.",
     };
   const current = readActivities(storage);
   const duplicate =
@@ -508,7 +478,7 @@ export function editActivity(
       fields.materialLink &&
       !safeMaterialUrl(fields.materialLink)
     )
-      return "Usa un enlace HTTPS válido de OneDrive o SharePoint.";
+      return "Usa un enlace HTTPS válido sin credenciales incrustadas.";
     if (
       bursonCreator &&
       fields.referenceLink &&
@@ -561,7 +531,7 @@ export function advanceActivity(
           : null;
     if (!status) return "La actividad ya fue entregada.";
     if (status === "Entregada" && !safeMaterialUrl(item.materialLink))
-      return "Añade un enlace válido de OneDrive antes de entregar.";
+      return "Añade un enlace HTTPS válido antes de entregar.";
     return {
       ...item,
       status,
@@ -743,8 +713,9 @@ export function isOverdue(item: SimulatedActivity, today = new Date()) {
   const end = new Date(`${lastDate(item)}T23:59:59`);
   return !Number.isNaN(end.getTime()) && today.getTime() > end.getTime();
 }
-export function useSimulatedActivities() {
+export function useSimulatedActivities(enabled = true) {
   const subscribe = useCallback((notify: () => void) => {
+    if (!enabled) return () => undefined;
     const handler = () => notify();
     window.addEventListener("storage", handler);
     window.addEventListener(changedEvent, handler);
@@ -752,12 +723,19 @@ export function useSimulatedActivities() {
       window.removeEventListener("storage", handler);
       window.removeEventListener(changedEvent, handler);
     };
-  }, []);
+  }, [enabled]);
   const snapshot = useCallback(
-    () => window.localStorage.getItem(activityStoreKey) ?? seedSnapshot,
-    [],
+    () =>
+      enabled
+        ? window.localStorage.getItem(activityStoreKey) ?? seedSnapshot
+        : "[]",
+    [enabled],
   );
-  const raw = useSyncExternalStore(subscribe, snapshot, serverSnapshot);
+  const initialSnapshot = useCallback(
+    () => (enabled ? serverSnapshot() : "[]"),
+    [enabled],
+  );
+  const raw = useSyncExternalStore(subscribe, snapshot, initialSnapshot);
   return useMemo(() => parseActivityStore(raw), [raw]);
 }
 export function useActivityStoreHealth() {
