@@ -5,24 +5,46 @@ description: Orquesta Codex y Claude Code para decidir, ejecutar o revisar tarea
 
 # Claudex para Codex
 
-Lee por completo `references/protocolo-doble-derivacion-v1.md` y aplícalo como fuente normativa. Resuelve esta ruta y las de los scripts respecto del directorio que contiene este `SKILL.md`, nunca respecto del directorio de trabajo del proyecto. Codex es el agente anfitrión de esta invocación; Claude Code es el par independiente.
+Lee por completo `references/protocolo-doble-derivacion-v1.md` y aplícalo como fuente normativa. Resuelve esta ruta, los esquemas y los scripts respecto del directorio que contiene este `SKILL.md`, nunca respecto del directorio de trabajo del proyecto. Codex es el agente anfitrión; Claude Code es el par independiente.
 
 ## Invocación
 
 ```text
-$claudex decide <problema>
-$claudex execute <orden>
-$claudex review <cambio o alcance>
+$claudex [perfil] decide <problema>
+$claudex [perfil] execute <orden>
+$claudex [perfil] review <cambio o alcance>
 ```
 
-Si se omite el modo, infiérelo de la intención y anúncialo antes de actuar. No obligues al usuario a repetir contexto disponible.
+El perfil tiene la forma `<modelo>/<nivel>`:
+
+- `s` selecciona `sonnet` y `o` selecciona `opus`.
+- Los niveles públicos son `low`, `medium`, `high` y `ultracode`.
+- `ultracode` equivale a esfuerzo CLI `xhigh` con Dynamic Workflows habilitado solo para esa invocación.
+
+Ejemplos:
+
+```text
+$claudex s/low decide <problema>
+$claudex o/medium execute <orden>
+$claudex o/ultracode review <alcance>
+```
+
+Si se omite el perfil, usa `o/ultracode` para conservar el comportamiento de Claudex 1.0. Si se omite el modo, infiérelo de la intención y anúncialo antes de actuar. No obligues al usuario a repetir contexto disponible.
 
 ## Coordinación con Claude Code
 
 - Antes de pedir una derivación a Claude, termina la derivación de Codex.
-- Usa siempre `scripts/invoke-claude.cmd`, resuelto desde el directorio de esta skill; no invoques el `claude.cmd` instalado por npm directamente ni pases el prompt como argumento posicional. El lanzador propio evita depender de la política global de ejecución de PowerShell.
-- El wrapper fija `opus` con esfuerzo `xhigh` y exige `enableWorkflows=true`. Esta combinación es el equivalente no interactivo de la configuración **Ultracode** solicitada por Marco.
-- Codifica el paquete como UTF-8 Base64 y envíalo por la entrada estándar. Esto preserva Unicode, saltos de línea y prompts extensos en Windows. Sustituye `<directorio-de-la-skill>` por la ruta absoluta del directorio que contiene este archivo:
+- Usa siempre `scripts/invoke-claude.cmd`, resuelto desde el directorio de esta skill; no invoques directamente el ejecutable de Claude Code ni pases el prompt como argumento posicional.
+- Determina la raíz absoluta del proyecto actual y pásala siempre mediante `-ProjectPath`.
+- Traduce el perfil público directamente a `-Profile`. No escales ni reduzcas el modelo o el esfuerzo elegido por Marco.
+- Usa `-Phase derive` para una derivación, `-Phase review` para revisar la implementación y `-Phase compare` para una síntesis limpia.
+- Usa contexto `project` para derivar o revisar con acceso de solo lectura al repositorio. La fase `compare` fuerza contexto `neutral`, un directorio vacío y ninguna herramienta.
+- Solicita salida `json`. Lee `structured_output` del sobre JSON de Claude y conserva el mensaje real cuando la CLI o la validación del esquema fallen.
+- El wrapper comprueba las capacidades de la CLI antes de gastar tokens. Si falta una bandera requerida, informa el fallo; no simules una degradación silenciosa.
+- El wrapper aplica `enableWorkflows=true` únicamente a `ultracode` y `false` a los demás niveles mediante un archivo temporal pasado con `--settings`. Nunca modifica `~/.claude/settings.json`; elimina el archivo temporal al terminar, incluso ante errores.
+- Mantén `--permission-mode plan`, sesiones sin persistencia y herramientas limitadas a `Read`, `Glob` y `Grep` en contexto de proyecto.
+
+Codifica el paquete neutral como UTF-8 Base64 y envíalo por la entrada estándar:
 
 ```powershell
 $paquete = @'
@@ -30,12 +52,18 @@ Describe aquí la consulta neutral para Claude.
 '@
 $paqueteCodificado = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($paquete))
 $scriptClaudex = Join-Path '<directorio-de-la-skill>' 'scripts\invoke-claude.cmd'
-$paqueteCodificado | & $scriptClaudex -EncodedStdin
+$paqueteCodificado | & $scriptClaudex `
+  -EncodedStdin `
+  -ProjectPath '<raíz-absoluta-del-proyecto>' `
+  -Profile 'o/ultracode' `
+  -Phase derive `
+  -ContextProfile project `
+  -OutputFormat json
 ```
 
 - Entrega solo el paquete neutral en la fase ciega. No incluyas la respuesta de Codex.
-- No invoques `/claudex` dentro de la sesión par: solicita únicamente la función acotada de derivar, comparar o revisar para evitar recursión.
-- Si hace falta una síntesis limpia, abre otra sesión nueva y entrégale el paquete neutral más ambas derivaciones.
+- No invoques `/claudex` dentro de la sesión par: solicita únicamente derivar, comparar o revisar para evitar recursión.
+- Si hace falta una síntesis limpia, abre otra sesión con `-Phase compare` y entrégale el paquete neutral más ambas derivaciones.
 - Si Claude falla o no está disponible, informa el fallo y conserva el mensaje real. Nunca fabriques una respuesta atribuida al otro agente.
 
 ## Límites por modo

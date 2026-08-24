@@ -4,15 +4,25 @@ La versión de la skill y la versión del protocolo son independientes. La líne
 
 ## Sin publicar — próxima versión
 
-Cambios acordados pero todavía no implementados:
+Cambios todavía no implementados:
 
-- sustituir el requisito rígido de `enableWorkflows=true` por una comprobación de capacidades de la CLI;
-- exigir y validar explícitamente la ruta del proyecto antes de invocar Claude Code;
 - impedir la lectura de `.env`, credenciales, claves y otros secretos;
-- adaptar modelo, esfuerzo y herramientas al modo y al riesgo;
-- separar perfiles de contexto consciente del proyecto y neutral;
-- solicitar una salida estructurada para comparar derivaciones;
 - añadir timeout, límites opcionales y trazabilidad sin registrar prompts sensibles.
+
+## 1.1.0 — 2026-08-24
+
+- añade perfiles públicos `s|o` con niveles `low`, `medium`, `high` y `ultracode`;
+- conserva la invocación sin selector como `o/ultracode`;
+- define `ultracode` como `xhigh` con Dynamic Workflows habilitado únicamente para la sesión;
+- mantiene Dynamic Workflows deshabilitado para los demás niveles sin reescribir la configuración persistente;
+- exige y valida `ProjectPath` antes de invocar Claude Code;
+- comprueba que la CLI instalada exponga las capacidades necesarias;
+- separa contexto `project` de contexto `neutral` para comparaciones limpias;
+- limita las herramientas a lectura en el proyecto y a ninguna en contexto neutral;
+- añade esquemas JSON para derivaciones, revisiones y comparaciones;
+- incorpora `DryRun` y pruebas de la matriz de perfiles sin consumir tokens.
+
+Los hashes exactos del paquete están en `versions/claudex-1.1.0.sha256`.
 
 ## 1.0.0 — 2026-08-24
 

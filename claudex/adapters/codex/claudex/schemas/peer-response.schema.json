@@ -1,0 +1,21 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "supuestos": { "type": "array", "items": { "type": "string" } },
+    "propuesta": { "type": "string" },
+    "alternativas": { "type": "array", "items": { "type": "string" } },
+    "riesgos": { "type": "array", "items": { "type": "string" } },
+    "verificacion": { "type": "array", "items": { "type": "string" } },
+    "confianza": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "nivel": { "type": "string", "enum": ["alta", "media", "baja"] },
+        "motivo": { "type": "string" }
+      },
+      "required": ["nivel", "motivo"]
+    }
+  },
+  "required": ["supuestos", "propuesta", "alternativas", "riesgos", "verificacion", "confianza"]
+}

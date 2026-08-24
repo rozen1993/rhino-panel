@@ -1,4 +1,4 @@
-# CLAUDEX — PROTOCOLO DE DOBLE DERIVACIÓN Y EJECUCIÓN VERIFICADA — v1.2
+# CLAUDEX — PROTOCOLO DE DOBLE DERIVACIÓN Y EJECUCIÓN VERIFICADA — v1.3
 
 Protocolo autónomo para aprovechar la principal ventaja de trabajar con Claude Code y Codex: obtener razonamientos independientes, localizar incertidumbre mediante discrepancias y producir una sola ejecución verificada. Marco conserva siempre la decisión final.
 
@@ -174,6 +174,8 @@ Resultado esperado y estructura requerida para el modo elegido.
 
 El paquete no contiene soluciones sugeridas ni lenguaje que favorezca una opción.
 
+El anfitrión pasa al agente par la raíz absoluta del proyecto. Las derivaciones y revisiones usan el perfil de contexto `project`, que permite leer el repositorio y cargar sus instrucciones. La comparación limpia usa el perfil `neutral`: se ejecuta desde un directorio temporal vacío, carga solo la configuración de usuario y no recibe herramientas. Este aislamiento neutraliza el contexto del proyecto; no sustituye un sandbox del sistema operativo.
+
 ---
 
 ## 3. DERIVACIÓN CIEGA
@@ -217,6 +219,8 @@ Formato:
 
 El comparador sintetiza; no vota ni sustituye a Marco. El consenso sin evidencia no basta.
 
+La comparación solicita una salida JSON validada por esquema. Las derivaciones y revisiones también entregan campos estructurados para supuestos, propuesta, alternativas, riesgos, verificación y confianza. Si la CLI o el esquema fallan, se conserva e informa el error real en lugar de completar campos inventados.
+
 ---
 
 ## 5. REGLAS DE SALIDA
@@ -233,14 +237,16 @@ Una vez resuelta la discrepancia, `decide` termina con una recomendación; `exec
 
 ## 6. MODELO Y ESFUERZO
 
-- Incertidumbre normal: modelos equilibrados, esfuerzo `medium`.
-- Arquitectura, seguridad o datos: modelos fuertes, esfuerzo `high`.
-- Problema crítico tras fallos previos: máxima capacidad justificada, `xhigh` o equivalente.
-- Comparación: modelo fuerte y contexto limpio.
+- Marco puede seleccionar explícitamente el perfil `<modelo>/<nivel>` en cada invocación.
+- `s` selecciona Sonnet y `o` selecciona Opus.
+- Los niveles públicos son `low`, `medium`, `high` y `ultracode`.
+- `low`, `medium` y `high` se pasan sin traducción al esfuerzo homónimo de la CLI y mantienen Dynamic Workflows deshabilitado para esa sesión.
+- `ultracode` equivale a esfuerzo CLI `xhigh` con Dynamic Workflows habilitado solo para esa sesión.
+- Si el perfil se omite, se usa `o/ultracode` para conservar Claudex 1.0.
 
-Escalar esfuerzo si el modelo entiende pero no cierra. Escalar modelo si falta capacidad. No escalar un timeout, permiso o fallo de red como si fuera falta de inteligencia.
+La selección explícita de Marco no se escala ni se reduce automáticamente. El anfitrión puede recomendar otro perfil antes de invocar, pero necesita que Marco lo elija. No se interpreta un timeout, permiso o fallo de red como falta de inteligencia.
 
-Los alias concretos cambian; importa usar niveles equivalentes en la versión disponible.
+El wrapper comprueba que la CLI instalada exponga las banderas requeridas antes de invocar el modelo. Si no puede cumplir exactamente el perfil solicitado, falla con evidencia; no degrada silenciosamente. La configuración persistente de Claude Code no se modifica: `enableWorkflows` se fija mediante una sobrescritura efímera y se elimina al terminar.
 
 ---
 
@@ -294,8 +300,18 @@ En Claude Code, Marco puede activarla con:
 En Codex, Marco puede activarla con:
 
 ```text
-$claudex [decide|execute|review] <tarea>
+$claudex [s|o]/[low|medium|high|ultracode] [decide|execute|review] <tarea>
 ```
+
+Ejemplos:
+
+```text
+$claudex s/low decide <problema>
+$claudex o/medium execute <orden>
+$claudex o/ultracode review <alcance>
+```
+
+El selector es opcional; omitirlo equivale a `o/ultracode`.
 
 También puede decir **«usa Claudex»** y el agente inferirá el modo. La sintaxis visible cambia entre herramientas, pero ambas aplican este protocolo y conservan la independencia de las derivaciones.
 
@@ -307,6 +323,7 @@ Los agentes pueden proponer Claudex cuando se cumplan las condiciones, informand
 
 | Versión | Fecha | Origen | Cambio |
 |---|---|---|---|
+| 1.3 | 2026-08-24 | Decisión de Marco | Claudex añade selector explícito de modelo/esfuerzo, workflows efímeros para Ultracode, raíz de proyecto validada, perfiles de contexto y salidas estructuradas. |
 | 1.2 | 2026-08-19 | Decisión de Marco | Claudex incorpora los modos `decide`, `execute` y `review`, ejecución con un solo escritor y adaptador local para Codex. |
 | 1.1 | 2026-08-19 | Decisión de Marco | La doble derivación adopta el nombre Claudex y se expone como habilidad local invocable mediante `/claudex`. |
 | 1.0 | 2026-08-19 | Decisión de Marco | Se formaliza la doble derivación adaptativa: activación por riesgo, razonamientos ciegos, comparación de discrepancias y una sola implementación. |
