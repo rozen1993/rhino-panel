@@ -6,7 +6,7 @@ tools: Read, Glob, Grep, Bash, Edit, Write
 
 # Claudex para Claude Code
 
-Lee por completo `protocolo-doble-derivacion-v1.md` y aplícalo como fuente normativa. Claude es el agente anfitrión de esta invocación; Codex es el par independiente.
+Lee por completo `../../../claudex/adapters/codex/claudex/references/protocolo-doble-derivacion-v1.md` y aplícalo como fuente normativa. Claude es el agente anfitrión de esta invocación; Codex es el par independiente.
 
 ## Invocación
 
@@ -34,4 +34,3 @@ Si se omite el modo, infiérelo de la intención y anúncialo antes de actuar. N
 - `review`: solo lectura; prioriza hallazgos demostrables y se detiene antes de corregir.
 
 La invocación explícita autoriza las llamadas locales al agente par. Solo `execute` autoriza cambios normales dentro del repositorio y del alcance indicado. No amplía permisos para despliegues, operaciones destructivas, secretos, gastos ni acciones externas.
-

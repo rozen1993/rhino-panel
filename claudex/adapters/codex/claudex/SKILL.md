@@ -1,11 +1,11 @@
 ---
 name: claudex
-description: Orquesta Codex y Claude Code para decidir, ejecutar o revisar tareas con razonamientos independientes y una sola implementación. Úsala cuando el usuario invoque $claudex o solicite doble derivación, ejecución verificada o revisión cruzada en este repositorio.
+description: Orquesta Codex y Claude Code para decidir, ejecutar o revisar tareas con razonamientos independientes y una sola implementación. Úsala cuando el usuario invoque $claudex o solicite doble derivación, ejecución verificada o revisión cruzada en el proyecto actual.
 ---
 
 # Claudex para Codex
 
-Lee por completo `protocolo-doble-derivacion-v1.md` y aplícalo como fuente normativa. Codex es el agente anfitrión de esta invocación; Claude Code es el par independiente.
+Lee por completo `references/protocolo-doble-derivacion-v1.md` y aplícalo como fuente normativa. Resuelve esta ruta y las de los scripts respecto del directorio que contiene este `SKILL.md`, nunca respecto del directorio de trabajo del proyecto. Codex es el agente anfitrión de esta invocación; Claude Code es el par independiente.
 
 ## Invocación
 
@@ -20,16 +20,17 @@ Si se omite el modo, infiérelo de la intención y anúncialo antes de actuar. N
 ## Coordinación con Claude Code
 
 - Antes de pedir una derivación a Claude, termina la derivación de Codex.
-- Usa siempre `scripts/invoke-claude.cmd`; no invoques el `claude.cmd` instalado por npm directamente ni pases el prompt como argumento posicional. El lanzador propio evita depender de la política global de ejecución de PowerShell.
+- Usa siempre `scripts/invoke-claude.cmd`, resuelto desde el directorio de esta skill; no invoques el `claude.cmd` instalado por npm directamente ni pases el prompt como argumento posicional. El lanzador propio evita depender de la política global de ejecución de PowerShell.
 - El wrapper fija `opus` con esfuerzo `xhigh` y exige `enableWorkflows=true`. Esta combinación es el equivalente no interactivo de la configuración **Ultracode** solicitada por Marco.
-- Codifica el paquete como UTF-8 Base64 y envíalo por la entrada estándar. Esto preserva Unicode, saltos de línea y prompts extensos en Windows. Ejemplo desde la raíz del repositorio:
+- Codifica el paquete como UTF-8 Base64 y envíalo por la entrada estándar. Esto preserva Unicode, saltos de línea y prompts extensos en Windows. Sustituye `<directorio-de-la-skill>` por la ruta absoluta del directorio que contiene este archivo:
 
 ```powershell
 $paquete = @'
 Describe aquí la consulta neutral para Claude.
 '@
 $paqueteCodificado = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($paquete))
-$paqueteCodificado | & 'claudex/adapters/codex/claudex/scripts/invoke-claude.cmd' -EncodedStdin
+$scriptClaudex = Join-Path '<directorio-de-la-skill>' 'scripts\invoke-claude.cmd'
+$paqueteCodificado | & $scriptClaudex -EncodedStdin
 ```
 
 - Entrega solo el paquete neutral en la fase ciega. No incluyas la respuesta de Codex.
