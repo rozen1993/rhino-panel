@@ -1,6 +1,6 @@
 # Historial de Claudex
 
-La versión de la skill y la versión del protocolo son independientes. La línea base de la skill se etiqueta en Git como `claudex-v1.0.0`; el protocolo incluido conserva su versión documental `v1.2`.
+La versión de la skill y la versión del protocolo son independientes. La línea base de la skill se etiqueta en Git como `claudex-v1.0.0`; el protocolo incluido usa su propia versión documental.
 
 ## Sin publicar — próxima versión
 
@@ -8,6 +8,13 @@ Cambios todavía no implementados:
 
 - impedir la lectura de `.env`, credenciales, claves y otros secretos;
 - añadir timeout, límites opcionales y trazabilidad sin registrar prompts sensibles.
+
+## 1.1.1 — 2026-08-24
+
+- cambia el perfil predeterminado de la invocación sin selector de `o/ultracode` a `o/low`;
+- mantiene `o/ultracode` disponible únicamente cuando Marco lo solicita explícitamente.
+
+Los hashes exactos del paquete están en `versions/claudex-1.1.1.sha256`.
 
 ## 1.1.0 — 2026-08-24
 

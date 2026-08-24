@@ -69,9 +69,9 @@ foreach ($case in $cases) {
 
 $defaultResult = Invoke-ClaudexDryRun
 Assert-Equal 'default model' $defaultResult.model 'opus'
-Assert-Equal 'default level' $defaultResult.level 'ultracode'
-Assert-Equal 'default effort' $defaultResult.effort 'xhigh'
-Assert-Equal 'default workflows' $defaultResult.enableWorkflows $true
+Assert-Equal 'default level' $defaultResult.level 'low'
+Assert-Equal 'default effort' $defaultResult.effort 'low'
+Assert-Equal 'default workflows' $defaultResult.enableWorkflows $false
 
 $comparisonResult = Invoke-ClaudexDryRun -Profile 'o/medium' -Phase compare -ContextProfile project
 Assert-Equal 'comparison context' $comparisonResult.contextProfile 'neutral'

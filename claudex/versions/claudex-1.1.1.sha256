@@ -1,0 +1,7 @@
+8c35ac3325cc66f787855eecaacf39ed9fa9fa1091fb7b349a029850dc426491  claudex/adapters/codex/claudex/references/protocolo-doble-derivacion-v1.md
+06169c09ee2c0dfe5abe50174b80e21e49b18393f6baf294e65985966551fb12  claudex/adapters/codex/claudex/schemas/comparison-response.schema.json
+c2f06bd19bc868d6979e0b4d050a2829324072db2db697f7f80659ff1cb1e692  claudex/adapters/codex/claudex/schemas/peer-response.schema.json
+e82fdfd4fd0e29e73aba768a3a8a910a6baccafaabe57243f9fba6740e6bf17c  claudex/adapters/codex/claudex/scripts/invoke-claude.cmd
+7a06f38e5e4fef880de2cdc7839ede4e7fa1dfbd2161c06ae03f5648335014f7  claudex/adapters/codex/claudex/scripts/invoke-claude.ps1
+1d1fa647f0f382bddd8bf4cf357392cc2c920a3ea83e9fa91c47df835f32f4b1  claudex/adapters/codex/claudex/scripts/test-invoke-claude.ps1
+e51a9495a41cad95f07dec8cab6ba72da4d4c9833b7c33affc8a4b5ae58a5f4d  claudex/adapters/codex/claudex/SKILL.md

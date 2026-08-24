@@ -8,7 +8,7 @@ param(
     [string] $ProjectPath,
 
     [ValidatePattern('^(s|o)/(low|medium|high|ultracode)$')]
-    [string] $Profile = 'o/ultracode',
+    [string] $Profile = 'o/low',
 
     [ValidateSet('derive', 'review', 'compare')]
     [string] $Phase = 'derive',

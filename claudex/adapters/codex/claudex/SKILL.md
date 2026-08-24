@@ -29,7 +29,7 @@ $claudex o/medium execute <orden>
 $claudex o/ultracode review <alcance>
 ```
 
-Si se omite el perfil, usa `o/ultracode` para conservar el comportamiento de Claudex 1.0. Si se omite el modo, infiérelo de la intención y anúncialo antes de actuar. No obligues al usuario a repetir contexto disponible.
+Si se omite el perfil, usa `o/low`. Si se omite el modo, infiérelo de la intención y anúncialo antes de actuar. No obligues al usuario a repetir contexto disponible.
 
 ## Coordinación con Claude Code
 
@@ -55,7 +55,7 @@ $scriptClaudex = Join-Path '<directorio-de-la-skill>' 'scripts\invoke-claude.cmd
 $paqueteCodificado | & $scriptClaudex `
   -EncodedStdin `
   -ProjectPath '<raíz-absoluta-del-proyecto>' `
-  -Profile 'o/ultracode' `
+  -Profile 'o/low' `
   -Phase derive `
   -ContextProfile project `
   -OutputFormat json
