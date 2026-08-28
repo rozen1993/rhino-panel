@@ -2,6 +2,7 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "pipeline": { "type": "string", "enum": ["core", "astro", "refine"] },
     "coincidencias": { "type": "array", "items": { "type": "string" } },
     "discrepancias": {
       "type": "array",

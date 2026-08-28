@@ -1,6 +1,6 @@
 # Estado
 
-**Actualizado:** 2026-08-22
+**Actualizado:** 2026-08-23
 
 ## Fase activa
 
@@ -31,21 +31,30 @@ cortes posteriores. En modo Supabase sus pantallas no muestran fixtures.
 
 ## Staging
 
-La configuración y migración están versionadas, pero aún no se aplicaron al
-proyecto remoto ni se desplegaron en Vercel. El procedimiento y la prueba de
-aceptación están en `../supabase/README.md`.
+La migración `202608220001_backend_foundation.sql` se aplicó al proyecto remoto
+`sistema-r` y el historial local/remoto coincide. El registro público está
+cerrado. Auth y `public.profiles` contienen un Admin y cinco Operarios activos;
+Eduardo es el único Operario especial. El frontend local ya tiene valores
+públicos de staging en un `.env.local` ignorado por Git y compiló correctamente
+en modo Supabase. El acceso real de Admin y la navegación protegida fueron
+aprobados manualmente. La cuenta Burson, el recorrido completo de un Operario,
+la matriz RLS y el Preview de Vercel siguen pendientes.
 
 ## Validación local
 
 - TypeScript, ESLint, 33 pruebas Vitest y build de producción: aprobados.
 - Build con variables equivalentes a Vercel Preview + Supabase: aprobado.
+- Build con el `.env.local` real de staging: aprobado.
+- Login real de Admin y navegación autenticada: aprobados manualmente.
 - Parser real de PostgreSQL sobre la migración: aprobado.
 - Playwright demo: 3 recorridos aprobados.
-- Ejecución de migración y matriz RLS real: pendiente del enlace a staging.
+- Ejecución remota de la migración: aprobada.
+- Matriz RLS y recorrido real desde el frontend: pendientes.
 
 ## Referencias
 
 - `decision-backend-supabase-2026-08-22.md`
+- `bitacora-aprendizaje-backend-supabase.md`
 - `handoff-frontend.md`
 - `../supabase/migrations/202608220001_backend_foundation.sql`
 - `../diseno/direccion-final-traducida/CONTRATO-VISUAL.md`

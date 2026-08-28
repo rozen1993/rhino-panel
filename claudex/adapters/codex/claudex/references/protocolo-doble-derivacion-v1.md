@@ -1,4 +1,4 @@
-# CLAUDEX — PROTOCOLO DE DOBLE DERIVACIÓN Y EJECUCIÓN VERIFICADA — v1.4
+# CLAUDEX — PROTOCOLO DE DOBLE DERIVACIÓN Y EJECUCIÓN VERIFICADA — v1.8
 
 Protocolo autónomo para aprovechar la principal ventaja de trabajar con Claude Code y Codex: obtener razonamientos independientes, localizar incertidumbre mediante discrepancias y producir una sola ejecución verificada. Marco conserva siempre la decisión final.
 
@@ -151,6 +151,53 @@ Este modo es de solo lectura. Corregir los hallazgos requiere una orden posterio
 
 ---
 
+## PIPELINES DE ESPECIALIZACIÓN
+
+El modo y el pipeline son ejes ortogonales:
+
+- el **modo** `decide|execute|review` gobierna permisos, escritura y garantías;
+- el **pipeline** `core|astro|refine` gobierna criterios, fases, gates y entregables;
+- el pipeline nunca concede permisos ni modifica el principio de un solo escritor.
+
+`core` es el pipeline predeterminado y conserva el comportamiento general. `astro` especializa la componización Astro + Tailwind. `refine` especializa la auditoría y mejora verificable preservando intención y contrato público.
+
+| Modo | `core` | `astro` | `refine` |
+|---|---|---|---|
+| `decide` | Decisión general. | Plan de componización sin escribir. | Triaje y plan de mejora sin escribir. |
+| `execute` | Implementación abierta. | Componización Astro + Tailwind verificada. | Auditoría y corrección acotadas por calidad. |
+| `review` | Revisión general. | Auditoría especializada de la componización. | Auditoría especializada de calidad, sin parches. |
+
+La forma canónica explicita ambos ejes:
+
+```text
+claudex [perfil] [decide|execute|review] [--pipeline core|astro|refine] <tarea>
+```
+
+Los alias diarios son solo expansiones de ejecución:
+
+```text
+claudex astro <tarea>   → execute --pipeline astro
+claudex refine <tarea>  → execute --pipeline refine
+```
+
+No existe el alias `track`. Un solo nombre por eje evita ambigüedad.
+Los alias `astro|refine` solo son válidos cuando no se escribió un modo. Para combinar con `decide` o `review`, usa siempre `--pipeline`; una forma mixta como `decide astro <tarea>` es inválida.
+
+### Carga progresiva
+
+- Para `astro`, leer por completo `pipeline-astro.md` antes de derivar, ejecutar o revisar.
+- Para `refine`, leer por completo `pipeline-refine.md` antes de derivar, ejecutar o revisar.
+- Para `core`, no cargar esas referencias salvo que la tarea necesite comparar pipelines.
+
+### Fronteras
+
+- `review --pipeline refine` es válido: entrega hallazgos con severidad y evidencia, pero no corrige.
+- `execute --pipeline refine` puede corregir defectos, accesibilidad y rendimiento sin cambiar requisitos ni API pública. Toda desviación observable se registra.
+- Cambiar requisitos, API, arquitectura de producto o dirección visual exige `decide` o `execute --pipeline core`.
+- `execute --pipeline astro` ejecuta siempre sus gates de destino, aunque el triaje permita omitir `refine`.
+
+---
+
 ## 2. PAQUETE NEUTRAL
 
 Ambos agentes reciben exactamente:
@@ -158,6 +205,9 @@ Ambos agentes reciben exactamente:
 ```text
 MODO Y TAREA
 `decide`, `execute` o `review`, seguido de la pregunta u orden exacta.
+
+PIPELINE
+`core`, `astro` o `refine`, seguido de la especialización y referencia aplicable.
 
 CONTEXTO
 Hechos confirmados y rutas relevantes.
@@ -173,6 +223,8 @@ Resultado esperado y estructura requerida para el modo elegido.
 ```
 
 El paquete no contiene soluciones sugeridas ni lenguaje que favorezca una opción.
+
+Cuando el pipeline sea `astro` o `refine`, el paquete incluye sus criterios cerrados y gates sin proponer de antemano una implementación concreta.
 
 El anfitrión pasa al agente par la raíz absoluta del proyecto. Las derivaciones y revisiones usan el perfil de contexto `project`, que permite leer el repositorio y cargar sus instrucciones. La comparación limpia usa el perfil `neutral`: se ejecuta desde un directorio temporal vacío, carga solo la configuración de usuario y no recibe herramientas. Este aislamiento neutraliza el contexto del proyecto; no sustituye un sandbox del sistema operativo.
 
@@ -196,6 +248,8 @@ RIESGOS — cómo podría fallar.
 VERIFICACIÓN — evidencia que la confirma o refuta.
 CONFIANZA — alta, media o baja, con razón concreta.
 ```
+
+Cuando sea pertinente y el esquema lo permita, la respuesta también declara `pipeline`, `input_class`, `gates`, `artifacts` y `deviations`. Estos campos complementan la estructura base; no sustituyen supuestos, propuesta, alternativas, riesgos, verificación y confianza.
 
 Si un agente conoció primero la respuesta del otro, su salida cuenta como revisión, no como derivación independiente.
 
@@ -239,14 +293,29 @@ Una vez resuelta la discrepancia, `decide` termina con una recomendación; `exec
 
 - Marco puede seleccionar explícitamente el perfil `<modelo>/<nivel>` en cada invocación.
 - `s` selecciona Sonnet y `o` selecciona Opus.
-- Los niveles públicos son `low`, `medium`, `high` y `ultracode`.
-- `low`, `medium` y `high` se pasan sin traducción al esfuerzo homónimo de la CLI y mantienen Dynamic Workflows deshabilitado para esa sesión.
-- `ultracode` equivale a esfuerzo CLI `xhigh` con Dynamic Workflows habilitado solo para esa sesión.
+- Los niveles públicos normales son `low`, `medium`, `high`, `xhigh` y `max`.
+- Los cinco niveles normales se pasan sin traducción al esfuerzo homónimo de la CLI y mantienen Dynamic Workflows deshabilitado para esa sesión.
+- `ultracode` equivale a esfuerzo CLI `max` con Dynamic Workflows/subagentes habilitados solo para esa sesión.
+- Solo `ultracode` activa Dynamic Workflows; `xhigh` y `max` no los activan.
 - Si el perfil se omite, se usa `o/low`.
 
 La selección explícita de Marco no se escala ni se reduce automáticamente. El anfitrión puede recomendar otro perfil antes de invocar, pero necesita que Marco lo elija. No se interpreta un timeout, permiso o fallo de red como falta de inteligencia.
 
 El wrapper comprueba que la CLI instalada exponga las banderas requeridas antes de invocar el modelo. Si no puede cumplir exactamente el perfil solicitado, falla con evidencia; no degrada silenciosamente. La configuración persistente de Claude Code no se modifica: `enableWorkflows` se fija mediante una sobrescritura efímera y se elimina al terminar.
+
+### Checkpoint de uso y recuperación durable
+
+El checkpoint predeterminado de Claude es 95%. Es una señal informativa para dejar evidencia recuperable; no reserva tokens, no bloquea nuevas llamadas y no interrumpe una tarea en curso.
+
+- Si Marco o una fuente fiable informa una utilización igual o superior al checkpoint, la llamada puede comenzar o continuar normalmente. El wrapper registra `claudex_usage_checkpoint` y mantiene la captura durable.
+- El valor conocido siempre se expresa como porcentaje consumido. Una indicación «queda X%» se normaliza a `100 - X`; un porcentaje ambiguo permanece desconocido.
+- Cuando la CLI emite un evento de límite con utilización igual o superior al checkpoint, el supervisor conserva la ruta exacta del journal y continúa esperando el resultado. No termina el proceso por ese evento.
+- Un estado `allowed_warning|rejected` también puede registrar el checkpoint aunque falte el porcentaje. En ese caso se usa `trigger_basis=status` y no se afirma que la utilización alcanzó 95%.
+- La telemetría de utilización puede faltar en modo no interactivo. La recuperación durable no depende de que ese dato exista.
+- Toda invocación JSON usa internamente `stream-json`, guarda al llegar cada evento JSON completo que contenga texto visible recuperable, el estado mínimo de cuota y el resultado final, y vacía el búfer en cada línea. Las líneas inválidas solo dejan longitud y hash, nunca su contenido. Los journals se conservan 72 horas; al iniciar cada operación real, el wrapper purga únicamente archivos `claudex-*.jsonl` vencidos de su directorio de recuperación. `DryRun` no modifica ese directorio, `RecoverLatest` nunca selecciona archivos más antiguos y no se crea ningún proceso persistente. Se excluyen deliberadamente el prompt, herramientas y bloques internos de razonamiento.
+- Una terminación sin resultado final, un resultado final vacío o un código no cero produce un sobre `claudex_recovery` con el texto recuperable, la causa y `complete=false`. Esa salida no se presenta como validada por el esquema.
+- La recuperación solo conserva texto de salida y metadatos operativos. Nunca solicita, reconstruye ni expone la cadena privada de razonamiento.
+- En Claude Code anfitrión, comunicar 95% o más no detiene el trabajo. Claude continúa y prioriza conclusiones útiles antes de refinamientos opcionales; si el proveedor termina la ejecución, se entrega lo recuperable como incompleto.
 
 ---
 
@@ -270,6 +339,7 @@ Cada activación termina con:
 
 ```text
 Modo:
+Pipeline:
 Tarea:
 Motivo de activación:
 Coincidencias:
@@ -294,26 +364,30 @@ Claudex tiene dos adaptadores locales que comparten este protocolo:
 En Claude Code, Marco puede activarla con:
 
 ```text
-/claudex [decide|execute|review] <tarea>
+/claudex [decide|execute|review] [--pipeline core|astro|refine] <tarea>
+/claudex [astro|refine] <tarea>
 ```
 
 En Codex, Marco puede activarla con:
 
 ```text
-$claudex [s|o]/[low|medium|high|ultracode] [decide|execute|review] <tarea>
+$claudex [s|o]/[low|medium|high|xhigh|max|ultracode] [decide|execute|review] [--pipeline core|astro|refine] <tarea>
+$claudex [s|o]/[low|medium|high|xhigh|max|ultracode] [astro|refine] <tarea>
 ```
 
 Ejemplos:
 
 ```text
 $claudex s/low decide <problema>
-$claudex o/medium execute <orden>
-$claudex o/ultracode review <alcance>
+$claudex o/medium execute --pipeline astro <orden>
+$claudex o/high review --pipeline refine <alcance>
+$claudex o/max execute <orden>
+$claudex o/ultracode astro <orden>
 ```
 
 El selector es opcional; omitirlo equivale a `o/low`.
 
-También puede decir **«usa Claudex»** y el agente inferirá el modo. La sintaxis visible cambia entre herramientas, pero ambas aplican este protocolo y conservan la independencia de las derivaciones.
+También puede decir **«usa Claudex»** y el agente inferirá el modo y el pipeline. La sintaxis visible cambia entre herramientas, pero ambas aplican este protocolo y conservan la independencia de las derivaciones.
 
 Los agentes pueden proponer Claudex cuando se cumplan las condiciones, informando a Marco antes de consumir la segunda derivación. Una invocación explícita autoriza las llamadas locales al agente par. `decide` y `review` permanecen en solo lectura. `execute` autoriza únicamente las modificaciones normales del repositorio comprendidas por la orden; no autoriza por sí solo despliegues, operaciones destructivas, acceso a secretos, gastos ni acciones externas.
 
@@ -323,6 +397,10 @@ Los agentes pueden proponer Claudex cuando se cumplan las condiciones, informand
 
 | Versión | Fecha | Origen | Cambio |
 |---|---|---|---|
+| 1.8 | 2026-08-27 | Aclaración de Marco | Añade checkpoint informativo de 95% sin bloqueo ni interrupción, streaming durable, recuperación explícita y retención oportunista de journals durante 72 horas. |
+| 1.7 | 2026-08-25 | Decisión de Marco | `ultracode` pasa de esfuerzo `xhigh` a `max`; conserva Dynamic Workflows/subagentes como su diferencia exclusiva frente a `o/max`. |
+| 1.6 | 2026-08-25 | Decisión de Marco | Claudex expone `xhigh` y `max` como esfuerzos normales sin Dynamic Workflows; solo `ultracode` conserva workflows/subagentes habilitados. |
+| 1.5 | 2026-08-25 | Decisión de Marco | Claudex separa modo y pipeline, añade `astro` y `refine`, alias de ejecución, carga progresiva, matriz de permisos y campos estructurados opcionales. |
 | 1.4 | 2026-08-24 | Decisión de Marco | La invocación sin selector cambia su perfil predeterminado de `o/ultracode` a `o/low`. |
 | 1.3 | 2026-08-24 | Decisión de Marco | Claudex añade selector explícito de modelo/esfuerzo, workflows efímeros para Ultracode, raíz de proyecto validada, perfiles de contexto y salidas estructuradas. |
 | 1.2 | 2026-08-19 | Decisión de Marco | Claudex incorpora los modos `decide`, `execute` y `review`, ejecución con un solo escritor y adaptador local para Codex. |

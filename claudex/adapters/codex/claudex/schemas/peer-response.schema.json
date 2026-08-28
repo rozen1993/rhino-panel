@@ -2,6 +2,60 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "pipeline": { "type": "string", "enum": ["core", "astro", "refine"] },
+    "input_class": {
+      "type": "string",
+      "enum": [
+        "flat-source",
+        "bundled-artifact",
+        "framework-source",
+        "structured-component",
+        "application",
+        "server-data-coupled",
+        "not-applicable"
+      ]
+    },
+    "gates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "status": { "type": "string", "enum": ["passed", "failed", "not-run", "not-applicable"] },
+          "evidence": { "type": "string" }
+        },
+        "required": ["name", "status", "evidence"]
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": { "type": "string" },
+          "purpose": { "type": "string" },
+          "status": { "type": "string", "enum": ["planned", "created", "modified", "reviewed"] }
+        },
+        "required": ["path", "purpose", "status"]
+      }
+    },
+    "deviations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "category": { "type": "string", "enum": ["defect", "accessibility", "performance", "other"] },
+          "before": { "type": "string" },
+          "after": { "type": "string" },
+          "reason": { "type": "string" },
+          "impact": { "type": "string" }
+        },
+        "required": ["category", "before", "after", "reason", "impact"]
+      }
+    },
     "supuestos": { "type": "array", "items": { "type": "string" } },
     "propuesta": { "type": "string" },
     "alternativas": { "type": "array", "items": { "type": "string" } },

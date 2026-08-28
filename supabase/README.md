@@ -27,6 +27,10 @@ debe recrear el esquema únicamente desde las migraciones.
 
 ## 2. Aplicar la migración a staging
 
+**Completado en `sistema-r` el 2026-08-22.** El historial local y remoto muestra
+la migración `202608220001` en ambos lados. Los comandos se conservan como
+procedimiento reproducible para futuros ambientes.
+
 Desde la raíz del repositorio:
 
 ```powershell
@@ -47,31 +51,28 @@ definitiva de Preview aún no existe.
 
 ## 3. Crear las cuentas mínimas
 
-En **Authentication → Users → Add user**, crear al menos un Admin y dos
-Operarios para poder comprobar aislamiento. Usar aliases del mismo dominio
-configurado en Vercel, por ejemplo:
+**Completado para el primer roster de staging.** En
+**Authentication → Users → Add user → Create new user** se usaron aliases del
+mismo dominio que utilizará la aplicación y se marcó **Auto confirm user**:
 
 ```text
-marco.admin@auth.sistema-r.invalid
-ana@auth.sistema-r.invalid
-carlos@auth.sistema-r.invalid
+admin@auth.sistema-r.invalid
+martin@auth.sistema-r.invalid
+cesar@auth.sistema-r.invalid
+kiara@auth.sistema-r.invalid
+johann@auth.sistema-r.invalid
+eduardo@auth.sistema-r.invalid
 ```
 
-Activar la confirmación y copiar el UUID de cada usuario. Luego, en SQL Editor,
-reemplazar los UUID y ejecutar una sola vez:
-
-```sql
-insert into public.profiles (
-  id, username, display_name, role, is_active, is_burson_operator
-) values
-  ('UUID_ADMIN', 'marco.admin', 'Marco Admin', 'admin', true, false),
-  ('UUID_ANA', 'ana', 'Ana Torres', 'operario', true, true),
-  ('UUID_CARLOS', 'carlos', 'Carlos Vega', 'operario', true, false);
-```
+SQL Editor vinculó los UUID de Auth con `public.profiles`: `admin` tiene rol
+Admin; Martin, Cesar, Kiara, Johann y Eduardo tienen rol Operario; únicamente
+Eduardo está marcado como Operario especial. La cuenta Burson sigue pendiente.
 
 La contraseña se define en Auth, no en SQL. El índice impide tener dos
 Operarios especiales activos. Las RPC administrativas que garantizarán además
 un mínimo de un Admin y una sola cuenta Burson pertenecen al siguiente corte.
+Los UUID y contraseñas no se documentan. En un ambiente nuevo deben obtenerse de
+sus propias cuentas Auth; no se reutilizan los usuarios de staging.
 
 ## 4. Configurar Vercel Preview
 
