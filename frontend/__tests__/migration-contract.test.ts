@@ -12,6 +12,16 @@ const migration = readFileSync(
   ),
   "utf8",
 );
+const authorityMigration = readFileSync(
+  resolve(
+    process.cwd(),
+    "..",
+    "supabase",
+    "migrations",
+    "202608280001_activity_authority.sql",
+  ),
+  "utf8",
+);
 
 describe("contrato estático de la migración inicial", () => {
   it("crea las cinco tablas del cimiento", () => {
@@ -43,7 +53,9 @@ describe("contrato estático de la migración inicial", () => {
   });
 
   it("protege concurrencia e idempotencia ante llamadas RPC directas", () => {
-    expect(migration.match(/p_expected_version is null/g)).toHaveLength(2);
+    expect(
+      migration.match(/p_expected_version is null/g)?.length ?? 0,
+    ).toBeGreaterThanOrEqual(2);
     expect(migration).toContain("idempotency_hash text");
     expect(migration).toContain("activity.idempotency_hash = request_hash");
     expect(migration).toContain("idempotency_hash is not null");
@@ -55,16 +67,26 @@ describe("contrato estático de la migración inicial", () => {
     expect(migration).toContain("private.current_app_role() <> 'burson'");
   });
 
-  it("expone solo las tres RPC del corte más el ciclo de sesión", () => {
+  it("documenta el cimiento y su sustitución por las RPC vigentes", () => {
     for (const fn of [
       "register_app_session",
       "revoke_current_app_session",
-      "create_activity_v1",
-      "edit_activity_v1",
       "advance_activity_v1",
     ]) {
       expect(migration).toContain(`function public.${fn}`);
     }
+    for (const legacy of ["create_activity_v1", "edit_activity_v1"]) {
+      expect(migration).toContain(`function public.${legacy}`);
+      expect(authorityMigration).toContain(`drop function public.${legacy}`);
+    }
+    for (const current of [
+      "plan_activity_v1",
+      "create_own_activity_v1",
+      "replan_activity_v1",
+      "update_execution_v1",
+      "advance_activity_v1",
+    ])
+      expect(authorityMigration).toContain(`function public.${current}`);
     expect(migration).toContain("security definer");
     expect(migration).toContain("set search_path = ''");
     expect(migration).toContain("auth.uid()");

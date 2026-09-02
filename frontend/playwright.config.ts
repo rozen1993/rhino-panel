@@ -20,8 +20,11 @@ export default defineConfig({
   },
   webServer: {
     command: "npm run build && npm run start -- -p 3100",
+    env: {
+      SISTEMA_R_DATA_SOURCE: "demo",
+    },
     url: "http://localhost:3100",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 180_000,
   },
   outputDir: ".verificacion/playwright-existing-results/results",

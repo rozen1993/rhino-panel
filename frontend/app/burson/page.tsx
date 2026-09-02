@@ -1,7 +1,7 @@
 import { BursonDashboard } from "@/components/burson-dashboard";
-import { BackendPhaseNotice } from "@/components/backend-phase-notice";
 import { MobileShell, requireRole } from "@/components/mobile-shell";
 import { resolveDataSource } from "@/lib/data-source";
+import { listSupabaseBursonRequests } from "@/lib/supabase/activities";
 
 export default async function BursonPage() {
   const role = await requireRole(
@@ -9,26 +9,26 @@ export default async function BursonPage() {
       item.id === "burson" || item.id === "admin" || Boolean(item.bursonLinked),
   );
   const dataSource = resolveDataSource();
+  const requests =
+    dataSource === "supabase" ? await listSupabaseBursonRequests() : [];
   return (
     <MobileShell active="Burson" role={role}>
       <main className="mx-auto max-w-[1500px] space-y-4 px-3 py-4 md:px-5 md:py-5 lg:px-6">
-        {dataSource === "supabase" ? (
-          <BackendPhaseNotice module="Canal Burson con datos reales" />
-        ) : (
-          <>
-            <header className="technical-surface rounded-[10px] border border-cyan/15 p-5 text-white shadow-[var(--shadow-2)] md:p-6">
-              <p className="data-label relative text-lime">Canal de encargos</p>
-              <h1 className="display-title relative mt-1 text-2xl md:text-3xl">
-                Encargos Burson
-              </h1>
-              <p className="relative mt-2 max-w-2xl text-sm text-white/65">
-                Burson deja el encargo; el operario vinculado se responsabiliza
-                de completarlo.
-              </p>
-            </header>
-            <BursonDashboard role={role} />
-          </>
-        )}
+        <header className="technical-surface rounded-[10px] border border-cyan/15 p-5 text-white shadow-[var(--shadow-2)] md:p-6">
+          <p className="data-label relative text-lime">Canal de encargos</p>
+          <h1 className="display-title relative mt-1 text-2xl md:text-3xl">
+            Encargos Burson
+          </h1>
+          <p className="relative mt-2 max-w-2xl text-sm text-white/65">
+            Burson deja el encargo; el operario vinculado se responsabiliza de
+            completarlo.
+          </p>
+        </header>
+        <BursonDashboard
+          dataSource={dataSource}
+          initialRequests={requests}
+          role={role}
+        />
       </main>
     </MobileShell>
   );

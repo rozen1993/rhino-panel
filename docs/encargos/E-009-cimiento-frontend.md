@@ -1,5 +1,7 @@
 # E-009 — Cimiento del frontend
 
+> **Encargo histórico ya ejecutado.** No usar como contrato vigente; consultar `README.md` en este directorio.
+
 **Fase:** 2 — Construcción frontend
 **Ejecuta:** Codex
 **Estado:** encargado

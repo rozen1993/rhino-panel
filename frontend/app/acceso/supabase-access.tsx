@@ -37,7 +37,7 @@ export function SupabaseAccessPage() {
         <Card className="relative w-full overflow-hidden p-5 text-ink shadow-[var(--shadow-3)] sm:p-7">
           <span className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan to-lime" />
           <div className="text-center">
-            <span className="mx-auto grid size-16 place-items-center rounded-full border-[5px] border-cyan/10 bg-gradient-to-br from-cyan to-[#078ca2] text-white shadow-[0_7px_18px_rgba(0,142,164,.24)]">
+            <span className="mx-auto grid size-16 place-items-center rounded-full border-[5px] border-cyan/10 bg-gradient-to-br from-cyan to-[#078ca2] text-night shadow-[0_7px_18px_rgba(0,142,164,.24)]">
               <SystemIcon className="size-7" name="profile" />
             </span>
             <h2 className="display-title mt-3 text-xl">Acceso de colaborador</h2>

@@ -3,7 +3,7 @@ import { SystemIcon, type IconName } from "@/components/system-icon";
 import type { Role } from "@/lib/roles";
 
 export type NavLabel =
-  "Actividades" | "Nueva" | "Burson" | "Cuentas" | "Histórico";
+  "Actividades" | "Burson" | "Cuentas" | "Histórico" | "Papelera";
 const destinations: {
   label: NavLabel;
   short: string;
@@ -17,13 +17,6 @@ const destinations: {
     icon: "activities",
     href: "/actividades",
     when: (role) => role.id !== "burson",
-  },
-  {
-    label: "Nueva",
-    short: "Nueva",
-    icon: "add",
-    href: "/actividades/nueva",
-    when: (role) => role.id === "operario",
   },
   {
     label: "Burson",
@@ -45,6 +38,13 @@ const destinations: {
     short: "Histórico",
     icon: "calendar",
     href: "/historico",
+    when: (role) => role.id === "admin",
+  },
+  {
+    label: "Papelera",
+    short: "Bajas",
+    icon: "trash",
+    href: "/papelera",
     when: (role) => role.id === "admin",
   },
 ];
@@ -94,9 +94,7 @@ export function NavBar({
   role: Role;
 }) {
   const mobile = presentation === "mobile";
-  const items = destinationsFor(role).filter(
-    (item) => mobile || item.label !== "Nueva",
-  );
+  const items = destinationsFor(role);
   return (
     <nav
       aria-label={`Navegación ${mobile ? "móvil" : "de escritorio"}`}
@@ -109,22 +107,13 @@ export function NavBar({
             : "flex flex-col gap-1 px-2 py-5 lg:px-3"
         }
       >
-        {items.map((item, index) => (
+        {items.map((item) => (
           <li key={item.label}>
             <NavigationLink
               item={item}
               mobile={mobile}
               selected={active === item.label}
             />
-            {!mobile && index === 0 && role.id === "operario" && (
-              <Link
-                className="action-surface mt-1 flex min-h-12 items-center justify-center gap-2 rounded-md px-2 text-sm font-extrabold text-[#173000] shadow-[0_7px_18px_rgba(95,170,0,.2)] transition hover:-translate-y-px lg:justify-start lg:px-4"
-                href="/actividades/nueva"
-              >
-                <SystemIcon className="size-5" name="add" />
-                <span className="hidden lg:inline">Nueva actividad</span>
-              </Link>
-            )}
           </li>
         ))}
       </ul>

@@ -1,25 +1,20 @@
-# Fase 1 — UX y desarrollo visual
+# Fase 1 — UX y desarrollo visual (archivo histórico)
 
-Cómo se verá y cómo se usará el producto descrito en `docs/fase-0-concepcion.md`.
+Este documento conserva la exploración visual anterior para trazabilidad. **No
+es una fuente vigente ni su inventario de pantallas prescribe el producto
+actual**: depende de la concepción histórica ya sustituida.
 
-Esta fase produce **diseño, no código de producto**: no se instala nada, no se andamia la aplicación y
-no se conecta ningún backend. Mobile-first: el caso que manda es una persona en vía, con el teléfono en
-una mano.
+La autoridad funcional actual es
+`docs/contrato-producto-vigente-2026-08-28.md`; la dirección visual aplicable se
+mantiene en `diseno/direccion-final-traducida/CONTRATO-VISUAL.md`. Ante cualquier
+diferencia de roles, estados, permisos o recorridos, prevalece el contrato
+vigente.
 
-**Puerta de salida:** Marco aprueba la dirección visual y entiende todos los recorridos principales
-desde las pantallas.
-
-> ## Fase cumplida el 2026-08-17
+> ## Corte histórico cumplido el 2026-08-17
 >
-> Todas las dudas que suspendieron esta fase están resueltas: el catálogo de roles (D-022, D-048,
-> D-051), los siete estados (D-019), el patrón compartido de pantalla (D-030), la dirección visual
-> (D-031, la pieza 2) y el flujo de acceso (D-026).
->
-> **Marco dio la fase por cumplida con D-044**, con las imperfecciones visuales conocidas de INC-002, y
-> la corrección se hizo sobre el frontend en código durante la Fase 2.
->
-> Este documento se conserva porque su inventario de pantallas, su arquitectura de información y sus
-> patrones transversales siguen siendo la referencia de lo que hay construido.
+> El contenido restante registra las decisiones y patrones aceptados en ese
+> corte. Puede explicar el origen de la interfaz, pero no autoriza recuperar el
+> modelo anterior.
 
 ---
 

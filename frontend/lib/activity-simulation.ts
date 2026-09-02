@@ -11,10 +11,11 @@ import type { ActivityDraftFields } from "@/lib/activity-draft";
 import { validSpans } from "@/lib/activity-validation";
 import { readAccounts } from "@/lib/account-store";
 import { safeMaterialUrl, safeReferenceUrl } from "@/lib/external-link";
+import { calendarDateInLima } from "@/lib/historical";
 import { activityTypes, roleIds, type Role, type RoleId } from "@/lib/roles";
 
-export const activityStoreKey = "rhino:actividades-simuladas:v3";
-const changedEvent = "rhino:actividades-simuladas-cambio-v3";
+export const activityStoreKey = "rhino:actividades-simuladas:v4";
+const changedEvent = "rhino:actividades-simuladas-cambio-v4";
 export type ActivityActor = {
   accountId: string;
   name: string;
@@ -32,6 +33,8 @@ export type ThreadMessage = {
   text: string;
   author: ActivityActor;
   createdAt: string;
+  version: number;
+  opensThread: boolean;
   editedAt?: string;
   deletedAt?: string;
 };
@@ -42,8 +45,10 @@ export type SimulatedActivity = Activity & {
   updatedAt: string;
   version: number;
   idempotencyKey?: string;
+  idempotencyFingerprint?: string;
   referenceLink: string;
   threadOpenedAt?: string;
+  detailHydration: "summary" | "complete";
   thread: ThreadMessage[];
   audit: AuditEntry[];
   deletionReason?: string;
@@ -115,13 +120,13 @@ function seedActivity(
   materialLink = "",
   operatorOpinion = "",
   origin: SimulatedActivity["origin"] = "operario",
-  creator = responsibleAccountId,
+  creator = origin === "burson" ? "account-burson" : "account-admin",
 ): SimulatedActivity {
   const actor: ActivityActor = {
     accountId: creator,
-    name: origin === "burson" ? "Equipo Burson" : responsible,
-    roleId: origin === "burson" ? "burson" : "operario",
-    roleLabel: origin === "burson" ? "Burson" : "Operario",
+    name: origin === "burson" ? "Equipo Burson" : "Marco Admin",
+    roleId: origin === "burson" ? "burson" : "admin",
+    roleLabel: origin === "burson" ? "Burson" : "Admin",
   };
   return {
     id,
@@ -142,6 +147,7 @@ function seedActivity(
     updatedAt: `${firstDate({ spans })}T08:00:00-05:00`,
     version: 1,
     referenceLink: "",
+    detailHydration: "complete",
     thread: [],
     audit: [
       {
@@ -193,10 +199,40 @@ function isThreadMessage(value: unknown): value is ThreadMessage {
     typeof value.id === "string" &&
     typeof value.text === "string" &&
     typeof value.createdAt === "string" &&
+    typeof value.version === "number" &&
+    Number.isInteger(value.version) &&
+    value.version > 0 &&
+    typeof value.opensThread === "boolean" &&
     isActor(value.author) &&
+    (!value.opensThread || value.author.roleId === "admin") &&
     (value.editedAt === undefined || typeof value.editedAt === "string") &&
     (value.deletedAt === undefined || typeof value.deletedAt === "string")
   );
+}
+function normalizeLegacyThreadMetadata(value: unknown): unknown {
+  if (!Array.isArray(value)) return value;
+  return value.map((activity) => {
+    if (!isRecord(activity) || !Array.isArray(activity.thread)) return activity;
+    return {
+      ...activity,
+      detailHydration:
+        activity.detailHydration === undefined
+          ? "complete"
+          : activity.detailHydration,
+      thread: activity.thread.map((message, index) =>
+        isRecord(message)
+          ? {
+              ...message,
+              version: message.version === undefined ? 1 : message.version,
+              opensThread:
+                message.opensThread === undefined
+                  ? index === 0
+                  : message.opensThread,
+            }
+          : message,
+      ),
+    };
+  });
 }
 function isStoredActivity(value: unknown): value is SimulatedActivity {
   if (!isRecord(value)) return false;
@@ -225,19 +261,27 @@ function isStoredActivity(value: unknown): value is SimulatedActivity {
     typeof value.version === "number" &&
     Number.isInteger(value.version) &&
     value.version > 0 &&
+    ["summary", "complete"].includes(value.detailHydration as string) &&
     Array.isArray(value.spans) &&
     validSpans(value.spans as DateSpan[]) &&
     Array.isArray(value.thread) &&
     value.thread.every(isThreadMessage) &&
     Array.isArray(value.audit) &&
     value.audit.every(isAuditEntry) &&
-    (value.deletedAt === undefined || typeof value.deletedAt === "string")
+    ((value.deletedAt === undefined &&
+      value.deletedBy === undefined &&
+      value.deletionReason === undefined) ||
+      (typeof value.deletedAt === "string" &&
+        isActor(value.deletedBy) &&
+        typeof value.deletionReason === "string" &&
+        value.deletionReason.trim().length >= 2 &&
+        value.deletionReason.trim().length <= 1000))
   );
 }
 export function parseActivityStore(raw: string | null): SimulatedActivity[] {
   if (!raw) return seed;
   try {
-    const value: unknown = JSON.parse(raw);
+    const value = normalizeLegacyThreadMetadata(JSON.parse(raw));
     return Array.isArray(value) && value.every(isStoredActivity) ? value : seed;
   } catch {
     return seed;
@@ -260,18 +304,22 @@ function update(
   storage: Pick<Storage, "getItem" | "setItem">,
   id: string,
   change: (item: SimulatedActivity) => SimulatedActivity | string,
+  bumpActivityVersion = true,
+  allowDeleted = false,
 ): Result {
   const current = readActivities(storage);
   const found = current.find((item) => item.id === id);
-  if (!found || found.deletedAt)
+  if (!found || (found.deletedAt && !allowDeleted))
     return { ok: false, error: "La actividad no existe." };
   const changed = change(found);
   if (typeof changed === "string") return { ok: false, error: changed };
-  const next = {
-    ...changed,
-    version: changed.version + 1,
-    updatedAt: new Date().toISOString(),
-  };
+  const next = bumpActivityVersion
+    ? {
+        ...changed,
+        version: changed.version + 1,
+        updatedAt: new Date().toISOString(),
+      }
+    : changed;
   save(
     storage,
     current.map((item) => (item.id === id ? next : item)),
@@ -301,62 +349,194 @@ function audit(
   ];
 }
 export function canViewActivity(item: SimulatedActivity, role: Role) {
+  if (item.deletedAt) return role.id === "admin";
   if (role.id === "admin") return true;
   if (role.id === "burson")
     return (
       item.origin === "burson" && item.createdByAccountId === role.accountId
     );
   return (
-    item.responsibleAccountId === role.accountId ||
-    Boolean(role.bursonLinked && item.origin === "burson")
+    item.responsibleAccountId === role.accountId
   );
 }
 export function canEditActivity(item: SimulatedActivity, role: Role) {
   const responsible =
     role.id === "operario" && item.responsibleAccountId === role.accountId;
-  const bursonCreator =
-    role.id === "burson" &&
-    item.origin === "burson" &&
-    item.createdByAccountId === role.accountId &&
-    item.status === "Programada";
-  return responsible || bursonCreator;
+  return role.id === "admin" || responsible;
 }
+
+function planningError(fields: ActivityDraftFields) {
+  if (
+    !fields.title.trim() ||
+    !fields.description.trim() ||
+    !validSpans(fields.spans)
+  )
+    return "Completa título, descripción y fechas válidas.";
+  if (fields.placeName.length > 300)
+    return "El lugar supera el tamaño permitido.";
+  return null;
+}
+
+function planningFingerprint(
+  fields: ActivityDraftFields,
+  responsibleAccountId: string,
+) {
+  return JSON.stringify({
+    responsibleAccountId,
+    type: fields.type,
+    title: fields.title.trim(),
+    description: fields.description.trim(),
+    place: fields.placeName.trim(),
+    spans: fields.spans.map(({ start, end }) => ({ start, end })),
+  });
+}
+
+function bursonPlanningFingerprint(
+  fields: ActivityDraftFields,
+  referenceLink: string,
+) {
+  return JSON.stringify({
+    type: fields.type,
+    title: fields.title.trim(),
+    description: fields.description.trim(),
+    place: fields.placeName.trim(),
+    spans: fields.spans.map(({ start, end }) => ({ start, end })),
+    referenceLink,
+  });
+}
+
+function idempotencyReplay(
+  activities: SimulatedActivity[],
+  actorAccountId: string,
+  key: string | undefined,
+  fingerprint: string,
+  expectedResponsibleAccountId: string,
+  responsibilityMismatchError: string,
+) {
+  if (!key) return null;
+  const duplicate = activities.find(
+    (item) =>
+      item.createdByAccountId === actorAccountId &&
+      item.idempotencyKey === key,
+  );
+  if (!duplicate) return null;
+  if (duplicate.responsibleAccountId !== expectedResponsibleAccountId)
+    return {
+      ok: false as const,
+      error: responsibilityMismatchError,
+    };
+  if (
+    duplicate.deletedAt ||
+    duplicate.idempotencyFingerprint !== fingerprint
+  )
+    return {
+      ok: false as const,
+      error:
+        "SR006: la clave de idempotencia se reutilizó con una solicitud diferente.",
+    };
+  return { ok: true as const, activity: duplicate, replayed: true as const };
+}
+
+export function planActivity(
+  storage: Pick<Storage, "getItem" | "setItem">,
+  accountStorage: Pick<Storage, "getItem">,
+  fields: ActivityDraftFields,
+  role: Role,
+  idempotencyKey?: string,
+) {
+  if (role.id !== "admin")
+    return {
+      ok: false as const,
+      error: "Solo Admin puede planificar actividades para el equipo.",
+    };
+  const validation = planningError(fields);
+  if (validation) return { ok: false as const, error: validation };
+  const responsible = readAccounts(accountStorage).find(
+    (item) =>
+      item.id === fields.responsibleAccountId &&
+      item.active &&
+      item.roleId === "operario",
+  );
+  if (!responsible)
+    return {
+      ok: false as const,
+      error: "Selecciona un operario activo como responsable.",
+    };
+
+  const current = readActivities(storage);
+  const actor = actorFromRole(role);
+  const idempotencyFingerprint = planningFingerprint(fields, responsible.id);
+  const replay = idempotencyReplay(
+    current,
+    actor.accountId,
+    idempotencyKey,
+    idempotencyFingerprint,
+    responsible.id,
+    "SR006: la actividad idempotente ya no conserva el responsable planificado.",
+  );
+  if (replay) return replay;
+  const now = new Date().toISOString();
+  const next: SimulatedActivity = {
+    id: slug(fields.title),
+    type: fields.type,
+    title: fields.title.trim(),
+    responsible: responsible.name,
+    responsibleAccountId: responsible.id,
+    status: "Programada",
+    origin: "operario",
+    spans: fields.spans,
+    description: fields.description.trim(),
+    place: fields.placeName.trim(),
+    materialLink: "",
+    operatorOpinion: "",
+    referenceLink: "",
+    createdByAccountId: actor.accountId,
+    createdByRoleId: "admin",
+    createdAt: now,
+    updatedAt: now,
+    version: 1,
+    idempotencyKey,
+    idempotencyFingerprint,
+    detailHydration: "complete",
+    thread: [],
+    audit: [
+      {
+        action: "Actividad planificada",
+        actor,
+        moment: now,
+        detail: responsible.name,
+      },
+    ],
+  };
+  save(storage, [next, ...current]);
+  return { ok: true as const, activity: next };
+}
+
 export function createOwnActivity(
   storage: Pick<Storage, "getItem" | "setItem">,
   fields: ActivityDraftFields,
   role: Role,
   idempotencyKey?: string,
 ) {
-  if (role.id !== "operario")
+  if (role.id !== "operario" || !role.canCreateOwnActivities)
     return {
       ok: false as const,
-      error: "Solo un operario puede registrar una actividad propia.",
+      error: "Admin no te concedió permiso para crear una actividad propia.",
     };
-  if (
-    !fields.title.trim() ||
-    !fields.description.trim() ||
-    !validSpans(fields.spans)
-  )
-    return {
-      ok: false as const,
-      error: "Completa título, descripción y fechas válidas.",
-    };
-  if (fields.referenceLink && !safeReferenceUrl(fields.referenceLink))
-    return {
-      ok: false as const,
-      error: "Usa un enlace de referencia HTTPS válido.",
-    };
-  if (fields.materialLink && !safeMaterialUrl(fields.materialLink))
-    return {
-      ok: false as const,
-      error: "Usa un enlace HTTPS válido sin credenciales incrustadas.",
-    };
+  const validation = planningError(fields);
+  if (validation) return { ok: false as const, error: validation };
   const current = readActivities(storage);
-  const duplicate =
-    idempotencyKey &&
-    current.find((item) => item.idempotencyKey === idempotencyKey);
-  if (duplicate) return { ok: true as const, activity: duplicate };
   const actor = actorFromRole(role);
+  const idempotencyFingerprint = planningFingerprint(fields, actor.accountId);
+  const replay = idempotencyReplay(
+    current,
+    actor.accountId,
+    idempotencyKey,
+    idempotencyFingerprint,
+    actor.accountId,
+    "SR002: la actividad ya no está asignada a este operario.",
+  );
+  if (replay) return replay;
   const now = new Date().toISOString();
   const next: SimulatedActivity = {
     id: slug(fields.title),
@@ -369,8 +549,8 @@ export function createOwnActivity(
     spans: fields.spans,
     description: fields.description.trim(),
     place: fields.placeName.trim(),
-    materialLink: fields.materialLink.trim(),
-    operatorOpinion: fields.notes.trim(),
+    materialLink: "",
+    operatorOpinion: "",
     referenceLink: "",
     createdByAccountId: actor.accountId,
     createdByRoleId: actor.roleId,
@@ -378,6 +558,8 @@ export function createOwnActivity(
     updatedAt: now,
     version: 1,
     idempotencyKey,
+    idempotencyFingerprint,
+    detailHydration: "complete",
     thread: [],
     audit: [{ action: "Actividad creada", actor, moment: now }],
   };
@@ -389,12 +571,50 @@ export function createBursonActivity(
   accountStorage: Pick<Storage, "getItem">,
   fields: ActivityDraftFields,
   role: Role,
+  idempotencyKey?: string,
 ) {
   if (role.id !== "burson")
     return {
       ok: false as const,
       error: "Solo Burson puede crear encargos Burson.",
     };
+  const validation = planningError(fields);
+  if (validation) return { ok: false as const, error: validation };
+  const rawReferenceLink = fields.referenceLink.trim();
+  const normalizedReferenceLink = rawReferenceLink
+    ? safeReferenceUrl(rawReferenceLink)
+    : "";
+  if (normalizedReferenceLink === null)
+    return {
+      ok: false as const,
+      error: "Usa un enlace de referencia HTTPS válido.",
+    };
+  const actor = actorFromRole(role);
+  const current = readActivities(storage);
+  const idempotencyFingerprint = bursonPlanningFingerprint(
+    fields,
+    normalizedReferenceLink,
+  );
+  if (idempotencyKey) {
+    const duplicate = current.find(
+      (item) =>
+        item.createdByAccountId === actor.accountId &&
+        item.idempotencyKey === idempotencyKey,
+    );
+    if (duplicate) {
+      if (
+        duplicate.deletedAt ||
+        duplicate.origin !== "burson" ||
+        duplicate.idempotencyFingerprint !== idempotencyFingerprint
+      )
+        return {
+          ok: false as const,
+          error:
+            "SR006: la clave de idempotencia se reutilizó con un encargo diferente.",
+        };
+      return { ok: true as const, activity: duplicate, replayed: true as const };
+    }
+  }
   const special = readAccounts(accountStorage).find(
     (item) => item.active && item.roleId === "operario" && item.bursonLinked,
   );
@@ -403,16 +623,6 @@ export function createBursonActivity(
       ok: false as const,
       error: "No existe un operario activo vinculado a Burson.",
     };
-  if (
-    !fields.title.trim() ||
-    !fields.description.trim() ||
-    !validSpans(fields.spans)
-  )
-    return {
-      ok: false as const,
-      error: "Completa título, descripción y fechas válidas.",
-    };
-  const actor = actorFromRole(role);
   const now = new Date().toISOString();
   const next: SimulatedActivity = {
     id: slug(fields.title),
@@ -427,12 +637,15 @@ export function createBursonActivity(
     place: fields.placeName.trim(),
     materialLink: "",
     operatorOpinion: "",
-    referenceLink: fields.referenceLink.trim(),
+    referenceLink: normalizedReferenceLink,
     createdByAccountId: actor.accountId,
     createdByRoleId: "burson",
     createdAt: now,
     updatedAt: now,
     version: 1,
+    idempotencyKey,
+    idempotencyFingerprint,
+    detailHydration: "complete",
     thread: [],
     audit: [
       {
@@ -443,48 +656,36 @@ export function createBursonActivity(
       },
     ],
   };
-  save(storage, [next, ...readActivities(storage)]);
+  save(storage, [next, ...current]);
   return { ok: true as const, activity: next };
 }
-export function editActivity(
+export function replanActivity(
   storage: Pick<Storage, "getItem" | "setItem">,
+  accountStorage: Pick<Storage, "getItem">,
   id: string,
   fields: ActivityDraftFields,
   actor: ActivityActor,
   expectedVersion: number,
 ): Result {
   return update(storage, id, (item) => {
+    if (actor.roleId !== "admin")
+      return "Solo Admin puede modificar la planificación.";
     if (item.version !== expectedVersion)
       return "La actividad cambió; recarga antes de guardar.";
-    const responsible =
-      item.responsibleAccountId === actor.accountId &&
-      actor.roleId === "operario";
-    const bursonCreator =
-      item.origin === "burson" &&
-      item.createdByAccountId === actor.accountId &&
-      actor.roleId === "burson" &&
-      item.status === "Programada";
-    if (!responsible && !bursonCreator)
-      return "No tienes permiso para editar esta actividad.";
-    if (
-      !validSpans(fields.spans) ||
-      !fields.title.trim() ||
-      !fields.description.trim()
-    )
-      return "Completa los datos obligatorios.";
-    if (
-      responsible &&
-      !item.threadOpenedAt &&
-      fields.materialLink &&
-      !safeMaterialUrl(fields.materialLink)
-    )
-      return "Usa un enlace HTTPS válido sin credenciales incrustadas.";
-    if (
-      bursonCreator &&
-      fields.referenceLink &&
-      !safeReferenceUrl(fields.referenceLink)
-    )
-      return "Usa un enlace de referencia HTTPS válido.";
+    const validation = planningError(fields);
+    if (validation) return validation;
+
+    const responsible = readAccounts(accountStorage).find(
+      (account) =>
+        account.id === fields.responsibleAccountId &&
+        account.active &&
+        account.roleId === "operario",
+    );
+    if (!responsible)
+      return "Selecciona un operario activo como responsable.";
+    if (item.origin === "burson" && !responsible.bursonLinked)
+      return "Un encargo Burson requiere al operario especial.";
+
     return {
       ...item,
       type: fields.type,
@@ -492,18 +693,51 @@ export function editActivity(
       description: fields.description.trim(),
       spans: fields.spans,
       place: fields.placeName.trim(),
-      referenceLink: bursonCreator
-        ? fields.referenceLink.trim()
-        : item.referenceLink,
-      materialLink:
-        responsible && !item.threadOpenedAt
-          ? fields.materialLink.trim()
-          : item.materialLink,
-      operatorOpinion:
-        responsible && !item.threadOpenedAt
-          ? fields.notes.trim()
-          : item.operatorOpinion,
-      audit: audit(item, "Actividad editada", actor),
+      responsible: responsible.name,
+      responsibleAccountId: responsible.id,
+      audit: audit(
+        item,
+        "Planificación actualizada",
+        actor,
+        responsible.name,
+      ),
+    };
+  });
+}
+
+export function updateExecutionActivity(
+  storage: Pick<Storage, "getItem" | "setItem">,
+  id: string,
+  fields: Pick<ActivityDraftFields, "materialLink" | "notes">,
+  actor: ActivityActor,
+  expectedVersion: number,
+): Result {
+  return update(storage, id, (item) => {
+    if (
+      actor.roleId !== "operario" ||
+      item.responsibleAccountId !== actor.accountId
+    )
+      return "Solo el operario responsable actualiza la ejecución.";
+    if (item.version !== expectedVersion)
+      return "La actividad cambió; recarga antes de guardar.";
+    if (item.threadOpenedAt)
+      return "Admin inició la conversación; el enlace y la opinión están bloqueados.";
+    const rawMaterialLink = fields.materialLink.trim();
+    const materialLink = rawMaterialLink
+      ? safeMaterialUrl(rawMaterialLink)
+      : "";
+    if (materialLink === null)
+      return "Usa un enlace HTTPS válido sin credenciales incrustadas.";
+    if (fields.notes.length > 5000)
+      return "La opinión supera el tamaño permitido.";
+    if (item.status === "Entregada" && !materialLink)
+      return "Una actividad entregada debe conservar su enlace de material.";
+
+    return {
+      ...item,
+      materialLink,
+      operatorOpinion: fields.notes.trim(),
+      audit: audit(item, "Ejecución actualizada", actor),
     };
   });
 }
@@ -521,8 +755,6 @@ export function advanceActivity(
       return "Solo el operario responsable puede cambiar el estado.";
     if (expectedVersion !== undefined && item.version !== expectedVersion)
       return "La actividad cambió; revisa la versión nueva.";
-    if (item.threadOpenedAt)
-      return "La actividad está bloqueada por la conversación con Admin.";
     const status: InternalStatus | null =
       item.status === "Programada"
         ? "En proceso"
@@ -546,55 +778,134 @@ export function softDeleteActivity(
   id: string,
   reason: string,
   actor: ActivityActor,
+  expectedVersion: number,
 ): Result {
   return update(storage, id, (item) => {
-    const ownBeforeAdmin =
-      actor.roleId === "operario" &&
-      item.responsibleAccountId === actor.accountId &&
-      !item.threadOpenedAt;
-    const admin = actor.roleId === "admin";
-    const burson =
-      actor.roleId === "burson" &&
-      item.createdByAccountId === actor.accountId &&
-      item.status === "Programada";
-    if (!ownBeforeAdmin && !admin && !burson)
-      return "No tienes permiso para eliminar esta actividad.";
-    if (!reason.trim()) return "Escribe el motivo de eliminación.";
+    if (actor.roleId !== "admin")
+      return "Solo Admin puede dar de baja una actividad.";
+    if (item.deletedAt) return "La actividad ya está en la Papelera.";
+    const normalizedReason = reason.trim();
+    if (normalizedReason.length < 2 || normalizedReason.length > 1000)
+      return "Escribe un motivo de baja de 2 a 1000 caracteres.";
+    if (item.version !== expectedVersion)
+      return "La actividad cambió; recarga antes de darla de baja.";
     return {
       ...item,
       deletedAt: new Date().toISOString(),
       deletedBy: actor,
-      deletionReason: reason.trim(),
+      deletionReason: normalizedReason,
       audit: audit(
         item,
-        "Actividad eliminada lógicamente",
+        "Actividad dada de baja",
         actor,
-        reason.trim(),
+        normalizedReason,
       ),
     };
-  });
+  }, true, true);
+}
+
+export function restoreActivity(
+  storage: Pick<Storage, "getItem" | "setItem">,
+  accountStorage: Pick<Storage, "getItem">,
+  id: string,
+  actor: ActivityActor,
+  expectedVersion: number,
+  responsibleAccountId: string | null = null,
+): Result {
+  return update(storage, id, (item) => {
+    if (actor.roleId !== "admin")
+      return "Solo Admin puede restaurar una actividad.";
+    if (!item.deletedAt) return "La actividad no está en la Papelera.";
+    if (item.version !== expectedVersion)
+      return "La actividad cambió; recarga antes de restaurarla.";
+
+    const resolvedResponsibleId =
+      responsibleAccountId ?? item.responsibleAccountId;
+    const responsibleChanged =
+      resolvedResponsibleId !== item.responsibleAccountId;
+    if (item.status === "Entregada" && responsibleChanged)
+      return "Una actividad entregada conserva a su responsable histórico.";
+    const accounts = readAccounts(accountStorage);
+    const resolvedAccount = accounts.find(
+      (account) => account.id === resolvedResponsibleId,
+    );
+    const requiresActiveResponsible = item.status !== "Entregada";
+    if (
+      (requiresActiveResponsible || responsibleChanged) &&
+      (!resolvedAccount?.active || resolvedAccount.roleId !== "operario")
+    )
+      return responsibleAccountId === null
+        ? "El responsable ya no está activo. Elige un Operario activo para restaurar."
+        : "Selecciona un Operario activo para restaurar.";
+    if (
+      item.origin === "burson" &&
+      item.status !== "Entregada" &&
+      !resolvedAccount?.bursonLinked
+    )
+      return "Un encargo Burson requiere al Operario especial activo.";
+    const restored = { ...item };
+    delete restored.deletedAt;
+    delete restored.deletedBy;
+    delete restored.deletionReason;
+    return {
+      ...restored,
+      responsibleAccountId: resolvedResponsibleId,
+      responsible:
+        responsibleChanged
+          ? (resolvedAccount?.name ?? item.responsible)
+          : item.responsible,
+      audit: audit(
+        item,
+        "Actividad restaurada",
+        actor,
+        responsibleChanged
+          ? `Responsable: ${resolvedAccount?.name ?? item.responsible}`
+          : undefined,
+      ),
+    };
+  }, true, true);
+}
+
+export function listTrashedActivities(
+  storage: Pick<Storage, "getItem">,
+  role: Role,
+) {
+  if (role.id !== "admin") return [];
+  return readActivities(storage)
+    .filter((item) => Boolean(item.deletedAt))
+    .sort((left, right) =>
+      (right.deletedAt ?? "").localeCompare(left.deletedAt ?? ""),
+    );
 }
 export function addThreadMessage(
   storage: Pick<Storage, "getItem" | "setItem">,
   id: string,
   text: string,
   actor: ActivityActor,
+  expectedActivityVersion: number | null,
 ): Result {
   return update(storage, id, (item) => {
     if (!text.trim()) return "Escribe un mensaje.";
     if (item.status !== "Entregada")
       return "La conversación se habilita cuando la actividad está entregada.";
     const first = !item.threadOpenedAt;
-    if (first && actor.roleId !== "admin")
-      return "Admin debe iniciar la conversación.";
+    if (actor.roleId === "burson")
+      return "Burson no puede acceder a esta conversación.";
     if (
-      !first &&
-      actor.roleId !== "admin" &&
+      actor.roleId === "operario" &&
       item.responsibleAccountId !== actor.accountId
     )
       return "Solo Admin y el responsable pueden conversar.";
-    if (actor.roleId === "burson")
-      return "Burson no puede acceder a esta conversación.";
+    if (first && actor.roleId !== "admin")
+      return "Admin debe iniciar la conversación.";
+    if (
+      first &&
+      (expectedActivityVersion === null ||
+        item.version !== expectedActivityVersion)
+    )
+      return "La actividad cambió; recarga antes de iniciar la conversación.";
+    if (!first && expectedActivityVersion !== null)
+      return "La conversación cambió; recarga antes de publicar.";
     const now = new Date().toISOString();
     return {
       ...item,
@@ -602,10 +913,12 @@ export function addThreadMessage(
       thread: [
         ...item.thread,
         {
-          id: `message-${Date.now().toString(36)}`,
+          id: `message-${globalThis.crypto.randomUUID()}`,
           text: text.trim(),
           author: actor,
           createdAt: now,
+          version: 1,
+          opensThread: first,
         },
       ],
       audit: audit(
@@ -616,7 +929,7 @@ export function addThreadMessage(
         actor,
       ),
     };
-  });
+  }, expectedActivityVersion !== null);
 }
 export function editThreadMessage(
   storage: Pick<Storage, "getItem" | "setItem">,
@@ -624,13 +937,22 @@ export function editThreadMessage(
   messageId: string,
   text: string,
   actor: ActivityActor,
+  expectedMessageVersion: number,
 ): Result {
   return update(storage, id, (item) => {
+    if (
+      actor.roleId === "burson" ||
+      (actor.roleId === "operario" &&
+        item.responsibleAccountId !== actor.accountId)
+    )
+      return "Solo Admin y el responsable pueden conversar.";
     const target = item.thread.find(
       (message) => message.id === messageId && !message.deletedAt,
     );
     if (!target || target.author.accountId !== actor.accountId)
       return "Solo el autor puede editar este mensaje.";
+    if (target.version !== expectedMessageVersion)
+      return "El mensaje cambió; recarga antes de editarlo.";
     if (!text.trim()) return "El mensaje no puede quedar vacío.";
     return {
       ...item,
@@ -639,36 +961,50 @@ export function editThreadMessage(
           ? {
               ...message,
               text: text.trim(),
+              version: message.version + 1,
               editedAt: new Date().toISOString(),
             }
           : message,
       ),
       audit: audit(item, "Mensaje editado", actor),
     };
-  });
+  }, false);
 }
 export function deleteThreadMessage(
   storage: Pick<Storage, "getItem" | "setItem">,
   id: string,
   messageId: string,
   actor: ActivityActor,
+  expectedMessageVersion: number,
 ): Result {
   return update(storage, id, (item) => {
+    if (
+      actor.roleId === "burson" ||
+      (actor.roleId === "operario" &&
+        item.responsibleAccountId !== actor.accountId)
+    )
+      return "Solo Admin y el responsable pueden conversar.";
     const target = item.thread.find(
       (message) => message.id === messageId && !message.deletedAt,
     );
     if (!target || target.author.accountId !== actor.accountId)
       return "Solo el autor puede eliminar este mensaje.";
+    if (target.version !== expectedMessageVersion)
+      return "El mensaje cambió; recarga antes de eliminarlo.";
     return {
       ...item,
       thread: item.thread.map((message) =>
         message.id === messageId
-          ? { ...message, deletedAt: new Date().toISOString() }
+          ? {
+              ...message,
+              version: message.version + 1,
+              deletedAt: new Date().toISOString(),
+            }
           : message,
       ),
-      audit: audit(item, "Mensaje eliminado", actor),
+      audit: audit(item, "Mensaje eliminado", actor, `Mensaje ${messageId}`),
     };
-  });
+  }, false);
 }
 export function reassignOpenBursonActivities(
   storage: Pick<Storage, "getItem" | "setItem">,
@@ -708,10 +1044,15 @@ export function reassignOpenBursonActivities(
       !item.deletedAt,
   ).length;
 }
-export function isOverdue(item: SimulatedActivity, today = new Date()) {
+export function isOverdue(
+  item: Pick<SimulatedActivity, "status" | "spans">,
+  today: Date | string = new Date(),
+) {
   if (item.status === "Entregada") return false;
-  const end = new Date(`${lastDate(item)}T23:59:59`);
-  return !Number.isNaN(end.getTime()) && today.getTime() > end.getTime();
+  const end = lastDate(item);
+  const todayDate =
+    typeof today === "string" ? today : calendarDateInLima(today);
+  return Boolean(end) && end < todayDate;
 }
 export function useSimulatedActivities(enabled = true) {
   const subscribe = useCallback((notify: () => void) => {
@@ -736,7 +1077,14 @@ export function useSimulatedActivities(enabled = true) {
     [enabled],
   );
   const raw = useSyncExternalStore(subscribe, snapshot, initialSnapshot);
-  return useMemo(() => parseActivityStore(raw), [raw]);
+  return useMemo(
+    () =>
+      parseActivityStore(raw).map((activity) => ({
+        ...activity,
+        thread: activity.thread.filter((message) => !message.deletedAt),
+      })),
+    [raw],
+  );
 }
 export function useActivityStoreHealth() {
   return { corrupt: false };

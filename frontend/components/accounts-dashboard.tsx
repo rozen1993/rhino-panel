@@ -1,30 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import {
+  createSupabaseAccountAction,
+  resetSupabaseTemporaryPasswordAction,
+  setSupabaseOperatorCreationPermissionAction,
+  updateSupabaseAccountAction,
+  type AccountsServerResult,
+} from "@/app/cuentas/actions";
 import { Avatar } from "@/components/avatar";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
 import { SystemIcon } from "@/components/system-icon";
-import { toggleAccount, upsertAccount, useAccounts } from "@/lib/account-store";
+import {
+  resetTemporaryPassword,
+  toggleAccount,
+  upsertAccount,
+  useAccounts,
+} from "@/lib/account-store";
 import {
   actorFromRole,
+  readActivities,
   reassignOpenBursonActivities,
 } from "@/lib/activity-simulation";
 import type { Account, AccountFields } from "@/lib/accounts";
+import type { DataSource } from "@/lib/data-source";
+import { generateTemporaryPassword } from "@/lib/password-policy";
 import { roleIds, roles, type Role } from "@/lib/roles";
 
 const control =
-  "min-h-11 w-full rounded-md border border-line bg-panel px-3 py-2 text-sm outline-none transition placeholder:text-ink-muted/75 focus:border-cyan focus:ring-2 focus:ring-cyan/15";
+  "min-h-11 w-full rounded-md border border-line bg-panel px-3 py-2 text-sm outline-none transition placeholder:text-ink-muted focus:border-cyan focus:ring-2 focus:ring-cyan/15";
 const emptyFields: AccountFields = {
   name: "",
   username: "",
   password: "",
   roleId: "operario",
   bursonLinked: false,
+  canCreateOwnActivities: false,
 };
 
-export function AccountsDashboard({ role }: { role: Role }) {
-  const accounts = useAccounts();
+export function AccountsDashboard({
+  role,
+  dataSource = "demo",
+  initialAccounts = [],
+}: {
+  role: Role;
+  dataSource?: DataSource;
+  initialAccounts?: Account[];
+}) {
+  const demoAccounts = useAccounts();
+  const [serverAccounts, setServerAccounts] = useState(initialAccounts);
+  const accounts = dataSource === "supabase" ? serverAccounts : demoAccounts;
   const [query, setQuery] = useState("");
   const [stateFilter, setStateFilter] = useState("");
   const [formOpen, setFormOpen] = useState(false);
@@ -32,6 +58,16 @@ export function AccountsDashboard({ role }: { role: Role }) {
   const [fields, setFields] = useState<AccountFields>(emptyFields);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [notice, setNotice] = useState("");
+  const [issuedCredential, setIssuedCredential] = useState<{
+    username: string;
+    password: string;
+  } | null>(null);
+  const [resetAccount, setResetAccount] = useState<Account | null>(null);
+  const [resetPassword, setResetPassword] = useState("");
+  const [pending, startTransition] = useTransition();
+  const editingAccount = editingId
+    ? accounts.find((account) => account.id === editingId)
+    : undefined;
   const visible = accounts.filter(
     (account) =>
       (!query.trim() ||
@@ -52,14 +88,37 @@ export function AccountsDashboard({ role }: { role: Role }) {
     setFields({
       name: account.name,
       username: account.username,
-      password: account.password,
+      password: "",
       roleId: account.roleId,
       bursonLinked: account.bursonLinked,
+      canCreateOwnActivities: account.canCreateOwnActivities,
     });
     setFormOpen(true);
   }
 
   function saveAccount() {
+    if (dataSource === "supabase") {
+      const edited = editingId
+        ? accounts.find((account) => account.id === editingId)
+        : undefined;
+      startTransition(async () => {
+        const result = edited
+          ? await updateSupabaseAccountAction(
+              edited.id,
+              edited.updatedAt,
+              fields,
+              edited.active,
+            )
+          : await createSupabaseAccountAction(fields);
+        handleServerResult(
+          result,
+          edited ? "Cuenta actualizada." : "Cuenta creada.",
+          edited ? null : { username: fields.username, password: fields.password },
+        );
+        if (result.ok) closeForm();
+      });
+      return;
+    }
     const result = upsertAccount(
       window.localStorage,
       fields,
@@ -81,14 +140,71 @@ export function AccountsDashboard({ role }: { role: Role }) {
           : "Cuenta creada."
         : result.error,
     );
-    if (result.ok) closeForm();
+    if (result.ok) {
+      if (!editingId)
+        setIssuedCredential({
+          username: result.account.username,
+          password: result.account.password,
+        });
+      closeForm();
+    }
   }
 
   function changeState(id: string) {
+    const account = accounts.find((item) => item.id === id);
+    if (!account) return;
+    if (dataSource === "supabase") {
+      startTransition(async () => {
+        const result = await updateSupabaseAccountAction(
+          account.id,
+          account.updatedAt,
+          {
+            name: account.name,
+            username: account.username,
+            password: "",
+            roleId: account.roleId,
+            bursonLinked: account.bursonLinked,
+            canCreateOwnActivities: account.canCreateOwnActivities,
+          },
+          !account.active,
+        );
+        handleServerResult(
+          result,
+          account.active ? "Cuenta desactivada." : "Cuenta reactivada.",
+        );
+        setConfirmId(null);
+      });
+      return;
+    }
+    if (
+      account.active &&
+      account.roleId === "operario" &&
+      account.bursonLinked
+    ) {
+      setNotice("Transfiere primero el vínculo Burson a otro Operario activo.");
+      setConfirmId(null);
+      return;
+    }
+    const hasOpenActivities = Boolean(
+      account.active &&
+      account.roleId === "operario" &&
+      readActivities(window.localStorage).some(
+        (activity) =>
+          activity.responsibleAccountId === account.id &&
+          activity.status !== "Entregada" &&
+          !activity.deletedAt,
+      ),
+    );
+    if (hasOpenActivities) {
+      setNotice("Reasigna primero las actividades abiertas de este Operario.");
+      setConfirmId(null);
+      return;
+    }
     const result = toggleAccount(
       window.localStorage,
       id,
       role.accountName ?? role.label,
+      hasOpenActivities,
     );
     setNotice(
       result.ok
@@ -100,6 +216,89 @@ export function AccountsDashboard({ role }: { role: Role }) {
     setConfirmId(null);
   }
 
+  function handleServerResult(
+    result: AccountsServerResult,
+    success: string,
+    credential: { username: string; password: string } | null = null,
+  ) {
+    setNotice(result.ok ? success : result.error);
+    if (!result.ok) return;
+    setServerAccounts(result.accounts);
+    if (credential) setIssuedCredential(credential);
+  }
+
+  function toggleCreationPermission(account: Account) {
+    if (dataSource === "supabase") {
+      startTransition(async () =>
+        handleServerResult(
+          await setSupabaseOperatorCreationPermissionAction(
+            account.id,
+            !account.canCreateOwnActivities,
+          ),
+          account.canCreateOwnActivities
+            ? "Permiso de creación retirado."
+            : "Permiso de creación concedido.",
+        ),
+      );
+      return;
+    }
+    const result = upsertAccount(
+      window.localStorage,
+      {
+        name: account.name,
+        username: account.username,
+        password: "",
+        roleId: account.roleId,
+        bursonLinked: account.bursonLinked,
+        canCreateOwnActivities: !account.canCreateOwnActivities,
+      },
+      role.accountName ?? role.label,
+      account.id,
+    );
+    setNotice(
+      result.ok
+        ? account.canCreateOwnActivities
+          ? "Permiso de creación retirado."
+          : "Permiso de creación concedido."
+        : result.error,
+    );
+  }
+
+  function beginReset(account: Account) {
+    setResetAccount(account);
+    setResetPassword(generateTemporaryPassword());
+  }
+
+  function confirmReset() {
+    if (!resetAccount) return;
+    const credential = {
+      username: resetAccount.username,
+      password: resetPassword,
+    };
+    if (dataSource === "supabase") {
+      startTransition(async () => {
+        const result = await resetSupabaseTemporaryPasswordAction(
+          resetAccount.id,
+          resetPassword,
+        );
+        handleServerResult(result, "Clave temporal regenerada.", credential);
+        if (result.ok) setResetAccount(null);
+      });
+      return;
+    }
+    const result = resetTemporaryPassword(
+      window.localStorage,
+      resetAccount.id,
+      resetPassword,
+      role.accountName ?? role.label,
+    );
+    setNotice(result.ok ? "Clave temporal regenerada." : result.error);
+    if (result.ok) {
+      setIssuedCredential(credential);
+      setResetAccount(null);
+    }
+  }
+
   return (
     <div className="space-y-4">
       {notice && (
@@ -109,6 +308,73 @@ export function AccountsDashboard({ role }: { role: Role }) {
         >
           {notice}
         </p>
+      )}
+
+      {issuedCredential && (
+        <Card className="border-lime/45 bg-lime/[.08] p-4 shadow-[var(--shadow-1)]">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="data-label text-[#376300]">Mostrar una sola vez</p>
+              <h2 className="section-title mt-1 text-lg">Credencial temporal</h2>
+              <p className="mt-2 text-xs leading-5 text-ink-muted">
+                Entrégala por un canal seguro. El usuario deberá cambiarla al
+                ingresar y el sistema no podrá volver a mostrarla.
+              </p>
+            </div>
+            <Button
+              onClick={() => setIssuedCredential(null)}
+              variant="secondary"
+            >
+              Ocultar
+            </Button>
+          </div>
+          <dl className="mt-3 grid gap-2 rounded-md border border-lime/35 bg-panel p-3 font-mono text-sm sm:grid-cols-2">
+            <div>
+              <dt className="data-label text-ink-muted">Usuario</dt>
+              <dd className="mt-1 break-all">{issuedCredential.username}</dd>
+            </div>
+            <div>
+              <dt className="data-label text-ink-muted">Clave temporal</dt>
+              <dd className="mt-1 break-all">{issuedCredential.password}</dd>
+            </div>
+          </dl>
+        </Card>
+      )}
+
+      {resetAccount && (
+        <Card className="border-orange/40 bg-orange/[.07] p-4">
+          <div className="flex flex-wrap items-end gap-3">
+            <label className="min-w-0 flex-1 text-xs font-bold">
+              Nueva clave temporal para {resetAccount.name}
+              <input
+                autoComplete="new-password"
+                className={`${control} mt-1.5 font-mono`}
+                readOnly
+                value={resetPassword}
+              />
+            </label>
+            <Button
+              disabled={pending}
+              onClick={() => setResetPassword(generateTemporaryPassword())}
+              variant="secondary"
+            >
+              Regenerar
+            </Button>
+            <Button
+              disabled={pending}
+              onClick={() => {
+                setResetAccount(null);
+                setResetPassword("");
+              }}
+              variant="secondary"
+            >
+              Cancelar
+            </Button>
+            <Button disabled={pending} onClick={confirmReset}>
+              Confirmar y revocar sesiones
+            </Button>
+          </div>
+        </Card>
       )}
 
       <section
@@ -175,9 +441,13 @@ export function AccountsDashboard({ role }: { role: Role }) {
               </select>
             </label>
             <Button
+              disabled={pending}
               onClick={() => {
                 setEditingId(null);
-                setFields(emptyFields);
+                setFields({
+                  ...emptyFields,
+                  password: generateTemporaryPassword(),
+                });
                 setFormOpen(true);
               }}
             >
@@ -226,6 +496,7 @@ export function AccountsDashboard({ role }: { role: Role }) {
                   <input
                     autoComplete="off"
                     className={`${control} mt-1.5`}
+                    readOnly={Boolean(editingId && dataSource === "supabase")}
                     onChange={(event) =>
                       setFields((current) => ({
                         ...current,
@@ -235,21 +506,31 @@ export function AccountsDashboard({ role }: { role: Role }) {
                     value={fields.username}
                   />
                 </label>
-                <label className="text-xs font-bold">
-                  Clave simulada
-                  <input
-                    autoComplete="new-password"
-                    className={`${control} mt-1.5`}
-                    onChange={(event) =>
-                      setFields((current) => ({
-                        ...current,
-                        password: event.target.value,
-                      }))
-                    }
-                    type="password"
-                    value={fields.password}
-                  />
-                </label>
+                {!editingId && (
+                  <div className="grid grid-cols-[1fr_auto] items-end gap-2">
+                    <label className="text-xs font-bold">
+                      Clave temporal
+                      <input
+                        autoComplete="new-password"
+                        className={`${control} mt-1.5 font-mono`}
+                        readOnly
+                        spellCheck={false}
+                        value={fields.password}
+                      />
+                    </label>
+                    <Button
+                      onClick={() =>
+                        setFields((current) => ({
+                          ...current,
+                          password: generateTemporaryPassword(),
+                        }))
+                      }
+                      variant="secondary"
+                    >
+                      Generar
+                    </Button>
+                  </div>
+                )}
                 <label className="text-xs font-bold">
                   Rol
                   <select
@@ -261,6 +542,10 @@ export function AccountsDashboard({ role }: { role: Role }) {
                         bursonLinked:
                           event.target.value === "operario"
                             ? current.bursonLinked
+                            : false,
+                        canCreateOwnActivities:
+                          event.target.value === "operario"
+                            ? current.canCreateOwnActivities
                             : false,
                       }))
                     }
@@ -274,20 +559,41 @@ export function AccountsDashboard({ role }: { role: Role }) {
                   </select>
                 </label>
                 {fields.roleId === "operario" && (
-                  <label className="flex min-h-11 items-center gap-3 rounded-md border border-violet/25 bg-violet/[.08] px-3 text-xs font-bold md:col-span-2 lg:col-span-3">
-                    <input
-                      checked={fields.bursonLinked}
-                      className="size-4 accent-violet"
-                      onChange={(event) =>
-                        setFields((current) => ({
-                          ...current,
-                          bursonLinked: event.target.checked,
-                        }))
-                      }
-                      type="checkbox"
-                    />
-                    Operario especial vinculado a Burson
-                  </label>
+                  <div className="grid gap-2 md:col-span-2 lg:col-span-3 lg:grid-cols-2">
+                    <label className="flex min-h-11 items-center gap-3 rounded-md border border-lime/35 bg-lime/[.08] px-3 text-xs font-bold">
+                      <input
+                        checked={fields.canCreateOwnActivities}
+                        className="size-4 accent-lime"
+                        disabled={
+                          editingAccount?.active === false &&
+                          !editingAccount.canCreateOwnActivities
+                        }
+                        onChange={(event) =>
+                          setFields((current) => ({
+                            ...current,
+                            canCreateOwnActivities: event.target.checked,
+                          }))
+                        }
+                        type="checkbox"
+                      />
+                      Permitir que cree actividades propias
+                    </label>
+                    <label className="flex min-h-11 items-center gap-3 rounded-md border border-violet/25 bg-violet/[.08] px-3 text-xs font-bold">
+                      <input
+                        checked={fields.bursonLinked}
+                        className="size-4 accent-violet"
+                        disabled={editingAccount?.active === false}
+                        onChange={(event) =>
+                          setFields((current) => ({
+                            ...current,
+                            bursonLinked: event.target.checked,
+                          }))
+                        }
+                        type="checkbox"
+                      />
+                      Operario especial vinculado a Burson
+                    </label>
+                  </div>
                 )}
                 <div
                   className={`grid grid-cols-2 gap-2 ${fields.roleId === "operario" ? "lg:col-start-4" : "md:col-start-2 lg:col-start-4"}`}
@@ -295,7 +601,9 @@ export function AccountsDashboard({ role }: { role: Role }) {
                   <Button onClick={closeForm} variant="secondary">
                     Cancelar
                   </Button>
-                  <Button onClick={saveAccount}>Guardar</Button>
+                  <Button disabled={pending} onClick={saveAccount}>
+                    {pending ? "Guardando…" : "Guardar"}
+                  </Button>
                 </div>
               </div>
               <p className="mt-3 text-[0.6875rem] text-ink-muted">
@@ -314,7 +622,9 @@ export function AccountsDashboard({ role }: { role: Role }) {
               key={account.id}
               onConfirm={changeState}
               onEdit={beginEdit}
+              onPermission={toggleCreationPermission}
               onPrompt={setConfirmId}
+              onReset={beginReset}
             />
           ))}
           {!visible.length && (
@@ -341,7 +651,7 @@ function AccountMetric({
     cyan: "bg-cyan",
     lime: "bg-lime",
     orange: "bg-orange",
-    violet: "bg-violet text-white",
+    violet: "bg-[#7c3aed] text-white",
   };
   return (
     <Card className="flex items-center gap-3 p-3 md:p-4">
@@ -363,13 +673,17 @@ function AccountCard({
   confirmId,
   onConfirm,
   onEdit,
+  onPermission,
   onPrompt,
+  onReset,
 }: {
   account: Account;
   confirmId: string | null;
   onConfirm: (id: string) => void;
   onEdit: (account: Account) => void;
+  onPermission: (account: Account) => void;
   onPrompt: (id: string | null) => void;
+  onReset: (account: Account) => void;
 }) {
   return (
     <Card
@@ -401,8 +715,18 @@ function AccountCard({
               {roles[account.roleId].label}
             </span>
             {account.bursonLinked && (
-              <span className="rounded-md bg-violet/12 px-2 py-1 text-[0.625rem] font-bold text-violet">
+              <span className="rounded-md bg-violet/12 px-2 py-1 text-[0.625rem] font-bold text-violet-ink">
                 Vínculo Burson
+              </span>
+            )}
+            {account.canCreateOwnActivities && (
+              <span className="rounded-md bg-lime/15 px-2 py-1 text-[0.625rem] font-bold text-[#376300]">
+                Creación propia autorizada
+              </span>
+            )}
+            {account.mustChangePassword && (
+              <span className="rounded-md bg-orange/15 px-2 py-1 text-[0.625rem] font-bold text-[#8a5200]">
+                Cambio de clave pendiente
               </span>
             )}
           </div>
@@ -449,6 +773,25 @@ function AccountCard({
           <Button onClick={() => onEdit(account)} variant="secondary">
             Editar
           </Button>
+          <Button onClick={() => onReset(account)} variant="secondary">
+            Restablecer clave
+          </Button>
+          {account.roleId === "operario" && (
+            <Button
+              disabled={!account.active && !account.canCreateOwnActivities}
+              onClick={() => onPermission(account)}
+              title={
+                !account.active && !account.canCreateOwnActivities
+                  ? "Reactiva la cuenta antes de conceder el permiso."
+                  : undefined
+              }
+              variant="secondary"
+            >
+              {account.canCreateOwnActivities
+                ? "Retirar creación"
+                : "Permitir creación"}
+            </Button>
+          )}
           <button
             className={`min-h-11 rounded-md text-xs font-extrabold underline underline-offset-4 ${account.active ? "text-red" : "text-[#08718a]"}`}
             onClick={() => onPrompt(account.id)}

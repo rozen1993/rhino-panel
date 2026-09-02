@@ -2,19 +2,19 @@
 
 > **Documento histórico.** Desde agosto de 2026 la fuente visual vigente es `diseno/direccion-final-traducida/CONTRATO-VISUAL.md`. Las reglas siguientes solo explican la evolución anterior y no deben prevalecer sobre ese contrato.
 
-El lenguaje visual del proyecto, extraído de la dirección aprobada en **D-031**: la pieza 2, «planilla
-de rodaje».
+El texto siguiente conserva el lenguaje visual que se extrajo de la dirección
+aprobada en **D-031**: la pieza 2, «planilla de rodaje».
 
-**Este archivo manda.** Cualquier pantalla que se diseñe a partir de ahora usa estos valores. Si una
-pantalla necesita algo que no está aquí, se añade aquí primero y se dibuja después.
+**Autoridad en su versión original:** este archivo mandaba. Esa declaración ya no
+está vigente y se conserva únicamente para explicar el proceso de diseño.
 
 **Por qué existe.** Las catorce pantallas móviles del bloque 1 salieron con cabeceras, avatares,
 navegación, iconos, radios, sombras y marcas de estado **distintas entre sí**, porque no había ningún
 sitio donde estuvieran fijadas. Cada pantalla se las inventó. Este archivo es la corrección de raíz de
 ese defecto.
 
-**La fuente es `diseno/piezas-png/pieza-2.png`**, que es **la imagen que Marco aprobó**. Es la única
-referencia válida.
+**La fuente histórica era `diseno/piezas-png/pieza-2.png`**, la imagen que Marco
+aprobó en esa fase. Ya no es la única referencia válida.
 
 > ### ⚠ Corrección del 2026-08-17
 >

@@ -1,4 +1,8 @@
-# Impacto del requerimiento v2
+# Impacto del requerimiento v2 (archivo histórico)
+
+> **Sustituido para implementación el 2026-08-28.** Este análisis explica un
+> cambio anterior y no define el producto actual. La autoridad funcional vigente
+> es `docs/contrato-producto-vigente-2026-08-28.md`.
 
 **Fecha:** 2026-08-17
 **Fuente:** `actualizacion_del_requerimiento/` — `Ficha_Requerimiento_Plataforma_Rhino_v2.pdf` y tres
@@ -212,7 +216,8 @@ técnica, pero omitirlo sería esconderle a Marco algo que necesita al hablar co
 | `CLAUDE.md` | Anotación mínima y **no resolutiva**: marca sus secciones afectadas como línea base en revisión |
 | `docs/estado.md` | Fase activa, siguiente acción y cifras corregidas |
 
-Nada se sustituyó. Todo lo marcado sigue vigente hasta que Marco decida.
+En ese corte todavía no se había sustituido nada; lo marcado permanecía vigente
+hasta una decisión posterior de Marco.
 
 ---
 

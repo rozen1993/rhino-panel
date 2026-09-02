@@ -66,7 +66,7 @@ Desde la raíz `Sistema_R` se ejecutó:
 ```powershell
 npx.cmd supabase login
 npx.cmd supabase projects list
-npx.cmd supabase link --project-ref fzbpqgjrdreefontqmnf
+npx.cmd supabase link --project-ref <STAGING_PROJECT_REF>
 ```
 
 Significado:
@@ -246,7 +246,7 @@ El frontend local ya usa, mediante `frontend/.env.local`, esta configuración:
 
 ```text
 SISTEMA_R_DATA_SOURCE=supabase
-SUPABASE_URL=https://fzbpqgjrdreefontqmnf.supabase.co
+SUPABASE_URL=https://<STAGING_PROJECT_REF>.supabase.co
 SUPABASE_PUBLISHABLE_KEY=[valor no documentado]
 SISTEMA_R_USERNAME_DOMAIN=auth.sistema-r.invalid
 ```

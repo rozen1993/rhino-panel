@@ -1,5 +1,7 @@
 # E-007 — Diseño móvil, bloque 1: el trabajo diario
 
+> **Encargo histórico ya ejecutado.** No usar como contrato vigente; consultar `README.md` en este directorio.
+
 **Fase:** 1 — UX y desarrollo visual
 **Ejecuta:** Codex
 **Estado:** encargado

@@ -1,36 +1,18 @@
-# Fase 0 — Concepción funcional
+# Fase 0 — Concepción funcional (archivo histórico)
 
-Qué producto debe existir, antes de diseñarlo. Este documento describe comportamiento, no técnica: no
-define tablas, RLS, migraciones, Auth ni arquitectura de base de datos.
+Este documento conserva la concepción anterior para trazabilidad. **No es una
+fuente vigente ni autoriza implementación**: sus roles, estados, pantallas y
+recorridos fueron sustituidos el 2026-08-28.
 
-Se apoya en `CLAUDE.md` (qué se construye) y en las decisiones cerradas de `docs/decisiones.md`.
+La única autoridad funcional actual es
+`docs/contrato-producto-vigente-2026-08-28.md`, complementada por `CLAUDE.md`.
+Ante cualquier diferencia, prevalece ese contrato.
 
-**Puerta de salida:** el producto puede explicarse pantalla por pantalla y recorrido por recorrido sin
-depender de decisiones técnicas de backend.
-
-> ## ⚠ Reabierta el 2026-08-17
+> ## Corte histórico reabierto el 2026-08-17
 >
-> Esta fase se cerró el 2026-08-12 y **Marco la reabrió el 2026-08-17**, tras recibir el cliente una
-> versión 2 completa del requerimiento con mockups de referencia.
->
-> **Este documento sigue siendo la descripción vigente del producto**, pero varias de sus secciones
-> están **en revisión** y llevan un aviso al principio. Una sección en revisión no está derogada: sigue
-> siendo lo acordado, pero **no se construye encima de ella** hasta que Marco resuelva la decisión
-> pendiente que la afecta.
->
-> - Qué cambió y por qué: `docs/impacto-requerimiento-v2.md`
-> - Las veintidós decisiones abiertas (D-019 a D-040): `docs/decisiones-pendientes.md`
-> - El incidente que lo originó: `docs/incidentes.md` → INC-001
-> - Fuente: `actualizacion_del_requerimiento/` — ficha v2 en PDF y tres mockups
->
-> **Marco cerró cuatro decisiones el 2026-08-17** y con ellas §5, §8, §10 y §11 dejaron de estar en
-> revisión: la plataforma es un **sistema de supervisión** con los siete estados intactos (D-019); el
-> material va **por enlace** y no se suben archivos (D-023); y **AUNOR puede dejar su opinión**, sin que
-> eso mande sobre los operarios (D-033).
->
-> Siguen en revisión: **§2** (roles), **§3** (campos), **§4** (ubicación), **§7** (pantallas) y **§9**
-> (Burson, solo permisos). Todo lo que queda depende de saber **quién es quién en el equipo** — D-020,
-> D-021 y D-022.
+> El contenido restante refleja lo entendido en ese momento, incluida la versión
+> 2 del requerimiento y sus decisiones entonces pendientes. Se conserva como
+> evidencia de evolución; no describe el producto que debe construirse hoy.
 
 ---
 
@@ -189,7 +171,7 @@ coordenadas nunca son obligatorias.
 ## 5. Estados, vistos por el usuario
 
 > **CONFIRMADA el 2026-08-17 — D-019.** Marco decidió que la plataforma es un **sistema de supervisión**
-> y no una bitácora: **esta sección entera sigue vigente sin cambios**, con sus siete estados, su ciclo
+> y no una bitácora: **en ese corte esta sección seguía vigente sin cambios**, con sus siete estados, su ciclo
 > de observación y los tres recorridos de ida y vuelta.
 >
 > Se mantienen «Por subir» y «Cancelada» **aunque no aparezcan en ningún mockup del cliente**, y se
@@ -499,7 +481,7 @@ aparece en la vista mensual de AUNOR.
 ## 10. Celular y mala señal
 
 > **CONFIRMADA el 2026-08-17 — D-023.** La plataforma **no recibe archivos**: el operario pega el enlace
-> a la carpeta donde ya subió sus fotos y vídeos. Por tanto esta sección sigue vigente tal cual, escrita
+> a la carpeta donde ya subió sus fotos y vídeos. Por tanto, en ese corte esta sección seguía vigente tal cual, escrita
 > para un formulario de texto, que es lo único que se envía.
 >
 > Queda descartada la subida directa de hasta 50 MB que mostraban los mockups, y con ella desaparece el

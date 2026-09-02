@@ -1,29 +1,51 @@
 # Contrato de handoff del frontend
 
-**Versión:** 2026-08-22 — tres roles y primer corte Supabase.
+**Versión:** 2026-08-28 — contrato de producto vigente.
+**Fuente normativa:** `contrato-producto-vigente-2026-08-28.md`.
+**Estado:** objetivo bajo implementación por cortes; `estado.md` distingue lo
+ya comprobado de lo que aún falta construir.
 
 ## Entidades
 
-- **Cuenta:** un solo rol (`operario`, `admin` o `burson`), estado activo y marca opcional `bursonLinked` exclusiva de Operario. Debe existir exactamente un operario especial activo.
-- **Actividad:** origen (`operario` o `burson`), responsable, tipo, título, descripción, lugar, uno o más rangos de fechas, estado, enlace, opinión, versión y auditoría.
-- **Conversación privada:** mensajes visibles únicamente para Admin y el operario responsable, con autoría, edición y eliminación lógica auditadas.
+- **Cuenta:** un rol (`operario`, `admin` o `burson`), estado activo, permiso
+  revocable `canCreateOwnActivities`, obligación de cambio de clave y marca
+  `bursonLinked` exclusiva de un Operario.
+- **Actividad:** canal, autor, responsable, planificación, ejecución, versión,
+  baja lógica y auditoría.
+- **Conversación privada:** mensajes visibles únicamente para Admin y el
+  Operario responsable, con edición y baja lógica auditadas.
 
-## Permisos
+## Permisos de interfaz
 
-- El Operario registra las actividades comunicadas por teléfono, consulta las propias y las avanza. El operario especial también ve todos los encargos Burson y responde por ellos.
-- Burson crea encargos que se asignan automáticamente al operario especial. Puede editar o eliminar sus encargos mientras estén Programados y consulta estado, enlace y opinión del operario.
-- Admin ve todas las actividades, cuentas e Histórico. No cambia estados ni entregas. Puede iniciar una conversación privada después de la entrega; ese primer mensaje bloquea cambios posteriores al enlace y la opinión.
-- Burson nunca accede a la conversación Admin–Operario.
-- La eliminación de actividades es lógica y conserva motivo, autor y auditoría.
+- Admin ve toda la operación y dispone de acciones para planificar, asignar,
+  replanificar, reasignar, dar de baja y restaurar. No muestra acciones de
+  iniciar ni entregar.
+- El Operario general consulta sus actividades y modifica solamente estado,
+  enlace y opinión. No existe una pestaña permanente «Nueva».
+- El Operario con `canCreateOwnActivities` recibe un CTA contextual para crear
+  una actividad propia. La ruta vuelve a comprobar el permiso en servidor.
+- Burson crea y consulta encargos propios, sin auditoría, conversación interna,
+  cuentas, papelera ni Histórico.
 
-## Estados y fechas
+## Estados, fechas y bloqueo
 
-La transición única es `Programada → En proceso → Entregada` y solo la ejecuta el operario responsable. La entrega exige cualquier enlace HTTPS válido y sin credenciales incrustadas. “Atrasada” es un indicador calculado respecto de las fechas, no un estado.
+La transición única es `Programada → En proceso → Entregada` y solo la ejecuta
+el Operario responsable. La entrega exige un enlace HTTPS válido y sin
+credenciales incrustadas. Una actividad admite uno o más rangos discontinuos.
 
-Una actividad admite un día, un rango continuo o varios rangos discontinuos. El estado, enlace y opinión son globales para toda la actividad.
+El primer mensaje de Admin bloquea cambios posteriores al enlace y a la opinión.
+Admin conserva la planificación y puede corregirla después de abrir el hilo.
 
-## Histórico
+## Histórico y papelera
 
-Es exclusivo de Admin y muestra los doce meses del año sin filtros. Los tipos se distinguen por color; los rangos se dibujan de forma continua y cualquier fecha marcada abre el detalle. En móvil usa una columna y hoja inferior; en tablet dos columnas y panel lateral; en laptop una malla 4×3 con panel superpuesto; en PC una malla 4×3 con detalle permanente.
+El Histórico es exclusivo de Admin, comienza en 2026 y permite navegar los años
+siguientes. En móvil usa una columna y hoja inferior; en tablet dos columnas y
+panel lateral; en laptop y PC una malla anual con detalle persistente cuando el
+espacio lo permita. La papelera es una vista distinta y solo Admin restaura.
 
-Los stores y cookies demo son adaptadores temporales. El modo Supabase ya repite autenticación, sesión, perfil activo y autorización en servidor y RLS; ocultar controles en el cliente nunca constituye seguridad. El alcance exacto del primer corte está en `decision-backend-supabase-2026-08-22.md`.
+## Seguridad de datos
+
+El modo Supabase repite autorización en servidor, RPC y RLS. El permiso de
+creación se obtiene del perfil autenticado; una cookie demo o un control oculto
+no concede capacidad. Una cuenta con clave temporal solo llega al cambio de
+clave y no puede leer ni modificar datos de negocio.

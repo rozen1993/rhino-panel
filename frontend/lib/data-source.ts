@@ -14,10 +14,16 @@ export function resolveDataSource(
     return "demo";
   }
   const normalized = value.trim();
-  if (normalized === "demo" || normalized === "supabase") return normalized;
-  throw new Error(
-    `SISTEMA_R_DATA_SOURCE debe ser "demo" o "supabase"; se recibió "${value}".`,
-  );
+  if (normalized === "demo") {
+    if (vercelEnvironment) {
+      throw new Error(
+        "SISTEMA_R_DATA_SOURCE=demo está prohibido en todos los despliegues de Vercel.",
+      );
+    }
+    return normalized;
+  }
+  if (normalized === "supabase") return normalized;
+  throw new Error('SISTEMA_R_DATA_SOURCE debe ser "demo" o "supabase".');
 }
 
 export function isSupabaseDataSource() {

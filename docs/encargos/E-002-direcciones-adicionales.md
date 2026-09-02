@@ -1,5 +1,7 @@
 # E-002 — Tres direcciones visuales adicionales
 
+> **Encargo histórico ya ejecutado.** No usar como contrato vigente; consultar `README.md` en este directorio.
+
 **Fase:** 1 — UX y desarrollo visual
 **Ejecuta:** Codex
 **Estado:** encargado

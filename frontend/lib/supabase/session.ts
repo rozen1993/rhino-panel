@@ -14,7 +14,9 @@ export const currentSupabaseRole = cache(async (): Promise<Role | null> => {
 
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("id, display_name, role, is_active, is_burson_operator")
+    .select(
+      "id, display_name, role, is_active, is_burson_operator, can_create_own_activities, must_change_password",
+    )
     .eq("id", subject)
     .maybeSingle();
   if (error || !profile) return null;

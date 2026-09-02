@@ -1,4 +1,7 @@
-import type { DateSpan } from "@/lib/activities";
+import { activityTypes, type DateSpan } from "@/lib/activities";
+import type { ActivityDraftFields } from "@/lib/activity-draft";
+
+export const activityHistoryFloor = "2026-01-01";
 
 export function validCalendarDate(value: unknown): value is string {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
@@ -24,10 +27,37 @@ export function validSpans(spans: unknown): spans is DateSpan[] {
         span !== null &&
         validCalendarDate(span.start) &&
         validCalendarDate(span.end) &&
+        span.start >= activityHistoryFloor &&
         span.end >= span.start &&
         Date.parse(`${span.end}T00:00:00Z`) -
           Date.parse(`${span.start}T00:00:00Z`) <=
           3660 * 86_400_000,
     )
   );
+}
+
+export function activityPlanningError(
+  fields: ActivityDraftFields | unknown,
+): string | null {
+  if (!fields || typeof fields !== "object")
+    return "Completa título, descripción y fechas válidas.";
+  const candidate = fields as Partial<ActivityDraftFields>;
+  const title = typeof candidate.title === "string" ? candidate.title.trim() : "";
+  const description =
+    typeof candidate.description === "string"
+      ? candidate.description.trim()
+      : "";
+  if (
+    typeof candidate.placeName !== "string" ||
+    !activityTypes.includes(candidate.type as (typeof activityTypes)[number]) ||
+    title.length < 2 ||
+    title.length > 180 ||
+    description.length < 2 ||
+    description.length > 5000 ||
+    !validSpans(candidate.spans)
+  )
+    return "Completa título, descripción y fechas válidas.";
+  if (candidate.placeName.length > 300)
+    return "El lugar supera el tamaño permitido.";
+  return null;
 }

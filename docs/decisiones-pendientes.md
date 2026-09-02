@@ -1,11 +1,15 @@
-# Decisiones pendientes
+# Decisiones pendientes — archivo histórico sustituido
 
-Cola de decisiones que corresponden a Marco. Cada entrada dice qué bloquea, qué opciones hay y qué
-consecuencias tiene cada una.
+> **Sustituido para implementación el 2026-08-28.** Esta cola pertenece al
+> modelo anterior. Las decisiones vigentes están consolidadas en
+> `contrato-producto-vigente-2026-08-28.md`. D-039 quedó resuelta: Admin genera
+> una clave temporal y el usuario debe cambiarla al ingresar. Las cuestiones de
+> OneDrive avanzado, una segunda taxonomía de servicio y exportación quedaron
+> diferidas y no bloquean el contrato actual.
 
-Marco resuelve en lote. Lo resuelto pasa a `docs/decisiones.md` y desaparece de esta cola.
-
-**Cerradas: cuarenta y tres.** Quedan **cuatro** abiertas: D-025, D-027, D-037 y D-039.
+La cola que sigue es una instantánea histórica: explica qué se consideraba
+pendiente en ese corte y no debe usarse como lista de trabajo actual. Las
+decisiones diferidas señaladas arriba no bloquean la plataforma contratada.
 
 El 2026-08-17 se cerraron además **D-052** (Burson ve solo su módulo y solo lee), **D-054** (la Meta
 Final ya no exige migrar el Excel) y **D-055** (P-9 pasa a ser el enlace al histórico).
@@ -108,13 +112,11 @@ así que esto es también una decisión de seguridad.
 
 ---
 
-## D-039 — Recuperación de clave y «Recordar este equipo»
+## D-039 — Resuelta y sustituida el 2026-08-28
 
-El modal muestra «¿Olvidaste tu clave?» y una casilla «Recordar este equipo» ya marcada.
-
-Ninguna de las dos existe en el modelo. Hay que decidir cómo se recupera una clave —¿por correo, o la
-repone administración?— y cuánto dura el «recordar», sabiendo que el dispositivo puede ser compartido y
-que la cuenta puede desactivarse mientras el recuerdo sigue vivo.
+Admin genera o regenera una clave temporal y la entrega por un canal seguro. El
+usuario debe cambiarla al ingresar; la regeneración revoca sus sesiones. No hay
+recuperación por correo ni opción «Recordar este equipo» en el contrato vigente.
 
 ---
 

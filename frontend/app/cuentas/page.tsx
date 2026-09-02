@@ -1,33 +1,35 @@
 import { AccountsDashboard } from "@/components/accounts-dashboard";
-import { BackendPhaseNotice } from "@/components/backend-phase-notice";
 import { MobileShell, requireRole } from "@/components/mobile-shell";
 import { resolveDataSource } from "@/lib/data-source";
+import { listSupabaseAccounts } from "@/lib/supabase/profiles";
 
 export default async function AccountsPage() {
   const role = await requireRole((candidate) => candidate.administers);
   const dataSource = resolveDataSource();
+  const accounts =
+    dataSource === "supabase" ? await listSupabaseAccounts() : [];
   return (
     <MobileShell active="Cuentas" role={role}>
       <main className="mx-auto max-w-[1450px] space-y-4 px-3 py-4 md:px-5 md:py-5 lg:px-6">
-        {dataSource === "supabase" ? (
-          <BackendPhaseNotice module="Administración real de cuentas" />
-        ) : (
-          <>
-            <header>
-              <h1 className="display-title text-[1.7rem] leading-none md:text-[2rem]">
-                Gestión de cuentas
-              </h1>
-              <p className="mt-2 text-xs text-ink-muted">
-                Accesos, roles y trazabilidad del equipo.
-              </p>
-            </header>
+        <header>
+          <h1 className="display-title text-[1.7rem] leading-none md:text-[2rem]">
+            Gestión de cuentas
+          </h1>
+          <p className="mt-2 text-xs text-ink-muted">
+            Accesos, roles y trazabilidad del equipo.
+          </p>
+        </header>
+        {dataSource === "demo" && (
             <aside className="rounded-[8px] border border-orange/35 bg-orange/[.08] px-4 py-3 text-xs leading-5">
               <strong>Entorno de demostración:</strong> las claves se guardan
               localmente para probar los recorridos.
             </aside>
-            <AccountsDashboard role={role} />
-          </>
         )}
+        <AccountsDashboard
+          dataSource={dataSource}
+          initialAccounts={accounts}
+          role={role}
+        />
       </main>
     </MobileShell>
   );

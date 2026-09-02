@@ -1,8 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { advanceSupabaseActivityAction } from "@/app/actividades/actions";
+import {
+  advanceSupabaseActivityAction,
+  deleteSupabaseActivityMessageAction,
+  editSupabaseActivityMessageAction,
+  postSupabaseActivityMessageAction,
+} from "@/app/actividades/actions";
+import { softDeleteSupabaseActivityAction } from "@/app/papelera/actions";
 import { formatActivityDates } from "@/components/activity-card";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
@@ -19,6 +26,7 @@ import {
   softDeleteActivity,
   useSimulatedActivities,
   type SimulatedActivity,
+  type ThreadMessage,
 } from "@/lib/activity-simulation";
 import type { DataSource } from "@/lib/data-source";
 import { safeMaterialUrl, safeReferenceUrl } from "@/lib/external-link";
@@ -50,8 +58,11 @@ export function ActivityDetail({
   const item = dataSource === "supabase" ? serverItem : simulatedItem;
   const [notice, setNotice] = useState("");
   const [message, setMessage] = useState("");
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [editingMessage, setEditingMessage] = useState("");
   const [reason, setReason] = useState("");
   const [pending, startTransition] = useTransition();
+  const router = useRouter();
 
   if (!item) return <Card className="p-6">Actividad no encontrada.</Card>;
   if (!canViewActivity(item, role))
@@ -65,21 +76,128 @@ export function ActivityDetail({
   const responsible =
     role.id === "operario" && item.responsibleAccountId === role.accountId;
   const canEdit = canEditActivity(item, role);
-  const canDelete = dataSource === "demo" && (role.id === "admin" || canEdit);
-  const canThread =
-    dataSource === "demo" && (role.id === "admin" || responsible);
+  const canDelete = role.id === "admin";
+  const canThread = role.id === "admin" || responsible;
   const url = safeMaterialUrl(item.materialLink);
   const referenceUrl = safeReferenceUrl(item.referenceLink);
-  const visibleAudit =
-    role.id === "burson"
-      ? item.audit.filter(
-          (entry) => !/conversación|mensaje/i.test(entry.action),
-        )
-      : item.audit;
   const report = (
     result: { ok: true } | { ok: false; error: string },
     success: string,
   ) => setNotice(result.ok ? success : result.error);
+  const reportActivity = (
+    result:
+      | { ok: true; activity: SimulatedActivity }
+      | { ok: false; error: string },
+    success: string,
+  ) => {
+    report(result, success);
+    if (result.ok && dataSource === "supabase") setServerItem(result.activity);
+  };
+  const postMessage = () => {
+    const expectedVersion = item.threadOpenedAt ? null : item.version;
+    if (dataSource === "supabase") {
+      startTransition(async () => {
+        const result = await postSupabaseActivityMessageAction(
+          item.id,
+          expectedVersion,
+          message,
+        );
+        reportActivity(result, "Mensaje publicado.");
+        if (result.ok) setMessage("");
+      });
+      return;
+    }
+    const result = addThreadMessage(
+      window.localStorage,
+      item.id,
+      message,
+      actor,
+      expectedVersion,
+    );
+    report(result, "Mensaje publicado.");
+    if (result.ok) setMessage("");
+  };
+  const saveMessage = (entry: ThreadMessage) => {
+    if (dataSource === "supabase") {
+      startTransition(async () => {
+        const result = await editSupabaseActivityMessageAction(
+          entry.id,
+          entry.version,
+          editingMessage,
+        );
+        reportActivity(result, "Mensaje editado.");
+        if (result.ok) {
+          setEditingMessageId(null);
+          setEditingMessage("");
+        }
+      });
+      return;
+    }
+    const result = editThreadMessage(
+      window.localStorage,
+      item.id,
+      entry.id,
+      editingMessage,
+      actor,
+      entry.version,
+    );
+    report(result, "Mensaje editado.");
+    if (result.ok) {
+      setEditingMessageId(null);
+      setEditingMessage("");
+    }
+  };
+  const removeMessage = (entry: ThreadMessage) => {
+    if (dataSource === "supabase") {
+      startTransition(async () => {
+        const result = await deleteSupabaseActivityMessageAction(
+          entry.id,
+          entry.version,
+        );
+        reportActivity(result, "Mensaje eliminado.");
+      });
+      return;
+    }
+    report(
+      deleteThreadMessage(
+        window.localStorage,
+        item.id,
+        entry.id,
+        actor,
+        entry.version,
+      ),
+      "Mensaje eliminado.",
+    );
+  };
+  const removeActivity = () => {
+    if (dataSource === "supabase") {
+      startTransition(async () => {
+        const result = await softDeleteSupabaseActivityAction(
+          item.id,
+          item.version,
+          reason,
+        );
+        report(result, "Actividad dada de baja.");
+        if (result.ok) {
+          router.push("/papelera");
+          router.refresh();
+        }
+      });
+      return;
+    }
+    const result = softDeleteActivity(
+      window.localStorage,
+      item.id,
+      reason,
+      actor,
+      item.version,
+    );
+    report(result, "Actividad dada de baja.");
+    if (result.ok) {
+      router.push("/papelera");
+      router.refresh();
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -101,7 +219,7 @@ export function ActivityDetail({
                   {item.type}
                   {item.origin === "burson"
                     ? " · Canal Burson"
-                    : " · Producción propia"}
+                    : " · Operación ordinaria"}
                 </p>
                 <h2 className="display-title mt-2 text-2xl leading-tight md:text-3xl">
                   {item.title}
@@ -194,7 +312,7 @@ export function ActivityDetail({
                     className="flex min-h-11 items-center justify-center rounded-md border border-line bg-panel text-sm font-extrabold text-ink transition hover:border-cyan"
                     href={`/actividades/nueva?editar=${item.id}`}
                   >
-                    Editar
+                    {role.id === "admin" ? "Editar plan" : "Actualizar entrega"}
                   </Link>
                   {responsible && item.status !== "Entregada" ? (
                     <Button
@@ -251,30 +369,27 @@ export function ActivityDetail({
                 </summary>
                 <div className="border-t border-line p-4">
                   <p className="text-xs leading-5 text-ink-muted">
-                    La eliminación es lógica y conserva toda la auditoría.
+                    La baja es lógica y reversible. Conserva la planificación,
+                    la ejecución, la conversación y toda la auditoría.
                   </p>
                   <textarea
                     className="mt-3 min-h-20 w-full rounded-md border border-line p-3 text-sm outline-none focus:border-cyan"
+                    maxLength={1000}
                     onChange={(event) => setReason(event.target.value)}
-                    placeholder="Motivo obligatorio"
+                    placeholder="Motivo de la baja (obligatorio)"
                     value={reason}
                   />
                   <Button
                     className="mt-2 w-full text-red"
-                    onClick={() =>
-                      report(
-                        softDeleteActivity(
-                          window.localStorage,
-                          item.id,
-                          reason,
-                          actor,
-                        ),
-                        "Actividad eliminada lógicamente.",
-                      )
+                    disabled={
+                      pending ||
+                      reason.trim().length < 2 ||
+                      reason.trim().length > 1000
                     }
+                    onClick={removeActivity}
                     variant="secondary"
                   >
-                    Eliminar actividad
+                    {pending ? "Dando de baja…" : "Dar de baja"}
                   </Button>
                 </div>
               </details>
@@ -306,56 +421,76 @@ export function ActivityDetail({
             </p>
           </header>
           <div className="space-y-2 bg-paper/55 p-4 md:p-5">
-            {item.thread
-              .filter((entry) => !entry.deletedAt)
-              .map((entry) => (
+            {item.thread.map((entry) => (
                 <div
                   className={`max-w-[46rem] rounded-md border p-3 text-sm ${entry.author.roleId === "admin" ? "ml-auto border-cyan/30 bg-cyan/10" : "border-line bg-panel"}`}
                   key={entry.id}
                 >
-                  <p className="leading-6">{entry.text}</p>
+                  {editingMessageId === entry.id ? (
+                    <form
+                      className="space-y-2"
+                      onSubmit={(event) => {
+                        event.preventDefault();
+                        saveMessage(entry);
+                      }}
+                    >
+                      <label
+                        className="sr-only"
+                        htmlFor={`edit-message-${entry.id}`}
+                      >
+                        Editar mensaje
+                      </label>
+                      <textarea
+                        autoFocus
+                        className="min-h-24 w-full rounded-md border border-line bg-panel p-3 text-sm outline-none focus:border-cyan focus:ring-2 focus:ring-cyan/20"
+                        id={`edit-message-${entry.id}`}
+                        maxLength={5000}
+                        onChange={(event) =>
+                          setEditingMessage(event.target.value)
+                        }
+                        value={editingMessage}
+                      />
+                      <div className="flex flex-wrap gap-2">
+                        <Button disabled={pending} type="submit">
+                          {pending ? "Guardando…" : "Guardar mensaje"}
+                        </Button>
+                        <Button
+                          disabled={pending}
+                          onClick={() => {
+                            setEditingMessageId(null);
+                            setEditingMessage("");
+                          }}
+                          type="button"
+                          variant="secondary"
+                        >
+                          Cancelar edición
+                        </Button>
+                      </div>
+                    </form>
+                  ) : (
+                    <p className="leading-6">{entry.text}</p>
+                  )}
                   <p className="mt-2 data-label text-ink-muted">
                     {entry.author.name} · {moment(entry.createdAt)}
                     {entry.editedAt ? " · editado" : ""}
                   </p>
-                  {entry.author.accountId === actor.accountId && (
+                  {entry.author.accountId === actor.accountId &&
+                    editingMessageId !== entry.id && (
                     <div className="mt-2 flex gap-3 text-xs font-bold">
                       <button
-                        className="text-[#08718a] underline"
+                        className="rounded-sm text-[#08718a] underline outline-none focus-visible:ring-2 focus-visible:ring-cyan"
                         onClick={() => {
-                          const next = window.prompt(
-                            "Editar mensaje",
-                            entry.text,
-                          );
-                          if (next !== null)
-                            report(
-                              editThreadMessage(
-                                window.localStorage,
-                                item.id,
-                                entry.id,
-                                next,
-                                actor,
-                              ),
-                              "Mensaje editado.",
-                            );
+                          setEditingMessageId(entry.id);
+                          setEditingMessage(entry.text);
                         }}
                         type="button"
                       >
                         Editar
                       </button>
                       <button
-                        className="text-red underline"
-                        onClick={() =>
-                          report(
-                            deleteThreadMessage(
-                              window.localStorage,
-                              item.id,
-                              entry.id,
-                              actor,
-                            ),
-                            "Mensaje eliminado.",
-                          )
-                        }
+                        className="rounded-sm text-red underline outline-none focus-visible:ring-2 focus-visible:ring-red/40"
+                        disabled={pending}
+                        onClick={() => removeMessage(entry)}
                         type="button"
                       >
                         Eliminar
@@ -371,58 +506,54 @@ export function ActivityDetail({
                 <span className="sr-only">Mensaje</span>
                 <input
                   className="min-h-11 w-full rounded-md border border-line px-3 text-sm outline-none focus:border-cyan focus:ring-2 focus:ring-cyan/15"
+                  disabled={pending}
+                  maxLength={5000}
                   onChange={(event) => setMessage(event.target.value)}
                   placeholder="Escribe un mensaje para el responsable"
                   value={message}
                 />
               </label>
               <Button
-                onClick={() => {
-                  const result = addThreadMessage(
-                    window.localStorage,
-                    item.id,
-                    message,
-                    actor,
-                  );
-                  report(result, "Mensaje publicado.");
-                  if (result.ok) setMessage("");
-                }}
+                disabled={pending || !message.trim()}
+                onClick={postMessage}
               >
-                Enviar mensaje
+                {pending ? "Enviando…" : "Enviar mensaje"}
               </Button>
             </div>
           )}
         </Card>
       )}
 
-      <Card className="overflow-hidden">
-        <details>
-          <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between px-4 text-sm font-extrabold md:px-5">
-            <span>Trazabilidad completa</span>
-            <span className="data-label text-ink-muted">
-              {visibleAudit.length} EVENTOS
-            </span>
-          </summary>
-          <div className="border-t border-line bg-panel-secondary/55 px-4 py-2 md:px-5">
-            {visibleAudit.map((entry, index) => (
-              <div
-                className="grid grid-cols-[auto_1fr] gap-3 border-b border-line py-3 last:border-b-0"
-                key={`${entry.moment}-${index}`}
-              >
-                <span className="mt-1 size-2 rounded-full bg-cyan ring-4 ring-cyan/10" />
-                <p className="text-xs">
-                  <strong>{entry.action}</strong>
-                  <br />
-                  <span className="leading-5 text-ink-muted">
-                    {entry.actor.name} · {moment(entry.moment)}
-                    {entry.detail ? ` · ${entry.detail}` : ""}
-                  </span>
-                </p>
-              </div>
-            ))}
-          </div>
-        </details>
-      </Card>
+      {role.id !== "burson" && (
+        <Card className="overflow-hidden">
+          <details>
+            <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between px-4 text-sm font-extrabold md:px-5">
+              <span>Trazabilidad completa</span>
+              <span className="data-label text-ink-muted">
+                {item.audit.length} EVENTOS
+              </span>
+            </summary>
+            <div className="border-t border-line bg-panel-secondary/55 px-4 py-2 md:px-5">
+              {item.audit.map((entry, index) => (
+                <div
+                  className="grid grid-cols-[auto_1fr] gap-3 border-b border-line py-3 last:border-b-0"
+                  key={`${entry.moment}-${index}`}
+                >
+                  <span className="mt-1 size-2 rounded-full bg-cyan ring-4 ring-cyan/10" />
+                  <p className="text-xs">
+                    <strong>{entry.action}</strong>
+                    <br />
+                    <span className="leading-5 text-ink-muted">
+                      {entry.actor.name} · {moment(entry.moment)}
+                      {entry.detail ? ` · ${entry.detail}` : ""}
+                    </span>
+                  </p>
+                </div>
+              ))}
+            </div>
+          </details>
+        </Card>
+      )}
     </div>
   );
 }

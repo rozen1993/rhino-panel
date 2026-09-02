@@ -94,7 +94,7 @@ function AccessDialog({
             ×
           </button>
           <div className="text-center">
-            <span className="mx-auto grid size-16 place-items-center rounded-full border-[5px] border-cyan/10 bg-gradient-to-br from-cyan to-[#078ca2] text-white shadow-[0_7px_18px_rgba(0,142,164,.24)]">
+            <span className="mx-auto grid size-16 place-items-center rounded-full border-[5px] border-cyan/10 bg-gradient-to-br from-cyan to-[#078ca2] text-night shadow-[0_7px_18px_rgba(0,142,164,.24)]">
               <SystemIcon
                 className="size-7"
                 name={
@@ -179,6 +179,8 @@ export default function AccessPage() {
               accountId: account.id,
               accountName: account.name,
               bursonLinked: account.bursonLinked,
+              canCreateOwnActivities: account.canCreateOwnActivities,
+              mustChangePassword: account.mustChangePassword,
             };
             const count = activities.filter((activity) =>
               canViewActivity(activity, role),
@@ -196,7 +198,9 @@ export default function AccessPage() {
                         {roles[account.roleId].label}
                         {account.bursonLinked
                           ? " especial · encargos Burson"
-                          : ""}
+                          : account.canCreateOwnActivities
+                            ? " · creación propia autorizada"
+                            : ""}
                       </small>
                     </span>
                   </div>

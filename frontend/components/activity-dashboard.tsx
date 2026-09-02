@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ActivityCard, formatActivityDates } from "@/components/activity-card";
-import { ActivityForm } from "@/components/activity-form";
 import { ActivityTable } from "@/components/activity-table";
 import { Card } from "@/components/card";
 import { MonthStrip, months } from "@/components/month-strip";
@@ -19,7 +18,11 @@ import type { Activity } from "@/lib/activities";
 import type { DataSource } from "@/lib/data-source";
 import type { Role } from "@/lib/roles";
 
-function touchesMonth(item: SimulatedActivity, month: number, year = 2026) {
+export function touchesMonth(
+  item: SimulatedActivity,
+  month: number,
+  year: number,
+) {
   const monthStart = `${year}-${String(month + 1).padStart(2, "0")}-01`;
   const monthEnd = new Date(Date.UTC(year, month + 1, 0))
     .toISOString()
@@ -27,6 +30,36 @@ function touchesMonth(item: SimulatedActivity, month: number, year = 2026) {
   return item.spans.some(
     (span) => span.start <= monthEnd && span.end >= monthStart,
   );
+}
+
+function currentLimaPeriod() {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    month: "numeric",
+    timeZone: "America/Lima",
+    year: "numeric",
+  }).formatToParts(new Date());
+  const value = (type: "month" | "year") =>
+    Number(parts.find((part) => part.type === type)?.value);
+  return {
+    month: Math.max(0, Math.min(11, value("month") - 1)),
+    year: Math.max(2026, value("year")),
+  };
+}
+
+export function activityYears(
+  activities: readonly SimulatedActivity[],
+  currentYear: number,
+) {
+  const years = new Set<number>([Math.max(2026, currentYear)]);
+  for (const activity of activities)
+    for (const span of activity.spans) {
+      const start = Number(span.start.slice(0, 4));
+      const end = Number(span.end.slice(0, 4));
+      if (!Number.isInteger(start) || !Number.isInteger(end)) continue;
+      for (let year = Math.max(2026, start); year <= end; year += 1)
+        years.add(year);
+    }
+  return [...years].sort((left, right) => left - right);
 }
 
 function DashboardTable({
@@ -144,7 +177,7 @@ function ActivityPreview({ item }: { item: SimulatedActivity | undefined }) {
           <dt className="font-bold">Fechas</dt>
           <dd>{formatActivityDates(item)}</dd>
           <dt className="font-bold">Origen</dt>
-          <dd>{item.origin === "burson" ? "Burson" : "Operario"}</dd>
+          <dd>{item.origin === "burson" ? "Burson" : "Ordinaria"}</dd>
         </dl>
         <section className="py-4">
           <h3 className="text-xs font-extrabold">Descripción</h3>
@@ -198,15 +231,19 @@ export function ActivityDashboard({
   const allActivities = sourceActivities.filter(
     (item) => !item.deletedAt && canViewActivity(item, role),
   );
-  const [selectedMonth, setSelectedMonth] = useState(7);
+  const period = currentLimaPeriod();
+  const [selectedMonth, setSelectedMonth] = useState(period.month);
+  const [selectedYear, setSelectedYear] = useState(period.year);
+  const years = activityYears(allActivities, period.year);
   const activities = allActivities.filter((item) =>
-    touchesMonth(item, selectedMonth),
+    touchesMonth(item, selectedMonth, selectedYear),
   );
   const count = (status: string) =>
     activities.filter((item) => item.status === status).length;
   const monthCounts = months.map(
     (_, month) =>
-      allActivities.filter((item) => touchesMonth(item, month)).length,
+      allActivities.filter((item) => touchesMonth(item, month, selectedYear))
+        .length,
   );
   const [selectedId, setSelectedId] = useState(activities[0]?.id ?? "");
   const selected =
@@ -214,10 +251,34 @@ export function ActivityDashboard({
 
   return (
     <>
+      <div className="flex items-center justify-between gap-3 rounded-[10px] border border-line bg-panel px-4 py-3 shadow-[var(--shadow-1)]">
+        <div>
+          <p className="data-label text-cyan-ink">Periodo operativo</p>
+          <p className="mt-1 text-xs text-ink-muted">
+            Consulta el año actual o actividades planificadas a futuro.
+          </p>
+        </div>
+        <label className="text-xs font-extrabold">
+          <span className="sr-only">Año de actividades</span>
+          <select
+            aria-label="Año de actividades"
+            className="min-h-10 rounded-md border border-line bg-white px-3 outline-none focus:border-cyan"
+            onChange={(event) => setSelectedYear(Number(event.target.value))}
+            value={selectedYear}
+          >
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
       <MonthStrip
         activeMonth={months[selectedMonth]}
         counts={monthCounts}
         onSelect={setSelectedMonth}
+        year={selectedYear}
       />
       <section
         aria-label="Resumen de actividades"
@@ -253,10 +314,24 @@ export function ActivityDashboard({
         />
       </section>
       {role.id === "operario" ? (
-        <div className="xl:grid xl:grid-cols-[25rem_minmax(0,1fr)] xl:items-start xl:gap-4">
-          <div className="md:hidden xl:block">
-            <ActivityForm compact dataSource={dataSource} role={role} />
-          </div>
+        <div className="space-y-3">
+          <Card className="flex flex-col gap-3 border-cyan/25 bg-cyan/[.045] p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="data-label text-cyan-ink">Planificación protegida</p>
+              <p className="mt-1 text-xs leading-5 text-ink-muted">
+                Admin planifica y asigna. Tú actualizas la ejecución de cada
+                actividad desde su ficha.
+              </p>
+            </div>
+            {role.canCreateOwnActivities && (
+              <Link
+                className="action-surface inline-flex min-h-11 shrink-0 items-center justify-center rounded-md px-4 text-xs font-extrabold text-[#173000]"
+                href="/actividades/nueva"
+              >
+                Crear actividad propia
+              </Link>
+            )}
+          </Card>
           <DashboardTable
             activities={activities}
             onSelect={() => undefined}
@@ -275,14 +350,6 @@ export function ActivityDashboard({
             <ActivityPreview item={selected} />
           </aside>
         </div>
-      )}
-      {role.id === "operario" && (
-        <Link
-          className="action-surface ml-auto hidden min-h-12 items-center justify-center rounded-md px-5 text-sm font-extrabold text-[#173000] shadow-[0_10px_24px_rgba(95,170,0,.28)] md:flex xl:hidden"
-          href="/actividades/nueva"
-        >
-          ＋ Nueva actividad
-        </Link>
       )}
     </>
   );

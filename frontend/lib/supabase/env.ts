@@ -1,8 +1,13 @@
+import { isValidUsernameDomain } from "@/lib/supabase/identity";
+
 export type SupabaseEnvironment = {
   url: string;
   publishableKey: string;
   usernameDomain: string;
 };
+
+export const supabasePublishableKeyPatternSource =
+  "^sb_publishable_[A-Za-z0-9_-]{8,}$";
 
 function required(name: "SUPABASE_URL" | "SUPABASE_PUBLISHABLE_KEY") {
   const value = process.env[name]?.trim();
@@ -16,6 +21,7 @@ function required(name: "SUPABASE_URL" | "SUPABASE_PUBLISHABLE_KEY") {
 
 export function getSupabaseEnvironment(): SupabaseEnvironment {
   const url = required("SUPABASE_URL");
+  const publishableKey = required("SUPABASE_PUBLISHABLE_KEY");
   try {
     const parsed = new URL(url);
     if (parsed.protocol !== "https:" && parsed.hostname !== "127.0.0.1") {
@@ -28,13 +34,21 @@ export function getSupabaseEnvironment(): SupabaseEnvironment {
   const usernameDomain =
     process.env.SISTEMA_R_USERNAME_DOMAIN?.trim().toLowerCase() ||
     "auth.sistema-r.invalid";
-  if (!/^[a-z0-9.-]+$/.test(usernameDomain) || !usernameDomain.includes(".")) {
+  if (!isValidUsernameDomain(usernameDomain)) {
     throw new Error("SISTEMA_R_USERNAME_DOMAIN no contiene un dominio válido.");
+  }
+  if (
+    process.env.VERCEL_ENV &&
+    !new RegExp(supabasePublishableKeyPatternSource).test(publishableKey)
+  ) {
+    throw new Error(
+      "SUPABASE_PUBLISHABLE_KEY debe ser publicable en todos los despliegues de Vercel.",
+    );
   }
 
   return {
     url,
-    publishableKey: required("SUPABASE_PUBLISHABLE_KEY"),
+    publishableKey,
     usernameDomain,
   };
 }

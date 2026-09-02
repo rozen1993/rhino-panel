@@ -1,12 +1,40 @@
 # Decisiones
 
-> **Archivo acumulativo con decisiones históricas.** Para el modelo implementado vigente prevalecen `decisiones-modelo-tres-roles-2026-08-20.md`, `handoff-frontend.md` y el resumen raíz `CLAUDE.md`.
+> **Archivo acumulativo con decisiones históricas.** Desde el 2026-08-28, la
+> autoridad de implementación es `contrato-producto-vigente-2026-08-28.md`. Los
+> roles, estados, permisos y conteos que aparecen más abajo documentan modelos
+> sustituidos y no deben alimentar rutas activas.
+
+## Decisiones confirmadas el 2026-08-28
+
+- Admin conserva la planificación; el Operario responsable conserva la
+  ejecución. Crear actividades propias requiere un permiso individual,
+  revocable y desactivado por defecto.
+- Burson crea y consulta sus propios encargos sin acceso interno.
+- Admin entrega una clave temporal y el usuario debe cambiarla al ingresar.
+- El Histórico comienza el 2026-01-01 y continúa hacia adelante.
+- El chat IA queda fuera de Sistema R. Se entrega solamente un plan PDF de tres
+  páginas para un componente separado, administrado inicialmente solo por
+  Admin, con Hermes en un VPS (Hostinger como opción) y OpenRouter; existe un
+  crédito inicial informado de USD 10, sin autorizar gasto ni despliegue.
+- La idempotencia de un encargo Burson no incluye al responsable porque este es
+  derivado y puede cambiar legítimamente. Crear encargos y transferir el vínculo
+  especial comparten el lock transaccional
+  `sistema-r-account-administration`.
+- En la conversación privada, una baja de mensaje conserva para Admin y el
+  responsable vigente un evento inmutable con `mensaje_id`, pero nunca el cuerpo;
+  la fila dada de baja no se entrega al cliente.
+- La baja de una actividad es reversible y vive solo en la Papelera Admin. Al
+  restaurar trabajo abierto con un responsable ya inactivo, Admin asigna un
+  Operario activo; el trabajo entregado conserva al responsable histórico. La
+  restauración nunca revive mensajes dados de baja.
 
 Decisiones de producto y arquitectura que deben sobrevivir al chat. Una decisión aquí solo cambia si
 Marco la cambia expresamente, y el cambio se escribe en este archivo.
 
-Cerradas: **cuarenta y tres**. Abiertas: **cuatro** — D-025, D-027, D-037 y D-039, en
-`docs/decisiones-pendientes.md`.
+**Conteo histórico al 2026-08-17:** cerradas cuarenta y tres; entonces figuraban
+cuatro abiertas — D-025, D-027, D-037 y D-039. El resumen vigente anterior ya
+registra D-039 como resuelta y difiere las restantes sin bloquear el producto.
 
 > ## Ninguna decisión queda en revisión
 >

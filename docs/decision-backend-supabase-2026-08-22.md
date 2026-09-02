@@ -3,6 +3,14 @@
 **Estado:** aprobada e implementada como primer corte vertical
 **Fecha:** 2026-08-22
 
+> **Addendum 2026-08-28:** este documento conserva la fotografía del primer
+> corte. El destino actualizado está en
+> `contrato-producto-vigente-2026-08-28.md`: Admin pasa a planificar y asignar;
+> el Operario crea únicamente con permiso individual; cuentas, Burson,
+> conversaciones, papelera e Histórico dejan de ser alcance diferido y forman
+> los siguientes cortes. El chat IA continúa fuera del producto y solo entrega
+> un PDF de planificación independiente.
+
 ## Resultado
 
 Sistema R conserva el frontend de demostración y suma un modo real, explícito y

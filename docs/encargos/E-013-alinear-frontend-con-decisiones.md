@@ -1,5 +1,7 @@
 # E-013 — Alinear el frontend con las decisiones del 2026-08-17
 
+> **Encargo histórico ya ejecutado.** No usar como contrato vigente; consultar `README.md` en este directorio.
+
 **Fase:** 2 — Construcción frontend
 **Ejecuta:** Codex
 **Estado:** en auditoría

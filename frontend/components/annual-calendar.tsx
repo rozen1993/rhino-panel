@@ -1,14 +1,18 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { formatActivitySpans } from "@/components/activity-card";
 import { StatusPill } from "@/components/status-pill";
-import {
-  isOverdue,
-  type SimulatedActivity,
-  useSimulatedActivities,
-} from "@/lib/activity-simulation";
+import { isOverdue, useSimulatedActivities } from "@/lib/activity-simulation";
+import type { DataSource } from "@/lib/data-source";
 import { safeMaterialUrl } from "@/lib/external-link";
+import {
+  activityOverlapsYear,
+  historicalYearCeiling,
+  historicalYearFloor,
+  type HistoricalActivity,
+} from "@/lib/historical";
 import type { ActivityType } from "@/lib/roles";
 
 const monthNames = [
@@ -40,7 +44,7 @@ const colors: Record<
 > = {
   Grabación: {
     solid: "bg-cyan text-night",
-    range: "bg-cyan/20 text-blue",
+    range: "bg-cyan/20 text-cyan-ink",
     marker: "bg-cyan",
   },
   Edición: {
@@ -54,7 +58,7 @@ const colors: Record<
     marker: "bg-lime",
   },
   Locución: {
-    solid: "bg-violet text-white",
+    solid: "bg-[#7c3aed] text-white",
     range: "bg-violet/15 text-[#5b2bb5]",
     marker: "bg-violet",
   },
@@ -67,11 +71,18 @@ function utcDate(value: string) {
 function isoDate(value: Date) {
   return value.toISOString().slice(0, 10);
 }
-function datesFor(item: SimulatedActivity) {
+function datesForYear(item: HistoricalActivity, year: number) {
   const result = new Set<string>();
+  const lower = new Date(Date.UTC(year, 0, 1, 12));
+  lower.setUTCDate(lower.getUTCDate() - 1);
+  const upper = new Date(Date.UTC(year, 11, 31, 12));
+  upper.setUTCDate(upper.getUTCDate() + 1);
   for (const span of item.spans) {
-    const cursor = utcDate(span.start);
-    const end = utcDate(span.end);
+    const spanStart = utcDate(span.start);
+    const spanEnd = utcDate(span.end);
+    if (spanEnd < lower || spanStart > upper) continue;
+    const cursor = new Date(Math.max(spanStart.getTime(), lower.getTime()));
+    const end = new Date(Math.min(spanEnd.getTime(), upper.getTime()));
     while (cursor <= end) {
       result.add(isoDate(cursor));
       cursor.setUTCDate(cursor.getUTCDate() + 1);
@@ -80,21 +91,32 @@ function datesFor(item: SimulatedActivity) {
   return result;
 }
 
+type IndexedActivity = {
+  item: HistoricalActivity;
+  dates: Set<string>;
+};
+
 function DetailPanel({
   item,
   choices,
   onChoose,
   close,
+  titleId,
+  closeButtonRef,
+  today,
 }: {
-  item: SimulatedActivity;
-  choices: SimulatedActivity[];
-  onChoose: (item: SimulatedActivity) => void;
+  item: HistoricalActivity;
+  choices: HistoricalActivity[];
+  onChoose: (item: HistoricalActivity) => void;
   close?: () => void;
+  titleId: string;
+  closeButtonRef?: RefObject<HTMLButtonElement | null>;
+  today: string;
 }) {
   const url = safeMaterialUrl(item.materialLink);
   return (
     <aside
-      aria-label="Detalle de actividad"
+      aria-labelledby={titleId}
       className="relative h-full overflow-y-auto bg-panel p-5 shadow-2xl xl:p-6 xl:shadow-none"
     >
       <span className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-cyan to-lime" />
@@ -103,6 +125,7 @@ function DetailPanel({
           aria-label="Cerrar detalle"
           className="float-right grid min-h-11 min-w-11 place-items-center rounded-full bg-panel-secondary text-xl"
           onClick={close}
+          ref={closeButtonRef}
           type="button"
         >
           ×
@@ -139,12 +162,12 @@ function DetailPanel({
         </p>
         <h2
           className="section-title mt-1 text-xl leading-tight"
-          id="activity-detail-title"
+          id={titleId}
         >
           {item.title}
         </h2>
       </div>
-      {isOverdue(item) && (
+      {isOverdue(item, today) && (
         <p className="mt-3 inline-flex rounded-md border border-red/30 bg-red/5 px-2 py-1 text-xs font-bold text-red">
           Actividad atrasada
         </p>
@@ -192,28 +215,26 @@ function DetailPanel({
 function MiniMonth({
   year,
   month,
-  items,
+  activitiesByDate,
+  monthTotal,
   onSelect,
   selectedId,
+  today,
 }: {
   year: number;
   month: number;
-  items: SimulatedActivity[];
-  onSelect: (items: SimulatedActivity[]) => void;
+  activitiesByDate: ReadonlyMap<string, IndexedActivity[]>;
+  monthTotal: number;
+  onSelect: (
+    items: HistoricalActivity[],
+    trigger: HTMLButtonElement,
+  ) => void;
   selectedId?: string;
+  today: string;
 }) {
   const first = new Date(Date.UTC(year, month, 1));
   const days = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
   const offset = (first.getUTCDay() + 6) % 7;
-  const indexed = useMemo(
-    () => items.map((item) => ({ item, dates: datesFor(item) })),
-    [items],
-  );
-  const monthStart = `${year}-${String(month + 1).padStart(2, "0")}-01`;
-  const monthEnd = `${year}-${String(month + 1).padStart(2, "0")}-${String(days).padStart(2, "0")}`;
-  const monthTotal = items.filter((item) =>
-    item.spans.some((span) => span.start <= monthEnd && span.end >= monthStart),
-  ).length;
   return (
     <section className="group relative min-h-[13rem] rounded-[8px] border border-line bg-panel p-2.5 shadow-[0_3px_10px_rgba(3,29,54,0.035)] transition hover:-translate-y-0.5 hover:border-cyan/45 hover:shadow-[var(--shadow-2)]">
       <div className="flex items-center justify-center gap-2">
@@ -240,7 +261,7 @@ function MiniMonth({
         {Array.from({ length: days }, (_, index) => {
           const day = index + 1;
           const iso = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-          const matches = indexed.filter((entry) => entry.dates.has(iso));
+          const matches = activitiesByDate.get(iso) ?? [];
           if (!matches.length)
             return (
               <span
@@ -260,12 +281,20 @@ function MiniMonth({
           const selected = matches.some(
             (entry) => entry.item.id === selectedId,
           );
+          const overdue = matches.some((entry) =>
+            isOverdue(entry.item, today),
+          );
           return (
             <button
-              aria-label={`${day} de ${monthNames[month].toLowerCase()}: ${matches.map((entry) => `${entry.item.type}, ${entry.item.title}`).join("; ")}`}
+              aria-label={`${day} de ${monthNames[month].toLowerCase()}: ${matches.map((entry) => `${entry.item.type}, ${entry.item.title}`).join("; ")}${overdue ? ". Hay una actividad atrasada." : ""}`}
               className={`relative flex min-h-6 items-center justify-center font-extrabold focus:z-10 ${colors[found.item.type][before || after ? "range" : "solid"]} ${before ? "rounded-l-none" : "rounded-l-full"} ${after ? "rounded-r-none" : "rounded-r-full"} ${selected ? "z-[1] ring-2 ring-night ring-offset-1" : ""}`}
               key={iso}
-              onClick={() => onSelect(matches.map((entry) => entry.item))}
+              onClick={(event) =>
+                onSelect(
+                  matches.map((entry) => entry.item),
+                  event.currentTarget,
+                )
+              }
               type="button"
             >
               {day}
@@ -277,9 +306,9 @@ function MiniMonth({
                   {matches.length}
                 </span>
               )}
-              {matches.some((entry) => isOverdue(entry.item)) && (
+              {overdue && (
                 <span
-                  aria-label="Atrasada"
+                  aria-hidden="true"
                   className="absolute -left-0.5 -top-0.5 size-1.5 rounded-full bg-red"
                 />
               )}
@@ -291,47 +320,164 @@ function MiniMonth({
   );
 }
 
-export function AnnualCalendar() {
-  const stored = useSimulatedActivities();
-  const all = useMemo(() => stored.filter((item) => !item.deletedAt), [stored]);
-  const years = all
-    .flatMap((item) => item.spans.map((span) => Number(span.start.slice(0, 4))))
-    .filter(Boolean);
-  const [year, setYear] = useState(
-    years.includes(2026) ? 2026 : new Date().getFullYear(),
+export function AnnualCalendar({
+  dataSource,
+  initialActivities = [],
+  today,
+  year,
+}: {
+  dataSource: DataSource;
+  initialActivities?: HistoricalActivity[];
+  today: string;
+  year: number;
+}) {
+  const stored = useSimulatedActivities(dataSource === "demo");
+  const all = useMemo<HistoricalActivity[]>(
+    () =>
+      dataSource === "demo"
+        ? stored.filter((item) => !item.deletedAt)
+        : initialActivities,
+    [dataSource, initialActivities, stored],
   );
   const visible = useMemo(
-    () =>
-      all.filter((item) =>
-        item.spans.some(
-          (span) =>
-            Number(span.start.slice(0, 4)) <= year &&
-            Number(span.end.slice(0, 4)) >= year,
-        ),
-      ),
+    () => all.filter((item) => activityOverlapsYear(item, year)),
     [all, year],
   );
+  const calendarIndex = useMemo(() => {
+    const activitiesByDate = new Map<string, IndexedActivity[]>();
+    const monthTotals = Array.from({ length: 12 }, () => 0);
+    visible.forEach((item) => {
+      const entry: IndexedActivity = {
+        item,
+        dates: datesForYear(item, year),
+      };
+      entry.dates.forEach((date) => {
+        const matches = activitiesByDate.get(date) ?? [];
+        matches.push(entry);
+        activitiesByDate.set(date, matches);
+      });
+      monthTotals.forEach((_, month) => {
+        const days = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+        const start = `${year}-${String(month + 1).padStart(2, "0")}-01`;
+        const end = `${year}-${String(month + 1).padStart(2, "0")}-${String(days).padStart(2, "0")}`;
+        if (
+          item.spans.some(
+            (span) => span.start <= end && span.end >= start,
+          )
+        ) {
+          monthTotals[month] += 1;
+        }
+      });
+    });
+    return { activitiesByDate, monthTotals };
+  }, [visible, year]);
   const [selectedId, setSelectedId] = useState(visible[0]?.id ?? "");
   const [choiceIds, setChoiceIds] = useState<string[]>(
     visible[0] ? [visible[0].id] : [],
   );
   const [overlay, setOverlay] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const returnFocusRef = useRef<HTMLButtonElement | null>(null);
+  const restoreFocusPendingRef = useRef(false);
   const selected =
     visible.find((item) => item.id === selectedId) ?? visible[0] ?? null;
   const selectedChoices = choiceIds
     .map((id) => visible.find((item) => item.id === id))
-    .filter((item): item is SimulatedActivity => Boolean(item));
+    .filter((item): item is HistoricalActivity => Boolean(item));
   const choices = selectedChoices.length
     ? selectedChoices
     : selected
       ? [selected]
       : [];
+  const dialogOpen = overlay && selected !== null;
 
-  function select(items: SimulatedActivity[]) {
+  useEffect(() => {
+    if (!dialogOpen) {
+      if (restoreFocusPendingRef.current) {
+        returnFocusRef.current?.focus();
+        restoreFocusPendingRef.current = false;
+      }
+      return;
+    }
+
+    const dialog = dialogRef.current;
+    const previousOverflow = document.body.style.overflow;
+    const mobileQuery = window.matchMedia("(max-width: 767px)");
+    document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
+
+    function handleMediaChange(event: MediaQueryListEvent) {
+      if (!event.matches) {
+        restoreFocusPendingRef.current = true;
+        setOverlay(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (!dialog) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        restoreFocusPendingRef.current = true;
+        setOverlay(false);
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const focusable = Array.from(
+        dialog.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((element) => !element.hasAttribute("hidden"));
+      if (!focusable.length) {
+        event.preventDefault();
+        dialog.focus();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable.at(-1) ?? first;
+      const active = document.activeElement;
+      if (!dialog.contains(active)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      } else if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    mobileQuery.addEventListener("change", handleMediaChange);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      mobileQuery.removeEventListener("change", handleMediaChange);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [dialogOpen]);
+
+  function select(
+    items: HistoricalActivity[],
+    trigger: HTMLButtonElement,
+  ) {
     setChoiceIds(items.map((item) => item.id));
     setSelectedId(items[0]?.id ?? "");
-    setOverlay(true);
+    returnFocusRef.current = trigger;
+    const mobile =
+      typeof window.matchMedia === "function"
+        ? window.matchMedia("(max-width: 767px)").matches
+        : window.innerWidth < 768;
+    setOverlay(mobile);
   }
+
+  function closeOverlay() {
+    restoreFocusPendingRef.current = true;
+    setOverlay(false);
+  }
+
+  const yearControlClass =
+    "grid min-h-11 min-w-11 place-items-center text-xl transition hover:bg-panel-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-cyan";
 
   return (
     <div className="items-start overflow-hidden rounded-[10px] border border-line bg-panel shadow-[var(--shadow-2)] md:grid md:grid-cols-[minmax(0,1fr)_42%] xl:grid-cols-[minmax(0,1fr)_20rem]">
@@ -349,31 +495,53 @@ export function AnnualCalendar() {
             </p>
           </div>
           <div className="flex items-center overflow-hidden rounded-full border border-line bg-panel shadow-[var(--shadow-1)]">
-            <button
-              aria-label="Año anterior"
-              className="min-h-11 min-w-11 text-xl transition hover:bg-panel-secondary"
-              onClick={() => {
-                setOverlay(false);
-                setYear((value) => value - 1);
-              }}
-              type="button"
-            >
-              ‹
-            </button>
+            {year > historicalYearFloor ? (
+              <Link
+                aria-label="Año anterior"
+                className={yearControlClass}
+                href={{
+                  pathname: "/historico",
+                  query: { anio: String(year - 1) },
+                }}
+                scroll={false}
+              >
+                ‹
+              </Link>
+            ) : (
+              <button
+                aria-label="Año anterior"
+                className={`${yearControlClass} cursor-not-allowed text-ink-muted opacity-45`}
+                disabled
+                type="button"
+              >
+                ‹
+              </button>
+            )}
             <strong className="border-x border-line px-5 py-3 tabular-nums">
               {year}
             </strong>
-            <button
-              aria-label="Año siguiente"
-              className="min-h-11 min-w-11 text-xl transition hover:bg-panel-secondary"
-              onClick={() => {
-                setOverlay(false);
-                setYear((value) => value + 1);
-              }}
-              type="button"
-            >
-              ›
-            </button>
+            {year < historicalYearCeiling ? (
+              <Link
+                aria-label="Año siguiente"
+                className={yearControlClass}
+                href={{
+                  pathname: "/historico",
+                  query: { anio: String(year + 1) },
+                }}
+                scroll={false}
+              >
+                ›
+              </Link>
+            ) : (
+              <button
+                aria-label="Año siguiente"
+                className={`${yearControlClass} cursor-not-allowed text-ink-muted opacity-45`}
+                disabled
+                type="button"
+              >
+                ›
+              </button>
+            )}
           </div>
         </header>
         <div
@@ -393,14 +561,24 @@ export function AnnualCalendar() {
             </span>
           ))}
         </div>
-        <div className="mt-4 grid gap-2 xl:grid-cols-4">
+        {!visible.length && (
+          <p
+            className="mt-4 rounded-md border border-dashed border-line bg-panel p-4 text-sm text-ink-muted md:hidden"
+            role="status"
+          >
+            No hay actividades registradas en {year}.
+          </p>
+        )}
+        <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-4">
           {monthNames.map((_, month) => (
             <MiniMonth
-              items={visible}
+              activitiesByDate={calendarIndex.activitiesByDate}
               key={month}
               month={month}
+              monthTotal={calendarIndex.monthTotals[month]}
               onSelect={select}
               selectedId={selected?.id}
+              today={today}
               year={year}
             />
           ))}
@@ -412,36 +590,38 @@ export function AnnualCalendar() {
             choices={choices}
             item={selected}
             onChoose={(item) => setSelectedId(item.id)}
+            today={today}
+            titleId="activity-detail-title-desktop"
           />
         ) : (
-          <p className="p-6 text-sm text-ink-muted">
+          <p className="p-6 text-sm text-ink-muted" role="status">
             No hay actividades registradas en {year}.
           </p>
         )}
       </div>
-      {overlay && selected && (
+      {dialogOpen && selected && (
         <div
-          aria-labelledby="activity-detail-title"
+          aria-labelledby="activity-detail-title-mobile"
           aria-modal="true"
-          autoFocus
           className="fixed inset-0 z-[60] bg-night/55 backdrop-blur-[2px] md:hidden"
-          onClick={() => setOverlay(false)}
-          onKeyDown={(event) => {
-            if (event.key === "Escape") setOverlay(false);
-          }}
+          onClick={closeOverlay}
+          ref={dialogRef}
           role="dialog"
           tabIndex={-1}
         >
           <div
-            className="absolute inset-x-0 bottom-0 max-h-[82vh] overflow-hidden rounded-t-[18px]"
+            className="absolute inset-x-0 bottom-0 max-h-[82dvh] overflow-y-auto overscroll-contain rounded-t-[18px] pb-[env(safe-area-inset-bottom)]"
             onClick={(event) => event.stopPropagation()}
           >
             <span className="absolute left-1/2 top-2 z-10 h-1 w-20 -translate-x-1/2 rounded-full bg-status-gray" />
             <DetailPanel
               choices={choices}
-              close={() => setOverlay(false)}
+              close={closeOverlay}
+              closeButtonRef={closeButtonRef}
               item={selected}
               onChoose={(item) => setSelectedId(item.id)}
+              today={today}
+              titleId="activity-detail-title-mobile"
             />
           </div>
         </div>

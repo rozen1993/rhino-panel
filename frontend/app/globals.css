@@ -4,7 +4,7 @@
   --paper: #f4f7f8;
   --panel: #ffffff;
   --panel-secondary: #f6f9fa;
-  --line: #d5e1e7;
+  --line: #8295a5;
   --ink: #10233f;
   --ink-muted: #607389;
   --blue: #11b7c9;
@@ -15,6 +15,7 @@
   --navy: #031d36;
   --orange: #ff9f1c;
   --violet: #8b5cf6;
+  --violet-ink: #5b2bb5;
   --action-gradient: linear-gradient(135deg, #92e600, #72c900);
   --shadow-1: 0 2px 8px rgb(3 29 54 / 5%);
   --shadow-2: 0 10px 28px rgb(3 29 54 / 8%);
@@ -35,12 +36,13 @@
   --color-red: var(--red);
   --color-turquoise: #11b7c9;
   --color-observed: #c8102e;
-  --color-green: #57b80c;
+  --color-green: #2d760d;
   --color-status-gray: #8290a0;
   --color-night: var(--night);
   --color-navy: var(--navy);
   --color-orange: var(--orange);
   --color-violet: var(--violet);
+  --color-violet-ink: var(--violet-ink);
   --font-sans: "Segoe UI", Arial, sans-serif;
 }
 * {

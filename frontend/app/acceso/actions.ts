@@ -10,6 +10,11 @@ import { isSupabaseAuthCookieName } from "@/lib/supabase/cookie-options";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const invalidCredentials = "El usuario o la clave no son correctos.";
+const demoSessionCookieOptions = {
+  path: "/",
+  sameSite: "lax" as const,
+  httpOnly: true,
+};
 
 export async function entrar(
   _prev: string | undefined,
@@ -43,13 +48,14 @@ export async function entrar(
     }
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("role, is_active")
+      .select("role, is_active, must_change_password")
       .eq("id", subject)
       .maybeSingle();
     if (profileError || !profile?.is_active) {
       await supabase.auth.signOut();
       return invalidCredentials;
     }
+    if (profile.must_change_password) redirect("/cambiar-clave");
     if (profile.role === "burson") redirect("/burson");
     redirect("/actividades");
   }
@@ -61,8 +67,13 @@ export async function entrar(
     store.get(accountsCookieName)?.value,
   );
   if (!match) return invalidCredentials;
-  store.set(SESSION_COOKIE, match.roleId, { path: "/", sameSite: "lax" });
-  store.set(SESSION_ACCOUNT_COOKIE, match.accountId, { path: "/", sameSite: "lax" });
+  store.set(SESSION_COOKIE, match.roleId, demoSessionCookieOptions);
+  store.set(
+    SESSION_ACCOUNT_COOKIE,
+    match.accountId,
+    demoSessionCookieOptions,
+  );
+  if (match.mustChangePassword) redirect("/cambiar-clave");
   if (match.roleId === "burson") redirect("/burson");
   redirect("/actividades");
 }

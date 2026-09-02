@@ -13,8 +13,10 @@ import {
   isSupabaseAuthCookieName,
 } from "@/lib/supabase/cookie-options";
 import { getSupabaseEnvironment } from "@/lib/supabase/env";
+import { secureRedirect } from "@/lib/supabase/proxy";
 import {
   isValidUsername,
+  isValidUsernameDomain,
   usernameToAuthEmail,
 } from "@/lib/supabase/identity";
 import { isUuid } from "@/lib/uuid";
@@ -27,8 +29,17 @@ describe("cimiento del backend", () => {
     expect(() => resolveDataSource("automatico")).toThrow(
       /SISTEMA_R_DATA_SOURCE/,
     );
+    try {
+      resolveDataSource("valor-no-documentado");
+    } catch (error) {
+      expect((error as Error).message).not.toContain("valor-no-documentado");
+    }
     expect(() => resolveDataSource(undefined, "preview")).toThrow(
       /obligatorio/,
+    );
+    expect(() => resolveDataSource("demo", "preview")).toThrow(/prohibido/);
+    expect(() => resolveDataSource("demo", "production")).toThrow(
+      /prohibido/,
     );
   });
 
@@ -52,6 +63,9 @@ describe("cimiento del backend", () => {
     expect(validSpans([{ start: "2026-02-30", end: "2026-03-01" }])).toBe(
       false,
     );
+    expect(validSpans([{ start: "2025-12-31", end: "2026-01-01" }])).toBe(
+      false,
+    );
     expect(validSpans(null)).toBe(false);
     expect(validSpans([null])).toBe(false);
   });
@@ -62,8 +76,15 @@ describe("cimiento del backend", () => {
   });
 
   it("aísla borradores demo/Supabase y descarta claves heredadas", () => {
-    expect(activityDraftStorageKey("operario", undefined, "supabase")).toBe(
-      "rhino:borrador-actividad:v3:supabase:operario:nueva",
+    expect(
+      activityDraftStorageKey(
+        "operario",
+        "account-ana",
+        undefined,
+        "supabase",
+      ),
+    ).toBe(
+      "rhino:borrador-actividad:v5:supabase:operario:account-ana:nueva",
     );
     expect(
       parseActivityDraft(
@@ -75,10 +96,51 @@ describe("cimiento del backend", () => {
         }),
       ),
     ).toBeNull();
+    expect(
+      parseActivityDraft(
+        JSON.stringify({
+          version: 5,
+          idempotencyKey: "00000000-0000-4000-8000-000000000001",
+          savedAt: "2026-08-30T00:00:00.000Z",
+          fields: {
+            type: "Grabación",
+            title: "Parcial",
+            description: "",
+            placeName: "",
+            responsibleAccountId: "",
+            spans: [{ start: "", end: "" }],
+            materialLink: "",
+            notes: "",
+          },
+        }),
+      ),
+    ).toBeNull();
+    expect(
+      parseActivityDraft(
+        JSON.stringify({
+          version: 5,
+          idempotencyKey: "00000000-0000-4000-8000-000000000002",
+          savedAt: "2026-08-30T00:00:00.000Z",
+          fields: {
+            type: "Grabación",
+            title: "Parcial",
+            description: "",
+            placeName: "",
+            responsibleAccountId: "",
+            spans: [{ start: "", end: "" }],
+            materialLink: "",
+            notes: "",
+            referenceLink: "https://burson.example/referencia",
+          },
+        }),
+      )?.fields.referenceLink,
+    ).toBe("https://burson.example/referencia");
   });
 
   it("traduce username a un alias interno sin publicar correos reales", () => {
     expect(isValidUsername("ana.torres")).toBe(true);
+    expect(isValidUsernameDomain("auth.sistema-r.invalid")).toBe(true);
+    expect(isValidUsernameDomain("sistema-r.1")).toBe(false);
     expect(usernameToAuthEmail(" Ana.Torres ", "auth.sistema-r.invalid")).toBe(
       "ana.torres@auth.sistema-r.invalid",
     );
@@ -95,11 +157,14 @@ describe("cimiento del backend", () => {
         role: "operario",
         is_active: true,
         is_burson_operator: true,
+        can_create_own_activities: true,
+        must_change_password: false,
       }),
     ).toMatchObject({
       id: "operario",
       accountName: "Ana Torres",
       bursonLinked: true,
+      canCreateOwnActivities: true,
     });
     expect(
       profileToRole({
@@ -108,6 +173,8 @@ describe("cimiento del backend", () => {
         role: "operario",
         is_active: false,
         is_burson_operator: false,
+        can_create_own_activities: false,
+        must_change_password: false,
       }),
     ).toBeNull();
   });
@@ -129,6 +196,23 @@ describe("cimiento del backend", () => {
     expect(isSupabaseAuthCookieName("rhino_rol_prueba_v2")).toBe(false);
   });
 
+  it("conserva las cabeceras defensivas en redirecciones del proxy", () => {
+    const response = secureRedirect(
+      new URL("https://sistema-r.example.com/acceso"),
+    );
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe(
+      "https://sistema-r.example.com/acceso",
+    );
+    expect(response.headers.get("content-security-policy")).toContain(
+      "frame-ancestors 'none'",
+    );
+    expect(response.headers.get("strict-transport-security")).toBe(
+      "max-age=63072000",
+    );
+    expect(response.headers.get("x-robots-tag")).toBe("noindex, nofollow");
+  });
+
   it("falla cerrado si el modo real no tiene configuración", () => {
     const previousUrl = process.env.SUPABASE_URL;
     const previousKey = process.env.SUPABASE_PUBLISHABLE_KEY;
@@ -145,6 +229,39 @@ describe("cimiento del backend", () => {
       else process.env.SUPABASE_URL = previousUrl;
       if (previousKey === undefined) delete process.env.SUPABASE_PUBLISHABLE_KEY;
       else process.env.SUPABASE_PUBLISHABLE_KEY = previousKey;
+    }
+  });
+
+  it("rechaza claves legacy también en el runtime de Vercel", () => {
+    const previous = {
+      url: process.env.SUPABASE_URL,
+      key: process.env.SUPABASE_PUBLISHABLE_KEY,
+      vercelEnvironment: process.env.VERCEL_ENV,
+    };
+    process.env.SUPABASE_URL = "https://stagingref123.supabase.co";
+    process.env.SUPABASE_PUBLISHABLE_KEY = "eyJlegacy.anon.signature";
+    process.env.VERCEL_ENV = "preview";
+    try {
+      expect(() => getSupabaseEnvironment()).toThrow(/publicable/);
+      process.env.SUPABASE_PUBLISHABLE_KEY =
+        "sb_publishable_runtime_test_key";
+      expect(getSupabaseEnvironment().publishableKey).toBe(
+        "sb_publishable_runtime_test_key",
+      );
+      delete process.env.VERCEL_ENV;
+      process.env.SUPABASE_PUBLISHABLE_KEY = "legacy-local-development-key";
+      expect(getSupabaseEnvironment().publishableKey).toBe(
+        "legacy-local-development-key",
+      );
+    } finally {
+      if (previous.url === undefined) delete process.env.SUPABASE_URL;
+      else process.env.SUPABASE_URL = previous.url;
+      if (previous.key === undefined)
+        delete process.env.SUPABASE_PUBLISHABLE_KEY;
+      else process.env.SUPABASE_PUBLISHABLE_KEY = previous.key;
+      if (previous.vercelEnvironment === undefined)
+        delete process.env.VERCEL_ENV;
+      else process.env.VERCEL_ENV = previous.vercelEnvironment;
     }
   });
 });

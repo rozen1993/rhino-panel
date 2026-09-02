@@ -1,6 +1,13 @@
 import { roleIds, type RoleId } from "@/lib/roles";
-export const accountsCookieName = "rhino_cuentas_simuladas_v2";
-export type AccountHistory = { action: string; actor: string; moment: string };
+
+export const accountsCookieName = "rhino_cuentas_simuladas_v3";
+
+export type AccountHistory = {
+  action: string;
+  actor: string;
+  moment: string;
+};
+
 export type Account = {
   id: string;
   name: string;
@@ -9,23 +16,40 @@ export type Account = {
   password: string;
   roleId: RoleId;
   bursonLinked: boolean;
+  canCreateOwnActivities: boolean;
+  mustChangePassword: boolean;
   active: boolean;
   createdAt: string;
   updatedAt: string;
   updatedBy: string;
   history: AccountHistory[];
 };
+
 export type AccountFields = Pick<
   Account,
-  "name" | "username" | "password" | "roleId" | "bursonLinked"
+  | "name"
+  | "username"
+  | "password"
+  | "roleId"
+  | "bursonLinked"
+  | "canCreateOwnActivities"
 >;
+
+export type AssignableOperator = {
+  id: string;
+  name: string;
+  bursonLinked: boolean;
+};
+
 const createdAt = "2026-01-01T08:00:00-05:00";
+
 function account(
   id: string,
   name: string,
   username: string,
   roleId: RoleId,
   bursonLinked = false,
+  canCreateOwnActivities = false,
 ): Account {
   return {
     id,
@@ -40,32 +64,40 @@ function account(
     password: `${username}2026`,
     roleId,
     bursonLinked,
+    canCreateOwnActivities,
+    mustChangePassword: false,
     active: true,
     createdAt,
     updatedAt: createdAt,
     updatedBy: "Sistema",
     history: [
       {
-        action: "Cuenta de demostración creada",
+        action: canCreateOwnActivities
+          ? "Cuenta demo creada con permiso de creación propia"
+          : "Cuenta de demostración creada",
         actor: "Sistema",
         moment: createdAt,
       },
     ],
   };
 }
+
 export const defaultAccounts: Account[] = [
   account("account-admin", "Marco Admin", "admin", "admin"),
-  account("account-ana", "Ana Torres", "ana", "operario"),
+  account("account-ana", "Ana Torres", "ana", "operario", false, true),
   account("account-carlos", "Carlos Vega", "carlos", "operario"),
   account("account-burson", "Equipo Burson", "burson", "burson"),
   account("account-luis", "Luis Mendoza", "luis", "operario", true),
 ];
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object";
 }
+
 function isRoleId(value: unknown): value is RoleId {
   return typeof value === "string" && roleIds.includes(value as RoleId);
 }
+
 function isAccount(value: unknown): value is Account {
   if (!isRecord(value)) return false;
   return (
@@ -81,6 +113,8 @@ function isAccount(value: unknown): value is Account {
     ].every((key) => typeof value[key] === "string") &&
     isRoleId(value.roleId) &&
     typeof value.bursonLinked === "boolean" &&
+    typeof value.canCreateOwnActivities === "boolean" &&
+    typeof value.mustChangePassword === "boolean" &&
     typeof value.active === "boolean" &&
     Array.isArray(value.history) &&
     value.history.every(
@@ -92,6 +126,7 @@ function isAccount(value: unknown): value is Account {
     )
   );
 }
+
 export function parseAccounts(raw: string | null): Account[] {
   if (!raw) return defaultAccounts;
   try {
@@ -99,26 +134,45 @@ export function parseAccounts(raw: string | null): Account[] {
     if (!Array.isArray(value) || !value.length || !value.every(isAccount))
       return defaultAccounts;
     const hasAdmin = value.some(
-      (account) => account.active && account.roleId === "admin",
+      (item) => item.active && item.roleId === "admin",
     );
     const special = value.filter(
-      (account) =>
-        account.active && account.roleId === "operario" && account.bursonLinked,
+      (item) =>
+        item.active && item.roleId === "operario" && item.bursonLinked,
     );
-    return hasAdmin && special.length === 1 ? value : defaultAccounts;
+    const activeBurson = value.filter(
+      (item) => item.active && item.roleId === "burson",
+    );
+    const capabilitiesMatchRole = value.every(
+      (item) =>
+        (!item.bursonLinked ||
+          (item.active && item.roleId === "operario")) &&
+        (!item.canCreateOwnActivities ||
+          (item.active && item.roleId === "operario")),
+    );
+    return hasAdmin &&
+      special.length === 1 &&
+      activeBurson.length === 1 &&
+      capabilitiesMatchRole
+      ? value
+      : defaultAccounts;
   } catch {
     return defaultAccounts;
   }
 }
+
 type CompactAccount = {
   i: string;
   u: string;
   p: string;
   r: RoleId;
   b: boolean;
+  c: boolean;
+  m: boolean;
   a: boolean;
   n: string;
 };
+
 function isCompactAccount(value: unknown): value is CompactAccount {
   if (!isRecord(value)) return false;
   return (
@@ -128,27 +182,54 @@ function isCompactAccount(value: unknown): value is CompactAccount {
     typeof value.n === "string" &&
     isRoleId(value.r) &&
     typeof value.b === "boolean" &&
+    typeof value.c === "boolean" &&
+    typeof value.m === "boolean" &&
     typeof value.a === "boolean"
   );
 }
-export function serializeAccountsCookie(accounts: Account[]) {
-  return JSON.stringify(
-    accounts.map((item): CompactAccount => ({
-      i: item.id,
-      u: item.username,
-      p: item.password,
-      r: item.roleId,
-      b: item.bursonLinked,
-      a: item.active,
-      n: item.name,
-    })),
+
+function hasCompactAccountInvariants(accounts: CompactAccount[]) {
+  return (
+    accounts.length > 0 &&
+    accounts.some((item) => item.a && item.r === "admin") &&
+    accounts.filter((item) => item.a && item.r === "burson").length === 1 &&
+    accounts.filter((item) => item.a && item.r === "operario" && item.b)
+      .length === 1 &&
+    accounts.every(
+      (item) =>
+        (!item.b || (item.a && item.r === "operario")) &&
+        (!item.c || (item.a && item.r === "operario")),
+    )
   );
 }
+
+export function serializeAccountsCookie(accounts: Account[]) {
+  return JSON.stringify(
+    accounts.map(
+      (item): CompactAccount => ({
+        i: item.id,
+        u: item.username,
+        p: item.password,
+        r: item.roleId,
+        b: item.bursonLinked,
+        c: item.canCreateOwnActivities,
+        m: item.mustChangePassword,
+        a: item.active,
+        n: item.name,
+      }),
+    ),
+  );
+}
+
 export function parseAccountsCookie(raw: string | undefined): CompactAccount[] {
   if (!raw) return [];
   try {
     const value: unknown = JSON.parse(raw);
-    return Array.isArray(value) && value.every(isCompactAccount) ? value : [];
+    return Array.isArray(value) &&
+      value.every(isCompactAccount) &&
+      hasCompactAccountInvariants(value)
+      ? value
+      : [];
   } catch {
     return [];
   }

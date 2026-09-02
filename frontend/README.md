@@ -21,6 +21,20 @@ Supabase, copiar `.env.example` a `.env.local`, seleccionar `supabase` y complet
 solo la URL y la publishable key. Ese modo falla explícitamente si falta alguna
 variable; nunca muestra fixtures como respaldo.
 
+## Preview y producción
+
+Vercel usa `npm run build:vercel`: primero ejecuta un preflight fail-closed y
+solo después compila Next.js. El preflight lee exclusivamente variables del
+proceso, exige la correspondencia Preview→staging o Production→production,
+comprueba el project ref, coteja el origen declarado con las variables de
+sistema de Vercel y rechaza claves legacy o privilegiadas. El modo `demo` nunca
+es válido en Vercel. Las System Environment Variables deben estar habilitadas y
+no se redefinen manualmente.
+
+Las variables y el orden operativo se documentan en
+`../docs/runbook-preview-produccion.md`. Ese documento es preparación: no
+autoriza por sí mismo un despliegue ni sustituye los gates PostgreSQL/RLS.
+
 ## Cuentas de demostración
 
 | Rol | Usuario | Clave |
@@ -34,7 +48,13 @@ variable; nunca muestra fixtures como respaldo.
 Estas cuentas existen únicamente en modo `demo`; allí los datos siguen en
 `localStorage` y cookies de prueba. No reutilizar esas claves en staging.
 
+`demo` es una simulacion local y no constituye una frontera de autenticacion:
+las cuentas mutables se sincronizan mediante una cookie sin firma. Las cookies
+que identifican la sesion son `httpOnly`, pero la autoridad real de despliegue
+pertenece exclusivamente a Supabase/RLS. El preflight rechaza `demo` en Vercel.
+
 El contrato funcional vigente está en `../docs/handoff-frontend.md`, la decisión
-de backend en `../docs/decision-backend-supabase-2026-08-22.md`, el runbook en
+de backend en `../docs/decision-backend-supabase-2026-08-22.md`, el runbook de
+despliegue en `../docs/runbook-preview-produccion.md`, los gates de backend en
 `../supabase/README.md` y la dirección visual en
 `../diseno/direccion-final-traducida/CONTRATO-VISUAL.md`.

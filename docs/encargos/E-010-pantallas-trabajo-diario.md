@@ -1,5 +1,7 @@
 # E-010 — Pantallas del trabajo diario (P-2, P-3, P-4, P-10)
 
+> **Encargo histórico ya ejecutado.** No usar como contrato vigente; consultar `README.md` en este directorio.
+
 **Fase:** 2 — Construcción frontend
 **Ejecuta:** Codex
 **Estado:** encargado

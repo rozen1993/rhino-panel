@@ -17,6 +17,8 @@ export type Database = {
           role: Database["public"]["Enums"]["app_role"];
           is_active: boolean;
           is_burson_operator: boolean;
+          can_create_own_activities: boolean;
+          must_change_password: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -27,6 +29,8 @@ export type Database = {
           role: Database["public"]["Enums"]["app_role"];
           is_active?: boolean;
           is_burson_operator?: boolean;
+          can_create_own_activities?: boolean;
+          must_change_password?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -109,6 +113,39 @@ export type Database = {
         Update: never;
         Relationships: [];
       };
+      activity_messages: {
+        Row: {
+          id: string;
+          activity_id: string;
+          author_id: string;
+          author_name: string;
+          author_role: Database["public"]["Enums"]["app_role"];
+          body: string;
+          opens_thread: boolean;
+          version: number;
+          created_at: string;
+          edited_at: string | null;
+          deleted_at: string | null;
+          deleted_by: string | null;
+        };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
+      account_audit_events: {
+        Row: {
+          id: number;
+          target_profile_id: string;
+          actor_id: string;
+          actor_name: string;
+          action: string;
+          detail: Json;
+          created_at: string;
+        };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -117,16 +154,15 @@ export type Database = {
         Args: Record<string, never>;
         Returns: undefined;
       };
-      create_activity_v1: {
+      plan_activity_v1: {
         Args: {
           p_idempotency_key: string;
+          p_responsible_id: string;
           p_type: Database["public"]["Enums"]["activity_type"];
           p_title: string;
           p_description: string;
           p_place: string;
           p_spans: Json;
-          p_material_link: string;
-          p_operator_opinion: string;
         };
         Returns: {
           activity_id: string;
@@ -134,15 +170,57 @@ export type Database = {
           replayed: boolean;
         }[];
       };
-      edit_activity_v1: {
+      create_own_activity_v1: {
         Args: {
-          p_activity_id: string;
-          p_expected_version: number;
+          p_idempotency_key: string;
           p_type: Database["public"]["Enums"]["activity_type"];
           p_title: string;
           p_description: string;
           p_place: string;
           p_spans: Json;
+        };
+        Returns: {
+          activity_id: string;
+          activity_version: number;
+          replayed: boolean;
+        }[];
+      };
+      create_burson_request_v1: {
+        Args: {
+          p_idempotency_key: string;
+          p_type: Database["public"]["Enums"]["activity_type"];
+          p_title: string;
+          p_description: string;
+          p_place: string;
+          p_spans: Json;
+          p_reference_link: string;
+        };
+        Returns: {
+          activity_id: string;
+          activity_version: number;
+          replayed: boolean;
+        }[];
+      };
+      replan_activity_v1: {
+        Args: {
+          p_activity_id: string;
+          p_expected_version: number;
+          p_responsible_id: string;
+          p_type: Database["public"]["Enums"]["activity_type"];
+          p_title: string;
+          p_description: string;
+          p_place: string;
+          p_spans: Json;
+        };
+        Returns: {
+          activity_id: string;
+          activity_version: number;
+        }[];
+      };
+      update_execution_v1: {
+        Args: {
+          p_activity_id: string;
+          p_expected_version: number;
           p_material_link: string;
           p_operator_opinion: string;
         };
@@ -158,6 +236,118 @@ export type Database = {
           activity_version: number;
           activity_status: Database["public"]["Enums"]["activity_status"];
         }[];
+      };
+      soft_delete_activity_v1: {
+        Args: {
+          p_activity_id: string;
+          p_expected_version: number;
+          p_reason: string;
+        };
+        Returns: {
+          activity_id: string;
+          activity_version: number;
+          deleted_at: string;
+        }[];
+      };
+      restore_activity_v1: {
+        Args: {
+          p_activity_id: string;
+          p_expected_version: number;
+          p_responsible_id: string | null;
+        };
+        Returns: {
+          activity_id: string;
+          activity_version: number;
+          responsible_id: string;
+        }[];
+      };
+      post_activity_message_v1: {
+        Args: {
+          p_activity_id: string;
+          p_expected_activity_version: number | null;
+          p_body: string;
+        };
+        Returns: {
+          activity_id: string;
+          activity_version: number;
+          message_id: string;
+          message_version: number;
+          opened_at: string;
+        }[];
+      };
+      edit_activity_message_v1: {
+        Args: {
+          p_message_id: string;
+          p_expected_message_version: number;
+          p_body: string;
+        };
+        Returns: {
+          activity_id: string;
+          activity_version: number;
+          message_id: string;
+          message_version: number;
+        }[];
+      };
+      delete_activity_message_v1: {
+        Args: {
+          p_message_id: string;
+          p_expected_message_version: number;
+        };
+        Returns: {
+          activity_id: string;
+          activity_version: number;
+          message_id: string;
+          message_version: number;
+        }[];
+      };
+      set_operator_creation_permission_v1: {
+        Args: { p_operator_id: string; p_enabled: boolean };
+        Returns: {
+          profile_id: string;
+          can_create_own_activities: boolean;
+        }[];
+      };
+      create_account_profile_v1: {
+        Args: {
+          p_profile_id: string;
+          p_username: string;
+          p_display_name: string;
+          p_role: Database["public"]["Enums"]["app_role"];
+          p_is_burson_operator: boolean;
+          p_can_create_own_activities: boolean;
+          p_actor_id: string;
+        };
+        Returns: {
+          profile_id: string;
+          profile_updated_at: string;
+        }[];
+      };
+      update_account_v1: {
+        Args: {
+          p_profile_id: string;
+          p_expected_updated_at: string;
+          p_display_name: string;
+          p_role: Database["public"]["Enums"]["app_role"];
+          p_is_active: boolean;
+          p_is_burson_operator: boolean;
+          p_can_create_own_activities: boolean;
+        };
+        Returns: {
+          profile_id: string;
+          profile_updated_at: string;
+        }[];
+      };
+      prepare_temporary_password_reset_v1: {
+        Args: { p_profile_id: string; p_actor_id: string };
+        Returns: { profile_id: string }[];
+      };
+      confirm_temporary_password_reset_v1: {
+        Args: { p_profile_id: string; p_actor_id: string };
+        Returns: { profile_id: string }[];
+      };
+      complete_temporary_password_change_v1: {
+        Args: { p_profile_id: string };
+        Returns: { profile_id: string }[];
       };
     };
     Enums: {

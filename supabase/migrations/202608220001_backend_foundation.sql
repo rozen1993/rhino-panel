@@ -415,6 +415,7 @@ begin
     where not (span ? 'start' and span ? 'end')
       or (span ->> 'start') !~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
       or (span ->> 'end') !~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+      or (span ->> 'start')::date < date '2026-01-01'
       or (span ->> 'end')::date < (span ->> 'start')::date
       or (span ->> 'end')::date - (span ->> 'start')::date > 3660
   ) then

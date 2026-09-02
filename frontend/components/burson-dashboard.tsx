@@ -1,21 +1,47 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { ActivityCard } from "@/components/activity-card";
+import { useMemo, useState } from "react";
 import { ActivityForm } from "@/components/activity-form";
+import { BursonRequestCard } from "@/components/burson-request-card";
 import { Card } from "@/components/card";
 import { SystemIcon } from "@/components/system-icon";
 import { useSimulatedActivities } from "@/lib/activity-simulation";
+import {
+  bursonRequestViewFromActivity,
+  type BursonRequestView,
+} from "@/lib/burson";
+import type { DataSource } from "@/lib/data-source";
 import type { Role } from "@/lib/roles";
 
-export function BursonDashboard({ role }: { role: Role }) {
+export function BursonDashboard({
+  role,
+  dataSource = "demo",
+  initialRequests = [],
+}: {
+  role: Role;
+  dataSource?: DataSource;
+  initialRequests?: BursonRequestView[];
+}) {
   const [creating, setCreating] = useState(false);
-  const items = useSimulatedActivities().filter(
-    (item) =>
-      item.origin === "burson" &&
-      !item.deletedAt &&
-      (role.id !== "burson" || item.createdByAccountId === role.accountId),
+  const simulated = useSimulatedActivities(dataSource === "demo");
+  const items = useMemo(
+    () =>
+      dataSource === "supabase"
+        ? initialRequests
+        : simulated
+            .filter(
+              (item) =>
+                item.origin === "burson" &&
+                !item.deletedAt &&
+                (role.id === "admin" ||
+                  (role.id === "burson" &&
+                    item.createdByAccountId === role.accountId) ||
+                  (role.id === "operario" &&
+                    item.responsibleAccountId === role.accountId)),
+            )
+            .map(bursonRequestViewFromActivity),
+    [dataSource, initialRequests, role.accountId, role.id, simulated],
   );
   const count = (status: string) =>
     items.filter((item) => item.status === status).length;
@@ -51,7 +77,7 @@ export function BursonDashboard({ role }: { role: Role }) {
                 <SystemIcon className="size-5" name="burson" />
               </span>
               <div>
-                <p className="data-label text-violet">Asignación automática</p>
+                <p className="data-label text-violet-ink">Asignación automática</p>
                 <strong className="mt-1 block text-sm">
                   Canal directo con el operario especial
                 </strong>
@@ -76,7 +102,7 @@ export function BursonDashboard({ role }: { role: Role }) {
         <div
           className={`${creating ? "block" : "hidden"} rounded-[12px] border border-cyan/25 bg-cyan/[.04] p-2 md:p-4 xl:block`}
         >
-          <ActivityForm role={role} />
+          <ActivityForm dataSource={dataSource} role={role} />
         </div>
       )}
 
@@ -102,7 +128,7 @@ export function BursonDashboard({ role }: { role: Role }) {
         </header>
         <div className="grid gap-3 bg-paper/55 p-3 lg:grid-cols-2 lg:p-4">
           {items.map((item) => (
-            <ActivityCard activity={item} key={item.id} showResponsible />
+            <BursonRequestCard key={item.id} request={item} />
           ))}
           {!items.length && (
             <p className="col-span-full p-8 text-center text-sm text-ink-muted">

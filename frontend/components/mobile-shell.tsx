@@ -10,6 +10,7 @@ export async function requireRole(
 ): Promise<Role> {
   const role = await currentRole();
   if (!role) redirect("/acceso");
+  if (role.mustChangePassword) redirect("/cambiar-clave");
   if (allow && !allow(role)) redirect("/sin-acceso");
   return role;
 }
@@ -41,7 +42,11 @@ export async function MobileShell({
         initials={initials}
         name={role.accountName ?? role.label}
         roleLabel={
-          role.bursonLinked ? "Operario especial · encargos Burson" : role.label
+          role.bursonLinked
+            ? "Operario especial · encargos Burson"
+            : role.id === "operario" && role.canCreateOwnActivities
+              ? "Operario · creación propia autorizada"
+              : role.label
         }
       />
       <div className="min-w-0 md:grid md:grid-cols-[5.125rem_minmax(0,1fr)] lg:grid-cols-[13.625rem_minmax(0,1fr)]">

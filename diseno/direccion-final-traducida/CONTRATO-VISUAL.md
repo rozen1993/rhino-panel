@@ -19,6 +19,12 @@ La marca provisional permanece como **Rhino Audiovisuales** hasta que Marco indi
 | Superficie | `#F4F7F8` | Área de trabajo |
 | Tinta | `#10233F` | Texto principal |
 
+El violeta de agenda `#8B5CF6` se conserva como marcador e identidad. Cuando
+el violeta lleva texto blanco se usa la variante sólida accesible `#7C3AED`;
+cuando funciona como texto sobre una superficie clara se usa `#5B2BB5`. Estas
+dos variantes mantienen el significado visual y evitan combinaciones que no
+alcanzan el contraste WCAG AA.
+
 - Identidad: familia condensada de alto peso, usada solo en títulos de marca.
 - Interfaz: Segoe UI/Arial, con números tabulares para datos.
 - Radios: 6–12 px; botones primarios de 6 px, tarjetas de 10 px.
@@ -27,9 +33,12 @@ La marca provisional permanece como **Rhino Audiovisuales** hasta que Marco indi
 
 ## Traducción funcional
 
-- **Operario:** actividades propias, creación, avance y entrega mediante OneDrive.
-- **Operario especial:** lo anterior y encargos Burson.
-- **Admin:** panorama completo, cuentas, conversación privada e Histórico anual.
+- **Operario:** actividades asignadas; cambia estado, enlace HTTPS y opinión.
+- **Operario autorizado:** lo anterior y un CTA contextual para crear una
+  actividad propia; no conserva una pestaña permanente de creación.
+- **Operario especial:** ejecuta además los encargos Burson asignados.
+- **Admin:** planificación y asignación, panorama completo, cuentas, conversación
+  privada, papelera e Histórico anual.
 - **Burson:** creación y seguimiento de encargos asignados al operario especial.
 - Estados únicos: `Programada`, `En proceso`, `Entregada`.
 - No se representan cargas de archivos; se usa enlace OneDrive/SharePoint.
@@ -46,6 +55,6 @@ La marca provisional permanece como **Rhino Audiovisuales** hasta que Marco indi
 
 1. Reconocible como la misma familia visual de los tres JPEG.
 2. Ninguna pantalla contradice el modelo de tres roles.
-3. Las acciones primarias lima se reservan para crear, guardar o avanzar.
+3. Las acciones primarias lima se reservan para crear, guardar o cambiar de estado.
 4. Estados distinguibles sin depender exclusivamente del color.
 5. Lectura y operación viables desde 390 px hasta 1920 px.
