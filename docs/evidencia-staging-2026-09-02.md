@@ -31,6 +31,8 @@
   activas en su versión 1.
 - `SISTEMA_R_USERNAME_DOMAIN` está configurado en Supabase. Solo se verificaron
   nombres de secretos, nunca valores.
+- Supabase Auth usa como Site URL y único redirect permitido el origen estable
+  del Preview. El signup público y los accesos anónimos están desactivados.
 - Staging conserva seis perfiles y un Admin activo. No se crearon cuentas ni se
   cambiaron contraseñas durante este bloque.
 - Las siete variables obligatorias se configuraron solo para Vercel Preview; la
@@ -60,8 +62,6 @@ datos definitivos.
   aislamiento entre responsables y concesión/revocación del permiso individual.
 - Limpiar esas identidades temporales de forma exacta y comprobar el retorno al
   baseline de seis perfiles.
-- Confirmar en Supabase Auth el Site URL y los redirect URLs exactos del Preview,
-  además de que el signup público permanezca desactivado.
 - Completar el gate remoto de 31 puntos: carreras deterministas, conversaciones,
   paginación por encima de `api.max_rows`, planes `EXPLAIN`, Histórico
   concurrente y compensaciones de Auth.
