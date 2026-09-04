@@ -1,9 +1,10 @@
 # Runbook de Preview y producción
 
-**Versión:** 2026-09-01
+**Versión:** 2026-09-04
 
-**Estado:** preparación local aprobada; ningún despliegue ejecutado por este
-documento.
+**Estado:** staging y el Preview privado del commit `6d52d8f` están desplegados
+y verificados parcialmente; el cierre local actual todavía no está publicado y
+Producción no fue creada ni modificada.
 
 Este es el procedimiento operativo único del Corte 7. La implementación del
 backend y la matriz detallada de aceptación viven en `../supabase/README.md`;
@@ -29,8 +30,12 @@ evidencia remota.
 | Superficie | Datos | Contrato | Estado actual |
 |---|---|---|---|
 | Local | fixtures `demo` o Supabase local | solo desarrollo | disponible |
-| Vercel Preview | proyecto `sistema-r` en Oregon | `VERCEL_ENV=preview` y target `staging` | preparado, no desplegado por el Corte 7 |
+| Vercel Preview | proyecto `sistema-r` en Oregon | `VERCEL_ENV=preview` y target `staging` | `6d52d8f`, seis migraciones; disponible para UAT privada parcial, no es el cierre final |
 | Vercel Production | otro proyecto Supabase | `VERCEL_ENV=production` y target `production` | proyecto/dominio aún por autorizar |
+
+“Disponible para UAT privada parcial” significa que el Preview es accesible
+para pruebas preliminares; no implica que incluya el árbol local vigente ni que
+la aceptación autenticada ya esté aprobada.
 
 La raíz Vercel es `frontend/`, la región declarada es `pdx1` y el build remoto
 debe usar el `buildCommand` versionado en `frontend/vercel.json`. Preview y
@@ -44,14 +49,23 @@ Desde `frontend/`:
 npm ci
 npm run verify
 npm run test:e2e
+npm run test:functions
+npm run verify:supabase:local
 ```
 
-La evidencia local del 2026-09-01 es:
+El último comando requiere Docker Desktop y opera únicamente sobre el Supabase
+local: reinicia su base al comienzo y la deja limpia al finalizar.
+
+La evidencia local repetida el 2026-09-04, registrada en
+[`evidencia-cierre-local-2026-09-04.md`](evidencia-cierre-local-2026-09-04.md),
+es:
 
 - TypeScript y ESLint aprobados;
-- 191 pruebas Vitest en 21 archivos;
+- 198 pruebas Vitest en 22 archivos;
 - build optimizado aprobado;
 - 10 recorridos Playwright aprobados;
+- 20 pruebas Deno de configuración, compensación y recuperación de Edge Functions;
+- 51 controles reales de Auth/RLS/RPC contra Supabase local;
 - `build:vercel` aprobado con un ambiente sintético aislado;
 - preflight sin variables de despliegue rechazado con 11 diagnósticos genéricos
   y sin revelar valores.
@@ -102,6 +116,13 @@ Una respuesta negativa es **No-Go**. Detenerse no invalida la preparación local
 
 ## 4. Backend de staging
 
+Los pasos 1 a 7 quedaron completados y verificados para las seis migraciones de
+staging el 2026-09-02. La séptima migración está validada solo localmente y
+requiere un nuevo dry-run y autorización. El punto 9 ya quedó ejecutado mediante
+el Supabase local desechable: 51 controles PostgreSQL/Auth más 20 pruebas de
+fallos de Edge Functions cubren los 31 puntos. El smoke autenticado del paso 8
+continúa pendiente; ninguna evidencia local sustituye esa prueba de staging.
+
 Con autorización y desde la raíz:
 
 1. Autenticar la CLI y vincular explícitamente `sistema-r`.
@@ -111,14 +132,106 @@ Con autorización y desde la raíz:
 5. Desplegar `admin-accounts` y `change-temporary-password`.
 6. Configurar `SISTEMA_R_USERNAME_DOMAIN` como secreto de ambas funciones.
 7. Confirmar signup público desactivado y las URL Auth exactas de Preview.
-8. Ejecutar los 31 puntos de “Gate objetivo de los Cortes 1 a 6” de
-   `../supabase/README.md`, incluida la matriz RLS, SQLSTATE, carreras y
-   `EXPLAIN`.
+8. Ejecutar en staging únicamente el smoke autenticado no destructivo de la
+   sección 6, con identidades temporales autorizadas y limpieza comprobable.
+9. **Completado localmente:** recrear un Supabase desechable desde las siete
+   migraciones y ejecutar allí los 31 puntos de “Gate objetivo de los Cortes 1
+   a 6” de `../supabase/README.md`, incluida la matriz RLS, SQLSTATE, carreras,
+   compensaciones de Auth, volúmenes mayores que `api.max_rows` y `EXPLAIN`.
+
+La matriz completa nunca se ejecuta sobre el roster vigente de staging. Dentro
+de esa matriz, los casos que intentan alterar o retirar la única cuenta Burson,
+transferir su vínculo especial, compensar Auth, cambiar roles o permisos
+globales, o fabricar volumen de paginación son exclusivos del proyecto
+desechable. La identidad Burson temporal de la sección 6 pertenece solo al
+smoke funcional de staging: requiere autorización separada, no ensaya esas
+invariantes y debe limpiarse de forma exacta.
 
 No marcar este bloque como aprobado a partir de pruebas simuladas o lectura de
 SQL. Cada resultado debe corresponder a la versión realmente aplicada.
 
+### 4.1 Sondas remotas obligatorias de RC1
+
+Antes de escribir, `migration list` debe mostrar las seis versiones remotas ya
+sincronizadas y el dry-run debe anunciar **solo**
+`202609030001_rls_visibility_performance.sql`:
+
+```powershell
+$stagingRef = "<STAGING_REF_CONFIRMADO>"
+npx.cmd --no-install supabase migration list --project-ref $stagingRef
+npx.cmd --no-install supabase db push --dry-run --skip-vault --project-ref $stagingRef
+$functionsBefore = npx.cmd --no-install supabase functions list `
+  --project-ref $stagingRef --output json | ConvertFrom-Json
+```
+
+Cualquier diferencia adicional produce **No-Go**. Después del `db push`, repetir
+los dos primeros comandos: las siete versiones deben quedar emparejadas y el
+segundo dry-run no debe encontrar trabajo pendiente. Consultar además el
+catálogo efectivo en una transacción de solo lectura:
+
+```powershell
+$policySql = @'
+begin transaction read only;
+select c.relname as table_name, p.polname as policy_name,
+       p.polcmd::text as command_code, p.polpermissive,
+       c.relrowsecurity as rls_enabled,
+       coalesce(pg_catalog.pg_get_expr(p.polwithcheck, p.polrelid, true), '')
+         as check_expression,
+       pg_catalog.pg_get_expr(p.polqual, p.polrelid, true) as using_expression
+from pg_catalog.pg_policy p
+join pg_catalog.pg_class c on c.oid = p.polrelid
+join pg_catalog.pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and c.relname in ('activities', 'activity_date_spans')
+order by c.relname, p.polname;
+commit;
+'@
+npx.cmd --no-install supabase db query --project-ref $stagingRef $policySql
+```
+
+El resultado debe contener exactamente `activities_select_authorized` y
+`activity_date_spans_select_authorized`, ambas de lectura, permisivas, con RLS
+activo y sin `WITH CHECK`. La primera expresión debe resolver sesión, rol,
+responsable, creador, origen y papelera sin invocar `can_view_activity`; la
+segunda debe delegar mediante una subconsulta RLS sobre `activities`, sin
+`can_view_activity_id`.
+
+Tras desplegar las dos funciones **sin** `--no-verify-jwt` ni `--prune`:
+
+```powershell
+$functionsAfter = npx.cmd --no-install supabase functions list `
+  --project-ref $stagingRef --output json | ConvertFrom-Json
+```
+
+Cada función debe quedar `ACTIVE`, con `verify_jwt=true`, versión mayor que en
+`$functionsBefore` y digest remoto presente. Un despliegue parcial es No-Go.
+Comprobar también la existencia del secreto por nombre, sin imprimir ni guardar
+su valor o digest, y registrar el commit más los SHA-256 de los tres fuentes.
+
+Finalmente, ambas rutas deben rechazar una petición sin token:
+
+```powershell
+$stagingUrl = "https://$stagingRef.supabase.co"
+foreach ($functionName in @("admin-accounts", "change-temporary-password")) {
+  $status = curl.exe --silent --show-error --output NUL `
+    --write-out "%{http_code}" --connect-timeout 10 --max-time 30 `
+    --request POST --header "Content-Type: application/json" --data "{}" `
+    "$stagingUrl/functions/v1/$functionName"
+  if ($status -ne "401") { throw "$functionName respondió $status; se esperaba 401" }
+}
+```
+
+La igualdad del dominio interno entre Vercel y Supabase no se demuestra leyendo
+solo los nombres de variables. Debe quedar probada sin revelar el valor mediante
+el recorrido real `alta temporal -> login por username -> cambio obligatorio de
+clave -> acceso`, seguido de la limpieza autorizada y el retorno al baseline.
+
 ## 5. Vercel Preview
+
+Los seis pasos quedaron completados el 2026-09-02 para la rama `equipo`. El
+Preview está `Ready`, protegido por Vercel y dispone de un enlace compartible
+revocable. Su smoke HTTP aprobó las rutas y cabeceras indicadas; el smoke por
+identidad de la sección siguiente sigue pendiente.
 
 1. Configurar las siete variables obligatorias solo para Preview y, si se usa
    una rama dedicada, hacer que `SISTEMA_R_SITE_URL` coincida con su URL de rama
@@ -148,6 +261,13 @@ cabeceras de una respuesta HTTPS desplegada, no solo leyendo la configuración.
 
 ## 6. Smoke test por identidad
 
+El roster vigente de staging no incluye una cuenta Burson. Antes de ejecutar su
+fila, Admin debe crear una identidad temporal mediante `/cuentas` y
+`admin-accounts`, con autorización y un plan de limpieza que retire exactamente
+su usuario Auth y su perfil y devuelva staging al baseline de seis perfiles. Si
+esa limpieza no está autorizada o no puede demostrarse, el escenario Burson se
+ejecuta solo en el proyecto desechable y permanece pendiente en staging.
+
 | Identidad | Prueba mínima | Resultado obligatorio |
 |---|---|---|
 | Anónima | abrir rutas privadas | redirección a acceso, sin datos |
@@ -159,9 +279,10 @@ cabeceras de una respuesta HTTPS desplegada, no solo leyendo la configuración.
 | Cuenta con clave temporal | intentar entrar al negocio | forzada a cambiar clave primero |
 | Perfil inactivo | reutilizar sesión anterior | operación denegada y sesión revocada |
 
-Añadir los escenarios de conversación, carreras, Papelera e Histórico del gate
-de Supabase. Probar al menos escritorio, móvil real y Safari/iOS antes del Go de
-producción.
+Repetir en Preview los escenarios no destructivos de conversación, Papelera e
+Histórico. Las carreras o invariantes que alteren el roster se reservan al
+proyecto desechable. Probar al menos escritorio, móvil real y Safari/iOS antes
+del Go de producción.
 
 ## 7. Evidencia requerida
 
@@ -172,7 +293,8 @@ Guardar en el registro de la versión, sin secretos ni contraseñas:
 | Identidad | fecha/hora Lima, operador, commit y artefacto Vercel |
 | Destino | ambiente, URL y huella enmascarada del project ref |
 | Backend | lista de migraciones, dry-run, versiones de funciones y backup |
-| Local | resultados de `verify`, E2E y `git diff --check` |
+| Local | resultados de `verify`, E2E, `verify:supabase:local` y `git diff --check` |
+| Vercel | URL o ID inmutable del deployment, alias estable, build log con `preview → staging` y artefacto anterior recuperable; nunca guardar la llave del enlace compartible |
 | Seguridad | salida aprobada del preflight y encabezados observados |
 | Datos | matriz RLS, SQLSTATE, carreras y planes `EXPLAIN` |
 | Producto | matriz smoke con resultado y captura cuando aporte evidencia |
@@ -188,13 +310,25 @@ Preview solo obtiene **Go** si:
 - gates locales y preflight están verdes;
 - el build usa Supabase staging, nunca `demo`;
 - migraciones y funciones coinciden con Git;
-- los 31 gates PostgreSQL/RLS se ejecutaron y aprobaron;
+- las sondas posteriores confirman las dos policies reales, versiones mayores,
+  `verify_jwt=true` y rechazo 401 sin token en ambas funciones;
+- el smoke autenticado no destructivo de staging se ejecutó y aprobó;
+- los 31 gates PostgreSQL/RLS se ejecutaron y aprobaron en un proyecto
+  desechable creado desde las mismas migraciones;
 - signup, dominio interno y redirects son exactos;
 - matriz smoke, encabezados y logs no muestran errores críticos;
 - existe un artefacto anterior recuperable.
 
 Cualquier secreto privilegiado en Vercel, ref ambiguo, migración no verificada,
 fallo RLS, error de build o evidencia ausente produce **No-Go**.
+
+El primer artefacto que cumpla estos gates se denomina `RC1`: es un candidato
+para la validación del equipo, no una versión inmutable ni una autorización de
+Producción. Consolidar el feedback, clasificarlo como defecto, mejora o cambio
+de alcance y aplicar cada lote sobre commits nuevos. Si afecta datos o permisos,
+añadir una migración forward-only; nunca modificar una ya aplicada. Cada
+`RC2…RCn` repite los gates pertinentes y solo la aceptación explícita del equipo
+permite solicitar el Go separado de Producción.
 
 ## 9. Preparar y promover producción
 
@@ -253,8 +387,12 @@ permite al robot leer la orden de retirada. Si algún día el producto debe ser
 público, retirar las tres señales en un cambio revisado; no cambiar una sola de
 forma aislada.
 
-Al cerrar este documento siguen sin ejecutarse: compilación PostgreSQL desde
-cero, migraciones pendientes en staging, matriz RLS/RPC/SQLSTATE, carreras,
-planes reales del Histórico, despliegue Preview, Safari/iOS real, proyecto de
-producción, backup/restauración y Go productivo. Son gates externos explícitos,
-no defectos ocultos ni resultados aprobados.
+Al cerrar esta versión ya se ejecutaron la compilación PostgreSQL desde cero y
+el gate local de 31 puntos. En remoto permanecen las seis migraciones, las Edge
+Functions y el Preview del commit `6d52d8f`, cuyo smoke HTTP público pasó.
+Siguen pendientes: publicar el cierre, aplicar con autorización la séptima
+migración, desplegar las dos Edge Functions actuales, generar el Preview `RC1`,
+preparar las identidades temporales autorizadas —incluida Burson—, ejecutar el
+smoke autenticado de staging, probar Safari/iOS real y preparar proyecto,
+backup/restauración y Go de producción. Son gates explícitos, no defectos
+ocultos ni resultados aprobados.

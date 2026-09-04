@@ -24,6 +24,11 @@ backend y su matriz de aceptación.
 - Migración local de Papelera con baja reversible, motivo obligatorio,
   restauración versionada, auditoría atómica y reasignación segura cuando el
   responsable de una actividad abierta ya no está activo.
+- Migración local de rendimiento RLS para las jornadas del Histórico, sin
+  cambiar la matriz de visibilidad, el timeout ni los índices existentes. La
+  policy de actividades resuelve el contexto una vez por sentencia y la de
+  jornadas reutiliza esa RLS; ninguna confía en argumentos de rol, identidad o
+  sesión ni añade un nuevo helper `SECURITY DEFINER`.
 - Edge Functions autenticadas para crear usuarios, regenerar claves temporales
   y completar el cambio obligatorio sin exponer una clave de servicio al
   frontend.
@@ -36,9 +41,8 @@ backend y su matriz de aceptación.
 - Región Vercel `pdx1`, cercana a la base en Oregon.
 
 Aquí, «listo» significa implementado como artefacto local y cubierto por las
-verificaciones locales indicadas. No significa compilado contra PostgreSQL,
-aplicado en staging ni certificado mediante una matriz RLS o pruebas reales de
-concurrencia.
+verificaciones locales indicadas. No significa aplicado en staging o
+producción ni aceptado todavía por personas en dispositivos reales.
 
 No hay claves, contraseñas ni identificadores remotos guardados en Git.
 
@@ -60,20 +64,28 @@ Las Edge Functions sí son verificables sin Docker:
 ```powershell
 npx.cmd --yes deno fmt --check supabase/functions
 npx.cmd --yes deno check supabase/functions/admin-accounts/index.ts supabase/functions/change-temporary-password/index.ts
+npm.cmd --prefix frontend run test:functions
 ```
 
-Ambos gates se aprobaron localmente el 2026-08-30 con Deno 2.9.6.
+Los tres gates se aprobaron localmente con Deno 2.9.6. El último ejecuta 17
+pruebas de compensación y recuperación con fallos inyectados en Auth, RPC y
+limpieza de metadatos, incluida la reparación paginada de un usuario Auth
+huérfano.
 
 ## 2. Aplicar migraciones y funciones a staging
 
-**Solo `202608220001` está aplicado en `sistema-r` desde el 2026-08-22.** Las
-migraciones `202608280001`, `202608290001`, `202608300001`, `202608300002` y
-`202608310001`, y
-las funciones `admin-accounts` y `change-temporary-password`, son artefactos
-locales todavía no desplegados. Ninguna de esas cinco migraciones se ha
-compilado desde cero mediante `supabase db reset` en este entorno. Los comandos
-siguientes son el procedimiento reproducible y no se ejecutan sin autorización
-explícita.
+**Completado en staging el 2026-09-02 para las seis primeras migraciones.** Las
+migraciones desde `202608220001` hasta `202608310001` coinciden en staging. La
+séptima, `202609030001_rls_visibility_performance.sql`, está validada solo en
+Supabase local y no se aplicará remotamente sin autorización. Antes del push,
+`supabase db push --dry-run` identificó exactamente las cinco pendientes. Las
+funciones `admin-accounts` y `change-temporary-password` están activas en su
+versión 1. La compilación desde una base vacía también quedó aprobada mediante
+`supabase db reset --local --no-seed` sobre PostgreSQL 17. La evidencia sin
+secretos está en `../docs/evidencia-staging-2026-09-02.md`.
+
+Los comandos siguientes se conservan como procedimiento reproducible para un
+ambiente nuevo y no se ejecutan sin autorización explícita:
 
 Desde la raíz del repositorio:
 
@@ -90,10 +102,10 @@ npx.cmd supabase functions deploy change-temporary-password
 Antes de `db push`, confirmar en el dashboard que el destino es `sistema-r` y no
 producción. No usar `db reset --linked`: borra los datos del proyecto remoto.
 
-`config.toml` configura el entorno local. En el dashboard de staging también se
-debe desactivar **Allow new users to sign up**. No ejecutar todavía
-`supabase config push`: el archivo local contiene URLs de localhost y la URL
-definitiva de Preview aún no existe.
+`config.toml` configura el entorno local y conserva URLs de localhost, por lo
+que no debe enviarse íntegro al proyecto hospedado. En staging, el Site URL y el
+único redirect permitido apuntan al origen estable del Preview; **Allow new
+users to sign up** y el acceso anónimo están desactivados.
 
 ## 3. Crear las cuentas mínimas
 
@@ -144,32 +156,28 @@ por Supabase; ninguna clave privilegiada pertenece a Vercel ni al repositorio.
 
 ## 5. Gates de aceptación por versión
 
-### Gate ejecutable del cimiento `202608220001`
+### Registro histórico del cimiento `202608220001` — no ejecutar
 
-Este recorrido corresponde exclusivamente al modelo anterior que hoy existe en
-staging. Sirve para comprobar que el cimiento no retrocedió; no certifica el
-contrato objetivo del 2026-08-28.
-
-1. Iniciar como Martin, crear una actividad propia con dos jornadas
-   discontinuas y recargar para confirmar su persistencia.
-2. Iniciar como Cesar: no debe aparecer ni abrirse la actividad de Martin.
-3. Iniciar como Admin: debe poder consultarla y ver su trazabilidad.
-4. Desactivar el perfil de Martin: su siguiente operación debe fallar.
-5. Restaurarlo solo para continuar las pruebas.
+Este recorrido describía el modelo anterior, antes de aplicar los Cortes 1 a 6.
+Se conserva únicamente como trazabilidad de la migración inicial: ya no es un
+gate ejecutable contra local ni staging y no certifica el contrato vigente. En
+ese modelo, Martin creaba una actividad propia, Cesar quedaba aislado, Admin
+conservaba la trazabilidad y la desactivación de Martin cerraba sus operaciones.
+El gate vigente comienza en la sección siguiente.
 
 ### Gate objetivo de los Cortes 1 a 6 (`202608280001` a `202608310001`)
 
-Las pruebas locales cubren el contrato de interfaz, el wiring de Server Actions
-y propiedades estáticas del SQL. **El recorrido siguiente no se ha ejecutado
-contra PostgreSQL local ni staging** y ningún punto debe registrarse como
-aprobado hasta aplicar
-`202608280001_activity_authority.sql` y
-`202608290001_account_administration.sql` y
-`202608300001_burson_channel.sql` y
-`202608300002_private_conversations.sql` y
-`202608310001_activity_trash.sql`, conservar evidencia de los códigos de
-error, la matriz RLS y las carreras. La aplicación remota requiere autorización
-separada y este gate todavía no es ejecutable en staging:
+Las siete migraciones ya compilaron localmente; las seis primeras están
+aplicadas en staging. El arnés `npm run verify:supabase:local` ejecutó 51
+controles reales con GoTrue, PostgREST y JWT independientes en un proyecto
+desechable aislado. Junto con 20 pruebas Deno de configuración y compensaciones de Edge
+Functions, el recorrido local de 31 puntos quedó aprobado y revalidado el
+2026-09-04. Este
+resultado no sustituye el smoke autenticado de staging: la séptima migración
+todavía no está publicada allí. Los 51 controles son solo la salida del arnés:
+su cantidad no equivale a puntos aprobados.
+Cada punto se registra solo con evidencia de códigos de error, RLS, carreras y
+estado final correspondiente:
 
 1. Iniciar como Admin y planificar para Martin una actividad con dos jornadas
    discontinuas; recargar y confirmar que persiste.
@@ -269,24 +277,40 @@ separada y este gate todavía no es ejecutable en staging:
     `confirm_temporary_password_reset_v1`. Todas las rutas deben adquirir el
     advisory global antes de bloquear el perfil actor: las operaciones quedan
     serializadas, un actor ya revocado falla con `SR002` y no se admite
-    `40P01`. Confirmar también la compensación de Auth documentada por cada Edge
-    Function, sin perfil, sesión ni auditoría parcial.
+    `40P01`. Confirmar también los estados fail-closed documentados por cada
+    Edge Function: el alta elimina el usuario Auth si falla crear el perfil o
+    informa limpieza pendiente; el reset conserva `must_change_password=true`,
+    sesiones revocadas y la auditoría de inicio si Auth o la confirmación
+    fallan; el cambio obligatorio conserva el bloqueo si falla su RPC final y
+    puede informar limpieza pendiente de la huella. Nunca debe quedar acceso de
+    negocio activo ni una auditoría que declare una fase que no ocurrió.
 
 Semántica conocida de idempotencia: mientras una actividad idempotente está en
 la Papelera, repetir su solicitud conserva el fallo cerrado vigente (`SR006`).
 Después de restaurarla, el mismo replay vuelve a devolver la actividad. El Corte
 5 documenta esta conducta y no modifica las RPC de creación.
 
-**Estado del gate hasta el Corte 7 al 2026-09-01: no ejecutado.** La revisión
-estática Claudex cerró las once cláusulas de conversación del Corte 4 sin
-hallazgos críticos ni altos. La revisión de Papelera tampoco encontró defectos
-críticos ni altos; sus hallazgos locales quedaron corregidos y el gate completo
-del frontend pasó con 191 pruebas en 21 archivos y 10 recorridos E2E, incluidos el lector
-Histórico con clientes simulados y las defensas del build de despliegue. Este
-equipo no dispone de
-Docker, `psql` ni Supabase CLI. Por tanto, sintaxis SQL, RLS, grants,
-propagación de SQLSTATE y carreras permanecen como evidencia externa
-obligatoria.
+**Estado actualizado al 2026-09-04: gate local completo.** La revisión estática
+Claudex cerró las once cláusulas de conversación del Corte 4 sin hallazgos
+críticos ni altos. La revisión de Papelera tampoco encontró defectos críticos
+ni altos; sus hallazgos locales quedaron corregidos y el gate completo del
+frontend pasó con 198 pruebas en 22 archivos y 10 recorridos E2E. Docker,
+PostgreSQL local y Supabase CLI están disponibles; las siete migraciones
+compilaron y los 51 controles reales de Auth/RLS/RPC aprobaron. El recorrido
+cubre los 31 puntos mediante identidades efímeras y una base desechable:
+conversación, Papelera, claves temporales, transferencia Burson, invariantes
+del roster, carreras entre cuentas y actividades, los siete recursos por
+encima de `api.max_rows`, Histórico concurrente y `EXPLAIN` bajo RLS para Admin
+y Operario. Las 20 pruebas Deno adicionales inyectan los fallos documentados
+de las Edge Functions, cubren la recuperación de usuarios Auth huérfanos y
+confirman los estados de compensación o recuperación fail-closed. El arnés
+rechaza además el lookup privilegiado falsificable
+descartado y prueba el cierre de jornadas por clave temporal, sesión revocada,
+perfil inactivo y Papelera. La séptima migración no está aplicada en staging;
+por ello el smoke autenticado de staging sigue siendo un gate distinto.
+La revisión final Claudex del cierre local terminó `APPROVED`, sin hallazgos
+críticos, altos ni medios; la evidencia canónica está en
+[`evidencia-cierre-local-2026-09-04.md`](../docs/evidencia-cierre-local-2026-09-04.md).
 
 Cada gate se registra solo después de ejecutarse contra la versión que declara.
 Las pruebas textuales del frontend no sustituyen `supabase db reset`, la matriz

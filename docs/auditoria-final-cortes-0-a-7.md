@@ -1,4 +1,4 @@
-# Auditoría final local de los Cortes 0 a 7
+# Auditoría final local de los Cortes 0 a 7 (registro histórico)
 
 **Fecha:** 2026-09-01 (America/Lima)
 
@@ -9,6 +9,15 @@
 **Resultado Claudex:** `APTO_PARA_CIERRE_LOCAL`
 
 **Estado de liberación:** **No-Go remoto** hasta completar los gates externos
+
+> Este documento conserva el cierre local observado el 2026-09-01. No describe
+> el estado operacional vigente. El 2026-09-02 se compilaron las migraciones,
+> se actualizó staging y se desplegó el Preview privado; consultar
+> [`evidencia-staging-2026-09-02.md`](evidencia-staging-2026-09-02.md) y
+> [`estado.md`](estado.md). El cierre local vigente y la revisión final Claudex
+> están en
+> [`evidencia-cierre-local-2026-09-04.md`](evidencia-cierre-local-2026-09-04.md).
+> Producción continúa en No-Go.
 
 Esta matriz contrasta el contrato vigente con la implementación y las pruebas
 observables. «Apto local» significa que el código, los artefactos y los gates
@@ -27,7 +36,7 @@ Vercel Preview estén certificados.
 | 4 — conversación | Solo Admin abre la conversación después de la entrega; Admin y responsable vigente participan. Cada autor modifica o da de baja solo sus mensajes; la baja no filtra el cuerpo a auditoría ni al cliente. | `supabase/migrations/202608300002_private_conversations.sql`, `frontend/components/activity-detail.tsx`, `frontend/lib/supabase/activities.ts` y `frontend/__tests__/private-conversations.test.ts`. | Implementado y probado localmente |
 | 5 — baja y restauración | No hay borrado físico. Admin registra motivo, usa Papelera exclusiva y restaura sin perder planificación, ejecución, jornadas, hilo ni auditoría; una actividad abierta exige responsable activo al restaurarse. | `supabase/migrations/202608310001_activity_trash.sql`, `frontend/app/papelera/`, `frontend/components/trash-dashboard.tsx`, `frontend/__tests__/activity-trash-actions.test.ts` y `frontend/__tests__/trash-dashboard.test.tsx`. | Implementado y probado localmente |
 | 6 — Histórico | Solo Admin navega desde `2026-01-01`, por año, con rangos y jornadas discontinuas; Papelera queda excluida. Las lecturas Supabase usan sesión/RLS, keyset y loteo, sin fixtures de respaldo. | `frontend/app/historico/page.tsx`, `frontend/lib/supabase/historical.ts`, `frontend/components/annual-calendar.tsx`, `frontend/__tests__/historical-supabase.test.ts`, `frontend/__tests__/historical-route.test.tsx` y `frontend/__tests__/supabase-pagination.test.ts`. | Implementado y probado localmente |
-| 7 — Preview y producción | El build remoto falla cerrado si el ambiente no coincide, rechaza `demo` y claves inapropiadas, añade cabeceras defensivas y bloquea indexación. Preview y Production se mantienen separados y todo efecto remoto exige autorización. | `frontend/scripts/check-deployment-readiness.mjs`, `frontend/vercel.json`, `frontend/next.config.ts`, `frontend/app/robots.ts`, `frontend/__tests__/deployment-readiness.test.ts`, `frontend/e2e/security-headers.spec.ts` y [runbook](runbook-preview-produccion.md). | Preparación local aprobada; no desplegado |
+| 7 — Preview y producción | El build remoto falla cerrado si el ambiente no coincide, rechaza `demo` y claves inapropiadas, añade cabeceras defensivas y bloquea indexación. Preview y Production se mantienen separados y todo efecto remoto exige autorización. | `frontend/scripts/check-deployment-readiness.mjs`, `frontend/vercel.json`, `frontend/next.config.ts`, `frontend/app/robots.ts`, `frontend/__tests__/deployment-readiness.test.ts`, `frontend/e2e/security-headers.spec.ts` y [runbook](runbook-preview-produccion.md). | Al 2026-09-01: preparación local aprobada; todavía no desplegado |
 | Entregable separado — chat IA | No se integró chat en Sistema R. Solo se entregó el plan reutilizable, exclusivo de Admin en su primera versión y con OpenRouter del lado servidor. | [PDF](plan-chat-ia-reutilizable.pdf) y fuente reproducible `plan-chat-ia-reutilizable.html`; `npm run render:chat-plan`. PDF 1.4, 58 620 bytes y 3 páginas. | Aprobado |
 
 ## Evidencia final reproducible
@@ -79,12 +88,12 @@ Quién decidió: Codex integra la evidencia; Marco conserva la autorización de 
 Próximo paso: ejecutar los gates externos con autorización y herramientas disponibles
 ```
 
-## Gates externos no ejecutados
+## Gates externos no ejecutados al 2026-09-01
 
 | Gate obligatorio | Estado y bloqueo actual |
 |---|---|
 | Recrear la base desde cero y compilar las seis migraciones | No ejecutado. Esta máquina no dispone de Docker, `psql` ni Supabase CLI; no se instalaron herramientas ni se usaron secretos. |
-| Matriz de 31 puntos RLS/RPC/SQLSTATE, concurrencia, replay, `api.max_rows` real y `EXPLAIN` | No ejecutada contra PostgreSQL. La matriz completa permanece en [Supabase](../supabase/README.md). Las pruebas simuladas no la sustituyen. |
+| Matriz de 31 puntos RLS/RPC/SQLSTATE, concurrencia, replay, `api.max_rows` real y `EXPLAIN` | Al cierre histórico del 2026-09-01 no estaba ejecutada. Posteriormente quedó aprobada localmente contra Supabase/PostgreSQL desechable con 51 controles reales y 20 pruebas Deno; consultar [Supabase](../supabase/README.md) y [estado vigente](estado.md). |
 | Aplicar migraciones y desplegar Edge Functions en staging | No autorizado y no ejecutado; produciría escrituras remotas. |
 | Desplegar Vercel Preview y ejecutar smoke con identidades reales | No autorizado y no ejecutado. Solo se aprobó un ambiente sintético local. |
 | Safari/iOS y dispositivos reales | Pendiente de ambiente Preview accesible y dispositivo/navegador real. |
@@ -96,8 +105,13 @@ destructiva, cambio de secretos o escritura remota.
 
 ## Conclusión
 
-La implementación local de los Cortes 0 a 7 es apta para cierre y entrega a un
-operador de staging. La plataforma completa aún no puede declararse lista para
-producción: conserva un **No-Go remoto** hasta que PostgreSQL compile desde
-cero, pasen los 31 gates con identidades reales, exista Preview verificable y
-Marco autorice explícitamente cada operación externa.
+La implementación local de los Cortes 0 a 7 era apta para cierre y entrega a un
+operador de staging en esta fecha histórica. PostgreSQL y el gate local de 31
+puntos se completaron posteriormente, pero la plataforma conserva un **No-Go
+de producción** hasta terminar el smoke autenticado de staging/Preview, las
+pruebas en dispositivos reales y la preparación operativa autorizada de
+Producción.
+
+Esta conclusión corresponde al corte histórico del 2026-09-01. Los avances
+posteriores no la borran; quedan registrados en la evidencia vigente enlazada
+al inicio.

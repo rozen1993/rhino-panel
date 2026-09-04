@@ -9,7 +9,12 @@ export type SupabaseEnvironment = {
 export const supabasePublishableKeyPatternSource =
   "^sb_publishable_[A-Za-z0-9_-]{8,}$";
 
-function required(name: "SUPABASE_URL" | "SUPABASE_PUBLISHABLE_KEY") {
+function required(
+  name:
+    | "SUPABASE_URL"
+    | "SUPABASE_PUBLISHABLE_KEY"
+    | "SISTEMA_R_USERNAME_DOMAIN",
+) {
   const value = process.env[name]?.trim();
   if (!value) {
     throw new Error(
@@ -31,9 +36,7 @@ export function getSupabaseEnvironment(): SupabaseEnvironment {
     throw new Error("SUPABASE_URL no contiene una URL válida de Supabase.");
   }
 
-  const usernameDomain =
-    process.env.SISTEMA_R_USERNAME_DOMAIN?.trim().toLowerCase() ||
-    "auth.sistema-r.invalid";
+  const usernameDomain = required("SISTEMA_R_USERNAME_DOMAIN").toLowerCase();
   if (!isValidUsernameDomain(usernameDomain)) {
     throw new Error("SISTEMA_R_USERNAME_DOMAIN no contiene un dominio válido.");
   }

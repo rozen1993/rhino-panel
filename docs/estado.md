@@ -1,11 +1,15 @@
 # Estado
 
-**Actualizado:** 2026-09-01
+**Actualizado:** 2026-09-04
 
-**Auditoría de cierre local:**
-[`auditoria-final-cortes-0-a-7.md`](auditoria-final-cortes-0-a-7.md). El resultado
-es `APTO_PARA_CIERRE_LOCAL`; la liberación permanece en **No-Go remoto** hasta
-completar los gates PostgreSQL, staging y Preview real allí documentados.
+**Estado vigente:** el cierre local está aprobado. El Preview privado publicado
+de la rama `equipo` corresponde todavía a `6d52d8f` sobre staging. La evidencia operacional actual es
+[`evidencia-cierre-local-2026-09-04.md`](evidencia-cierre-local-2026-09-04.md);
+[`evidencia-staging-2026-09-02.md`](evidencia-staging-2026-09-02.md) conserva el
+último despliegue remoto y la
+[`auditoria-final-cortes-0-a-7.md`](auditoria-final-cortes-0-a-7.md) conserva el
+cierre histórico previo al despliegue. Producción permanece en **No-Go** hasta
+completar los gates pendientes y contar con autorización separada.
 
 ## Fase activa
 
@@ -17,10 +21,17 @@ implementada y revisada la conversación privada Admin–Operario; su revisión
 Claudex no encontró defectos críticos ni altos. El Corte 5 dejó implementada,
 corregida y revisada la baja reversible con Papelera Admin. El Corte 6 dejó
 implementado, corregido y verificado localmente el Histórico Supabase desde
-2026. El Corte 7 ya tiene preparación local de Preview/producción, preflight
-fail-closed, cabeceras, bloqueo de indexación y runbook; no representa un
-despliegue. La ejecución de migraciones y la matriz RLS contra PostgreSQL
-continúan como gate acumulado antes de producción.
+2026. El Corte 7 tiene preflight fail-closed, cabeceras, bloqueo de indexación y
+runbook. Las siete migraciones compilaron desde cero en Supabase local; las seis
+primeras están aplicadas en staging y la optimización RLS del Histórico permanece
+solo local hasta una autorización posterior. Las versiones publicadas el
+2026-09-02 de las dos Edge Functions están activas y ese Preview privado está
+`Ready`; las versiones locales actuales aún no fueron desplegadas. El smoke
+local real aprobó 51 controles de Auth/RLS/RPC y completó el gate objetivo de
+31 puntos en una base desechable. La aplicación de la séptima migración y el
+redespliegue de las funciones en staging, la aceptación autenticada del Preview
+final y las pruebas en dispositivos reales continúan pendientes antes de
+producción.
 
 ## Decisiones ya consolidadas
 
@@ -36,11 +47,13 @@ La fuente completa es `contrato-producto-vigente-2026-08-28.md`.
 
 ## Estado técnico observado
 
-- La migración inicial `202608220001_backend_foundation.sql` continúa aplicada
-  en staging como cimiento. La migración local
+- Las siete migraciones, desde `202608220001_backend_foundation.sql` hasta
+  `202609030001_rls_visibility_performance.sql`, compilan desde una base local
+  vacía. Staging conserva deliberadamente las seis primeras; no coincide con la
+  lista local hasta que se autorice y aplique la séptima. La migración
   `202608280001_activity_authority.sql` agrega el permiso individual y separa
   planificación, creación propia, ejecución y avance de estado.
-- La migración local `202608290001_account_administration.sql` añade las
+- La migración `202608290001_account_administration.sql` añade las
   invariantes de cuentas, auditoría, revocación de sesiones y puerta de clave
   temporal. Las Edge Functions mantienen la clave de servicio fuera del
   frontend y completan las operaciones de Auth.
@@ -50,23 +63,34 @@ La fuente completa es `contrato-producto-vigente-2026-08-28.md`.
   responsable inactivo. La carrera forma el punto 30 del gate PostgreSQL.
 - La clave temporal se compara mediante una huella PBKDF2-SHA256 con sal
   aleatoria y se elimina al completar el cambio; nunca se persiste en claro.
-- La migración local `202608300001_burson_channel.sql` añade la única RPC de
+- La migración `202608300001_burson_channel.sql` añade la única RPC de
   creación Burson. Su idempotencia excluye al responsable derivado y comparte
   el lock de administración de cuentas, por lo que un replay sigue siendo
   válido después de transferir el vínculo especial.
 - Burson ya usa datos Supabase con una proyección propia, ruta de detalle
   externa y fronteras directas que impiden abrir la ficha operativa.
-- La migración local `202608300002_private_conversations.sql` añade mensajes
+- La migración `202608300002_private_conversations.sql` añade mensajes
   internos, apertura exclusiva de Admin, control optimista, autoría por mensaje,
   baja lógica y acceso RLS limitado a Admin y al responsable vigente. El
   frontend real hidrata el hilo solo en el detalle interno y nunca envía al
   cliente mensajes dados de baja.
-- La migración local `202608310001_activity_trash.sql` añade baja y restauración
+- La migración `202608310001_activity_trash.sql` añade baja y restauración
   versionadas, motivo obligatorio, auditoría inmutable y un índice parcial de
   Papelera. Admin dispone de la ruta real `/papelera`; una actividad dada de
   baja queda fuera de Actividades, Histórico, Burson y de las consultas de los
   demás roles. Restaurar trabajo abierto exige reemplazar a un responsable
   inactivo; el trabajo entregado conserva su responsable histórico.
+- La migración local `202609030001_rls_visibility_performance.sql` conserva la
+  matriz de acceso y reemplaza las policies de lectura de actividades y
+  jornadas: resuelve sesión, rol e identidad una vez por sentencia, mantiene el
+  fast-path Admin y reutiliza el conjunto visible de `activities` bajo la RLS
+  real del actor. No crea helpers `SECURITY DEFINER` ni acepta contexto
+  suministrado por el llamante. En la carga real de 11 055 jornadas, el
+  `EXPLAIN` Admin bajó desde una línea base de 6 897,950 ms a 4,163 ms; el
+  Operario recorrió una página visible completa en 5,406 ms y una selección de
+  veinte actividades en 2,594 ms. El owner sin RLS midió 1,989 ms. El conjunto
+  masivo se contrastó sin `LIMIT` contra otro Operario, Burson y Admin. No se
+  cambiaron timeout, índices ni grants de tabla.
 - El Histórico autentica primero a Admin y lee Supabase mediante RLS de sesión,
   sin `service_role` ni fixtures de respaldo. Acota candidatos al año solicitado,
   excluye Papelera, pagina por keyset, conserva todas las jornadas discontinuas,
@@ -76,15 +100,19 @@ La fuente completa es `contrato-producto-vigente-2026-08-28.md`.
   esperado y rechaza claves legacy/privilegiadas sin imprimir valores. El build
   añade cabeceras defensivas, elimina `X-Powered-By` y mantiene la plataforma
   privada fuera de indexación mediante metadata, encabezado y `robots.txt`.
+- El Preview estable de la rama `equipo` usa únicamente las variables de
+  Preview, apunta a staging y está protegido por Vercel. Supabase Auth permite
+  exactamente ese origen, con signup público y acceso anónimo desactivados.
 - `runbook-preview-produccion.md` separa preparación local, autorización,
   staging, Preview, matriz smoke, evidencia, Go/No-Go, producción aislada,
   observabilidad nativa y rollback forward-only.
-- El árbol partió limpio desde `0be6965`; el Goal no hace commit, push ni
-  despliegue.
+- El árbol partió desde el punto de restauración `0be6965`. Las operaciones
+  remotas posteriores se ejecutaron únicamente tras las autorizaciones de
+  Marco; Producción no fue modificada.
 
-## Verificación local acumulada hasta el Corte 7
+## Verificación local vigente
 
-- TypeScript, ESLint, 191 pruebas Vitest en 21 archivos y build de producción,
+- TypeScript, ESLint, 198 pruebas Vitest en 22 archivos y build de producción,
   aprobados sobre la implementación local del Corte 7.
 - `build:vercel` aprobó un ambiente Preview sintético aislado y el preflight sin
   variables de despliegue falló cerrado con 11 diagnósticos genéricos, sin
@@ -94,8 +122,20 @@ La fuente completa es `contrato-producto-vigente-2026-08-28.md`.
   de la política `sb_publishable_`, detección de claves legacy/secretas incluso
   embebidas, mensaje de data source sin eco y cabeceras comprobadas sobre una
   redirección privada. Después se repitieron todos los gates locales.
-- Deno 2.9.6: formato y `deno check` de las dos Edge Functions, aprobados. La
-  derivación PBKDF2 también fue ejecutada con igualdad y diferencia correctas.
+- La revisión prepublicación Claudex inspeccionó la optimización RLS, el arnés
+  PostgreSQL, el Histórico y las Edge Functions. Confirmó la equivalencia de la
+  migración 7 y pidió cerrar el fallback silencioso del dominio, el smoke del
+  runtime real y las sondas remotas. El código ahora falla cerrado sin dominio,
+  repara el username desde el perfil canónico, fija `@supabase/server@1.4.1` y el
+  runbook contiene los gates exactos. La pasada final terminó `APPROVED` para
+  commit, push y publicación controlada; sus dos condiciones exclusivamente
+  documentales quedaron corregidas antes del commit.
+- Deno 2.9.6: formato y `deno check` de las dos Edge Functions, aprobados. Las
+  20 pruebas con fallos inyectados confirman la configuración obligatoria, la
+  compensación del alta, la recuperación paginada de usuarios Auth huérfanos,
+  la reparación del username canónico y los estados recuperables fail-closed
+  del reset, cambio obligatorio y limpieza de huella.
+  La derivación PBKDF2 también fue ejecutada con igualdad y diferencia correctas.
 - Las revisiones Claudex de solo lectura corrigieron y después cerraron los
   hallazgos de vínculo Burson inactivo, permiso alternativo, errores de Edge,
   fecha mínima, huella temporal, auditoría y canal Burson. La revisión del
@@ -129,18 +169,34 @@ La fuente completa es `contrato-producto-vigente-2026-08-28.md`.
   offset.
 - El arnés E2E fija `SISTEMA_R_DATA_SOURCE=demo`, levanta el build de producción
   y nunca reutiliza otro servidor.
-- Estas pruebas demo validan el contrato de interfaz, pero no demuestran todavía los permisos
-  RLS ni las RPC contra una instancia PostgreSQL real.
+- Estas pruebas demo validan el contrato de interfaz, pero no demuestran por sí
+  solas los permisos RLS ni las RPC contra una instancia PostgreSQL real.
+- `supabase db reset --local --no-seed` recreó PostgreSQL 17 desde cero y
+  `npm run verify:supabase:local` aprobó 51 controles reales con identidades
+  efímeras de Admin, Operarios y Burson. El gate de 31 puntos cubre claves
+  temporales, invariantes del roster, transferencia Burson, Papelera completa,
+  carreras de conversación/restauración/cuentas/actividades y los siete
+  recursos por encima de `api.max_rows`, además de demostrar que no existe el
+  lookup falsificable descartado. La base queda limpia al final.
+- El último Vercel Preview publicado compiló el commit `6d52d8f` de la rama
+  `equipo`, registró `preview → staging`, quedó `Ready` y aprobó el smoke HTTP
+  de rutas públicas, redirección privada, cabeceras y `robots.txt`. No contiene
+  el cierre local actual ni la séptima migración.
 - `docs/plan-chat-ia-reutilizable.pdf`: PDF 1.4 válido, tres páginas, 58 620
   bytes al generarse.
 - Los mismos gates se repetirán después de cada corte de código.
 
 ## Próximos gates
 
-1. Compilar las migraciones desde cero cuando exista PostgreSQL local.
-2. Ejecutar la matriz RLS, las lecturas reales del Histórico y `EXPLAIN` de sus
-   consultas si Docker está disponible.
-3. Con autorización explícita, aplicar staging y ejecutar el gate de 31 puntos.
-4. Desplegar Preview, completar smoke/Safari real y conservar evidencia.
-5. Crear un proyecto separado, backup restaurable y dominio antes del Go de
-   producción.
+1. Con autorización, publicar el cierre local, aplicar la séptima migración en
+   staging y desplegar las dos Edge Functions actuales; repetir allí el
+   catálogo y el plan RLS sin usar identidades reales.
+2. Preparar con autorización las identidades temporales del smoke, incluida una
+   cuenta Burson, y su limpieza exacta de Auth/perfil para devolver staging a su
+   baseline de seis perfiles.
+3. Generar el Preview de validación `RC1` del commit candidato y completar allí
+   el smoke autenticado no destructivo.
+4. Probar escritorio, móvil real y Safari/iOS, consolidar el feedback del equipo
+   y repetir `RC2…RCn` con todos los gates hasta la aceptación.
+5. Con autorización separada, crear Producción con proyecto Supabase distinto,
+   backup/restauración ensayados, dominio, variables y nuevo Go/No-Go.

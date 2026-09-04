@@ -1,15 +1,16 @@
 # Validación del frontend
 
-**Última ejecución local completa:** aprobada el 2026-09-01 sobre la
+**Última ejecución local completa:** aprobada el 2026-09-04 sobre la
 implementación del Corte 7, incluido el Histórico Supabase desde 2026 y la
 preparación fail-closed de despliegue. La
 evidencia histórica anterior fue sustituida por el contrato del 2026-08-28; el
-estado acumulado se registra en `estado.md`.
+estado acumulado se registra en `estado.md` y el cierre reproducible en
+[`evidencia-cierre-local-2026-09-04.md`](evidencia-cierre-local-2026-09-04.md).
 
 ## Cobertura ejecutada
 
 - TypeScript estricto y ESLint: aprobados sin errores.
-- Vitest: 191 pruebas aprobadas en 21 archivos sobre contrato, roles, permisos, persistencia,
+- Vitest: 198 pruebas aprobadas en 22 archivos sobre contrato, roles, permisos, persistencia,
   idempotencia, autoridad de RPC y Server Actions, clave temporal, cuentas,
   vínculo y canal Burson, conversación privada, Papelera, stores, contrato
   visual, lectores Supabase con paginación keyset bajo `max_rows` reducido,
@@ -17,7 +18,10 @@ estado acumulado se registra en `estado.md`.
   Preview/producción.
 - Build optimizado de Next.js: aprobado.
 - Edge Functions: `deno fmt --check` y `deno check` aprobados con Deno 2.9.6;
-  prueba ejecutada de la huella PBKDF2 con sal, igualdad y diferencia correctas.
+  20 pruebas ejecutadas con fallos inyectados cubren configuración, compensación de alta,
+  recuperación de usuarios Auth huérfanos, reset, cambio obligatorio y limpieza
+  de huella. La derivación PBKDF2 con sal también se comprobó con igualdad y
+  diferencia correctas.
 - Playwright: 10 recorridos aprobados con fronteras de los tres roles y acceso
   directo, concesión/revocación del permiso individual, cambio obligatorio de
   clave temporal, creación propia forzada al Operario autorizado, flujo
@@ -33,6 +37,21 @@ estado acumulado se registra en `estado.md`.
 - `build:vercel` aprobó un Preview sintético aislado. El mismo preflight sin
   variables de despliegue terminó con exit 1: emitió diagnósticos genéricos por
   nombres de configuración faltante y por `VERCEL_ENV` inválido, nunca valores.
+- `supabase db reset --local --no-seed` compiló las siete migraciones desde una
+  base PostgreSQL 17 vacía. `npm run verify:supabase:local` aprobó 51 controles
+  reales de Auth/RLS/RPC y dejó la base local limpia. El recorrido cubrió las
+  carreras del gate de 31 puntos y paginó actividades, jornadas, auditorías,
+  mensajes, encargos Burson, perfiles e historial de cuentas con más de
+  `api.max_rows` y una inserción controlada durante cada keyset. El `EXPLAIN`
+  de la repetición final midió Operario masivo en 6,103 ms, selección de veinte
+  actividades en 3,170 ms, Admin en 3,561 ms y owner sin RLS en 2,047 ms. Un
+  conteo sin `LIMIT` contrastó los conjuntos exactos de Admin, ambos Operarios
+  y Burson. No se cambió el timeout ni se añadieron índices o helpers
+  privilegiados.
+- El último Preview privado publicado de la rama `equipo` quedó `Ready` contra
+  staging. Corresponde al commit `6d52d8f` y a las seis primeras migraciones;
+  su smoke HTTP verificó rutas, redirección privada, cabeceras e indexación
+  bloqueada, pero no certifica el cierre local actual.
 
 ## Cambios cubiertos por la corrección de auditoría
 
@@ -67,22 +86,28 @@ estado acumulado se registra en `estado.md`.
 
 ## Revisión manual recomendada
 
-1. Abrir `http://localhost:3000` en un teléfono y un equipo de escritorio reales.
+1. Abrir el enlace privado vigente del Preview en un teléfono y un equipo de
+   escritorio reales.
 2. Ingresar con cada rol y confirmar textos, jerarquía, tacto, teclado y legibilidad.
 3. Crear y editar una actividad, completar una entrega, iniciar una conversación como Admin y confirmar el bloqueo del enlace/opinión.
-4. Transferir el vínculo Burson y confirmar que solo cambian los encargos pendientes.
+4. Probar la transferencia del vínculo Burson únicamente en un proyecto
+   desechable; no alterar el vínculo único del roster vigente de staging.
 5. Dar de baja una actividad, comprobar su aislamiento por rol y restaurarla
    desde la Papelera con teclado y en un viewport móvil.
 6. Navegar el Histórico desde 2026, abrir/cerrar el detalle móvil con teclado y
    comprobar el bloqueo de scroll y el retorno de foco en Safari/iOS real.
-7. Tras autorización, ejecutar el runbook de Preview, la matriz RLS/RPC de 31
-   puntos y comprobar cabeceras, logs y redirects sobre la URL desplegada.
+7. Después de aplicar con autorización la séptima migración, completar el smoke
+   autenticado del Preview y conservar evidencia sin credenciales.
 
 Los recorridos Playwright usan el modo demo. Las rutas Supabase y sus Server
-Actions pasan pruebas locales con clientes simulados, y las Edge Functions
-pasan sus gates de Deno. Las migraciones aplicables hasta `202608310001` solo
-tienen validación estática: compilación PostgreSQL, propagación de códigos,
-matriz RLS, consultas/planes reales del Histórico y carreras todavía deben
-ejecutarse con Docker o en un ambiente autorizado antes de producción. El
-procedimiento, evidencia y Go/No-Go se definen en
-`runbook-preview-produccion.md`; no se ha desplegado Preview ni producción.
+Actions también tienen pruebas simuladas, y las Edge Functions pasan sus gates
+de Deno. Las migraciones hasta `202609030001` ya compilaron en PostgreSQL local;
+staging conserva las seis hasta `202608310001` y la séptima requiere
+autorización. El arnés real confirmó RLS, RPC, SQLSTATE, paginación y planes
+del Histórico. El gate local de 31 puntos quedó completo
+con 51 controles de PostgreSQL/Auth y 20 pruebas de configuración y compensación de Edge
+Functions. Antes de producción aún faltan aplicar la migración local en
+staging con autorización, el smoke autenticado del Preview y las pruebas en
+dispositivos reales. El procedimiento, evidencia y Go/No-Go se definen en
+`runbook-preview-produccion.md`. El Preview existente corresponde a `6d52d8f`;
+el Preview del cierre actual y Producción todavía no están desplegados.

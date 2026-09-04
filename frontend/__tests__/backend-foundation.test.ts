@@ -216,19 +216,28 @@ describe("cimiento del backend", () => {
   it("falla cerrado si el modo real no tiene configuración", () => {
     const previousUrl = process.env.SUPABASE_URL;
     const previousKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+    const previousDomain = process.env.SISTEMA_R_USERNAME_DOMAIN;
     delete process.env.SUPABASE_URL;
     delete process.env.SUPABASE_PUBLISHABLE_KEY;
+    delete process.env.SISTEMA_R_USERNAME_DOMAIN;
     try {
       expect(() => getSupabaseEnvironment()).toThrow(/SUPABASE_URL/);
       process.env.SUPABASE_URL = "https://staging.supabase.co";
       expect(() => getSupabaseEnvironment()).toThrow(
         /SUPABASE_PUBLISHABLE_KEY/,
       );
+      process.env.SUPABASE_PUBLISHABLE_KEY = "local-test-key";
+      expect(() => getSupabaseEnvironment()).toThrow(
+        /SISTEMA_R_USERNAME_DOMAIN/,
+      );
     } finally {
       if (previousUrl === undefined) delete process.env.SUPABASE_URL;
       else process.env.SUPABASE_URL = previousUrl;
       if (previousKey === undefined) delete process.env.SUPABASE_PUBLISHABLE_KEY;
       else process.env.SUPABASE_PUBLISHABLE_KEY = previousKey;
+      if (previousDomain === undefined)
+        delete process.env.SISTEMA_R_USERNAME_DOMAIN;
+      else process.env.SISTEMA_R_USERNAME_DOMAIN = previousDomain;
     }
   });
 
@@ -236,10 +245,12 @@ describe("cimiento del backend", () => {
     const previous = {
       url: process.env.SUPABASE_URL,
       key: process.env.SUPABASE_PUBLISHABLE_KEY,
+      domain: process.env.SISTEMA_R_USERNAME_DOMAIN,
       vercelEnvironment: process.env.VERCEL_ENV,
     };
     process.env.SUPABASE_URL = "https://stagingref123.supabase.co";
     process.env.SUPABASE_PUBLISHABLE_KEY = "eyJlegacy.anon.signature";
+    process.env.SISTEMA_R_USERNAME_DOMAIN = "auth.sistema-r.invalid";
     process.env.VERCEL_ENV = "preview";
     try {
       expect(() => getSupabaseEnvironment()).toThrow(/publicable/);
@@ -259,6 +270,9 @@ describe("cimiento del backend", () => {
       if (previous.key === undefined)
         delete process.env.SUPABASE_PUBLISHABLE_KEY;
       else process.env.SUPABASE_PUBLISHABLE_KEY = previous.key;
+      if (previous.domain === undefined)
+        delete process.env.SISTEMA_R_USERNAME_DOMAIN;
+      else process.env.SISTEMA_R_USERNAME_DOMAIN = previous.domain;
       if (previous.vercelEnvironment === undefined)
         delete process.env.VERCEL_ENV;
       else process.env.VERCEL_ENV = previous.vercelEnvironment;

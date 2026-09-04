@@ -11,15 +11,24 @@ const normativeSources = [
   "docs/handoff-frontend.md",
   "diseno/direccion-final-traducida/CONTRATO-VISUAL.md",
 ].map(read);
+const currentState = read("docs/estado.md");
+const supabaseRunbook = read("supabase/README.md");
+const releaseRunbook = read("docs/runbook-preview-produccion.md");
+const frontendValidation = read("docs/validacion-frontend.md");
+const stagingEvidence = read("docs/evidencia-staging-2026-09-02.md");
+const localSupabaseHarness = read(
+  "frontend/scripts/verify-local-supabase.mjs",
+);
 const governanceSources = [
-  "docs/estado.md",
-  "docs/decisiones.md",
-  "docs/decisiones-operativas-2026-08-20.md",
-  "docs/decisiones-pendientes.md",
-  "docs/decision-backend-supabase-2026-08-22.md",
-  "docs/validacion-frontend.md",
-  "supabase/README.md",
-].map(read);
+  currentState,
+  read("docs/decisiones.md"),
+  read("docs/decisiones-operativas-2026-08-20.md"),
+  read("docs/decisiones-pendientes.md"),
+  read("docs/decision-backend-supabase-2026-08-22.md"),
+  frontendValidation,
+  supabaseRunbook,
+  releaseRunbook,
+];
 const contract = normativeSources.join("\n");
 const governance = governanceSources.join("\n");
 const behavioralGates = [
@@ -89,10 +98,52 @@ describe("contrato de producto vigente", () => {
     expect(pageObjects).toBeLessThanOrEqual(3);
   });
 
-  it("separa el contrato objetivo de la implementación y evidencia históricas", () => {
-    expect(contract).toContain("objetivo bajo implementación");
-    expect(governance).toContain("no demuestran todavía los permisos");
-    expect(governance).toContain("todavía no es ejecutable");
+  it("distingue fuentes normativas, simulaciones y evidencia histórica", () => {
+    expect(contract).toMatch(
+      /esta fuente\s+manda sobre el comportamiento que debe implementarse/,
+    );
+    expect(currentState).toContain("evidencia operacional actual es");
+    const evidencePath = currentState.match(
+      /evidencia operacional actual es\s+\[`[^`]+`\]\(([^)]+)\)/,
+    )?.[1];
+    expect(evidencePath).toBeTruthy();
+    expect(
+      existsSync(resolve(root, "docs", evidencePath ?? "__missing__")),
+    ).toBe(true);
+    expect(currentState).toMatch(
+      /no demuestran por sí\s+solas los permisos RLS/,
+    );
+    expect(supabaseRunbook).toContain(
+      "Cada punto se registra solo con evidencia",
+    );
+    expect(releaseRunbook).toContain(
+      "No marcar este bloque como aprobado a partir de pruebas simuladas",
+    );
+    expect(localSupabaseHarness.match(/^  await check\(/gm) ?? []).toHaveLength(
+      51,
+    );
+    for (const source of [
+      currentState,
+      supabaseRunbook,
+      releaseRunbook,
+      frontendValidation,
+      stagingEvidence,
+    ]) {
+      expect(source).toContain("51 controles");
+      expect(source).toMatch(/17\s+pruebas/i);
+    }
+    expect(supabaseRunbook).toContain(
+      "su cantidad no equivale a puntos aprobados",
+    );
+    const officialGateStart = supabaseRunbook.indexOf("### Gate objetivo");
+    const officialGateEnd = supabaseRunbook.indexOf("**Estado actualizado");
+    expect(officialGateStart).toBeGreaterThanOrEqual(0);
+    expect(officialGateEnd).toBeGreaterThan(officialGateStart);
+    const officialGate = supabaseRunbook.slice(
+      officialGateStart,
+      officialGateEnd,
+    );
+    expect(officialGate.match(/^\d+\.\s/gm)).toHaveLength(31);
     expect(governance.toLocaleLowerCase("es")).toMatch(
       /evidencia histórica(?: anterior)?\s+(?:fue\s+)?sustituida/,
     );

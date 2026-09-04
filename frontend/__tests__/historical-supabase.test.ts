@@ -137,6 +137,36 @@ const deletedId = "22222222-2222-4222-8222-222222222222";
 const secondActiveId = "33333333-3333-4333-8333-333333333333";
 const thirdActiveId = "44444444-4444-4444-8444-444444444444";
 
+function activityRow(version: number, title = "Actividad concurrente") {
+  return {
+    id: activeId,
+    version,
+    type: "Edición",
+    title,
+    responsible_name: "Ana Torres",
+    status: "Programada",
+    origin: "admin",
+    description: "Prueba de consistencia",
+    material_link: "",
+    operator_opinion: "",
+  };
+}
+
+function spanRow(
+  id: number,
+  position: number,
+  startDate: string,
+  endDate = startDate,
+) {
+  return {
+    id,
+    activity_id: activeId,
+    position,
+    start_date: startDate,
+    end_date: endDate,
+  };
+}
+
 describe("lector Supabase del Histórico", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -176,6 +206,7 @@ describe("lector Supabase del Histórico", () => {
         response: ok([
           {
             id: activeId,
+            version: 3,
             type: "Locución",
             title: "Campaña anual",
             responsible_name: "Luis Mendoza",
@@ -215,6 +246,11 @@ describe("lector Supabase del Histórico", () => {
         ]),
       },
       { table: "activity_date_spans", response: ok([]) },
+      {
+        table: "activities",
+        response: ok([{ id: activeId, version: 3 }]),
+      },
+      { table: "activities", response: ok([]) },
     ]);
     mocks.createServerClient.mockResolvedValue(setup.client);
 
@@ -246,6 +282,8 @@ describe("lector Supabase del Histórico", () => {
       "activities",
       "activity_date_spans",
       "activity_date_spans",
+      "activities",
+      "activities",
     ]);
 
     const candidateQueries = setup.calls.slice(0, 2);
@@ -305,6 +343,7 @@ describe("lector Supabase del Histórico", () => {
         response: ok([
           {
             id: activeId,
+            version: 3,
             type: "Edición",
             title: "Replanificada",
             responsible_name: "Ana Torres",
@@ -330,6 +369,11 @@ describe("lector Supabase del Histórico", () => {
         ]),
       },
       { table: "activity_date_spans", response: ok([]) },
+      {
+        table: "activities",
+        response: ok([{ id: activeId, version: 3 }]),
+      },
+      { table: "activities", response: ok([]) },
     ]);
     mocks.createServerClient.mockResolvedValue(setup.client);
 
@@ -386,6 +430,7 @@ describe("lector Supabase del Histórico", () => {
         activities: [
           {
             id: activeId,
+            version: 1,
             type: "Edición",
             title: "Primera activa",
             responsible_name: "Ana Torres",
@@ -398,6 +443,7 @@ describe("lector Supabase del Histórico", () => {
           },
           {
             id: secondActiveId,
+            version: 1,
             type: "Grabación",
             title: "Segunda activa",
             responsible_name: "Carlos Vega",
@@ -410,6 +456,7 @@ describe("lector Supabase del Histórico", () => {
           },
           {
             id: deletedId,
+            version: 2,
             type: "Creatividad",
             title: "En Papelera",
             responsible_name: "Ana Torres",
@@ -422,6 +469,7 @@ describe("lector Supabase del Histórico", () => {
           },
           {
             id: thirdActiveId,
+            version: 1,
             type: "Locución",
             title: "Tercera activa",
             responsible_name: "Luis Mendoza",
@@ -470,6 +518,7 @@ describe("lector Supabase del Histórico", () => {
     }));
     const rows = ids.map((id) => ({
       id,
+      version: 1,
       type: "Creatividad",
       title: `Actividad ${id}`,
       responsible_name: "Ana Torres",
@@ -494,7 +543,7 @@ describe("lector Supabase del Histórico", () => {
     const activityQueries = setup.calls.filter(
       (call) => call.table === "activities",
     );
-    expect(activityQueries).toHaveLength(4);
+    expect(activityQueries).toHaveLength(8);
     const batchLengths = activityQueries.map((call) => {
       const operation = call.operations.find((item) => item.name === "in");
       return (operation?.args[1] as string[]).length;
@@ -508,6 +557,88 @@ describe("lector Supabase del Histórico", () => {
         call.operations.some((operation) => operation.name === "gt"),
       ),
     ).toBe(true);
+  });
+
+  it("descarta jornadas mezcladas y reintenta con una version coherente", async () => {
+    const oldSpan = spanRow(5, 1, "2026-01-10");
+    const newSpans = [
+      spanRow(900, 1, "2026-05-01"),
+      spanRow(901, 2, "2026-06-01", "2026-06-02"),
+    ];
+    const setup = fakeClient([
+      { table: "activity_date_spans", response: ok([oldSpan]) },
+      { table: "activity_date_spans", response: ok([]) },
+      { table: "activities", response: ok([activityRow(3)]) },
+      { table: "activities", response: ok([]) },
+      { table: "activity_date_spans", response: ok([oldSpan]) },
+      { table: "activity_date_spans", response: ok(newSpans) },
+      { table: "activity_date_spans", response: ok([]) },
+      { table: "activities", response: ok([{ id: activeId, version: 4 }]) },
+      { table: "activities", response: ok([]) },
+      { table: "activity_date_spans", response: ok(newSpans) },
+      { table: "activity_date_spans", response: ok([]) },
+      { table: "activities", response: ok([activityRow(4)]) },
+      { table: "activities", response: ok([]) },
+      { table: "activity_date_spans", response: ok(newSpans) },
+      { table: "activity_date_spans", response: ok([]) },
+      { table: "activities", response: ok([{ id: activeId, version: 4 }]) },
+      { table: "activities", response: ok([]) },
+    ]);
+    mocks.createServerClient.mockResolvedValue(setup.client);
+
+    const result = await listSupabaseHistoricalActivities(2026);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].spans).toEqual([
+      { start: "2026-05-01", end: "2026-05-01" },
+      { start: "2026-06-01", end: "2026-06-02" },
+    ]);
+    expect(setup.remaining).toHaveLength(0);
+  });
+
+  it("falla de forma explicita tras tres lecturas que siguen cambiando", async () => {
+    const queued: Parameters<typeof fakeClient>[0] = [];
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      const span = spanRow(attempt, 1, "2026-07-01");
+      queued.push(
+        { table: "activity_date_spans", response: ok([span]) },
+        { table: "activity_date_spans", response: ok([]) },
+        { table: "activities", response: ok([activityRow(attempt)]) },
+        { table: "activities", response: ok([]) },
+        { table: "activity_date_spans", response: ok([span]) },
+        { table: "activity_date_spans", response: ok([]) },
+        {
+          table: "activities",
+          response: ok([{ id: activeId, version: attempt + 1 }]),
+        },
+        { table: "activities", response: ok([]) },
+      );
+    }
+    const setup = fakeClient(queued);
+    mocks.createServerClient.mockResolvedValue(setup.client);
+
+    await expect(listSupabaseHistoricalActivities(2026)).rejects.toThrow(
+      "El Histórico cambió durante la lectura y no pudo consolidarse tras 3 intentos.",
+    );
+    expect(setup.remaining).toHaveLength(0);
+  });
+
+  it("reinicia la lectura cuando una actividad entra a Papelera", async () => {
+    const activeSpan = spanRow(20, 1, "2026-08-01");
+    const setup = fakeClient([
+      { table: "activity_date_spans", response: ok([activeSpan]) },
+      { table: "activity_date_spans", response: ok([]) },
+      { table: "activities", response: ok([activityRow(2)]) },
+      { table: "activities", response: ok([]) },
+      { table: "activity_date_spans", response: ok([activeSpan]) },
+      { table: "activity_date_spans", response: ok([]) },
+      { table: "activities", response: ok([]) },
+      { table: "activity_date_spans", response: ok([]) },
+    ]);
+    mocks.createServerClient.mockResolvedValue(setup.client);
+
+    await expect(listSupabaseHistoricalActivities(2026)).resolves.toEqual([]);
+    expect(setup.remaining).toHaveLength(0);
   });
 
   it("detiene la consulta cuando no hay candidatos y propaga errores de lectura", async () => {
@@ -582,6 +713,7 @@ describe("lector Supabase del Histórico", () => {
         response: ok([
           {
             id: activeId,
+            version: 1,
             type: "Edición",
             title: "Cursor estancado",
             responsible_name: "Ana Torres",
@@ -598,6 +730,7 @@ describe("lector Supabase del Histórico", () => {
         response: ok([
           {
             id: activeId,
+            version: 1,
             type: "Edición",
             title: "Cursor estancado",
             responsible_name: "Ana Torres",
