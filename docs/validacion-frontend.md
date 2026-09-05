@@ -43,15 +43,20 @@ estado acumulado se registra en `estado.md` y el cierre reproducible en
   carreras del gate de 31 puntos y paginó actividades, jornadas, auditorías,
   mensajes, encargos Burson, perfiles e historial de cuentas con más de
   `api.max_rows` y una inserción controlada durante cada keyset. El `EXPLAIN`
-  de la repetición final midió Operario masivo en 6,103 ms, selección de veinte
+  de la corrida registrada aquí (serie B) midió Operario masivo en 6,103 ms, selección de veinte
   actividades en 3,170 ms, Admin en 3,561 ms y owner sin RLS en 2,047 ms. Un
   conteo sin `LIMIT` contrastó los conjuntos exactos de Admin, ambos Operarios
   y Burson. No se cambió el timeout ni se añadieron índices o helpers
   privilegiados.
-- El último Preview privado publicado de la rama `equipo` quedó `Ready` contra
-  staging. Corresponde al commit `6d52d8f` y a las seis primeras migraciones;
-  su smoke HTTP verificó rutas, redirección privada, cabeceras e indexación
-  bloqueada, pero no certifica el cierre local actual.
+  La serie A de los snapshots mide 5,406 / 2,594 / 4,163 / 1,989 ms en ese
+  mismo orden. Son mediciones de corridas distintas: los registros no fijan
+  su orden temporal exacto y ninguna se denomina aquí la corrida final.
+- El candidato técnico a RC1 de `equipo`, commit `c328b7d`, quedó `Ready` contra
+  staging con siete migraciones y ambas funciones v2. Su preflight y smoke HTTP
+  verificaron destino, rutas, redirección privada, cabeceras e indexación
+  bloqueada. El catálogo remoto y el rechazo 401 de las funciones aprobaron;
+  falta el smoke autenticado. Véase
+  [`evidencia-preview-rc1-2026-09-04.md`](evidencia-preview-rc1-2026-09-04.md).
 
 ## Cambios cubiertos por la corrección de auditoría
 
@@ -96,18 +101,18 @@ estado acumulado se registra en `estado.md` y el cierre reproducible en
    desde la Papelera con teclado y en un viewport móvil.
 6. Navegar el Histórico desde 2026, abrir/cerrar el detalle móvil con teclado y
    comprobar el bloqueo de scroll y el retorno de foco en Safari/iOS real.
-7. Después de aplicar con autorización la séptima migración, completar el smoke
-   autenticado del Preview y conservar evidencia sin credenciales.
+7. Completar el smoke autenticado del candidato publicado y conservar evidencia
+   sin credenciales, con identidades de prueba y limpieza autorizadas.
 
 Los recorridos Playwright usan el modo demo. Las rutas Supabase y sus Server
 Actions también tienen pruebas simuladas, y las Edge Functions pasan sus gates
 de Deno. Las migraciones hasta `202609030001` ya compilaron en PostgreSQL local;
-staging conserva las seis hasta `202608310001` y la séptima requiere
-autorización. El arnés real confirmó RLS, RPC, SQLSTATE, paginación y planes
+staging también tiene las siete versiones sincronizadas. El arnés real local
+confirmó RLS, RPC, SQLSTATE, paginación y planes
 del Histórico. El gate local de 31 puntos quedó completo
 con 51 controles de PostgreSQL/Auth y 20 pruebas de configuración y compensación de Edge
-Functions. Antes de producción aún faltan aplicar la migración local en
-staging con autorización, el smoke autenticado del Preview y las pruebas en
+Functions. Antes del Go de RC1 falta el smoke autenticado del Preview; antes de
+producción también falta la aceptación del equipo y las pruebas en
 dispositivos reales. El procedimiento, evidencia y Go/No-Go se definen en
-`runbook-preview-produccion.md`. El Preview existente corresponde a `6d52d8f`;
-el Preview del cierre actual y Producción todavía no están desplegados.
+`runbook-preview-produccion.md`. El Preview del cierre corresponde a `c328b7d`;
+Producción no fue desplegada.

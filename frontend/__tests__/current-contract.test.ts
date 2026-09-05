@@ -127,11 +127,13 @@ describe("contrato de producto vigente", () => {
       supabaseRunbook,
       releaseRunbook,
       frontendValidation,
-      stagingEvidence,
     ]) {
-      expect(source).toContain("51 controles");
-      expect(source).toMatch(/17\s+pruebas/i);
+      expect(source).toMatch(/51\s+controles/);
+      expect(source).toMatch(/20\s+pruebas/i);
     }
+    // Un snapshot conserva su identidad, no las cifras de ejecuciones futuras.
+    expect(stagingEvidence).toContain("**Fecha:** 2026-09-02");
+    expect(stagingEvidence).toContain("`equipo` · `6d52d8f`");
     expect(supabaseRunbook).toContain(
       "su cantidad no equivale a puntos aprobados",
     );

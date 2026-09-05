@@ -2,6 +2,14 @@
 
 **Fecha:** 2026-09-04 (America/Lima)
 
+> Checkpoint histórico resuelto: después de renovarse la cuota se obtuvo una
+> revisión nueva completa, se corrigieron los hallazgos confirmados y otra
+> pasada terminó `APPROVED` para publicación controlada. El resultado y el
+> journal válido están en
+> [`evidencia-preview-rc1-2026-09-04.md`](evidencia-preview-rc1-2026-09-04.md).
+> La recuperación incompleta de abajo no se convirtió en aprobación y no es el
+> bloqueo vigente: ahora falta el smoke autenticado de staging.
+
 **Etapa detenida:** revisión independiente previa al commit y al despliegue de
 staging.
 

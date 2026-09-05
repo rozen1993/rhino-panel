@@ -2,11 +2,14 @@
 
 **Actualizado:** 2026-09-04
 
-**Estado vigente:** el cierre local está aprobado. El Preview privado publicado
-de la rama `equipo` corresponde todavía a `6d52d8f` sobre staging. La evidencia operacional actual es
-[`evidencia-cierre-local-2026-09-04.md`](evidencia-cierre-local-2026-09-04.md);
-[`evidencia-staging-2026-09-02.md`](evidencia-staging-2026-09-02.md) conserva el
-último despliegue remoto y la
+**Estado vigente:** el cierre está publicado en `equipo` como `c328b7d`; el
+Preview privado está `Ready` sobre staging con siete migraciones y ambas Edge
+Functions v2. Es un candidato técnico a RC1, pendiente del smoke autenticado.
+La evidencia operacional actual es
+[`evidencia-preview-rc1-2026-09-04.md`](evidencia-preview-rc1-2026-09-04.md);
+[`evidencia-cierre-local-2026-09-04.md`](evidencia-cierre-local-2026-09-04.md) y
+[`evidencia-staging-2026-09-02.md`](evidencia-staging-2026-09-02.md) conservan
+los snapshots anteriores y la
 [`auditoria-final-cortes-0-a-7.md`](auditoria-final-cortes-0-a-7.md) conserva el
 cierre histórico previo al despliegue. Producción permanece en **No-Go** hasta
 completar los gates pendientes y contar con autorización separada.
@@ -22,16 +25,16 @@ Claudex no encontró defectos críticos ni altos. El Corte 5 dejó implementada,
 corregida y revisada la baja reversible con Papelera Admin. El Corte 6 dejó
 implementado, corregido y verificado localmente el Histórico Supabase desde
 2026. El Corte 7 tiene preflight fail-closed, cabeceras, bloqueo de indexación y
-runbook. Las siete migraciones compilaron desde cero en Supabase local; las seis
-primeras están aplicadas en staging y la optimización RLS del Histórico permanece
-solo local hasta una autorización posterior. Las versiones publicadas el
-2026-09-02 de las dos Edge Functions están activas y ese Preview privado está
-`Ready`; las versiones locales actuales aún no fueron desplegadas. El smoke
+runbook. Las siete migraciones compilaron desde cero en Supabase local y están
+aplicadas en staging, incluida la optimización RLS del Histórico. Ambas Edge
+Functions se publicaron como versión 2, `ACTIVE` y con `verify_jwt=true`; sus
+rutas rechazan peticiones sin token con `401`. El nuevo Preview privado está
+`Ready` y aprobó preflight y sondas HTTP. El smoke
 local real aprobó 51 controles de Auth/RLS/RPC y completó el gate objetivo de
-31 puntos en una base desechable. La aplicación de la séptima migración y el
-redespliegue de las funciones en staging, la aceptación autenticada del Preview
-final y las pruebas en dispositivos reales continúan pendientes antes de
-producción.
+31 puntos en una base desechable. La aceptación autenticada del Preview y las
+pruebas en dispositivos reales continúan pendientes. No se dispone de una
+sesión Admin autorizada para ejecutar ese recorrido desde el agente; no se
+extraerán credenciales ni se resetearán cuentas existentes para obtenerla.
 
 ## Decisiones ya consolidadas
 
@@ -49,8 +52,8 @@ La fuente completa es `contrato-producto-vigente-2026-08-28.md`.
 
 - Las siete migraciones, desde `202608220001_backend_foundation.sql` hasta
   `202609030001_rls_visibility_performance.sql`, compilan desde una base local
-  vacía. Staging conserva deliberadamente las seis primeras; no coincide con la
-  lista local hasta que se autorice y aplique la séptima. La migración
+  vacía y coinciden con las siete versiones remotas de staging. El dry-run
+  posterior no encuentra migraciones, seeds ni roles pendientes. La migración
   `202608280001_activity_authority.sql` agrega el permiso individual y separa
   planificación, creación propia, ejecución y avance de estado.
 - La migración `202608290001_account_administration.sql` añade las
@@ -80,15 +83,17 @@ La fuente completa es `contrato-producto-vigente-2026-08-28.md`.
   baja queda fuera de Actividades, Histórico, Burson y de las consultas de los
   demás roles. Restaurar trabajo abierto exige reemplazar a un responsable
   inactivo; el trabajo entregado conserva su responsable histórico.
-- La migración local `202609030001_rls_visibility_performance.sql` conserva la
+- La migración aplicada `202609030001_rls_visibility_performance.sql` conserva la
   matriz de acceso y reemplaza las policies de lectura de actividades y
   jornadas: resuelve sesión, rol e identidad una vez por sentencia, mantiene el
   fast-path Admin y reutiliza el conjunto visible de `activities` bajo la RLS
   real del actor. No crea helpers `SECURITY DEFINER` ni acepta contexto
   suministrado por el llamante. En la carga real de 11 055 jornadas, el
-  `EXPLAIN` Admin bajó desde una línea base de 6 897,950 ms a 4,163 ms; el
-  Operario recorrió una página visible completa en 5,406 ms y una selección de
-  veinte actividades en 2,594 ms. El owner sin RLS midió 1,989 ms. El conjunto
+  `EXPLAIN` local Admin bajó desde una línea base de 6 897,950 ms a 3,561 ms en
+  la serie B registrada en `validacion-frontend.md`; el Operario recorrió una
+  página visible completa en 6,103 ms y una selección de veinte actividades en
+  3,170 ms. El owner sin RLS midió 2,047 ms. Los snapshots conservan la serie A
+  de otra corrida; no se presupone un orden temporal entre ambas. El conjunto
   masivo se contrastó sin `LIMIT` contra otro Operario, Burson y Admin. No se
   cambiaron timeout, índices ni grants de tabla.
 - El Histórico autentica primero a Admin y lee Supabase mediante RLS de sesión,
@@ -178,24 +183,26 @@ La fuente completa es `contrato-producto-vigente-2026-08-28.md`.
   carreras de conversación/restauración/cuentas/actividades y los siete
   recursos por encima de `api.max_rows`, además de demostrar que no existe el
   lookup falsificable descartado. La base queda limpia al final.
-- El último Vercel Preview publicado compiló el commit `6d52d8f` de la rama
+- El candidato Vercel Preview publicado compiló el commit `c328b7d` de la rama
   `equipo`, registró `preview → staging`, quedó `Ready` y aprobó el smoke HTTP
-  de rutas públicas, redirección privada, cabeceras y `robots.txt`. No contiene
-  el cierre local actual ni la séptima migración.
+  de rutas públicas, redirección privada, cabeceras y `robots.txt`. Contiene el
+  cierre de producto y apunta a staging con la séptima migración. El catálogo
+  remoto confirma las dos policies de lectura esperadas; esto no sustituye el
+  smoke por roles ni un `EXPLAIN` remoto autenticado.
 - `docs/plan-chat-ia-reutilizable.pdf`: PDF 1.4 válido, tres páginas, 58 620
   bytes al generarse.
 - Los mismos gates se repetirán después de cada corte de código.
 
 ## Próximos gates
 
-1. Con autorización, publicar el cierre local, aplicar la séptima migración en
-   staging y desplegar las dos Edge Functions actuales; repetir allí el
-   catálogo y el plan RLS sin usar identidades reales.
-2. Preparar con autorización las identidades temporales del smoke, incluida una
+1. Obtener un medio de prueba Admin autorizado o la ejecución del recorrido por
+   su titular. Probar alta temporal, login por username, cambio obligatorio y
+   acceso sin compartir contraseñas ni cookies.
+2. Preparar con autorización las identidades temporales restantes, incluida una
    cuenta Burson, y su limpieza exacta de Auth/perfil para devolver staging a su
    baseline de seis perfiles.
-3. Generar el Preview de validación `RC1` del commit candidato y completar allí
-   el smoke autenticado no destructivo.
+3. Completar el smoke autenticado no destructivo en el candidato publicado y
+   registrar el Go de `RC1` solo si aprueba la matriz del runbook.
 4. Probar escritorio, móvil real y Safari/iOS, consolidar el feedback del equipo
    y repetir `RC2…RCn` con todos los gates hasta la aceptación.
 5. Con autorización separada, crear Producción con proyecto Supabase distinto,

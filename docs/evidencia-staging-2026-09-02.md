@@ -7,10 +7,10 @@
 **Destino:** Supabase `sistema-r`, Oregon (`us-west-2`), y Vercel Preview de
 `rhino-panel`. Producción no fue modificada.
 
-> Este documento conserva la evidencia del último despliegue remoto. El cierre
-> local posterior está en
-> [`evidencia-cierre-local-2026-09-04.md`](evidencia-cierre-local-2026-09-04.md)
-> y todavía no está publicado en este Preview.
+> Registro histórico del despliegue `6d52d8f` y de la preparación local posterior,
+> anterior a la publicación `c328b7d`. Sus estados describen ese momento, no el
+> remoto actual. La evidencia vigente está en
+> [`evidencia-preview-rc1-2026-09-04.md`](evidencia-preview-rc1-2026-09-04.md).
 
 ## Resultado confirmado
 
@@ -32,7 +32,8 @@ versiones remotas documentadas el 2026-09-02; producción no fue tocada.
   claves temporales, invariantes del roster y carreras de apertura, baja,
   transferencia, restauración, actividad y cuentas. También cubre los siete
   recursos con más de `api.max_rows`, inserciones intercaladas, Histórico real,
-  `EXPLAIN` y baja/restauración entre fases. La repetición final del gate local
+  `EXPLAIN` y baja/restauración entre fases. La corrida del gate local registrada
+  en este snapshot (serie A)
   midió 4,163 ms para Admin, 5,406 ms para una página Operario, 2,594 ms para
   veinte actividades y 1,989 ms para owner sin RLS. Un oráculo sin `LIMIT`
   confirmó exactamente 1 005 actividades/11 055 jornadas para el responsable,

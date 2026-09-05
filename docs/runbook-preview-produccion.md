@@ -2,9 +2,11 @@
 
 **Versión:** 2026-09-04
 
-**Estado:** staging y el Preview privado del commit `6d52d8f` están desplegados
-y verificados parcialmente; el cierre local actual todavía no está publicado y
-Producción no fue creada ni modificada.
+**Estado:** el candidato técnico a RC1 del commit `c328b7d` está publicado;
+staging tiene siete migraciones y ambas funciones v2. Preflight, catálogo y
+sondas HTTP aprobaron; el smoke autenticado sigue pendiente. Producción no fue
+creada ni modificada. Evidencia:
+[`evidencia-preview-rc1-2026-09-04.md`](evidencia-preview-rc1-2026-09-04.md).
 
 Este es el procedimiento operativo único del Corte 7. La implementación del
 backend y la matriz detallada de aceptación viven en `../supabase/README.md`;
@@ -30,12 +32,11 @@ evidencia remota.
 | Superficie | Datos | Contrato | Estado actual |
 |---|---|---|---|
 | Local | fixtures `demo` o Supabase local | solo desarrollo | disponible |
-| Vercel Preview | proyecto `sistema-r` en Oregon | `VERCEL_ENV=preview` y target `staging` | `6d52d8f`, seis migraciones; disponible para UAT privada parcial, no es el cierre final |
+| Vercel Preview | proyecto `sistema-r` en Oregon | `VERCEL_ENV=preview` y target `staging` | `c328b7d`, siete migraciones y funciones v2; candidato a RC1, sin Go autenticado todavía |
 | Vercel Production | otro proyecto Supabase | `VERCEL_ENV=production` y target `production` | proyecto/dominio aún por autorizar |
 
-“Disponible para UAT privada parcial” significa que el Preview es accesible
-para pruebas preliminares; no implica que incluya el árbol local vigente ni que
-la aceptación autenticada ya esté aprobada.
+El Preview es accesible para pruebas preliminares e incluye el cierre de
+producto; que esté publicado no implica aceptación autenticada ni Go de RC1.
 
 La raíz Vercel es `frontend/`, la región declarada es `pdx1` y el build remoto
 debe usar el `buildCommand` versionado en `frontend/vercel.json`. Preview y
@@ -116,9 +117,11 @@ Una respuesta negativa es **No-Go**. Detenerse no invalida la preparación local
 
 ## 4. Backend de staging
 
-Los pasos 1 a 7 quedaron completados y verificados para las seis migraciones de
-staging el 2026-09-02. La séptima migración está validada solo localmente y
-requiere un nuevo dry-run y autorización. El punto 9 ya quedó ejecutado mediante
+Los pasos 1 a 7 se ejecutaron para las seis primeras migraciones el 2026-09-02.
+Con autorización posterior, el 2026-09-04 se aplicó la séptima, se desplegaron
+ambas funciones v2 y se aprobaron las sondas remotas de la sección 4.1. El
+dominio interno aún debe comprobarse de extremo a extremo sin leer su valor.
+El punto 9 ya quedó ejecutado mediante
 el Supabase local desechable: 51 controles PostgreSQL/Auth más 20 pruebas de
 fallos de Edge Functions cubren los 31 puntos. El smoke autenticado del paso 8
 continúa pendiente; ninguna evidencia local sustituye esa prueba de staging.
@@ -152,16 +155,20 @@ SQL. Cada resultado debe corresponder a la versión realmente aplicada.
 
 ### 4.1 Sondas remotas obligatorias de RC1
 
-Antes de escribir, `migration list` debe mostrar las seis versiones remotas ya
-sincronizadas y el dry-run debe anunciar **solo**
-`202609030001_rls_visibility_performance.sql`:
+Para la publicación de `c328b7d`, antes de escribir se observaron las seis
+versiones remotas sincronizadas y el dry-run anunció **solo**
+`202609030001_rls_visibility_performance.sql`. Ahora debe mostrar siete versiones
+y ningún pendiente; no volver a aplicar la migración. En futuras publicaciones,
+comparar contra el conjunto autorizado de esa versión. Ejecutar los comandos
+de base secuencialmente, sin compartir en paralelo la inicialización de login:
 
 ```powershell
 $stagingRef = "<STAGING_REF_CONFIRMADO>"
-npx.cmd --no-install supabase migration list --project-ref $stagingRef
-npx.cmd --no-install supabase db push --dry-run --skip-vault --project-ref $stagingRef
-$functionsBefore = npx.cmd --no-install supabase functions list `
-  --project-ref $stagingRef --output json | ConvertFrom-Json
+npx.cmd --no-install supabase migration list --linked --project-ref $stagingRef
+npx.cmd --no-install supabase db push --dry-run --skip-vault --linked --project-ref $stagingRef
+$functionsBeforeJson = npx.cmd --no-install supabase functions list `
+  --project-ref $stagingRef --output json
+$functionsBefore = ($functionsBeforeJson -join "`n") | ConvertFrom-Json
 ```
 
 Cualquier diferencia adicional produce **No-Go**. Después del `db push`, repetir
@@ -175,6 +182,9 @@ begin transaction read only;
 select c.relname as table_name, p.polname as policy_name,
        p.polcmd::text as command_code, p.polpermissive,
        c.relrowsecurity as rls_enabled,
+       p.polroles = array[(select oid from pg_catalog.pg_roles
+                           where rolname = 'authenticated')]::oid[]
+         as authenticated_only,
        coalesce(pg_catalog.pg_get_expr(p.polwithcheck, p.polrelid, true), '')
          as check_expression,
        pg_catalog.pg_get_expr(p.polqual, p.polrelid, true) as using_expression
@@ -184,23 +194,36 @@ join pg_catalog.pg_namespace n on n.oid = c.relnamespace
 where n.nspname = 'public'
   and c.relname in ('activities', 'activity_date_spans')
 order by c.relname, p.polname;
-commit;
 '@
-npx.cmd --no-install supabase db query --project-ref $stagingRef $policySql
+$policySql = $policySql -replace '\r?\n', ' '
+npx.cmd --no-install supabase db query $policySql --linked `
+  --project-ref $stagingRef --output json
 ```
+
+Con la CLI instalada, `db query --project-ref` necesita `--linked`. El SQL se
+aplana para cruzar `npx.cmd` en Windows. `SELECT` debe ser la última sentencia
+para devolver sus filas; no añadir `COMMIT`, que devolvería un resultado vacío.
+La transacción de solo lectura termina al liberarse la conexión de la CLI.
+El bloque no admite comentarios SQL de línea `--`: al aplanarlo comentarían
+también el resto de la consulta. Mantenerlo sin esos comentarios.
 
 El resultado debe contener exactamente `activities_select_authorized` y
 `activity_date_spans_select_authorized`, ambas de lectura, permisivas, con RLS
-activo y sin `WITH CHECK`. La primera expresión debe resolver sesión, rol,
+activo, `authenticated_only=true` y sin `WITH CHECK`. La primera expresión debe resolver sesión, rol,
 responsable, creador, origen y papelera sin invocar `can_view_activity`; la
 segunda debe delegar mediante una subconsulta RLS sobre `activities`, sin
 `can_view_activity_id`.
 
+Valores literales a comprobar en ambas filas: `command_code="r"`,
+`polpermissive=true`, `rls_enabled=true`, `authenticated_only=true` y
+`check_expression=""`.
+
 Tras desplegar las dos funciones **sin** `--no-verify-jwt` ni `--prune`:
 
 ```powershell
-$functionsAfter = npx.cmd --no-install supabase functions list `
-  --project-ref $stagingRef --output json | ConvertFrom-Json
+$functionsAfterJson = npx.cmd --no-install supabase functions list `
+  --project-ref $stagingRef --output json
+$functionsAfter = ($functionsAfterJson -join "`n") | ConvertFrom-Json
 ```
 
 Cada función debe quedar `ACTIVE`, con `verify_jwt=true`, versión mayor que en
@@ -228,10 +251,11 @@ clave -> acceso`, seguido de la limpieza autorizada y el retorno al baseline.
 
 ## 5. Vercel Preview
 
-Los seis pasos quedaron completados el 2026-09-02 para la rama `equipo`. El
-Preview está `Ready`, protegido por Vercel y dispone de un enlace compartible
-revocable. Su smoke HTTP aprobó las rutas y cabeceras indicadas; el smoke por
-identidad de la sección siguiente sigue pendiente.
+La configuración inicial se completó el 2026-09-02 para `equipo`. La publicación
+del cierre `c328b7d` del 2026-09-04 está `Ready`, protegida por Vercel, con alias
+estable y artefacto inmutable registrados en su evidencia. No se generó una
+llave compartible nueva ni se presupone que la anterior cubra este artefacto.
+Preflight y smoke HTTP aprobaron; el smoke por identidad sigue pendiente.
 
 1. Configurar las siete variables obligatorias solo para Preview y, si se usa
    una rama dedicada, hacer que `SISTEMA_R_SITE_URL` coincida con su URL de rama
@@ -387,12 +411,11 @@ permite al robot leer la orden de retirada. Si algún día el producto debe ser
 público, retirar las tres señales en un cambio revisado; no cambiar una sola de
 forma aislada.
 
-Al cerrar esta versión ya se ejecutaron la compilación PostgreSQL desde cero y
-el gate local de 31 puntos. En remoto permanecen las seis migraciones, las Edge
-Functions y el Preview del commit `6d52d8f`, cuyo smoke HTTP público pasó.
-Siguen pendientes: publicar el cierre, aplicar con autorización la séptima
-migración, desplegar las dos Edge Functions actuales, generar el Preview `RC1`,
-preparar las identidades temporales autorizadas —incluida Burson—, ejecutar el
-smoke autenticado de staging, probar Safari/iOS real y preparar proyecto,
-backup/restauración y Go de producción. Son gates explícitos, no defectos
-ocultos ni resultados aprobados.
+Al cerrar esta publicación ya se ejecutaron la compilación PostgreSQL desde
+cero y el gate local de 31 puntos. Staging tiene siete migraciones, ambas Edge
+Functions v2 y el Preview `c328b7d`, con sondas de catálogo y HTTP aprobadas.
+Siguen pendientes para el Go de RC1: acceso de prueba Admin autorizado,
+identidades temporales —incluida Burson— con limpieza exacta y smoke autenticado.
+Después corresponde UAT y Safari/iOS real. La preparación de Producción está
+definida aquí; crear su proyecto, ejecutar backup/restauración y desplegar
+requieren autorización separada. Ningún punto pendiente equivale a aprobado.

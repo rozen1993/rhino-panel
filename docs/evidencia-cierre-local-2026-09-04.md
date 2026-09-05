@@ -6,7 +6,13 @@
 
 **Rama actual:** `equipo`
 
-**Estado:** cierre local aprobado; publicación y aceptación remota pendientes
+**Estado del snapshot:** cierre local aprobado; publicación y aceptación remota
+pendientes en ese momento.
+
+> La publicación autorizada posterior quedó registrada por separado en
+> [`evidencia-preview-rc1-2026-09-04.md`](evidencia-preview-rc1-2026-09-04.md).
+> Este documento conserva la evidencia previa; sus pendientes no describen
+> automáticamente el estado remoto actual.
 
 ## Resultado
 
@@ -30,7 +36,7 @@ El chat IA no se integró. Su único entregable es
 | `npm run test:functions` | 20/20 pruebas aprobadas: dominio obligatorio, compensación de alta, recuperación paginada de usuarios Auth huérfanos, reset con reparación del username canónico, cambio obligatorio, igualdad/diferencia de huella y limpieza de metadata. |
 | `supabase db reset --local --no-seed` | Siete migraciones compiladas desde una base PostgreSQL 17 vacía. |
 | `npm run verify:supabase:local` | 51/51 controles reales de Auth/RLS/RPC; matriz oficial de 31 puntos cubierta y base limpia al terminar. |
-| Rendimiento RLS | Operario masivo 5,406 ms; selectivo 2,594 ms; Admin 4,163 ms; owner sin RLS 1,989 ms sobre 11 055 jornadas. |
+| Rendimiento RLS, serie A | Operario masivo 5,406 ms; selectivo 2,594 ms; Admin 4,163 ms; owner sin RLS 1,989 ms sobre 11 055 jornadas. |
 | Integridad | `git diff --check` sin errores. |
 
 ## Revisión independiente Claudex
@@ -68,7 +74,7 @@ Durante este cierre local no se realizó commit, push, despliegue, cambio de
 secretos ni escritura remota. Tampoco se inspeccionaron ni imprimieron valores
 de `.env.local` o `supabase/.temp/project-ref`.
 
-## Gates que aún impiden el Go de Producción
+## Gates pendientes al registrar este snapshot
 
 1. Autorizar y crear el commit de cierre; publicarlo en `equipo`.
 2. Identificar staging, ejecutar `db push --dry-run`, aplicar únicamente la

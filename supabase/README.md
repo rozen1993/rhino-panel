@@ -40,11 +40,13 @@ backend y su matriz de aceptación.
   Corte 6 no requiere una migración nueva.
 - Región Vercel `pdx1`, cercana a la base en Oregon.
 
-Aquí, «listo» significa implementado como artefacto local y cubierto por las
-verificaciones locales indicadas. No significa aplicado en staging o
-producción ni aceptado todavía por personas en dispositivos reales.
+Aquí, «listo» significa implementado y cubierto por las verificaciones locales
+indicadas. Las siete migraciones y ambas funciones v2 están aplicadas en
+staging; su aceptación autenticada y en dispositivos reales sigue pendiente.
+Producción no fue desplegada.
 
-No hay claves, contraseñas ni identificadores remotos guardados en Git.
+No hay claves ni contraseñas guardadas en Git. Los registros de despliegue solo
+conservan identificadores y URLs no secretos; las refs de base se enmascaran.
 
 ## 1. Validación local posterior
 
@@ -67,22 +69,23 @@ npx.cmd --yes deno check supabase/functions/admin-accounts/index.ts supabase/fun
 npm.cmd --prefix frontend run test:functions
 ```
 
-Los tres gates se aprobaron localmente con Deno 2.9.6. El último ejecuta 17
-pruebas de compensación y recuperación con fallos inyectados en Auth, RPC y
+Los tres gates se aprobaron localmente con Deno 2.9.6. El último ejecuta 20
+pruebas de configuración, compensación y recuperación con fallos inyectados en Auth, RPC y
 limpieza de metadatos, incluida la reparación paginada de un usuario Auth
 huérfano.
 
 ## 2. Aplicar migraciones y funciones a staging
 
-**Completado en staging el 2026-09-02 para las seis primeras migraciones.** Las
-migraciones desde `202608220001` hasta `202608310001` coinciden en staging. La
-séptima, `202609030001_rls_visibility_performance.sql`, está validada solo en
-Supabase local y no se aplicará remotamente sin autorización. Antes del push,
-`supabase db push --dry-run` identificó exactamente las cinco pendientes. Las
-funciones `admin-accounts` y `change-temporary-password` están activas en su
-versión 1. La compilación desde una base vacía también quedó aprobada mediante
-`supabase db reset --local --no-seed` sobre PostgreSQL 17. La evidencia sin
-secretos está en `../docs/evidencia-staging-2026-09-02.md`.
+**Completado en staging el 2026-09-04 para las siete migraciones.** Las versiones
+desde `202608220001` hasta `202609030001` coinciden local/remoto. El dry-run
+previo anunció solo la séptima migración; después del push autorizado no hay
+migraciones, seeds ni roles pendientes. `admin-accounts` y
+`change-temporary-password` están `ACTIVE` en versión 2, con `verify_jwt=true`
+y rechazo 401 sin token. El catálogo confirma las dos policies nuevas de
+lectura. La compilación desde una base vacía también aprobó sobre PostgreSQL 17.
+La evidencia sin secretos está en
+[`evidencia-preview-rc1-2026-09-04.md`](../docs/evidencia-preview-rc1-2026-09-04.md);
+la del 2026-09-02 se conserva como snapshot histórico.
 
 Los comandos siguientes se conservan como procedimiento reproducible para un
 ambiente nuevo y no se ejecutan sin autorización explícita:
@@ -118,8 +121,8 @@ SQL Editor vinculó los UUID de Auth con `public.profiles`: `admin` tiene rol
 Admin; Martin, Cesar, Kiara, Johann y Eduardo tienen rol Operario; únicamente
 Eduardo está marcado como Operario especial. La cuenta Burson sigue pendiente.
 
-La contraseña se define en Auth, no en SQL. Una vez desplegado el corte local,
-Admin gestiona las cuentas desde `/cuentas`: el alta genera una credencial
+La contraseña se define en Auth, no en SQL. El corte de cuentas ya está
+desplegado; Admin dispone de `/cuentas`: el alta genera una credencial
 temporal de un solo uso visual, y el usuario queda limitado a
 `/cambiar-clave` hasta reemplazarla. Los UUID y contraseñas no se documentan. En
 un ambiente nuevo deben obtenerse de sus propias cuentas Auth; no se reutilizan
@@ -167,14 +170,14 @@ El gate vigente comienza en la sección siguiente.
 
 ### Gate objetivo de los Cortes 1 a 6 (`202608280001` a `202608310001`)
 
-Las siete migraciones ya compilaron localmente; las seis primeras están
-aplicadas en staging. El arnés `npm run verify:supabase:local` ejecutó 51
+Las siete migraciones ya compilaron localmente y están aplicadas en staging.
+El arnés `npm run verify:supabase:local` ejecutó 51
 controles reales con GoTrue, PostgREST y JWT independientes en un proyecto
 desechable aislado. Junto con 20 pruebas Deno de configuración y compensaciones de Edge
 Functions, el recorrido local de 31 puntos quedó aprobado y revalidado el
 2026-09-04. Este
-resultado no sustituye el smoke autenticado de staging: la séptima migración
-todavía no está publicada allí. Los 51 controles son solo la salida del arnés:
+resultado no sustituye el smoke autenticado de staging, que sigue pendiente
+aunque el catálogo remoto ya coincida. Los 51 controles son solo la salida del arnés:
 su cantidad no equivale a puntos aprobados.
 Cada punto se registra solo con evidencia de códigos de error, RLS, carreras y
 estado final correspondiente:
@@ -306,10 +309,11 @@ de las Edge Functions, cubren la recuperación de usuarios Auth huérfanos y
 confirman los estados de compensación o recuperación fail-closed. El arnés
 rechaza además el lookup privilegiado falsificable
 descartado y prueba el cierre de jornadas por clave temporal, sesión revocada,
-perfil inactivo y Papelera. La séptima migración no está aplicada en staging;
-por ello el smoke autenticado de staging sigue siendo un gate distinto.
-La revisión final Claudex del cierre local terminó `APPROVED`, sin hallazgos
-críticos, altos ni medios; la evidencia canónica está en
+perfil inactivo y Papelera. La séptima migración ya está aplicada en staging;
+el smoke autenticado hospedado sigue siendo un gate distinto y pendiente.
+La revisión final Claudex terminó `APPROVED` para publicación controlada, sin
+regresiones críticas ni altas y con dos condiciones documentales corregidas
+antes del commit. No concedió el Go autenticado de RC1. La evidencia está en
 [`evidencia-cierre-local-2026-09-04.md`](../docs/evidencia-cierre-local-2026-09-04.md).
 
 Cada gate se registra solo después de ejecutarse contra la versión que declara.
