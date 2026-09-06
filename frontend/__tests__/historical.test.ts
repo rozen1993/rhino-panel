@@ -19,6 +19,7 @@ function activity(
     type: "Edición",
     title: `Actividad ${id}`,
     responsible: "Ana Torres",
+    place: "Lima",
     status: "Programada",
     origin: "operario",
     spans,

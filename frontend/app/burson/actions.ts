@@ -16,6 +16,7 @@ export type BursonRequestServerResult =
 
 function bursonErrorMessage(error: { code?: string }) {
   const messages: Record<string, string> = {
+    PGRST202: "Falta actualizar el servidor para guardar lugares por jornada. No se guardaron cambios.",
     SR002: "Tu cuenta no puede crear encargos Burson.",
     SR003: "Completa el encargo con datos y fechas válidas.",
     SR006:
@@ -57,7 +58,7 @@ export async function createSupabaseBursonRequestAction(
   const referenceLink = normalizedReferenceLink;
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc("create_burson_request_v1", {
+  const { data, error } = await supabase.rpc("create_burson_request_v2", {
     p_idempotency_key: idempotencyKey,
     p_type: fields.type,
     p_title: fields.title,

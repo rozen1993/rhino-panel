@@ -89,6 +89,21 @@ const activity = {
 } satisfies SimulatedActivity;
 
 describe("autoridad ejecutada dentro de Server Actions", () => {
+  it("transporta lugares por v2 y no reintenta en v1 cuando falta la migración", async () => {
+    mocks.currentRole.mockResolvedValue({ ...roles.admin, accountId: "00000000-0000-4000-8000-000000000013" });
+    const spans = [{ ...fields.spans[0], place: "Norte" }, { ...fields.spans[0], place: "Sur" }];
+    mocks.rpc.mockResolvedValue({ data: null, error: { code: "PGRST202" } });
+    const result = await planSupabaseActivityAction({ ...fields, spans }, requestId);
+    expect(result).toEqual({ ok: false, error: expect.stringContaining("Falta actualizar el servidor") });
+    expect(mocks.rpc).toHaveBeenCalledTimes(1);
+    expect(mocks.rpc).toHaveBeenCalledWith("plan_activity_v2", expect.objectContaining({ p_spans: spans }));
+    expect(mocks.getActivity).not.toHaveBeenCalled();
+    mocks.rpc.mockClear();
+    const replan = await replanSupabaseActivityAction(activityId, 1, { ...fields, spans });
+    expect(replan).toEqual({ ok: false, error: expect.stringContaining("Falta actualizar el servidor") });
+    expect(mocks.rpc).toHaveBeenCalledTimes(1);
+    expect(mocks.rpc).toHaveBeenCalledWith("replan_activity_v2", expect.objectContaining({ p_spans: spans }));
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.getActivity.mockResolvedValue(activity);
@@ -170,7 +185,7 @@ describe("autoridad ejecutada dentro de Server Actions", () => {
     expect(result.ok).toBe(true);
     const [, args] = mocks.rpc.mock.calls[0];
     expect(mocks.rpc).toHaveBeenCalledWith(
-      "create_own_activity_v1",
+      "create_own_activity_v2",
       expect.objectContaining({ p_idempotency_key: requestId }),
     );
     expect(args).not.toHaveProperty("p_responsible_id");
@@ -194,7 +209,7 @@ describe("autoridad ejecutada dentro de Server Actions", () => {
       (await replanSupabaseActivityAction(activityId, 1, fields)).ok,
     ).toBe(true);
     expect(mocks.rpc).toHaveBeenCalledWith(
-      "replan_activity_v1",
+      "replan_activity_v2",
       expect.objectContaining({
         p_activity_id: activityId,
         p_responsible_id: operatorId,
@@ -442,7 +457,7 @@ describe("autoridad ejecutada dentro de Server Actions", () => {
       requestId,
     );
     expect(result.ok).toBe(true);
-    expect(mocks.rpc).toHaveBeenCalledWith("create_burson_request_v1", {
+    expect(mocks.rpc).toHaveBeenCalledWith("create_burson_request_v2", {
       p_idempotency_key: requestId,
       p_type: fields.type,
       p_title: fields.title,
@@ -494,7 +509,7 @@ describe("autoridad ejecutada dentro de Server Actions", () => {
     );
     expect(result.ok).toBe(true);
     expect(mocks.rpc).toHaveBeenCalledWith(
-      "create_burson_request_v1",
+      "create_burson_request_v2",
       expect.objectContaining({
         p_reference_link: "https://burson.example/material%20de%20apoyo",
       }),

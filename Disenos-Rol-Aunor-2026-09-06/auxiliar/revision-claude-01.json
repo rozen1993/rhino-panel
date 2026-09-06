@@ -1,0 +1,137 @@
+{
+  "supuestos": [
+    "El paquete no fijaba criterios de aceptación numéricos (contraste mínimo, tolerancia de píxeles en header/sidebar), así que la fidelidad se juzgó por comparación visual directa contra las 3 referencias reales indicadas.",
+    "El inventario de escenas de referencia no se aportó, por lo que 'faltantes de inventario' se evalúa solo por continuidad narrativa observable entre las 8 escenas.",
+    "'12 meses legibles a resolución original' se acepta como declarado: el visor reduce 07-movil a 221 px de ancho y no permite juzgar su contraste, por lo que ese punto se declara no evaluado en vez de atribuirle defecto.",
+    "No se abrió ningún archivo del repositorio, CSS, HTML ni documentación: solo las 16 PNG y las 3 referencias enumeradas."
+  ],
+  "propuesta": "Revisión cruzada visual del candidato borrador-01 completada sobre 16/16 PNG vistos con Read, más 3 referencias reales. Resultado: la dirección visual es fiel en lo estructural (header 72, sidebar 218, paper/navy/cyan+lima, Bahnschrift+Segoe, eyebrows monoespaciados, subrayado cyan, botón lima primario, calendario de 12 meses con panel de detalle). Se detectan 2 hallazgos bloqueantes y 6 mejoras opcionales. Bloqueante 1: las vistas 07 (escritorio y móvil) arrastran el chrome del Histórico de Admin dentro del panel de Aunor — enlaces 'Elegir histórico' y 'Ver Edición' y rótulo 'Archivo operativo' —, que no pertenecen a la nav declarada Mi panel/Lo acordado/Mensajes y duplican el selector de categoría ya presente. Bloqueante 2: el badge 'Entregada' sobre el hero oscuro en 02 y 03 (4 archivos) se pinta verde oscuro sobre navy y resulta ilegible en móvil, desviándose de cómo la referencia admin-actividad-desktop resuelve ese mismo badge. Mejoras: paleta ampliada con ámbar y violeta sin respaldo en referencias y con codificación cromática incoherente dentro de una misma tarjeta; casillas marcadas en la lista de servicios que se leen como cumplimiento; botones 'Abrir hilo' estirados al alto de fila en 08 escritorio; eyebrow que mezcla categoría y estado de relación entre 01 y 08; nomenclatura de la barra inferior Admin desalineada con la app real; y un nombre de organismo real dentro de una maqueta declarada ficticia. Los requisitos de contrato verificables visualmente se cumplen: nav de tres ítems, calendario como vista alternativa dentro de Mi panel, mensajes por actividad, confirmación fuera del chat con panel derecho en escritorio y previa al chat en móvil, atribución sin persona, ausencia de botón de pedir trabajos y de cantidades/vigencias/equivalencias/pagos, Admin con su navegación intacta, solicitante declarado separado del registrador Admin, y original+sustituto+motivo+evidencia+confirmación presentados juntos. Único hueco de inventario: no hay escenas de estado vacío.",
+  "alternativas": [
+    "Haber juzgado la fidelidad a partir del CSS/HTML de las maquetas en lugar de las imágenes: descartado por instrucción explícita y porque contradice la lección ya registrada de que la referencia es la imagen aprobada, no una fuente equivalente.",
+    "Haber delegado el volumen de lectura a Codex: descartado porque el encargo exige ver cada PNG directamente y una revisión visual delegada no sería atribuible.",
+    "Haber clasificado la paleta ampliada (ámbar/violeta) como bloqueante en vez de mejora: se dejó como mejora porque no hay referencia real de los estados 'En proceso' y 'Programada' contra la que declarar la desviación con certeza."
+  ],
+  "riesgos": [
+    "La legibilidad de 07-movil (12 meses apilados) no pudo comprobarse: el visor reduce la imagen a 221 px de ancho. Si el contraste de los números de día fuese bajo a resolución original, sería un hallazgo adicional no recogido aquí.",
+    "La clasificación de B1 como bloqueante asume que 'Elegir histórico' y 'Ver Edición' no forman parte del alcance aprobado para Aunor; si esos accesos estuvieran previstos, el hallazgo baja a inconsistencia de lenguaje.",
+    "'OSITRAN' podría ser el nombre literal de un servicio del contrato real y no una invención; en ese caso el hallazgo M6 se anula.",
+    "Sin el inventario de escenas de referencia, la ausencia de estados vacíos podría ser una omisión deliberada y no un faltante."
+  ],
+  "verificacion": [
+    "Abrir 02-entrega-pendiente-movil.png y 03-entrega-confirmada-movil.png a resolución original y medir el contraste del texto 'Entregada' contra el fondo del hero navy.",
+    "Abrir 07-calendario-escritorio.png y localizar la franja 'Elegir histórico / Ver Edición / ARCHIVO OPERATIVO' sobre el título 'Histórico 2026'.",
+    "Comparar el eyebrow de GR-025 entre 08-mensajes-escritorio.png ('GR-025 · POR RELACIONAR') y 01-panel-actividades-escritorio.png ('GRABACIÓN · GR-025' con chip aparte).",
+    "Comparar la barra inferior de 06-admin-respuesta-reemplazo-movil.png con la de Revision-Visual-2026-09-05/admin-actividad-mobile.png ('Panel'/'Bajas' frente a 'Mi panel'/'Papelera').",
+    "Abrir 07-calendario-movil.png a resolución original para resolver el punto de contraste que aquí queda no evaluado."
+  ],
+  "confianza": {
+    "nivel": "alta",
+    "motivo": "Las 16 imágenes y las 3 referencias se abrieron y observaron directamente, sin sustituir ninguna por código ni por descripción. Los dos hallazgos bloqueantes son visibles sin ambigüedad en las capturas. La confianza no es total únicamente por el punto de contraste de 07-movil, que el downscale del visor impide juzgar y que se declara explícitamente como no evaluado."
+  },
+  "input_class": "not-applicable",
+  "pipeline": "core",
+  "gates": [
+    {
+      "name": "Completitud 16/16 vistas con Read",
+      "status": "passed",
+      "evidence": "Las 16 PNG de Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-01/ se abrieron y renderizaron como imagen; ninguna falló ni se sustituyó por otra fuente."
+    },
+    {
+      "name": "Referencias reales consultadas (3/3)",
+      "status": "passed",
+      "evidence": "admin-actividad-desktop.png, admin-actividad-mobile.png y verificacion-final/grabacion-1366.png abiertas antes de revisar las candidatas."
+    },
+    {
+      "name": "Solo lectura, sin escritura dentro ni fuera del repo",
+      "status": "passed",
+      "evidence": "Únicas herramientas usadas: Read (19 llamadas). No se creó plan file ni ningún otro archivo, conforme a la instrucción explícita del encargo."
+    },
+    {
+      "name": "Fidelidad estructural al contrato visual (header 72 / sidebar 218 / paper-navy-cyan-lima / Bahnschrift+Segoe / calendario 12 meses)",
+      "status": "passed",
+      "evidence": "Medido sobre las capturas escaladas: franja de header ~70px y borde de sidebar ~213-218px equivalentes; tipografía, eyebrows, subrayado cyan y botonera coinciden con las referencias."
+    },
+    {
+      "name": "Contraste de badges de estado",
+      "status": "failed",
+      "evidence": "'• Entregada' sobre el hero navy en 02 y 03 (escritorio y móvil) usa verde oscuro sobre fondo oscuro; la referencia resuelve el mismo badge con relleno claro."
+    },
+    {
+      "name": "Coherencia de navegación del rol Aunor",
+      "status": "failed",
+      "evidence": "07 escritorio y móvil muestran 'Elegir histórico', 'Ver Edición' y 'ARCHIVO OPERATIVO', ajenos a la nav Mi panel / Lo acordado / Mensajes."
+    },
+    {
+      "name": "Ausencias requeridas (pedir trabajos, cantidades, vigencia, equivalencias, pagos, Burson/interno/auditoría/papelera en vistas Aunor)",
+      "status": "passed",
+      "evidence": "Ninguna de las 16 vistas incorpora esos elementos; 02-06 incluyen avisos explícitos de negación y 06 conserva la navegación Admin por ser vista Admin."
+    },
+    {
+      "name": "Separación solicitante declarado vs registrador Admin",
+      "status": "passed",
+      "evidence": "05 escritorio y móvil: 'Solicitante declarado: Ejecutivo de Aunor, según lo informado por Admin' y 'Registrado por: Admin · Rhino'; 06 replica ambos campos."
+    },
+    {
+      "name": "Inventario de escenas sin huecos",
+      "status": "failed",
+      "evidence": "No existen escenas de estado vacío (panel sin actividades, Mensajes sin hilos) en el conjunto de 8 escenas."
+    },
+    {
+      "name": "Auditoría de aplicación / implementación",
+      "status": "not-applicable",
+      "evidence": "Excluidas por el encargo: revisión exclusivamente visual sobre PNG."
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-01/ (16 PNG)",
+      "purpose": "Candidato borrador-01 sometido a revisión cruzada visual",
+      "status": "reviewed"
+    },
+    {
+      "path": "C:/Users/MARCO/Desktop/Sistema_R/Revision-Visual-2026-09-05/admin-actividad-desktop.png",
+      "purpose": "Referencia real de header, sidebar, hero, badge de estado y botonera",
+      "status": "reviewed"
+    },
+    {
+      "path": "C:/Users/MARCO/Desktop/Sistema_R/Revision-Visual-2026-09-05/admin-actividad-mobile.png",
+      "purpose": "Referencia real de adaptación móvil y barra inferior de navegación Admin",
+      "status": "reviewed"
+    },
+    {
+      "path": "C:/Users/MARCO/Desktop/Sistema_R/Implementacion-Historico-C-2026-09-05/verificacion-final/grabacion-1366.png",
+      "purpose": "Referencia real del calendario anual de 12 meses con panel de detalle",
+      "status": "reviewed"
+    }
+  ],
+  "deviations": [
+    {
+      "category": "accessibility",
+      "before": "Referencia admin-actividad-desktop.png: badge '• Entregada' sobre el hero navy con relleno claro y texto oscuro, legible.",
+      "after": "Candidato 02 y 03 (escritorio y móvil): mismo badge en la misma posición con verde oscuro sobre navy; en móvil el texto casi desaparece.",
+      "reason": "Cambio de tratamiento del badge al colocarlo sobre fondo oscuro, sin invertir el relleno como hace la referencia.",
+      "impact": "El estado de la actividad deja de leerse en la cabecera, que es donde el usuario lo busca primero; afecta a 4 de los 16 archivos."
+    },
+    {
+      "category": "defect",
+      "before": "Nav declarada para el rol Aunor: Mi panel / Lo acordado / Mensajes, con el calendario como vista alternativa dentro de Mi panel.",
+      "after": "07 escritorio y móvil muestran sobre el calendario los enlaces 'Elegir histórico' y 'Ver Edición' y el rótulo 'ARCHIVO OPERATIVO · Histórico 2026'.",
+      "reason": "Reutilización literal del chrome del Histórico de Admin al portar la retícula de 12 meses al panel de Aunor.",
+      "impact": "Ofrece al cliente rutas fuera de su navegación y duplica el selector de categoría 'Grabación ⌄' ya presente, con etiquetas contradictorias."
+    },
+    {
+      "category": "other",
+      "before": "Paleta de contrato: navy, paper, cyan y lima.",
+      "after": "01 escritorio y móvil añaden ámbar ('En proceso') y violeta ('Programada'); en la tarjeta 'Visita técnica de campo' la barra superior es cyan mientras el badge es violeta.",
+      "reason": "Necesidad de distinguir tres estados sin referencia real disponible para dos de ellos.",
+      "impact": "Amplía la paleta sin respaldo y rompe la coherencia cromática dentro de una misma tarjeta."
+    },
+    {
+      "category": "defect",
+      "before": "08-mensajes-movil.png: botones 'Abrir hilo →' con altura propia de botón.",
+      "after": "08-mensajes-escritorio.png: los tres botones se estiran al alto de su fila, entre ~120 y ~150 px.",
+      "reason": "El botón hereda la altura del contenedor de fila en el layout de escritorio.",
+      "impact": "Los botones se leen como cajas y desequilibran la columna derecha de la lista."
+    }
+  ]
+}

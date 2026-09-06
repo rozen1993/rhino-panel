@@ -3,6 +3,7 @@ import { useCallback, useMemo, useSyncExternalStore } from "react";
 import type { InternalStatus } from "@/components/status-pill";
 import {
   firstDate,
+  normalizeSpans,
   lastDate,
   type Activity,
   type DateSpan,
@@ -387,7 +388,7 @@ function planningFingerprint(
     title: fields.title.trim(),
     description: fields.description.trim(),
     place: fields.placeName.trim(),
-    spans: fields.spans.map(({ start, end }) => ({ start, end })),
+    spans: normalizeSpans(fields.spans),
   });
 }
 
@@ -400,7 +401,7 @@ function bursonPlanningFingerprint(
     title: fields.title.trim(),
     description: fields.description.trim(),
     place: fields.placeName.trim(),
-    spans: fields.spans.map(({ start, end }) => ({ start, end })),
+    spans: normalizeSpans(fields.spans),
     referenceLink,
   });
 }
@@ -484,7 +485,7 @@ export function planActivity(
     responsibleAccountId: responsible.id,
     status: "Programada",
     origin: "operario",
-    spans: fields.spans,
+    spans: normalizeSpans(fields.spans),
     description: fields.description.trim(),
     place: fields.placeName.trim(),
     materialLink: "",
@@ -546,7 +547,7 @@ export function createOwnActivity(
     responsibleAccountId: actor.accountId,
     status: "Programada",
     origin: "operario",
-    spans: fields.spans,
+    spans: normalizeSpans(fields.spans),
     description: fields.description.trim(),
     place: fields.placeName.trim(),
     materialLink: "",
@@ -632,7 +633,7 @@ export function createBursonActivity(
     responsibleAccountId: special.id,
     status: "Programada",
     origin: "burson",
-    spans: fields.spans,
+    spans: normalizeSpans(fields.spans),
     description: fields.description.trim(),
     place: fields.placeName.trim(),
     materialLink: "",
@@ -691,7 +692,7 @@ export function replanActivity(
       type: fields.type,
       title: fields.title.trim(),
       description: fields.description.trim(),
-      spans: fields.spans,
+      spans: normalizeSpans(fields.spans),
       place: fields.placeName.trim(),
       responsible: responsible.name,
       responsibleAccountId: responsible.id,

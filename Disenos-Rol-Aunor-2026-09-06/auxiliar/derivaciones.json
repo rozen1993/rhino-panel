@@ -1,0 +1,188 @@
+{
+  "codex": {
+    "supuestos": "Solo PNG ficticios, cuenta compartida Aunor; diseño aprobado inmutable.",
+    "propuesta": "Panel con calendario anual y detalle, 4x3 escritorio y una columna móvil. Navegación Mi panel, Lo acordado, Mensajes; bandeja de hilos anclados a actividad. Detalle: resumen, entrega, conversación. Entrega y confirmación rotuladas separadas. Confirmación en escena previa (actividad/material, atribución cuenta Aunor, botón final) y posterior (Aunor/fecha). Lo acordado lista2.2, originales/sustitutos/evidencia/motivo y Por relacionar. Admin en flujo actual con conversación externa y formulario llamado/reemplazo, solicitante declarado separado del registrador. No identidad personal en confirmación.",
+    "alternativas": "Dos columnas meses móvil ahorran altura pero menos legible; una columna preferible. Separar escenas en móvil.",
+    "riesgos": "Publicación vs relación, color ejecución vs confirmación, comentarios vs aceptación, original no oculto.",
+    "verificacion": "Todas escenas desktop/móvil, contenidos completos/exclusiones, no overflow, original+sustituto, no cifras cumplimiento.",
+    "confianza": "alta conceptual; legibilidad pendiente de PNG."
+  },
+  "claude": {
+    "supuestos": [
+      "El paquete pide SOLO recomendación de composición para maquetas offline PNG; no ejecuta la generación de los PNG ni toca código de aplicación.",
+      "El lanzador prohíbe escribir archivos y guardar planes, incluso el archivo de plan del modo planificación; por tanto no se ha escrito nada en disco ni dentro ni fuera del repo.",
+      "La dirección visual está cerrada y se toma literalmente de las tres capturas indicadas (admin-actividad-desktop/mobile y grabacion-1366), no de maquetas equivalentes ni del CSS extraído por sí solo.",
+      "El paquete no fija el número de escenas ni el inventario de PNG; se deriva un set mínimo de 5 escenas x 2 anchos que cubre todos los contenidos exigidos (panel, detalle/entrega+conversación, Lo acordado/relacionados/Por relacionar, Admin responde/registra reemplazo).",
+      "El paquete no fija los ítems de navegación del rol Aunor; se propone un mínimo de 4 sin inventar módulos nuevos.",
+      "'Lo acordado' se interpreta como catálogo de líneas de servicio de la cláusula 2.2 sin cantidades, vigencia ni equivalencias, por prohibición explícita.",
+      "No se ha auditado con Codex ni se ha adjuntado la imagen aprobada a un encargo porque esta unidad no emite un encargo de ejecución; esos dos pasos siguen siendo obligatorios antes de generar los PNG."
+    ],
+    "propuesta": "Partir el detalle de actividad Aunor en dos columnas con roles opuestos sobre el esqueleto ya aprobado (cabecera navy 72px, sidebar 218px, fondo paper, tarjetas blancas): la columna izquierda relata en solo lectura (jornadas, lugares, entrega, conversación con Admin, original+sustituto, evidencia, llamada registrada) y el raíl derecho de ~320px —el que hoy ocupa 'Material y estado'— se convierte en el bloque 'Confirmación', única superficie accionable del rol. La confirmación queda fuera del hilo de mensajes y se resuelve en tres pasos verticales: qué se confirma (entrega o reemplazo, nunca pago), campo 'Confirma en nombre de Aunor: ____', y botón lima; el resultado se sella como registro, no como aprobación: 'Confirmado · cuenta compartida Aunor · declarado: A. Ruiz', replicando el patrón solicitante declarado vs Admin registrador de la llamada. 'Lo acordado' se ubica como sección de primer nivel en el sidebar (catálogo de servicios 2.2 con actividades relacionadas colgando y 'Por relacionar' como último grupo, sin ningún contador), no como pestaña del detalle, y el detalle solo la referencia con una línea discreta. Los mensajes quedan anclados a la actividad con un punto cyan de no leídos en la tarjeta del panel, sin bandeja global. En móvil, bottom-nav de 4 (Actividades · Lo acordado · Calendario · Mensajes), apilado fijo con la conversación colapsada a los 2 últimos mensajes, y el bloque de confirmación fijado como barra sticky sobre el bottom-nav para que el acto decisivo no quede sepultado bajo la escena más larga. Set mínimo: 5 escenas x 2 anchos = 10 PNG.",
+    "alternativas": [
+      "Pestañas dentro del detalle (Entrega / Mensajes / Acuerdos): ahorra alto en móvil, pero esconde la confirmación tras un tab y diluye justo la separación ejecución-confirmación que hay que preservar.",
+      "Confirmar desde la tarjeta del panel sin abrir el detalle: más rápido, pero permite confirmar sin haber visto la evidencia ni el motivo de no realizado.",
+      "Timeline única que fusione mensajes, llamadas registradas y confirmaciones en un solo flujo cronológico: narra mejor la relación con el cliente, pero mezcla los tres registros que Marco pidió separados.",
+      "Bandeja de mensajes global como sección propia: útil si el volumen crece, pero inventa un modelo de enrutado no decidido y duplica el hilo que ya vive en la actividad.",
+      "'Lo acordado' como pestaña del detalle de actividad: acerca el contexto contractual a la actividad, pero deja 'Por relacionar' sin domicilio, porque por definición no pertenece a ninguna actividad relacionada."
+    ],
+    "riesgos": [
+      "La escena 3 (original + sustituto + motivo + evidencia + confirmación + llamada) es la que puede desbordar el móvil; si crece, hay que colapsar la evidencia antes que la conversación.",
+      "El sello de confirmación puede leerse como firma autenticada de un individuo; solo el copy 'cuenta compartida · declarado' impide esa lectura, y es frágil ante cualquier reescritura posterior del texto.",
+      "Cualquier contador junto a una línea de servicio en 'Lo acordado' se leería como cuota o cálculo de cumplimiento, ambos prohibidos; el riesgo reaparece cada vez que alguien quiera 'dar contexto' con un número.",
+      "Un raíl derecho vacío cuando no hay nada que confirmar deja un hueco visual que invita a rellenarlo con controles no autorizados; necesita estado explícito 'Nada pendiente de confirmación'.",
+      "Deriva visual acumulada: si las diez piezas se generan en tandas y cada una toma como referencia la anterior, el resultado se aleja de las tres capturas aprobadas sin que se note de golpe.",
+      "El sidebar Aunor de 4 ítems puede tentar a añadir entradas (papelera, cuentas, informes) que el rol tiene prohibidas."
+    ],
+    "verificacion": [
+      "Comparar cada PNG contra las TRES capturas originales (admin-actividad-desktop.png, admin-actividad-mobile.png, grabacion-1366.png), nunca contra la entrega anterior de la propia tanda.",
+      "Medir contra la referencia: cabecera navy 72px, sidebar 218px, píldoras de estado rellenas (no contorneadas), acentos cyan/lima, fondo paper, tarjetas blancas, tipografías Bahnschrift/Segoe.",
+      "Checklist de exclusión aplicado pantalla por pantalla: sin Burson, sin Cuentas, sin Papelera, sin opinión del operario, sin trazabilidad/auditoría, sin importes ni saldos, sin contadores de cumplimiento, sin botón de pedir trabajo.",
+      "Verificar que los nombres de servicio son literales de la cláusula 2.2 y que no aparece ninguna cantidad, vigencia ni equivalencia contractual inventada.",
+      "Verificar en las dos escenas de confirmación que el sello incluye 'cuenta compartida' y el nombre declarado, y que ninguna confirmación ocurre dentro del hilo de mensajes.",
+      "Verificar que la llamada registrada distingue visualmente solicitante declarado de Admin registrador.",
+      "Comprobar que original y sustituto aparecen juntos, y que motivo de no realizado, evidencia y confirmación están en bloques separados.",
+      "Recorrer el PNG móvil de la escena 3 a tamaño real (390px) confirmando que el bloque de confirmación permanece visible sin scroll adicional."
+    ],
+    "confianza": {
+      "nivel": "media",
+      "motivo": "La dirección visual y los permisos están cerrados y verificados contra las tres capturas reales, y la separación por columnas reutiliza un patrón ya aprobado, lo que da alta confianza en la parte de composición de escritorio. Baja a media por dos motivos: el comportamiento del apilado móvil en la escena más densa (original+sustituto+evidencia+confirmación) no se puede validar sin renderizar, y el tratamiento visual de la confirmación en cuenta compartida es una derivación mía del patrón de la llamada registrada, no algo que Marco haya decidido literalmente; conviene que él lo confirme antes de fijarlo en las diez piezas."
+    },
+    "pipeline": "core",
+    "input_class": "not-applicable",
+    "artifacts": [
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/png/01-panel-actividades-escritorio.png",
+        "purpose": "Panel Aunor con jornadas, lugares, estados y no leídos; incluye fila de trabajo no realizado y fila pendiente de confirmación.",
+        "status": "planned"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/png/01-panel-actividades-movil.png",
+        "purpose": "Misma escena a 390px con bottom-nav de 4 ítems.",
+        "status": "planned"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/png/02-detalle-entrega-conversacion-escritorio.png",
+        "purpose": "Detalle con entrega pendiente, conversación externa (comentario y respuesta) y raíl derecho de confirmación explícita.",
+        "status": "planned"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/png/02-detalle-entrega-conversacion-movil.png",
+        "purpose": "Misma escena apilada con conversación colapsada y confirmación sticky.",
+        "status": "planned"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/png/03-detalle-sustituto-evidencia-escritorio.png",
+        "purpose": "Original y sustituto juntos, motivo de no realizado, evidencia, confirmación sellada y llamada registrada.",
+        "status": "planned"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/png/03-detalle-sustituto-evidencia-movil.png",
+        "purpose": "Escena más densa a 390px; prueba de saturación del apilado.",
+        "status": "planned"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/png/04-lo-acordado-escritorio.png",
+        "purpose": "Catálogo de servicios 2.2 con relacionados y 'Por relacionar', sin contadores.",
+        "status": "planned"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/png/04-lo-acordado-movil.png",
+        "purpose": "Misma sección a 390px.",
+        "status": "planned"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/png/05-admin-responde-reemplazo-escritorio.png",
+        "purpose": "Vista Admin respondiendo al cliente y registrando el reemplazo acordado.",
+        "status": "planned"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/png/05-admin-responde-reemplazo-movil.png",
+        "purpose": "Misma escena a 390px.",
+        "status": "planned"
+      },
+      {
+        "path": "Revision-Visual-2026-09-05/admin-actividad-desktop.png",
+        "purpose": "Referencia visual aprobada de escritorio; leída para extraer el esqueleto de dos columnas y el raíl de acciones.",
+        "status": "reviewed"
+      },
+      {
+        "path": "Revision-Visual-2026-09-05/admin-actividad-mobile.png",
+        "purpose": "Referencia visual aprobada de móvil; leída para extraer el orden de apilado y el bottom-nav.",
+        "status": "reviewed"
+      },
+      {
+        "path": "Implementacion-Historico-C-2026-09-05/verificacion-final/grabacion-1366.png",
+        "purpose": "Referencia del calendario anual de 12 meses y del panel de detalle lateral.",
+        "status": "reviewed"
+      },
+      {
+        "path": "docs/aprobacion-historico-y-alcance-aunor-2026-09-05.md",
+        "purpose": "Fuente de los límites del rol Aunor y de la regla de que registrar el relato no equivale a aprobación documentada.",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/LEEME.md",
+        "purpose": "Confirma decisiones cerradas y que la carpeta es solo de maquetas offline.",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/estilos-aprobados.css",
+        "purpose": "Hoja de estilos aprobada ya extraída, reutilizable para renderizar las diez piezas sin reinventar tokens.",
+        "status": "reviewed"
+      }
+    ],
+    "gates": [
+      {
+        "name": "Comparación contra las tres capturas aprobadas",
+        "status": "not-run",
+        "evidence": "Requiere los PNG generados; esta unidad es de solo lectura y no los produce."
+      },
+      {
+        "name": "Checklist de exclusión de contenido prohibido (Burson, Cuentas, Papelera, opinión del operario, auditoría, importes, cuotas, botón pedir trabajo)",
+        "status": "not-run",
+        "evidence": "Definido en la sección de verificación; se aplica pantalla por pantalla cuando existan las piezas."
+      },
+      {
+        "name": "Literalidad de los nombres de servicio de la cláusula 2.2",
+        "status": "not-run",
+        "evidence": "Lista confirmada en el paquete y presente en activity-simulation.ts y docs/encargos; falta contrastarla contra las piezas."
+      },
+      {
+        "name": "Prueba de saturación móvil a 390px en la escena 3",
+        "status": "not-run",
+        "evidence": "Es el riesgo principal de composición; solo verificable con render."
+      },
+      {
+        "name": "Auditoría OCRAV del encargo por Codex antes de ejecutar la generación",
+        "status": "not-run",
+        "evidence": "Paso obligatorio del estándar de Marco; esta unidad no emite el encargo de ejecución, así que la doble pasada sigue pendiente."
+      },
+      {
+        "name": "npm run verify",
+        "status": "not-applicable",
+        "evidence": "El trabajo son maquetas offline; no se toca código de la aplicación."
+      }
+    ],
+    "deviations": [
+      {
+        "category": "other",
+        "before": "El modo planificación indica escribir el plan en C:/Users/MARCO/.claude/plans/claudex-pipeline-core-si-el-misty-finch.md.",
+        "after": "No se ha escrito ningún archivo; la recomendación se devuelve solo por la respuesta estructurada.",
+        "reason": "El lanzador prohíbe explícitamente guardar planes y escribir archivos, dentro y fuera del repo. La intersección de ambas restricciones es no escribir nada.",
+        "impact": "La recomendación no queda persistida en disco. Si debe sobrevivir a la sesión, hay que autorizar expresamente su volcado a Disenos-Rol-Aunor-2026-09-06/."
+      },
+      {
+        "category": "other",
+        "before": "El paquete pide contrastar tres decisiones abiertas de composición.",
+        "after": "Se añaden dos decisiones de composición no listadas: ubicación de los mensajes (anclados a la actividad, sin bandeja global) y ausencia total de contadores en 'Lo acordado'.",
+        "reason": "Ambas son consecuencia directa de las prohibiciones cerradas (no inventar enrutado ni cálculos de cumplimiento) y no pueden dejarse sin resolver para maquetar.",
+        "impact": "Son recomendaciones, no decisiones tomadas; conviene que Marco las confirme o las descarte antes de fijar las diez piezas."
+      }
+    ]
+  },
+  "evidence": {
+    "claudeSession": "b6ebcedf-43c0-49e3-a432-99a5249891fd",
+    "terminal_reason": "completed",
+    "note": "Salida completa recuperada del diario local tras truncamiento de la herramienta; no es una nueva derivación."
+  }
+}

@@ -20,6 +20,7 @@ function activity(
     type,
     title,
     responsible: "Ana Torres",
+    place: "Lima",
     status: "Entregada",
     origin: "operario",
     spans: [{ start: "2026-08-01", end: "2026-08-01" }],
@@ -75,6 +76,23 @@ function changeMobile(matches: boolean) {
 }
 
 describe("calendario anual compartido", () => {
+  it("filtra antes de contar y distingue actividades homónimas sin duplicar jornadas", () => {
+    setMobile(false);
+    const first = { ...activity("id-uno", "Mismo título", "Grabación"), spans: [{ start: "2026-08-01", end: "2026-08-01", place: "Norte" }, { start: "2026-08-01", end: "2026-08-01", place: "Sur" }] };
+    render(<AnnualCalendar dataSource="supabase" category="Grabación" year={2026} today="2026-08-31" initialActivities={[first, activity("id-dos", "Mismo título", "Grabación"), activity("id-edicion", "Otra categoría", "Edición")]} />);
+    expect(screen.getByText("Archivo operativo · 2 registros")).toBeTruthy();
+    expect(screen.queryByText("Otra categoría")).toBeNull();
+    const day = screen.getByRole("button", { name: /1 de agosto: Grabación/ });
+    expect(day.textContent).toBe("12");
+    fireEvent.click(day);
+    const choices = screen.getByRole("region", { name: "Actividades de esta fecha" });
+    expect(within(choices).getAllByRole("button")).toHaveLength(2);
+    expect(within(choices).getByRole("button", { name: /ID: id-uno/ }).textContent).toContain("Norte · Sur");
+    fireEvent.click(within(choices).getByRole("button", { name: /ID: id-dos/ }));
+    expect(within(choices).getByRole("button", { name: /ID: id-dos/ }).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.getByRole("link", { name: "Año siguiente" }).getAttribute("href")).toContain("tipo=grabacion");
+    expect(screen.getByRole("heading", { name: "DICIEMBRE" })).toBeTruthy();
+  });
   beforeEach(() => {
     setMobile();
     document.body.style.overflow = "";
@@ -170,7 +188,7 @@ describe("calendario anual compartido", () => {
 
     fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
     const secondChoice = within(dialog).getByRole("button", {
-      name: "Locución · Actividad B",
+      name: /Locución · Actividad B/,
     });
     expect(document.activeElement).toBe(secondChoice);
     fireEvent.keyDown(document, { key: "Tab" });

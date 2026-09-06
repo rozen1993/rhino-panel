@@ -29,13 +29,14 @@ type HistoricalActivityRow = Pick<
   | "status"
   | "origin"
   | "description"
+  | "place"
   | "material_link"
   | "operator_opinion"
 >;
 
 type HistoricalSpanRow = Pick<
   Database["public"]["Tables"]["activity_date_spans"]["Row"],
-  "id" | "activity_id" | "position" | "start_date" | "end_date"
+  "id" | "activity_id" | "position" | "start_date" | "end_date" | "place"
 >;
 
 type HistoricalVersionRow = Pick<HistoricalActivityRow, "id" | "version">;
@@ -55,7 +56,7 @@ async function locateCandidateIds(
   for (;;) {
     const { data, error } = await supabase
       .from("activity_date_spans")
-      .select("id, activity_id, position, start_date, end_date")
+      .select("id, activity_id, position, start_date, end_date, place")
       .lte("start_date", bounds.end)
       .gte("end_date", bounds.start)
       .gt("id", cursor)
@@ -89,7 +90,7 @@ async function fetchHistoricalActivityRows(
         let query = supabase
           .from("activities")
           .select(
-            "id, version, type, title, responsible_name, status, origin, description, material_link, operator_opinion",
+            "id, version, type, title, responsible_name, status, origin, description, place, material_link, operator_opinion",
           )
           .in("id", ids)
           .is("deleted_at", null);
@@ -132,7 +133,7 @@ async function fetchHistoricalSpans(
       for (;;) {
         const { data, error } = await supabase
           .from("activity_date_spans")
-          .select("id, activity_id, position, start_date, end_date")
+          .select("id, activity_id, position, start_date, end_date, place")
           .in("activity_id", ids)
           .gt("id", cursor)
           .order("id", { ascending: true })
@@ -225,7 +226,7 @@ function buildHistoricalActivities(
           (left, right) =>
             left.position - right.position || left.id - right.id,
         )
-        .map((span) => ({ start: span.start_date, end: span.end_date }));
+        .map((span) => ({ start: span.start_date, end: span.end_date, place: span.place }));
       return {
         id: row.id,
         type: row.type,
@@ -235,6 +236,7 @@ function buildHistoricalActivities(
         origin: row.origin,
         spans,
         description: row.description,
+        place: row.place,
         materialLink: row.material_link,
         operatorOpinion: row.operator_opinion,
       };

@@ -1,0 +1,775 @@
+{
+  "date": "2026-09-05",
+  "scope": "Read-only local demo visual review; no business mutations",
+  "initial": [
+    {
+      "file": "admin-panel-vacio-desktop.png",
+      "user": "admin",
+      "screen": "panel-vacio",
+      "mode": "desktop",
+      "url": "http://localhost:3000/actividades",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Todas las actividades",
+        "Actividad reciente"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\nTodas las actividades\n\nVista integral del trabajo audiovisual\n\nVer Papelera\nPlanificar actividad\n\nPERIODO OPERATIVO\n\nConsulta el año actual o actividades planificadas a futuro.\n\nAño de actividades\n2026\n‹\nJUN\n0\nJUL\n0\nAGO\n0\nSEP 2026\n0\nOCT\n1\nNOV\n1\n›\n0\nactividades\nActividad visible\n0\nprogramadas\nPor iniciar\n0\nen proceso\nTrabajo activo\n0\nentregadas\nCon material\nActividad reciente\n\n0 de 0 actividades visibles\n\nBuscar actividad\nFiltrar por estado\nTodos los estados\nProgramada\nEn proceso\nEntregada\n\nNo hay actividades que coincidan con la búsqueda.\n\nSelecciona una actividad para ver su detalle.",
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000
+    },
+    {
+      "file": "admin-panel-vacio-mobile.png",
+      "user": "admin",
+      "screen": "panel-vacio",
+      "mode": "mobile",
+      "url": "http://localhost:3000/actividades",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Todas las actividades",
+        "Actividad reciente"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\nTodas las actividades\n\nVista integral del trabajo audiovisual\n\nVer Papelera\nPlanificar actividad\n\nPERIODO OPERATIVO\n\nConsulta el año actual o actividades planificadas a futuro.\n\nAño de actividades\n2026\n‹\nAGO\n0\nSEP 2026\n0\nOCT\n1\n›\n0\nactividades\nActividad visible\n0\nprogramadas\nPor iniciar\n0\nen proceso\nTrabajo activo\n0\nentregadas\nCon material\nActividad reciente\n\n0 de 0 actividades visibles\n\nBuscar actividad\nFiltrar por estado\nTodos los estados\nProgramada\nEn proceso\nEntregada\n\nNo hay actividades que coincidan con la búsqueda.\n\nPanel\nBurson\nCuentas\nHistórico\nBajas",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 959
+    },
+    {
+      "file": "admin-planificar-desktop.png",
+      "user": "admin",
+      "screen": "planificar",
+      "mode": "desktop",
+      "url": "http://localhost:3000/actividades/nueva",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Planificar actividad",
+        "Planificar actividad",
+        "Jornadas de la actividad"
+      ],
+      "text": "Saltar al contenido\n←\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\n\nPLANIFICACIÓN\n\nPlanificar actividad\n\nActividad, responsable y jornadas en una sola ficha.\n\nCONTROL ADMIN\n\nPLANIFICACIÓN AUDIOVISUAL\n\nPlanificar actividad\n\nDefine el trabajo, sus jornadas y la persona responsable.\n\nOperario responsable\nAna Torres\nCarlos Vega\nLuis Mendoza · Operario especial\nActividad o proyecto\nTipo de servicio\nGrabación\nEdición\nCreatividad\nLocución\nLugar o referencia\nDescripción\nJornadas de la actividad\n\nAdmite fechas continuas o periodos separados desde el 1 de enero de 2026.\n\n＋ Añadir jornada\nINICIO\nFIN\n×\nPlanificar y asignar",
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000
+    },
+    {
+      "file": "admin-planificar-mobile.png",
+      "user": "admin",
+      "screen": "planificar",
+      "mode": "mobile",
+      "url": "http://localhost:3000/actividades/nueva",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Planificar actividad",
+        "Planificar actividad",
+        "Jornadas de la actividad"
+      ],
+      "text": "Saltar al contenido\n←\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\n\nPLANIFICACIÓN\n\nPlanificar actividad\n\nActividad, responsable y jornadas en una sola ficha.\n\nCONTROL ADMIN\n\nPLANIFICACIÓN AUDIOVISUAL\n\nPlanificar actividad\n\nDefine el trabajo, sus jornadas y la persona responsable.\n\nOperario responsable\nAna Torres\nCarlos Vega\nLuis Mendoza · Operario especial\nActividad o proyecto\nTipo de servicio\nGrabación\nEdición\nCreatividad\nLocución\nLugar o referencia\nDescripción\nJornadas de la actividad\n\nAdmite fechas continuas o periodos separados desde el 1 de enero de 2026.\n\n＋ Añadir jornada\nINICIO\nFIN\n×\nPlanificar y asignar\nPanel\nBurson\nCuentas\nHistórico\nBajas",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 1115
+    },
+    {
+      "file": "admin-cuentas-desktop.png",
+      "user": "admin",
+      "screen": "cuentas",
+      "mode": "desktop",
+      "url": "http://localhost:3000/cuentas",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Gestión de cuentas",
+        "Equipo y accesos",
+        "Marco Admin",
+        "Ana Torres",
+        "Carlos Vega",
+        "Equipo Burson",
+        "Luis Mendoza"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\nGestión de cuentas\n\nAccesos, roles y trazabilidad del equipo.\n\nEntorno de demostración: las claves se guardan localmente para probar los recorridos.\n5\n\nCUENTAS\n\nen el sistema\n\n5\n\nACTIVAS\n\nen el sistema\n\n3\n\nOPERARIOS\n\nen el sistema\n\n1\n\nVÍNCULO BURSON\n\nen el sistema\n\nDIRECTORIO OPERATIVO\n\nEquipo y accesos\n\n5 de 5 cuentas visibles\n\nBuscar cuenta\nFiltrar cuentas\nTodos los estados\nActivas\nInactivas\n＋ Dar de alta\nMA\nMarco Admin\n\n@admin\n\n● ACTIVA\nAdmin\nAuditoría · 1 eventos\nEditar\nRestablecer clave\nDesactivar\nAT\nAna Torres\n\n@ana\n\n● ACTIVA\nOperario\nCreación propia autorizada\nAuditoría · 1 eventos\nEditar\nRestablecer clave\nRetirar creación\nDesactivar\nCV\nCarlos Vega\n\n@carlos\n\n● ACTIVA\nOperario\nAuditoría · 1 eventos\nEditar\nRestablecer clave\nPermitir creación\nDesactivar\nEB\nEquipo Burson\n\n@burson\n\n● ACTIVA\nBurson\nAuditoría · 1 eventos\nEditar\nRestablecer clave\nDesactivar\nLM\nLuis Mendoza\n\n@luis\n\n● ACTIVA\nOperario\nVínculo Burson\nAuditoría · 1 eventos\nEditar\nRestablecer clave\nPermitir creación\nDesactivar",
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "scrollHeight": 1023
+    },
+    {
+      "file": "admin-cuentas-mobile.png",
+      "user": "admin",
+      "screen": "cuentas",
+      "mode": "mobile",
+      "url": "http://localhost:3000/cuentas",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Gestión de cuentas",
+        "Equipo y accesos",
+        "Marco Admin",
+        "Ana Torres",
+        "Carlos Vega",
+        "Equipo Burson",
+        "Luis Mendoza"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\nGestión de cuentas\n\nAccesos, roles y trazabilidad del equipo.\n\nEntorno de demostración: las claves se guardan localmente para probar los recorridos.\n5\n\nCUENTAS\n\nen el sistema\n\n5\n\nACTIVAS\n\nen el sistema\n\n3\n\nOPERARIOS\n\nen el sistema\n\n1\n\nVÍNCULO BURSON\n\nen el sistema\n\nDIRECTORIO OPERATIVO\n\nEquipo y accesos\n\n5 de 5 cuentas visibles\n\nBuscar cuenta\nFiltrar cuentas\nTodos los estados\nActivas\nInactivas\n＋ Dar de alta\nMA\nMarco Admin\n\n@admin\n\n● ACTIVA\nAdmin\nAuditoría · 1 eventos\nEditar\nRestablecer clave\nDesactivar\nAT\nAna Torres\n\n@ana\n\n● ACTIVA\nOperario\nCreación propia autorizada\nAuditoría · 1 eventos\nEditar\nRestablecer clave\nRetirar creación\nDesactivar\nCV\nCarlos Vega\n\n@carlos\n\n● ACTIVA\nOperario\nAuditoría · 1 eventos\nEditar\nRestablecer clave\nPermitir creación\nDesactivar\nEB\nEquipo Burson\n\n@burson\n\n● ACTIVA\nBurson\nAuditoría · 1 eventos\nEditar\nRestablecer clave\nDesactivar\nLM\nLuis Mendoza\n\n@luis\n\n● ACTIVA\nOperario\nVínculo Burson\nAuditoría · 1 eventos\nEditar\nRestablecer clave\nPermitir creación\nDesactivar\nPanel\nBurson\nCuentas\nHistórico\nBajas",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 2319
+    },
+    {
+      "file": "admin-papelera-desktop.png",
+      "user": "admin",
+      "screen": "papelera",
+      "mode": "desktop",
+      "url": "http://localhost:3000/papelera",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Papelera de actividades",
+        "La Papelera está vacía"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\n\nADMINISTRACIÓN REVERSIBLE\n\nPapelera de actividades\n\nAquí viven exclusivamente las actividades dadas de baja. Restaurar recupera su visibilidad ordinaria sin borrar historial ni mensajes.\n\nVolver a actividades\n\nLa Papelera está vacía\n\nLas actividades dadas de baja aparecerán aquí sin perder su planificación, ejecución, conversación ni auditoría.",
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000
+    },
+    {
+      "file": "admin-papelera-mobile.png",
+      "user": "admin",
+      "screen": "papelera",
+      "mode": "mobile",
+      "url": "http://localhost:3000/papelera",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Papelera de actividades",
+        "La Papelera está vacía"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\n\nADMINISTRACIÓN REVERSIBLE\n\nPapelera de actividades\n\nAquí viven exclusivamente las actividades dadas de baja. Restaurar recupera su visibilidad ordinaria sin borrar historial ni mensajes.\n\nVolver a actividades\n\nLa Papelera está vacía\n\nLas actividades dadas de baja aparecerán aquí sin perder su planificación, ejecución, conversación ni auditoría.\n\nPanel\nBurson\nCuentas\nHistórico\nBajas",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 844
+    },
+    {
+      "file": "admin-actividad-desktop.png",
+      "user": "admin",
+      "screen": "actividad",
+      "mode": "desktop",
+      "url": "http://localhost:3000/actividades/cobertura-norte",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Detalle de actividad",
+        "Cobertura audiovisual Norte",
+        "Descripción",
+        "Opinión de entrega",
+        "Material y estado",
+        "Conversación con Admin"
+      ],
+      "text": "Saltar al contenido\n←\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\n\nFICHA DE PRODUCCIÓN\n\nDetalle de actividad\nRegistro · cobertura-norte\n\nGRABACIÓN · OPERACIÓN ORDINARIA\n\nCobertura audiovisual Norte\n\nFicha única de ejecución, entrega y trazabilidad de la actividad.\n\n●\nEntregada\n\nRESPONSABLE\n\nAna Torres\n\nJORNADAS\n\n4 ene. · 3 jornadas\n\nLUGAR\n\nSin lugar indicado\n\nALCANCE\n\nDescripción\n\nCobertura de actividades y entrevistas en las sedes del norte del país.\n\nCIERRE DEL OPERARIO\n\nOpinión de entrega\n\nEl material cumplió con los objetivos y la calidad técnica requerida.\n\nACCIONES\n\nMaterial y estado\nAbrir material ↗\nEditar plan\nAdministrar registro\n＋\n\nCOMUNICACIÓN INTERNA\n\nConversación con Admin\nSIN INICIAR\n\nTu primer mensaje bloqueará el enlace y la opinión inicial.\n\nMensaje\nEnviar mensaje\nTrazabilidad completa\n1 EVENTOS",
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000
+    },
+    {
+      "file": "admin-actividad-mobile.png",
+      "user": "admin",
+      "screen": "actividad",
+      "mode": "mobile",
+      "url": "http://localhost:3000/actividades/cobertura-norte",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Detalle de actividad",
+        "Cobertura audiovisual Norte",
+        "Descripción",
+        "Opinión de entrega",
+        "Material y estado",
+        "Conversación con Admin"
+      ],
+      "text": "Saltar al contenido\n←\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\n\nFICHA DE PRODUCCIÓN\n\nDetalle de actividad\nRegistro · cobertura-norte\n\nGRABACIÓN · OPERACIÓN ORDINARIA\n\nCobertura audiovisual Norte\n\nFicha única de ejecución, entrega y trazabilidad de la actividad.\n\n●\nEntregada\n\nRESPONSABLE\n\nAna Torres\n\nJORNADAS\n\n4 ene. · 3 jornadas\n\nLUGAR\n\nSin lugar indicado\n\nALCANCE\n\nDescripción\n\nCobertura de actividades y entrevistas en las sedes del norte del país.\n\nCIERRE DEL OPERARIO\n\nOpinión de entrega\n\nEl material cumplió con los objetivos y la calidad técnica requerida.\n\nACCIONES\n\nMaterial y estado\nAbrir material ↗\nEditar plan\nAdministrar registro\n＋\n\nCOMUNICACIÓN INTERNA\n\nConversación con Admin\nSIN INICIAR\n\nTu primer mensaje bloqueará el enlace y la opinión inicial.\n\nMensaje\nEnviar mensaje\nTrazabilidad completa\n1 EVENTOS\nPanel\nBurson\nCuentas\nHistórico\nBajas",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 1689
+    },
+    {
+      "file": "admin-historico-desktop.png",
+      "user": "admin",
+      "screen": "historico",
+      "mode": "desktop",
+      "url": "http://localhost:3000/historico?anio=2026",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Histórico 2026",
+        "ENERO",
+        "FEBRERO",
+        "MARZO",
+        "ABRIL",
+        "MAYO",
+        "JUNIO",
+        "JULIO",
+        "AGOSTO",
+        "SEPTIEMBRE",
+        "OCTUBRE",
+        "NOVIEMBRE",
+        "DICIEMBRE",
+        "Cobertura audiovisual Norte",
+        "Descripción",
+        "Opinión del operario"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\n\nARCHIVO OPERATIVO · 4 REGISTROS\n\nHistórico 2026\n\nTodas las actividades del año en una sola vista\n\n‹\n2026\n›\nGrabación\n1\nEdición\n1\nCreatividad\n1\nLocución\n1\nENERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nFEBRERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\nMARZO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nABRIL\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nMAYO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nJUNIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nJULIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nAGOSTO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nSEPTIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nOCTUBRE\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nNOVIEMBRE\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nDICIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n●\nEntregada\n\nGRABACIÓN\n\nCobertura audiovisual Norte\nRESPONSABLE\nAna Torres\nFECHAS\n4 ene. 2026 · 11 ene. 2026 · 2 feb. 2026\nORIGEN\nOperario\nDescripción\n\nCobertura de actividades y entrevistas en las sedes del norte del país.\n\nOpinión del operario\n\nEl material cumplió con los objetivos y la calidad técnica requerida.\n\nAbrir material ↗",
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "scrollHeight": 1050
+    },
+    {
+      "file": "admin-historico-detalle-mobile.png",
+      "user": "admin",
+      "screen": "historico-detalle",
+      "mode": "mobile",
+      "url": "http://localhost:3000/historico?anio=2026",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Histórico 2026",
+        "ENERO",
+        "FEBRERO",
+        "MARZO",
+        "ABRIL",
+        "MAYO",
+        "JUNIO",
+        "JULIO",
+        "AGOSTO",
+        "SEPTIEMBRE",
+        "OCTUBRE",
+        "NOVIEMBRE",
+        "DICIEMBRE",
+        "Cobertura audiovisual Norte",
+        "Descripción",
+        "Opinión del operario",
+        "Cobertura audiovisual Norte",
+        "Descripción",
+        "Opinión del operario"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\n\nARCHIVO OPERATIVO · 4 REGISTROS\n\nHistórico 2026\n\nTodas las actividades del año en una sola vista\n\n‹\n2026\n›\nGrabación\n1\nEdición\n1\nCreatividad\n1\nLocución\n1\nENERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nFEBRERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\nMARZO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nABRIL\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nMAYO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nJUNIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nJULIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nAGOSTO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nSEPTIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nOCTUBRE\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nNOVIEMBRE\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nDICIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n×\n●\nEntregada\n\nGRABACIÓN\n\nCobertura audiovisual Norte\nRESPONSABLE\nAna Torres\nFECHAS\n4 ene. 2026 · 11 ene. 2026 · 2 feb. 2026\nORIGEN\nOperario\nDescripción\n\nCobertura de actividades y entrevistas en las sedes del norte del país.\n\nOpinión del operario\n\nEl material cumplió con los objetivos y la calidad técnica requerida.\n\nAbrir material ↗\nPanel\nBurson\nCuentas\nHistórico\nBajas",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 3105
+    },
+    {
+      "file": "admin-historico-mobile.png",
+      "user": "admin",
+      "screen": "historico",
+      "mode": "mobile",
+      "url": "http://localhost:3000/historico?anio=2026",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Histórico 2026",
+        "ENERO",
+        "FEBRERO",
+        "MARZO",
+        "ABRIL",
+        "MAYO",
+        "JUNIO",
+        "JULIO",
+        "AGOSTO",
+        "SEPTIEMBRE",
+        "OCTUBRE",
+        "NOVIEMBRE",
+        "DICIEMBRE",
+        "Cobertura audiovisual Norte",
+        "Descripción",
+        "Opinión del operario"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\n\nARCHIVO OPERATIVO · 4 REGISTROS\n\nHistórico 2026\n\nTodas las actividades del año en una sola vista\n\n‹\n2026\n›\nGrabación\n1\nEdición\n1\nCreatividad\n1\nLocución\n1\nENERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nFEBRERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\nMARZO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nABRIL\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nMAYO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nJUNIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nJULIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nAGOSTO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nSEPTIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nOCTUBRE\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nNOVIEMBRE\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nDICIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nPanel\nBurson\nCuentas\nHistórico\nBajas",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 3105
+    },
+    {
+      "actor": "admin",
+      "blockedMutations": 0,
+      "pageErrors": []
+    },
+    {
+      "file": "carlos-panel-vacio-desktop.png",
+      "user": "carlos",
+      "screen": "panel-vacio",
+      "mode": "desktop",
+      "url": "http://localhost:3000/actividades",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Mis actividades",
+        "Actividad reciente"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nCV\nCarlos Vega\nOperario\nCerrar sesión\nMi panel\nMis actividades\n\nConsulta y ejecuta únicamente las actividades que te asignaron\n\nPanel operativo activo\n\nPERIODO OPERATIVO\n\nConsulta el año actual o actividades planificadas a futuro.\n\nAño de actividades\n2026\n‹\nJUN\n0\nJUL\n0\nAGO\n0\nSEP 2026\n0\nOCT\n0\nNOV\n0\n›\n0\nactividades\nActividad visible\n0\nprogramadas\nPor iniciar\n0\nen proceso\nTrabajo activo\n0\nentregadas\nCon material\n\nPLANIFICACIÓN PROTEGIDA\n\nAdmin planifica y asigna. Tú actualizas la ejecución de cada actividad desde su ficha.\n\nActividad reciente\n\n0 de 0 actividades visibles\n\nBuscar actividad\nFiltrar por estado\nTodos los estados\nProgramada\nEn proceso\nEntregada\n\nNo hay actividades que coincidan con la búsqueda.",
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000
+    },
+    {
+      "file": "carlos-panel-vacio-mobile.png",
+      "user": "carlos",
+      "screen": "panel-vacio",
+      "mode": "mobile",
+      "url": "http://localhost:3000/actividades",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Mis actividades",
+        "Actividad reciente"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nCV\nSalir\nMis actividades\n\nConsulta y ejecuta únicamente las actividades que te asignaron\n\nPERIODO OPERATIVO\n\nConsulta el año actual o actividades planificadas a futuro.\n\nAño de actividades\n2026\n‹\nAGO\n0\nSEP 2026\n0\nOCT\n0\n›\n0\nactividades\nActividad visible\n0\nprogramadas\nPor iniciar\n0\nen proceso\nTrabajo activo\n0\nentregadas\nCon material\n\nPLANIFICACIÓN PROTEGIDA\n\nAdmin planifica y asigna. Tú actualizas la ejecución de cada actividad desde su ficha.\n\nActividad reciente\n\n0 de 0 actividades visibles\n\nBuscar actividad\nFiltrar por estado\nTodos los estados\nProgramada\nEn proceso\nEntregada\n\nNo hay actividades que coincidan con la búsqueda.\n\nPanel",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 1008
+    },
+    {
+      "file": "carlos-actividad-desktop.png",
+      "user": "carlos",
+      "screen": "actividad",
+      "mode": "desktop",
+      "url": "http://localhost:3000/actividades/edicion-seguridad",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Detalle de actividad",
+        "Edición campaña de seguridad vial",
+        "Descripción",
+        "Opinión de entrega",
+        "Material y estado"
+      ],
+      "text": "Saltar al contenido\n←\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nCV\nCarlos Vega\nOperario\nCerrar sesión\nMi panel\n\nFICHA DE PRODUCCIÓN\n\nDetalle de actividad\nRegistro · edicion-seguridad\n\nEDICIÓN · OPERACIÓN ORDINARIA\n\nEdición campaña de seguridad vial\n\nFicha única de ejecución, entrega y trazabilidad de la actividad.\n\n◐\nEn proceso\n\nRESPONSABLE\n\nCarlos Vega\n\nJORNADAS\n\n12 may. – 19 may.\n\nLUGAR\n\nSin lugar indicado\n\nALCANCE\n\nDescripción\n\nEdición de piezas para la campaña vial 2026.\n\nCIERRE DEL OPERARIO\n\nOpinión de entrega\n\nTodavía no se registró una opinión sobre esta entrega.\n\nACCIONES\n\nMaterial y estado\n\nEl enlace aparecerá al entregar.\n\nActualizar entrega\nEntregar\nTrazabilidad completa\n1 EVENTOS",
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000
+    },
+    {
+      "file": "carlos-actividad-mobile.png",
+      "user": "carlos",
+      "screen": "actividad",
+      "mode": "mobile",
+      "url": "http://localhost:3000/actividades/edicion-seguridad",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Detalle de actividad",
+        "Edición campaña de seguridad vial",
+        "Descripción",
+        "Opinión de entrega",
+        "Material y estado"
+      ],
+      "text": "Saltar al contenido\n←\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nCV\nSalir\n\nFICHA DE PRODUCCIÓN\n\nDetalle de actividad\nRegistro · edicion-seguridad\n\nEDICIÓN · OPERACIÓN ORDINARIA\n\nEdición campaña de seguridad vial\n\nFicha única de ejecución, entrega y trazabilidad de la actividad.\n\n◐\nEn proceso\n\nRESPONSABLE\n\nCarlos Vega\n\nJORNADAS\n\n12 may. – 19 may.\n\nLUGAR\n\nSin lugar indicado\n\nALCANCE\n\nDescripción\n\nEdición de piezas para la campaña vial 2026.\n\nCIERRE DEL OPERARIO\n\nOpinión de entrega\n\nTodavía no se registró una opinión sobre esta entrega.\n\nACCIONES\n\nMaterial y estado\n\nEl enlace aparecerá al entregar.\n\nActualizar entrega\nEntregar\nTrazabilidad completa\n1 EVENTOS\nPanel",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 1295
+    },
+    {
+      "actor": "carlos",
+      "blockedMutations": 0,
+      "pageErrors": []
+    },
+    {
+      "file": "ana-panel-vacio-desktop.png",
+      "user": "ana",
+      "screen": "panel-vacio",
+      "mode": "desktop",
+      "url": "http://localhost:3000/actividades",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Mis actividades",
+        "Actividad reciente"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nAT\nAna Torres\nOperario · creación propia autorizada\nCerrar sesión\nMi panel\nMis actividades\n\nConsulta y ejecuta únicamente las actividades que te asignaron\n\nPanel operativo activo\n\nPERIODO OPERATIVO\n\nConsulta el año actual o actividades planificadas a futuro.\n\nAño de actividades\n2026\n‹\nJUN\n0\nJUL\n0\nAGO\n0\nSEP 2026\n0\nOCT\n1\nNOV\n0\n›\n0\nactividades\nActividad visible\n0\nprogramadas\nPor iniciar\n0\nen proceso\nTrabajo activo\n0\nentregadas\nCon material\n\nPLANIFICACIÓN PROTEGIDA\n\nAdmin planifica y asigna. Tú actualizas la ejecución de cada actividad desde su ficha.\n\nCrear actividad propia\nActividad reciente\n\n0 de 0 actividades visibles\n\nBuscar actividad\nFiltrar por estado\nTodos los estados\nProgramada\nEn proceso\nEntregada\n\nNo hay actividades que coincidan con la búsqueda.",
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000
+    },
+    {
+      "file": "ana-panel-vacio-mobile.png",
+      "user": "ana",
+      "screen": "panel-vacio",
+      "mode": "mobile",
+      "url": "http://localhost:3000/actividades",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Mis actividades",
+        "Actividad reciente"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nAT\nSalir\nMis actividades\n\nConsulta y ejecuta únicamente las actividades que te asignaron\n\nPERIODO OPERATIVO\n\nConsulta el año actual o actividades planificadas a futuro.\n\nAño de actividades\n2026\n‹\nAGO\n0\nSEP 2026\n0\nOCT\n1\n›\n0\nactividades\nActividad visible\n0\nprogramadas\nPor iniciar\n0\nen proceso\nTrabajo activo\n0\nentregadas\nCon material\n\nPLANIFICACIÓN PROTEGIDA\n\nAdmin planifica y asigna. Tú actualizas la ejecución de cada actividad desde su ficha.\n\nCrear actividad propia\nActividad reciente\n\n0 de 0 actividades visibles\n\nBuscar actividad\nFiltrar por estado\nTodos los estados\nProgramada\nEn proceso\nEntregada\n\nNo hay actividades que coincidan con la búsqueda.\n\nPanel",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 1064
+    },
+    {
+      "file": "ana-creacion-propia-desktop.png",
+      "user": "ana",
+      "screen": "creacion-propia",
+      "mode": "desktop",
+      "url": "http://localhost:3000/actividades/nueva",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Crear actividad propia",
+        "Crear actividad propia",
+        "Jornadas de la actividad"
+      ],
+      "text": "Saltar al contenido\n←\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nAT\nAna Torres\nOperario · creación propia autorizada\nCerrar sesión\nMi panel\n\nPLANIFICACIÓN\n\nCrear actividad propia\n\nActividad, responsable y jornadas en una sola ficha.\n\nPERMISO INDIVIDUAL\n\nPLANIFICACIÓN AUDIOVISUAL\n\nCrear actividad propia\n\nEste permiso es individual; la actividad quedará asignada a tu cuenta.\n\nActividad o proyecto\nTipo de servicio\nGrabación\nEdición\nCreatividad\nLocución\nLugar o referencia\nDescripción\nJornadas de la actividad\n\nAdmite fechas continuas o periodos separados desde el 1 de enero de 2026.\n\n＋ Añadir jornada\nINICIO\nFIN\n×\nCrear actividad propia",
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000
+    },
+    {
+      "file": "ana-creacion-propia-mobile.png",
+      "user": "ana",
+      "screen": "creacion-propia",
+      "mode": "mobile",
+      "url": "http://localhost:3000/actividades/nueva",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Crear actividad propia",
+        "Crear actividad propia",
+        "Jornadas de la actividad"
+      ],
+      "text": "Saltar al contenido\n←\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nAT\nSalir\n\nPLANIFICACIÓN\n\nCrear actividad propia\n\nActividad, responsable y jornadas en una sola ficha.\n\nPERMISO INDIVIDUAL\n\nPLANIFICACIÓN AUDIOVISUAL\n\nCrear actividad propia\n\nEste permiso es individual; la actividad quedará asignada a tu cuenta.\n\nActividad o proyecto\nTipo de servicio\nGrabación\nEdición\nCreatividad\nLocución\nLugar o referencia\nDescripción\nJornadas de la actividad\n\nAdmite fechas continuas o periodos separados desde el 1 de enero de 2026.\n\n＋ Añadir jornada\nINICIO\nFIN\n×\nCrear actividad propia\nPanel",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 1061
+    },
+    {
+      "actor": "ana",
+      "blockedMutations": 0,
+      "pageErrors": []
+    },
+    {
+      "file": "luis-actividad-burson-desktop.png",
+      "user": "luis",
+      "screen": "actividad-burson",
+      "mode": "desktop",
+      "url": "http://localhost:3000/actividades/locucion-burson",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Detalle de actividad",
+        "Locución institucional Burson",
+        "Descripción",
+        "Opinión de entrega",
+        "Material y estado"
+      ],
+      "text": "Saltar al contenido\n←\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nLM\nLuis Mendoza\nOperario especial · encargos Burson\nCerrar sesión\nMi panel\nBurson\n\nFICHA DE PRODUCCIÓN\n\nDetalle de actividad\nRegistro · locucion-burson\n\nLOCUCIÓN · CANAL BURSON\n\nLocución institucional Burson\n\nFicha única de ejecución, entrega y trazabilidad de la actividad.\n\n○\nProgramada\n\nRESPONSABLE\n\nLuis Mendoza\n\nJORNADAS\n\n9 nov. – 11 nov.\n\nLUGAR\n\nSin lugar indicado\n\nALCANCE\n\nDescripción\n\nEncargo de locución para campaña institucional.\n\nCIERRE DEL OPERARIO\n\nOpinión de entrega\n\nTodavía no se registró una opinión sobre esta entrega.\n\nACCIONES\n\nMaterial y estado\n\nEl enlace aparecerá al entregar.\n\nActualizar entrega\nIniciar\nTrazabilidad completa\n1 EVENTOS",
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000
+    },
+    {
+      "file": "luis-actividad-burson-mobile.png",
+      "user": "luis",
+      "screen": "actividad-burson",
+      "mode": "mobile",
+      "url": "http://localhost:3000/actividades/locucion-burson",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Detalle de actividad",
+        "Locución institucional Burson",
+        "Descripción",
+        "Opinión de entrega",
+        "Material y estado"
+      ],
+      "text": "Saltar al contenido\n←\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nLM\nSalir\n\nFICHA DE PRODUCCIÓN\n\nDetalle de actividad\nRegistro · locucion-burson\n\nLOCUCIÓN · CANAL BURSON\n\nLocución institucional Burson\n\nFicha única de ejecución, entrega y trazabilidad de la actividad.\n\n○\nProgramada\n\nRESPONSABLE\n\nLuis Mendoza\n\nJORNADAS\n\n9 nov. – 11 nov.\n\nLUGAR\n\nSin lugar indicado\n\nALCANCE\n\nDescripción\n\nEncargo de locución para campaña institucional.\n\nCIERRE DEL OPERARIO\n\nOpinión de entrega\n\nTodavía no se registró una opinión sobre esta entrega.\n\nACCIONES\n\nMaterial y estado\n\nEl enlace aparecerá al entregar.\n\nActualizar entrega\nIniciar\nTrazabilidad completa\n1 EVENTOS\nPanel\nBurson",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 1295
+    },
+    {
+      "actor": "luis",
+      "blockedMutations": 0,
+      "pageErrors": []
+    },
+    {
+      "file": "burson-encargos-desktop.png",
+      "user": "burson",
+      "screen": "encargos",
+      "mode": "desktop",
+      "url": "http://localhost:3000/burson",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Encargos Burson",
+        "Nuevo encargo",
+        "Jornadas de la actividad",
+        "Encargos Burson",
+        "Locución institucional Burson"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nEB\nEquipo Burson\nBurson\nCerrar sesión\nBurson\n\nCANAL DE ENCARGOS\n\nEncargos Burson\n\nBurson deja el encargo; el operario vinculado se responsabiliza de completarlo.\n\n1\n\nProgramados\n\nen el canal\n\n0\n\nEn proceso\n\nen el canal\n\n0\n\nEntregados\n\nen el canal\n\nASIGNACIÓN AUTOMÁTICA\n\nCanal directo con el operario especial\nCada encargo queda programado y asignado al crearla.\n\nCANAL BURSON\n\nNuevo encargo\n\nEl sistema lo asignará al Operario especial.\n\nActividad o proyecto\nTipo de servicio\nGrabación\nEdición\nCreatividad\nLocución\nLugar o referencia\nDescripción\nEnlace de referencia opcional\nJornadas de la actividad\n\nAdmite fechas continuas o periodos separados desde el 1 de enero de 2026.\n\n＋ Añadir jornada\nINICIO\nFIN\n×\nCrear encargo\n\nSEGUIMIENTO ESPECIALIZADO\n\nEncargos Burson\n\n1 encargos en el canal\n\n9 NOV. – 11 NOV. · LOCUCIÓN\n\nLocución institucional Burson\n○\nProgramada\n\nEncargo de locución para campaña institucional.\n\nResponsable: Luis Mendoza",
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "scrollHeight": 1555
+    },
+    {
+      "file": "burson-encargos-mobile.png",
+      "user": "burson",
+      "screen": "encargos",
+      "mode": "mobile",
+      "url": "http://localhost:3000/burson",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Encargos Burson",
+        "Nuevo encargo",
+        "Jornadas de la actividad",
+        "Encargos Burson",
+        "Locución institucional Burson"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nEB\nSalir\n\nCANAL DE ENCARGOS\n\nEncargos Burson\n\nBurson deja el encargo; el operario vinculado se responsabiliza de completarlo.\n\n1\n\nProgramados\n\n0\n\nEn proceso\n\n0\n\nEntregados\n\nASIGNACIÓN AUTOMÁTICA\n\nCanal directo con el operario especial\nCada encargo queda programado y asignado al crearla.\n＋ Dejar nuevo encargo\n\nSEGUIMIENTO ESPECIALIZADO\n\nEncargos Burson\n\n1 encargos en el canal\n\n9 NOV. – 11 NOV. · LOCUCIÓN\n\nLocución institucional Burson\n○\nProgramada\n\nEncargo de locución para campaña institucional.\n\nResponsable: Luis Mendoza\nBurson",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 897
+    },
+    {
+      "file": "burson-detalle-desktop.png",
+      "user": "burson",
+      "screen": "detalle",
+      "mode": "desktop",
+      "url": "http://localhost:3000/burson/locucion-burson",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Detalle Burson",
+        "Locución institucional Burson"
+      ],
+      "text": "Saltar al contenido\n←\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nEB\nEquipo Burson\nBurson\nCerrar sesión\nBurson\n\nCONSULTA DE ENCARGO\n\nDetalle Burson\n\nLOCUCIÓN · CANAL BURSON\n\nLocución institucional Burson\n\nSeguimiento del encargo y su entrega, sin información interna de operación.\n\n○\nProgramada\n\nDESCRIPCIÓN\n\nEncargo de locución para campaña institucional.\n\nJORNADAS\n9 nov. – 11 nov. 2026\nLUGAR\nSin lugar indicado\nRESPONSABLE\nLuis Mendoza\nÚLTIMA ACTUALIZACIÓN\n9 nov. 2026, 8:00 a. m.\n\nEl material aparecerá aquí cuando el Operario lo registre.",
+      "width": 1440,
+      "height": 1000,
+      "scrollWidth": 1440,
+      "scrollHeight": 1000
+    },
+    {
+      "file": "burson-detalle-mobile.png",
+      "user": "burson",
+      "screen": "detalle",
+      "mode": "mobile",
+      "url": "http://localhost:3000/burson/locucion-burson",
+      "title": "Rhino Audiovisuales",
+      "headings": [
+        "Detalle Burson",
+        "Locución institucional Burson"
+      ],
+      "text": "Saltar al contenido\n←\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nEB\nSalir\n\nCONSULTA DE ENCARGO\n\nDetalle Burson\n\nLOCUCIÓN · CANAL BURSON\n\nLocución institucional Burson\n\nSeguimiento del encargo y su entrega, sin información interna de operación.\n\n○\nProgramada\n\nDESCRIPCIÓN\n\nEncargo de locución para campaña institucional.\n\nJORNADAS\n9 nov. – 11 nov. 2026\nLUGAR\nSin lugar indicado\nRESPONSABLE\nLuis Mendoza\nÚLTIMA ACTUALIZACIÓN\n9 nov. 2026, 8:00 a. m.\n\nEl material aparecerá aquí cuando el Operario lo registre.\n\nBurson",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 889
+    },
+    {
+      "actor": "burson",
+      "blockedMutations": 0,
+      "pageErrors": []
+    }
+  ],
+  "supplementary": [
+    {
+      "file": "admin-panel-con-actividad-desktop.png",
+      "user": "admin",
+      "url": "http://localhost:3000/actividades",
+      "fullPage": true,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "headings": [
+        "Todas las actividades",
+        "Actividad reciente",
+        "Piezas para campaña institucional",
+        "Piezas para campaña institucional",
+        "Descripción"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\nTodas las actividades\n\nVista integral del trabajo audiovisual\n\nVer Papelera\nPlanificar actividad\n\nPERIODO OPERATIVO\n\nConsulta el año actual o actividades planificadas a futuro.\n\nAño de actividades\n2026\n‹\nJUL\n0\nAGO\n0\nSEP\n0\nOCT 2026\n1\nNOV\n1\nDIC\n0\n›\n1\nactividades\nActividad visible\n1\nprogramadas\nPor iniciar\n0\nen proceso\nTrabajo activo\n0\nentregadas\nCon material\nActividad reciente\n\n1 de 1 actividades visibles\n\nBuscar actividad\nFiltrar por estado\nTodos los estados\nProgramada\nEn proceso\nEntregada\nFECHAS\tACTIVIDAD\tLUGAR\tRESPONSABLE\tESTADO\tACCIONES\n13 oct. – 15 oct.\t\nPiezas para campaña institucional\nCreatividad\n\t—\tAna Torres\t\n○\nProgramada\t\n\nCREATIVIDAD\n\n○\nProgramada\nPiezas para campaña institucional\nResponsable\nAna Torres\nFechas\n13 oct. – 15 oct.\nOrigen\nOrdinaria\nDescripción\n\nDesarrollo de piezas gráficas y audiovisuales.\n\nAbrir ficha completa"
+    },
+    {
+      "file": "admin-panel-con-actividad-mobile.png",
+      "user": "admin",
+      "url": "http://localhost:3000/actividades",
+      "fullPage": true,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "headings": [
+        "Todas las actividades",
+        "Actividad reciente",
+        "Piezas para campaña institucional",
+        "Piezas para campaña institucional",
+        "Descripción"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\nTodas las actividades\n\nVista integral del trabajo audiovisual\n\nVer Papelera\nPlanificar actividad\n\nPERIODO OPERATIVO\n\nConsulta el año actual o actividades planificadas a futuro.\n\nAño de actividades\n2026\n‹\nSEP\n0\nOCT 2026\n1\nNOV\n1\n›\n1\nactividades\nActividad visible\n1\nprogramadas\nPor iniciar\n0\nen proceso\nTrabajo activo\n0\nentregadas\nCon material\nActividad reciente\n\n1 de 1 actividades visibles\n\nBuscar actividad\nFiltrar por estado\nTodos los estados\nProgramada\nEn proceso\nEntregada\n\n13 OCT. – 15 OCT. · CREATIVIDAD\n\nPiezas para campaña institucional\n\nResponsable: Ana Torres\n\n○\nProgramada\nPanel\nBurson\nCuentas\nHistórico\nBajas"
+    },
+    {
+      "file": "admin-historico-mobile-viewport.png",
+      "user": "admin",
+      "url": "http://localhost:3000/historico?anio=2026",
+      "fullPage": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "headings": [
+        "Histórico 2026",
+        "ENERO",
+        "FEBRERO",
+        "MARZO",
+        "ABRIL",
+        "MAYO",
+        "JUNIO",
+        "JULIO",
+        "AGOSTO",
+        "SEPTIEMBRE",
+        "OCTUBRE",
+        "NOVIEMBRE",
+        "DICIEMBRE",
+        "Cobertura audiovisual Norte",
+        "Descripción",
+        "Opinión del operario"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\n\nARCHIVO OPERATIVO · 4 REGISTROS\n\nHistórico 2026\n\nTodas las actividades del año en una sola vista\n\n‹\n2026\n›\nGrabación\n1\nEdición\n1\nCreatividad\n1\nLocución\n1\nENERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nFEBRERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\nMARZO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nABRIL\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nMAYO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nJUNIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nJULIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nAGOSTO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nSEPTIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nOCTUBRE\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nNOVIEMBRE\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nDICIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nPanel\nBurson\nCuentas\nHistórico\nBajas"
+    },
+    {
+      "file": "admin-historico-detalle-mobile-viewport.png",
+      "user": "admin",
+      "url": "http://localhost:3000/historico?anio=2026",
+      "fullPage": false,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "headings": [
+        "Histórico 2026",
+        "ENERO",
+        "FEBRERO",
+        "MARZO",
+        "ABRIL",
+        "MAYO",
+        "JUNIO",
+        "JULIO",
+        "AGOSTO",
+        "SEPTIEMBRE",
+        "OCTUBRE",
+        "NOVIEMBRE",
+        "DICIEMBRE",
+        "Cobertura audiovisual Norte",
+        "Descripción",
+        "Opinión del operario",
+        "Cobertura audiovisual Norte",
+        "Descripción",
+        "Opinión del operario"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\n\nARCHIVO OPERATIVO · 4 REGISTROS\n\nHistórico 2026\n\nTodas las actividades del año en una sola vista\n\n‹\n2026\n›\nGrabación\n1\nEdición\n1\nCreatividad\n1\nLocución\n1\nENERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nFEBRERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\nMARZO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nABRIL\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nMAYO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nJUNIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nJULIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nAGOSTO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nSEPTIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nOCTUBRE\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nNOVIEMBRE\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nDICIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n×\n●\nEntregada\n\nGRABACIÓN\n\nCobertura audiovisual Norte\nRESPONSABLE\nAna Torres\nFECHAS\n4 ene. 2026 · 11 ene. 2026 · 2 feb. 2026\nORIGEN\nOperario\nDescripción\n\nCobertura de actividades y entrevistas en las sedes del norte del país.\n\nOpinión del operario\n\nEl material cumplió con los objetivos y la calidad técnica requerida.\n\nAbrir material ↗\nPanel\nBurson\nCuentas\nHistórico\nBajas"
+    },
+    {
+      "file": "admin-historico-edicion-desktop.png",
+      "user": "admin",
+      "url": "http://localhost:3000/historico?anio=2026",
+      "fullPage": true,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "headings": [
+        "Histórico 2026",
+        "ENERO",
+        "FEBRERO",
+        "MARZO",
+        "ABRIL",
+        "MAYO",
+        "JUNIO",
+        "JULIO",
+        "AGOSTO",
+        "SEPTIEMBRE",
+        "OCTUBRE",
+        "NOVIEMBRE",
+        "DICIEMBRE",
+        "Edición campaña de seguridad vial",
+        "Descripción",
+        "Opinión del operario"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\n\nARCHIVO OPERATIVO · 4 REGISTROS\n\nHistórico 2026\n\nTodas las actividades del año en una sola vista\n\n‹\n2026\n›\nGrabación\n1\nEdición\n1\nCreatividad\n1\nLocución\n1\nENERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nFEBRERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\nMARZO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nABRIL\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nMAYO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nJUNIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nJULIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nAGOSTO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nSEPTIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nOCTUBRE\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nNOVIEMBRE\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nDICIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n◐\nEn proceso\n\nEDICIÓN\n\nEdición campaña de seguridad vial\n\nActividad atrasada\n\nRESPONSABLE\nCarlos Vega\nFECHAS\n12 may. – 19 may. 2026\nORIGEN\nOperario\nDescripción\n\nEdición de piezas para la campaña vial 2026.\n\nOpinión del operario\n\nTodavía no dejó una opinión.\n\nEnlace disponible al entregar"
+    },
+    {
+      "file": "carlos-panel-con-actividad-desktop.png",
+      "user": "carlos",
+      "url": "http://localhost:3000/actividades",
+      "fullPage": true,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "headings": [
+        "Mis actividades",
+        "Actividad reciente",
+        "Edición campaña de seguridad vial"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nCV\nCarlos Vega\nOperario\nCerrar sesión\nMi panel\nMis actividades\n\nConsulta y ejecuta únicamente las actividades que te asignaron\n\nPanel operativo activo\n\nPERIODO OPERATIVO\n\nConsulta el año actual o actividades planificadas a futuro.\n\nAño de actividades\n2026\n‹\nFEB\n0\nMAR\n0\nABR\n0\nMAY 2026\n1\nJUN\n0\nJUL\n0\n›\n1\nactividades\nActividad visible\n0\nprogramadas\nPor iniciar\n1\nen proceso\nTrabajo activo\n0\nentregadas\nCon material\n\nPLANIFICACIÓN PROTEGIDA\n\nAdmin planifica y asigna. Tú actualizas la ejecución de cada actividad desde su ficha.\n\nActividad reciente\n\n1 de 1 actividades visibles\n\nBuscar actividad\nFiltrar por estado\nTodos los estados\nProgramada\nEn proceso\nEntregada\nFECHAS\tACTIVIDAD\tLUGAR\tESTADO\tACCIONES\n12 may. – 19 may.\t\nEdición campaña de seguridad vial\nEdición\n\t—\t\n◐\nEn proceso\t"
+    },
+    {
+      "file": "carlos-panel-con-actividad-mobile.png",
+      "user": "carlos",
+      "url": "http://localhost:3000/actividades",
+      "fullPage": true,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "headings": [
+        "Mis actividades",
+        "Actividad reciente",
+        "Edición campaña de seguridad vial"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nCV\nSalir\nMis actividades\n\nConsulta y ejecuta únicamente las actividades que te asignaron\n\nPERIODO OPERATIVO\n\nConsulta el año actual o actividades planificadas a futuro.\n\nAño de actividades\n2026\n‹\nABR\n0\nMAY 2026\n1\nJUN\n0\n›\n1\nactividades\nActividad visible\n0\nprogramadas\nPor iniciar\n1\nen proceso\nTrabajo activo\n0\nentregadas\nCon material\n\nPLANIFICACIÓN PROTEGIDA\n\nAdmin planifica y asigna. Tú actualizas la ejecución de cada actividad desde su ficha.\n\nActividad reciente\n\n1 de 1 actividades visibles\n\nBuscar actividad\nFiltrar por estado\nTodos los estados\nProgramada\nEn proceso\nEntregada\n\n12 MAY. – 19 MAY. · EDICIÓN\n\nEdición campaña de seguridad vial\n◐\nEn proceso\nPanel"
+    },
+    {
+      "file": "ana-panel-con-actividad-desktop.png",
+      "user": "ana",
+      "url": "http://localhost:3000/actividades",
+      "fullPage": true,
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "headings": [
+        "Mis actividades",
+        "Actividad reciente",
+        "Piezas para campaña institucional"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nAT\nAna Torres\nOperario · creación propia autorizada\nCerrar sesión\nMi panel\nMis actividades\n\nConsulta y ejecuta únicamente las actividades que te asignaron\n\nPanel operativo activo\n\nPERIODO OPERATIVO\n\nConsulta el año actual o actividades planificadas a futuro.\n\nAño de actividades\n2026\n‹\nJUL\n0\nAGO\n0\nSEP\n0\nOCT 2026\n1\nNOV\n0\nDIC\n0\n›\n1\nactividades\nActividad visible\n1\nprogramadas\nPor iniciar\n0\nen proceso\nTrabajo activo\n0\nentregadas\nCon material\n\nPLANIFICACIÓN PROTEGIDA\n\nAdmin planifica y asigna. Tú actualizas la ejecución de cada actividad desde su ficha.\n\nCrear actividad propia\nActividad reciente\n\n1 de 1 actividades visibles\n\nBuscar actividad\nFiltrar por estado\nTodos los estados\nProgramada\nEn proceso\nEntregada\nFECHAS\tACTIVIDAD\tLUGAR\tESTADO\tACCIONES\n13 oct. – 15 oct.\t\nPiezas para campaña institucional\nCreatividad\n\t—\t\n○\nProgramada\t"
+    },
+    {
+      "file": "ana-panel-con-actividad-mobile.png",
+      "user": "ana",
+      "url": "http://localhost:3000/actividades",
+      "fullPage": true,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "headings": [
+        "Mis actividades",
+        "Actividad reciente",
+        "Piezas para campaña institucional"
+      ],
+      "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nAT\nSalir\nMis actividades\n\nConsulta y ejecuta únicamente las actividades que te asignaron\n\nPERIODO OPERATIVO\n\nConsulta el año actual o actividades planificadas a futuro.\n\nAño de actividades\n2026\n‹\nSEP\n0\nOCT 2026\n1\nNOV\n0\n›\n1\nactividades\nActividad visible\n1\nprogramadas\nPor iniciar\n0\nen proceso\nTrabajo activo\n0\nentregadas\nCon material\n\nPLANIFICACIÓN PROTEGIDA\n\nAdmin planifica y asigna. Tú actualizas la ejecución de cada actividad desde su ficha.\n\nCrear actividad propia\nActividad reciente\n\n1 de 1 actividades visibles\n\nBuscar actividad\nFiltrar por estado\nTodos los estados\nProgramada\nEn proceso\nEntregada\n\n13 OCT. – 15 OCT. · CREATIVIDAD\n\nPiezas para campaña institucional\n○\nProgramada\nPanel"
+    }
+  ],
+  "accessReference": "01-acceso-desktop.png",
+  "notes": [
+    "37 PNG reales; no nuevas propuestas gráficas.",
+    "Desktop 1440x1000; móvil emulado 390x844.",
+    "No datos coincidentes en semilla: revisión por código, no runtime.",
+    "Barras fijas en fullPage no equivalen a fallo; modal canónico en mobile-viewport.",
+    "No se accedió a cookies/perfil Chrome del usuario ni a servicios externos."
+  ]
+}

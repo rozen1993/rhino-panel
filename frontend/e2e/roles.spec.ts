@@ -404,7 +404,7 @@ test("Admin da de baja y restaura desde una Papelera aislada", async ({
   await expect(page.getByRole("heading", { name: title })).toBeVisible();
 });
 
-test("el Histórico responde en cuatro viewports", async ({ page }) => {
+test("el Histórico responde en cuatro viewports", async ({ page }, testInfo) => {
   await login(page, "admin");
   for (const viewport of [
     { width: 390, height: 844 },
@@ -414,6 +414,7 @@ test("el Histórico responde en cuatro viewports", async ({ page }) => {
   ]) {
     await page.setViewportSize(viewport);
     await page.goto("/historico");
+    await page.getByRole("link", { name: /Ver todo el Histórico/ }).click();
     await expect(
       page.getByRole("heading", { name: "Histórico 2026" }),
     ).toBeVisible();
@@ -444,7 +445,7 @@ test("el Histórico responde en cuatro viewports", async ({ page }) => {
     }
     await page.screenshot({
       fullPage: true,
-      path: `.verificacion/current-historico-${viewport.width}.png`,
+      path: testInfo.outputPath(`historico-${viewport.width}.png`),
     });
   }
 });

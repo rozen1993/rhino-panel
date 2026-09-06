@@ -1,0 +1,228 @@
+{
+  "note": "Pruebas solo de maquetas offline y galería; no validan la aplicación.",
+  "pngCount": 16,
+  "identicalCopies": true,
+  "source": "auxiliar/borrador-03",
+  "files": [
+    {
+      "name": "01-panel-actividades-escritorio",
+      "hash": "885a9ebaacc9511ed954defe4b8493490981d09630f23299938bbd089fbcabad",
+      "width": 1366,
+      "height": 1212
+    },
+    {
+      "name": "01-panel-actividades-movil",
+      "hash": "454514fad398dba7a638e24804c6bacec9284c670c1a8a0b931eaf7ed5deaf64",
+      "width": 390,
+      "height": 2061
+    },
+    {
+      "name": "02-entrega-pendiente-escritorio",
+      "hash": "10cc38038d74c6fc22d0651cfe5f5d1fd3b9e2067c2d2468ecd0193e96a857c4",
+      "width": 1366,
+      "height": 1569
+    },
+    {
+      "name": "02-entrega-pendiente-movil",
+      "hash": "3504c79752328cf9ce37d0a714e8185be306b9dcb0ce3525b3c66fa6ab9ea1f9",
+      "width": 390,
+      "height": 2372
+    },
+    {
+      "name": "03-entrega-confirmada-escritorio",
+      "hash": "611dc2a016b38bc4f830b41fe39218818b2e03397024fb3ceec9f4ad89a41d5c",
+      "width": 1366,
+      "height": 1569
+    },
+    {
+      "name": "03-entrega-confirmada-movil",
+      "hash": "ae6ecdda6726ad98581e0e2aeb06dc3ad1a87ef483447fca6429302fa9ab02fa",
+      "width": 390,
+      "height": 2424
+    },
+    {
+      "name": "04-lo-acordado-escritorio",
+      "hash": "1ec4fb550cd157c4615d1659ec2b471be8fa4261d37e9be2d1bfe85b5d3c10c9",
+      "width": 1366,
+      "height": 1418
+    },
+    {
+      "name": "04-lo-acordado-movil",
+      "hash": "d70afcfa764405ed5ec98a4f1ebebef7de2fb095f1772d11f6fb73eb6732f436",
+      "width": 390,
+      "height": 2452
+    },
+    {
+      "name": "05-reemplazo-escritorio",
+      "hash": "500aa8c445e19e4998875a6d942d1cc1560f2ebdea116499410a0c160d4cbcf5",
+      "width": 1366,
+      "height": 1105
+    },
+    {
+      "name": "05-reemplazo-movil",
+      "hash": "1decd7cf324506b4b2f695564fd1385ea87b82e2eb72dabc723cb04be3ea1811",
+      "width": 390,
+      "height": 2111
+    },
+    {
+      "name": "06-admin-respuesta-reemplazo-escritorio",
+      "hash": "fe3013f04dd915e163f5481fa4127fc16ede0c46cab0943e8e4b60f4917b2c39",
+      "width": 1366,
+      "height": 1998
+    },
+    {
+      "name": "06-admin-respuesta-reemplazo-movil",
+      "hash": "8398ac05a8ee38f0eb0c30f85da73a7d135b2aa73f4fae5de9bde49c5fb81ed8",
+      "width": 390,
+      "height": 2932
+    },
+    {
+      "name": "07-calendario-escritorio",
+      "hash": "4c48b18b11d10db47f2f3e3255a49d087367d773f8dfe690998b6dbf1b7b0457",
+      "width": 1366,
+      "height": 1351
+    },
+    {
+      "name": "07-calendario-movil",
+      "hash": "501730895cfa93c39f20e60fc126439b833cb7dcab8f994cabd31e8fb6356cb2",
+      "width": 390,
+      "height": 3500
+    },
+    {
+      "name": "08-mensajes-escritorio",
+      "hash": "42f09f68640ac0a675b98f88b2f3c7a83ff4d40bb3b7a914d6d7faaf00e780c1",
+      "width": 1366,
+      "height": 1000
+    },
+    {
+      "name": "08-mensajes-movil",
+      "hash": "4ac8863e334077702b49fd5e47b7a7bc03dd00ca160f544027704546444e59a3",
+      "width": 390,
+      "height": 1339
+    }
+  ],
+  "gallery": [
+    {
+      "width": 1366,
+      "scrollWidth": 1366,
+      "images": 16,
+      "broken": 0,
+      "links": [
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/LEEME.md",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/REVISION.md",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/01-panel-actividades-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/01-panel-actividades-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/01-panel-actividades-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/01-panel-actividades-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/01-panel-actividades-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/01-panel-actividades-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/02-entrega-pendiente-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/02-entrega-pendiente-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/02-entrega-pendiente-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/02-entrega-pendiente-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/02-entrega-pendiente-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/02-entrega-pendiente-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/03-entrega-confirmada-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/03-entrega-confirmada-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/03-entrega-confirmada-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/03-entrega-confirmada-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/03-entrega-confirmada-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/03-entrega-confirmada-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/04-lo-acordado-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/04-lo-acordado-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/04-lo-acordado-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/04-lo-acordado-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/04-lo-acordado-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/04-lo-acordado-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/05-reemplazo-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/05-reemplazo-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/05-reemplazo-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/05-reemplazo-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/05-reemplazo-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/05-reemplazo-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/06-admin-respuesta-reemplazo-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/06-admin-respuesta-reemplazo-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/06-admin-respuesta-reemplazo-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/06-admin-respuesta-reemplazo-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/06-admin-respuesta-reemplazo-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/06-admin-respuesta-reemplazo-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/07-calendario-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/07-calendario-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/07-calendario-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/07-calendario-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/07-calendario-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/07-calendario-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/08-mensajes-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/08-mensajes-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/08-mensajes-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/08-mensajes-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/08-mensajes-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/08-mensajes-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Revision-Visual-2026-09-05/admin-actividad-desktop.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Implementacion-Historico-C-2026-09-05/verificacion-final/grabacion-1366.png"
+      ],
+      "blocked": 0
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "images": 16,
+      "broken": 0,
+      "links": [
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/LEEME.md",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/REVISION.md",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/01-panel-actividades-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/01-panel-actividades-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/01-panel-actividades-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/01-panel-actividades-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/01-panel-actividades-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/01-panel-actividades-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/02-entrega-pendiente-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/02-entrega-pendiente-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/02-entrega-pendiente-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/02-entrega-pendiente-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/02-entrega-pendiente-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/02-entrega-pendiente-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/03-entrega-confirmada-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/03-entrega-confirmada-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/03-entrega-confirmada-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/03-entrega-confirmada-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/03-entrega-confirmada-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/03-entrega-confirmada-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/04-lo-acordado-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/04-lo-acordado-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/04-lo-acordado-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/04-lo-acordado-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/04-lo-acordado-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/04-lo-acordado-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/05-reemplazo-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/05-reemplazo-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/05-reemplazo-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/05-reemplazo-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/05-reemplazo-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/05-reemplazo-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/06-admin-respuesta-reemplazo-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/06-admin-respuesta-reemplazo-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/06-admin-respuesta-reemplazo-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/06-admin-respuesta-reemplazo-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/06-admin-respuesta-reemplazo-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/06-admin-respuesta-reemplazo-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/07-calendario-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/07-calendario-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/07-calendario-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/07-calendario-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/07-calendario-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/07-calendario-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/08-mensajes-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/08-mensajes-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/08-mensajes-escritorio.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/08-mensajes-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/08-mensajes-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Rol-Aunor-2026-09-06/png/08-mensajes-movil.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Revision-Visual-2026-09-05/admin-actividad-desktop.png",
+        "file:///C:/Users/MARCO/Desktop/Sistema_R/Implementacion-Historico-C-2026-09-05/verificacion-final/grabacion-1366.png"
+      ],
+      "blocked": 0
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 "use client";
+import { ActivityJourneys } from "@/components/activity-journeys";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -251,6 +252,10 @@ export function ActivityDetail({
             />
           </div>
 
+          <section className="border-b border-line p-5 md:p-6">
+            <h3 className="data-label mb-3 text-cyan-ink">Fechas y lugares planificados</h3>
+            <ActivityJourneys activity={item} />
+          </section>
           <div className="grid gap-0 md:grid-cols-2">
             <section className="p-5 md:border-r md:border-line md:p-6">
               <p className="data-label text-cyan-ink">Alcance</p>

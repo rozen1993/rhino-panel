@@ -35,6 +35,8 @@ function validateExecution(
 
 function errorMessage(error: { code?: string; message?: string }) {
   const messages: Record<string, string> = {
+    PGRST202: "Falta actualizar el servidor para guardar lugares por jornada. No se guardaron cambios.",
+    SR011: "Actualiza la aplicación antes de replanificar: esta actividad tiene lugares por jornada.",
     SR001: "La actividad cambió; recarga antes de guardar.",
     SR002: "No tienes permiso para realizar esta acción.",
     SR003: "Completa los datos obligatorios con valores válidos.",
@@ -100,7 +102,7 @@ export async function planSupabaseActivityAction(
     return { ok: false, error: "La solicitud o el responsable no son válidos." };
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc("plan_activity_v1", {
+  const { data, error } = await supabase.rpc("plan_activity_v2", {
     p_idempotency_key: idempotencyKey,
     p_responsible_id: fields.responsibleAccountId,
     p_type: fields.type,
@@ -130,7 +132,7 @@ export async function createOwnSupabaseActivityAction(
     return { ok: false, error: "La solicitud no contiene una clave válida." };
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc("create_own_activity_v1", {
+  const { data, error } = await supabase.rpc("create_own_activity_v2", {
     p_idempotency_key: idempotencyKey,
     p_type: fields.type,
     p_title: fields.title,
@@ -162,7 +164,7 @@ export async function replanSupabaseActivityAction(
     return { ok: false, error: "La actividad o su responsable no son válidos." };
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc("replan_activity_v1", {
+  const { data, error } = await supabase.rpc("replan_activity_v2", {
     p_activity_id: id,
     p_expected_version: expectedVersion,
     p_responsible_id: fields.responsibleAccountId,

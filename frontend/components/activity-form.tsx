@@ -1,4 +1,5 @@
 "use client";
+import { ActivityJourneys } from "@/components/activity-journeys";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -510,7 +511,7 @@ export function ActivityForm({
                   </h3>
                   <p className="mt-1 text-[0.6875rem] text-ink-muted">
                     Admite fechas continuas o periodos separados desde el 1 de
-                    enero de 2026.
+                    enero de 2026. Puedes repetir fechas si hay distintos lugares.
                   </p>
                 </div>
                 <button
@@ -529,7 +530,7 @@ export function ActivityForm({
               <div className="mt-3 space-y-2">
                 {fields.spans.map((span, index) => (
                   <div
-                    className="grid grid-cols-[1fr_1fr_auto] gap-2"
+                    className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2 rounded-md border border-line p-2"
                     key={index}
                   >
                     <label className="data-label text-ink-muted">
@@ -574,6 +575,16 @@ export function ActivityForm({
                     >
                       ×
                     </button>
+                    <label className="col-span-3 text-xs font-bold text-ink-muted">
+                      Lugar de la jornada {index + 1} (opcional)
+                      <input
+                        className={`${control} mt-1`}
+                        maxLength={300}
+                        onChange={(event) => changeSpan(index, "place", event.target.value)}
+                        placeholder={fields.placeName || "Usar el lugar general, si se indicó"}
+                        value={span.place ?? ""}
+                      />
+                    </label>
                   </div>
                 ))}
               </div>
@@ -591,6 +602,7 @@ export function ActivityForm({
                 <dd className="mt-1 font-extrabold">{existing?.responsible}</dd>
               </div>
             </dl>
+            {existing && <section className="border-b border-line p-4 md:p-5"><h3 className="data-label mb-3 text-cyan-ink">Fechas y lugares planificados</h3><ActivityJourneys activity={existing} /></section>}
             <section className="grid gap-3 p-4 md:grid-cols-2 md:p-5">
               <label className="text-xs font-bold">
                 Enlace del material

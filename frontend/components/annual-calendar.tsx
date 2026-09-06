@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { formatActivitySpans } from "@/components/activity-card";
+import { ActivityJourneys } from "@/components/activity-journeys";
+import { spanPlace } from "@/lib/activities";
 import { StatusPill } from "@/components/status-pill";
 import { isOverdue, useSimulatedActivities } from "@/lib/activity-simulation";
 import type { DataSource } from "@/lib/data-source";
@@ -11,6 +13,8 @@ import {
   activityOverlapsYear,
   historicalYearCeiling,
   historicalYearFloor,
+  historicalCategorySlug,
+  type HistoricalCategory,
   type HistoricalActivity,
 } from "@/lib/historical";
 import type { ActivityType } from "@/lib/roles";
@@ -142,13 +146,18 @@ function DetailPanel({
           <div className="mt-2 grid gap-1.5">
             {choices.map((choice) => (
               <button
+                aria-label={`${choice.type} · ${choice.title}. ID: ${choice.id}. ${choice.responsible}. ${formatActivitySpans(choice)}. ${[...new Set(choice.spans.map((span) => spanPlace(span, choice.place) || "Sin lugar indicado"))].join("; ")}`}
                 aria-pressed={choice.id === item.id}
                 className={`rounded-md border px-3 py-2 text-left text-xs font-bold ${choice.id === item.id ? "border-cyan bg-cyan/10 text-cyan-ink" : "border-line bg-white hover:border-cyan/50"}`}
                 key={choice.id}
                 onClick={() => onChoose(choice)}
                 type="button"
               >
-                {choice.type} · {choice.title}
+                <span className="block">{choice.type} · {choice.title}</span>
+                <span className="mt-1 block break-all font-mono text-[0.625rem] font-normal">ID: {choice.id}</span>
+                <span className="block text-[0.6875rem] font-normal text-ink-muted">{choice.responsible}</span>
+                <span className="block break-words text-[0.6875rem] font-normal text-ink-muted">Lugares de la actividad: {[...new Set(choice.spans.map((span) => spanPlace(span, choice.place) || "Sin lugar indicado"))].join(" · ")}</span>
+                <span className="block text-[0.6875rem] font-normal text-ink-muted">{formatActivitySpans(choice)}</span>
               </button>
             ))}
           </div>
@@ -167,6 +176,7 @@ function DetailPanel({
           {item.title}
         </h2>
       </div>
+      <p className="mt-3 break-all font-mono text-[0.625rem] text-ink-muted">ID: {item.id}</p>
       {isOverdue(item, today) && (
         <p className="mt-3 inline-flex rounded-md border border-red/30 bg-red/5 px-2 py-1 text-xs font-bold text-red">
           Actividad atrasada
@@ -175,8 +185,8 @@ function DetailPanel({
       <dl className="mt-5 grid grid-cols-[6.5rem_1fr] gap-3 border-y border-line py-5 text-sm">
         <dt className="data-label text-ink-muted">Responsable</dt>
         <dd className="font-bold">{item.responsible}</dd>
-        <dt className="data-label text-ink-muted">Fechas</dt>
-        <dd className="font-bold">{formatActivitySpans(item)}</dd>
+        <dt className="data-label text-ink-muted">Jornadas</dt>
+        <dd className="min-w-0"><ActivityJourneys activity={item} /></dd>
         <dt className="data-label text-ink-muted">Origen</dt>
         <dd className="font-bold">
           {item.origin === "burson" ? "Burson" : "Operario"}
@@ -271,7 +281,7 @@ function MiniMonth({
                 {day}
               </span>
             );
-          const found = matches[0];
+          const found = matches.find((entry) => entry.item.id === selectedId) ?? matches[0];
           const previous = utcDate(iso);
           previous.setUTCDate(previous.getUTCDate() - 1);
           const next = utcDate(iso);
@@ -321,11 +331,13 @@ function MiniMonth({
 }
 
 export function AnnualCalendar({
+  category,
   dataSource,
   initialActivities = [],
   today,
   year,
 }: {
+  category?: HistoricalCategory;
   dataSource: DataSource;
   initialActivities?: HistoricalActivity[];
   today: string;
@@ -340,8 +352,8 @@ export function AnnualCalendar({
     [dataSource, initialActivities, stored],
   );
   const visible = useMemo(
-    () => all.filter((item) => activityOverlapsYear(item, year)),
-    [all, year],
+    () => all.filter((item) => (!category || item.type === category) && activityOverlapsYear(item, year)),
+    [all, year, category],
   );
   const calendarIndex = useMemo(() => {
     const activitiesByDate = new Map<string, IndexedActivity[]>();
@@ -482,6 +494,10 @@ export function AnnualCalendar({
   return (
     <div className="items-start overflow-hidden rounded-[10px] border border-line bg-panel shadow-[var(--shadow-2)] md:grid md:grid-cols-[minmax(0,1fr)_42%] xl:grid-cols-[minmax(0,1fr)_20rem]">
       <section className="min-w-0 bg-paper p-3 md:p-5">
+        <nav aria-label="Históricos" className="mb-3 flex flex-wrap gap-x-4 gap-y-2 text-xs font-bold text-cyan-ink">
+          <Link href="/historico" className="py-2">← Elegir histórico</Link>
+          {category && <Link href={{ pathname: "/historico", query: { anio: year, tipo: historicalCategorySlug(category === "Grabación" ? "Edición" : "Grabación") } }} className="py-2">Ver {category === "Grabación" ? "Edición" : "Grabación"}</Link>}
+        </nav>
         <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
           <div>
             <p className="data-label text-cyan-ink">
@@ -489,9 +505,10 @@ export function AnnualCalendar({
             </p>
             <h1 className="section-title mt-1 text-2xl md:text-3xl">
               Histórico {year}
+              {category && <span className="ml-3 inline-block rounded border border-line bg-panel px-2 py-1 align-middle font-sans text-xs font-semibold text-cyan-ink">{category}</span>}
             </h1>
             <p className="mt-2 text-sm text-ink-muted">
-              Todas las actividades del año en una sola vista
+              {category ? `Todas las actividades de ${category.toLowerCase()} del año` : "Todas las actividades del año en una sola vista"}
             </p>
           </div>
           <div className="flex items-center overflow-hidden rounded-full border border-line bg-panel shadow-[var(--shadow-1)]">
@@ -501,7 +518,7 @@ export function AnnualCalendar({
                 className={yearControlClass}
                 href={{
                   pathname: "/historico",
-                  query: { anio: String(year - 1) },
+                  query: { anio: String(year - 1), ...(category ? { tipo: historicalCategorySlug(category) } : {}) },
                 }}
                 scroll={false}
               >
@@ -526,7 +543,7 @@ export function AnnualCalendar({
                 className={yearControlClass}
                 href={{
                   pathname: "/historico",
-                  query: { anio: String(year + 1) },
+                  query: { anio: String(year + 1), ...(category ? { tipo: historicalCategorySlug(category) } : {}) },
                 }}
                 scroll={false}
               >
@@ -548,7 +565,7 @@ export function AnnualCalendar({
           aria-label="Leyenda de tipos"
           className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-[8px] border border-line bg-panel p-3 text-xs shadow-[var(--shadow-1)]"
         >
-          {Object.entries(colors).map(([type, value]) => (
+          {Object.entries(colors).filter(([type]) => !category || type === category).map(([type, value]) => (
             <span className="flex items-center gap-2" key={type}>
               <i
                 aria-hidden="true"
@@ -561,6 +578,7 @@ export function AnnualCalendar({
             </span>
           ))}
         </div>
+        <p className="mt-2 text-[0.6875rem] text-ink-muted">Color = categoría. Número oscuro = actividades en ese día. Pulsa la fecha para verlas todas.</p>
         {!visible.length && (
           <p
             className="mt-4 rounded-md border border-dashed border-line bg-panel p-4 text-sm text-ink-muted md:hidden"

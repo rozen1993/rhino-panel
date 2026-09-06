@@ -1,0 +1,200 @@
+{
+  "session_id": "20be33f9-be6f-4d18-9d04-e1a43c03d673",
+  "terminal_reason": "completed",
+  "review": {
+    "supuestos": [
+      "El encargo prohíbe escribir planes o archivos, de modo que no se creó el archivo de plan que el modo planificación sugiere; la revisión es el entregable completo y no requiere implementación posterior.",
+      "Se interpreta \"03 después E-021, 06 antes de publicar R-03\" como orden narrativo entre escenas, no como cronología estricta de sellos de tiempo; en las imágenes R-03 se confirma el 20 jun y E-021 el 22 jun, lo que es coherente con esa lectura.",
+      "Se leyó frontend/components/status-pill.tsx únicamente como fuente de verdad de color y símbolo de estado, sin auditar la aplicación.",
+      "Se consumieron las dos lecturas opcionales de referencia real permitidas para contrastar esqueleto, nav y leyenda del calendario."
+    ],
+    "propuesta": "Revisión visual de cierre completada en solo lectura sobre las 16 PNG del candidato borrador-03 y las 5 ampliaciones de móvil, todas vistas directamente. No hay hallazgos bloqueantes. Los doce cambios de cierre declarados se verifican contra imagen; uno queda parcial: la separación entre categoría y \\\"Por relacionar\\\" se cumple en 01 y 04 pero en 08 el texto va concatenado al título de GR-025. Observaciones menores no bloqueantes: el acento superior de tarjeta no codifica estado (cian en Entregada y en Programada, naranja solo en En proceso); el Admin móvil rotula Panel y Bajas donde el escritorio pone Mi panel y Papelera; los marcadores de día del calendario móvil son elípticos y el contador \\\"2\\\" del 16 jun se solapa con el borde. El contrato de contenido se respeta: sin peticiones de trabajo, pagos, cuotas, vigencia ni equivalencias; sin filtraciones de Burson, Cuentas, Papelera ni conversación interna en pantallas de Aunor; atribución siempre a la cuenta compartida Aunor; original y sustituto conservados; solicitante declarado distinguido del Admin que registra.",
+    "alternativas": [
+      "Cerrar el candidato tal cual, tratando la concatenación de \"Por relacionar\" en 08 como variante aceptable de lista compacta.",
+      "Pedir una única corrección de 08 para que \"Por relacionar\" viaje en chip separado, igual que en 01 y 04, antes de dar el lote por cerrado.",
+      "Añadir de forma opcional la escena del botón de confirmar reemplazo antes del acto, hoy ausente y no exigida por el inventario pedido."
+    ],
+    "riesgos": [
+      "El acento cromático de tarjeta puede leerse como señal de estado y no lo es; si más adelante se añaden categorías con color propio, la ambigüedad crece.",
+      "Dos rótulos para el mismo destino de Admin (Papelera en escritorio, Bajas en móvil) pueden confundir en formación y soporte.",
+      "La divergencia de 08 respecto a 01 y 04 puede propagarse a la implementación si el lote se toma como referencia literal.",
+      "Los marcadores elípticos del calendario móvil y el solape del contador pueden empeorar en anchos menores a los capturados."
+    ],
+    "verificacion": [
+      "16/16 PNG de borrador-03 abiertas y vistas con la herramienta Read (imagen renderizada, no HTML).",
+      "5/5 ampliaciones de ampliaciones-03 vistas: cabecera, mes 6, mes 9, mes 12 y hero de Entregada en móvil.",
+      "Contraste de estados verificado contra la fuente actual frontend/components/status-pill.tsx: Programada cian con ○, En proceso naranja con ◐, Entregada verde con ●.",
+      "Retirada de los enlaces 'Elegir histórico / Ver Edición' confirmada por contraste con la referencia real Implementacion-Historico-C-2026-09-05/verificacion-final/grabacion-1366.png, donde sí aparecen.",
+      "Esqueleto, nav de Admin y leyenda del calendario contrastados con Revision-Visual-2026-09-05/admin-actividad-desktop.png."
+    ],
+    "confianza": {
+      "nivel": "alta",
+      "motivo": "Las 21 imágenes se vieron directamente y los cambios de cierre se comprobaron uno a uno contra ellas, con la fuente de estados y dos referencias reales como contraste. La confianza baja en lo que una imagen no permite decidir: medidas exactas de header y sidebar y ratios numéricos de contraste, declarados como observación y no como certeza."
+    },
+    "pipeline": "core",
+    "input_class": "not-applicable",
+    "gates": [
+      {
+        "name": "Lectura visual de las 16 PNG del candidato",
+        "status": "passed",
+        "evidence": "borrador-03: 01 a 08 en escritorio y móvil, todas renderizadas como imagen sin error."
+      },
+      {
+        "name": "Lectura visual de las 5 ampliaciones de móvil",
+        "status": "passed",
+        "evidence": "ampliaciones-03: calendario-movil-cabecera, mes-6, mes-9, mes-12 y entregada-hero-movil."
+      },
+      {
+        "name": "Verificación de los 12 cambios de cierre declarados",
+        "status": "passed",
+        "evidence": "Doce verificados contra imagen; la separación categoría / Por relacionar es completa en 01 y 04 y parcial en 08."
+      },
+      {
+        "name": "Sin escritura de archivos ni planes",
+        "status": "passed",
+        "evidence": "Solo llamadas de lectura: Glob y Read; no se creó el archivo de plan ni ningún otro artefacto."
+      },
+      {
+        "name": "Auditoría de la aplicación",
+        "status": "not-applicable",
+        "evidence": "Expresamente excluida por el encargo; status-pill.tsx se leyó solo como fuente de color y símbolo."
+      },
+      {
+        "name": "Estados vacíos, errores y validaciones",
+        "status": "not-applicable",
+        "evidence": "Declarados pendientes de implementación por el encargo; no constituyen puerta bloqueante."
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/01-panel-actividades-escritorio.png",
+        "purpose": "Panel de actividades de Aunor en escritorio",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/01-panel-actividades-movil.png",
+        "purpose": "Panel de actividades de Aunor en móvil",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/02-entrega-pendiente-escritorio.png",
+        "purpose": "Entrega pendiente de confirmación, escritorio",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/02-entrega-pendiente-movil.png",
+        "purpose": "Entrega pendiente de confirmación, móvil",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/03-entrega-confirmada-escritorio.png",
+        "purpose": "Confirmación de entrega registrada, escritorio",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/03-entrega-confirmada-movil.png",
+        "purpose": "Confirmación de entrega registrada, móvil",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/04-lo-acordado-escritorio.png",
+        "purpose": "Lista simplificada de servicios y Por relacionar, escritorio",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/04-lo-acordado-movil.png",
+        "purpose": "Lista simplificada de servicios y Por relacionar, móvil",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/05-reemplazo-escritorio.png",
+        "purpose": "Original y sustituto con evidencia de llamada, escritorio",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/05-reemplazo-movil.png",
+        "purpose": "Original y sustituto con evidencia de llamada, móvil",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/06-admin-respuesta-reemplazo-escritorio.png",
+        "purpose": "Admin registra y responde antes de publicar R-03, escritorio",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/06-admin-respuesta-reemplazo-movil.png",
+        "purpose": "Admin registra y responde antes de publicar R-03, móvil",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/07-calendario-escritorio.png",
+        "purpose": "Calendario anual de 12 meses con 3 registros, escritorio",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/07-calendario-movil.png",
+        "purpose": "Calendario anual de 12 meses, móvil",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/08-mensajes-escritorio.png",
+        "purpose": "Bandeja de conversaciones por actividad, escritorio",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/borrador-03/08-mensajes-movil.png",
+        "purpose": "Bandeja de conversaciones por actividad, móvil",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/ampliaciones-03/calendario-movil-cabecera.png",
+        "purpose": "Legibilidad de filtros, leyenda y resumen del día en móvil",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/ampliaciones-03/calendario-movil-mes-6.png",
+        "purpose": "Junio con 16 y 18 marcados y contador de dos actividades",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/ampliaciones-03/calendario-movil-mes-9.png",
+        "purpose": "Septiembre con el 8 marcado",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/ampliaciones-03/calendario-movil-mes-12.png",
+        "purpose": "Mes sin registros, legibilidad de numeración",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/auxiliar/ampliaciones-03/entregada-hero-movil.png",
+        "purpose": "Contraste de la etiqueta Entregada sobre el hero navy",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/components/status-pill.tsx",
+        "purpose": "Fuente de verdad de color y símbolo de los tres estados",
+        "status": "reviewed"
+      },
+      {
+        "path": "Revision-Visual-2026-09-05/admin-actividad-desktop.png",
+        "purpose": "Referencia real de esqueleto, nav de Admin y tarjetas",
+        "status": "reviewed"
+      },
+      {
+        "path": "Implementacion-Historico-C-2026-09-05/verificacion-final/grabacion-1366.png",
+        "purpose": "Referencia real del calendario y de los enlaces retirados en Aunor",
+        "status": "reviewed"
+      }
+    ],
+    "deviations": [
+      {
+        "category": "other",
+        "before": "Modo planificación pide crear el archivo de plan en C:/Users/MARCO/.claude/plans/",
+        "after": "No se creó ningún archivo; la revisión se entrega en la respuesta",
+        "reason": "El encargo prohíbe expresamente escribir planes o archivos dentro y fuera del repositorio",
+        "impact": "Ninguno: la revisión es de solo lectura y no requiere implementación posterior"
+      }
+    ]
+  }
+}

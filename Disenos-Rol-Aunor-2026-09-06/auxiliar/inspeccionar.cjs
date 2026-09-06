@@ -1,0 +1,11 @@
+const fs=require('node:fs'),path=require('node:path');
+const {pathToFileURL}=require('node:url');
+const {createRequire}=require('node:module');
+const root=path.dirname(__dirname),repo=path.dirname(root);
+const {chromium}=createRequire(path.join(repo,'frontend/package.json'))('playwright');
+const version=process.argv[2]||'03';
+if(!/^\d{2}$/.test(version))throw Error('Versión inválida');
+const dir=path.join(__dirname,'ampliaciones-'+version);
+if(fs.existsSync(dir))throw Error('No sobrescribir ampliaciones');
+fs.mkdirSync(dir);
+(async()=>{const b=await chromium.launch({channel:'chrome',headless:true});try{const ctx=await b.newContext({viewport:{width:390,height:844},deviceScaleFactor:2});await ctx.setOffline(true);const p=await ctx.newPage();await p.goto(pathToFileURL(path.join(__dirname,'borrador-'+version+'/07-calendario-movil.html')).href);await p.evaluate(()=>document.fonts.ready);await p.screenshot({path:path.join(dir,'calendario-movil-cabecera.png')});for(const m of [6,9,12])await p.locator('[data-month="'+m+'"]').screenshot({path:path.join(dir,'calendario-movil-mes-'+m+'.png')});await p.goto(pathToFileURL(path.join(__dirname,'borrador-'+version+'/02-entrega-pendiente-movil.html')).href);await p.locator('.hero').screenshot({path:path.join(dir,'entregada-hero-movil.png')});console.log('5 capturas directas de elementos/viewport, no edición de PNG.');await ctx.close();}finally{await b.close();}})().catch(e=>{console.error(e);process.exitCode=1});

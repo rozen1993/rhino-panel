@@ -93,6 +93,7 @@ export type Database = {
           position: number;
           start_date: string;
           end_date: string;
+          place: string;
         };
         Insert: never;
         Update: never;
@@ -154,6 +155,10 @@ export type Database = {
         Args: Record<string, never>;
         Returns: undefined;
       };
+      plan_activity_v2: Database["public"]["Functions"]["plan_activity_v1"];
+      create_own_activity_v2: Database["public"]["Functions"]["create_own_activity_v1"];
+      replan_activity_v2: Database["public"]["Functions"]["replan_activity_v1"];
+      create_burson_request_v2: Database["public"]["Functions"]["create_burson_request_v1"];
       plan_activity_v1: {
         Args: {
           p_idempotency_key: string;

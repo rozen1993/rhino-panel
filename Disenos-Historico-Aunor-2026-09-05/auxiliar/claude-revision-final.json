@@ -1,0 +1,218 @@
+{
+  "is_error": false,
+  "duration_api_ms": 315909,
+  "num_turns": 43,
+  "stop_reason": "tool_use",
+  "session_id": "298010da-4ed6-45c4-826c-275aa877a88f",
+  "total_cost_usd": 3.2436154999999998,
+  "usage": {
+    "input_tokens": 34,
+    "cache_creation_input_tokens": 112850,
+    "cache_read_input_tokens": 3129043,
+    "output_tokens": 21939,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 112850,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "not_available",
+    "iterations": [
+      {
+        "input_tokens": 2,
+        "output_tokens": 8254,
+        "cache_read_input_tokens": 223556,
+        "cache_creation_input_tokens": 985,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 985
+        },
+        "type": "message"
+      }
+    ],
+    "speed": "standard"
+  },
+  "modelUsage": {
+    "claude-haiku-4-5-20251001": {
+      "inputTokens": 1844,
+      "outputTokens": 21,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0.001949,
+      "contextWindow": 200000,
+      "maxOutputTokens": 32000,
+      "canonicalModel": "claude-haiku-4-5",
+      "provider": "firstParty"
+    },
+    "claude-opus-5": {
+      "inputTokens": 34,
+      "outputTokens": 21939,
+      "cacheReadInputTokens": 3129043,
+      "cacheCreationInputTokens": 112850,
+      "webSearchRequests": 0,
+      "costUSD": 3.2416664999999996,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 64000,
+      "canonicalModel": "claude-opus-5",
+      "provider": "firstParty"
+    }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"input_class\":\"structured-component\",\"pipeline\":\"core\",\"supuestos\":[\"El paquete no fija umbral numérico de contraste ni método de medición; 'texto legible sobre fotos' se evalúa por lectura visual de los PNG, no por cálculo WCAG.\",\"'Mismos 12 meses y detalle' se interpreta a nivel de conjunto: los 12 meses en 08/10 y el detalle móvil en el par 12+15, según la convención de exportación declarada.\",\"La etiqueta roja 'Actividad atrasada', el anillo de selección sobre el rango de mayo y el resaltado ámbar se aceptan como procedentes del calendario aprobado y quedan fuera de evaluación.\",\"El indicador lima bajo 'Histórico' en la nav móvil se coteja contra admin-historico-mobile-viewport.png y se da por parte del shell aprobado.\",\"El complemento 17 (390 px desde el HTML de escritorio) se abre solo para comprobar que el shell colapsa correctamente; no se evalúa como entregable.\",\"La carpeta png/ y auxiliar/borrador-01/ quedan excluidas; solo se juzga png-final/.\"],\"propuesta\":\"APROBABLE CON CORRECCIONES MENORES. Shell, tipografías y paleta intactos frente a las tres referencias reales aprobadas: mismo lockup 'CONTROL DE ACTIVIDADES / RHINO AUDIOVISUALES', mismo sidebar con item activo cian, mismo avatar MA + 'Cerrar sesión'/'Salir', misma nav móvil fija con indicador lima, mismo verde lima de CTA, mismo cian de acento y misma familia de meses del calendario anual. Las tres variantes se distinguen en escritorio y en móvil: A tarjetas blancas enfrentadas con foto superior y texto sobre blanco, B díptico oscuro a sangre con corte recto y texto sobre foto, C díptico oscuro con corte diagonal. El texto blanco sobre fotografía es legible en B y C gracias al velado oscuro, en ambos tamaños. Los doce meses aparecen completos en 07, 08, 09, 10, 11 y 12. Filtro y recuentos coherentes: 07 declara 1 registro con leyenda 'Grabación 1' y badges enero 1 / febrero 1 para una sola actividad discontinua; 09 declara 1 registro con 'Edición 1' y badge mayo 1; 11 declara 3 registros con 'Grabación 3', badge enero 3, febrero 1 y contadores por día 3 en el 4 y 2 en el 11, que cuadran exactamente con las fechas de G-DEMO-01/02/03. La ficha de coincidencias muestra código, categoría, título, persona, lugar y fechas con jerarquía distinta para código (monoespaciada teal) y categoría (monoespaciada gris), sin confundir identidad con categoría. Aunor conserva el original (REF-DEMO-A 'Original conservado', REF-DEMO-B 'Sin trabajo vinculado'), vincula trabajo, cambio y evidencias, y separa EJECUCIÓN / CONFORMIDAD DEL CLIENTE / APROBACIÓN ECONÓMICA con 'Sin constancia', 'No hay aceptación documentada', 'No equivale a aprobado ni pagado' y 'Propuesto · sin aprobación registrada'; no hay importes, cantidades contractuales ni aprobaciones fabricadas, y todas las pantallas rotulan 'MAQUETA PARA APROBACIÓN' con la advertencia de datos ficticios. HALLAZGOS: (1) GRAVEDAD MEDIA — inestabilidad de título para un mismo código. E-DEMO-01 se titula 'Edición de pieza ilustrativa' en 09-historico-edicion-escritorio.png y 'Trabajo sin referencia identificada' en 13-aunor-escritorio.png y 14-aunor-movil.png, bajo el mismo rótulo 'E-DEMO-01 · EDICIÓN' y en la misma ranura tipográfica que los títulos de REF-DEMO-A y REF-DEMO-B. Origen: auxiliar/maquetas.tsx:83 fija ese h3 a mano, frente al título canónico de auxiliar/maquetas.tsx:6. Corrección mínima: poner en el h3 'Edición de pieza ilustrativa' y bajar 'Trabajo sin referencia identificada' a la línea descriptiva, que ya convive con el chip 'Pendiente de vincular'; re-exportar 13 y 14. (2) GRAVEDAD MEDIA-BAJA — dos actividades distintas con título idéntico. auxiliar/maquetas.tsx:10 clona G-DEMO-01 sin sobrescribir title, de modo que en 11-coincidencias-escritorio.png, 12-coincidencias-movil.png y 15-coincidencias-movil-detalle.png las dos primeras tarjetas dicen ambas 'Cobertura ilustrativa Norte' y solo se separan por código, responsable y sede. Debilita la lectura de coincidencias, que es lo que esas tres piezas deben demostrar. Corrección mínima: añadir un title propio en la línea 10 (por ejemplo 'Cobertura ilustrativa Sur', coherente con 'Sede Sur · ejemplo') y re-exportar 11, 12 y 15. (3) GRAVEDAD MEDIA — recorte de la ficha en 11-coincidencias-escritorio.png. El aside crece con la lista de tres actividades y la captura de página (1176 px CSS, igual que 07 y 09) corta la ficha en el encabezado 'Opinión del operario': no se ven ni la opinión ni el CTA 'Ver material · ejemplo', que sí están en el DOM según png-final/verificacion.json y sí se ven completos en 07. Corrección mínima: re-exportar 11 con altura mayor, o añadir un segundo fotograma con el aside desplazado, replicando la solución ya aplicada en móvil con el par 12+15. Sin estas tres correcciones el paquete sigue siendo comprensible, pero incumple el gate explícito de estabilidad de título y código y deja incompleta la única vista de detalle de coincidencias en escritorio.\",\"alternativas\":[\"Aprobar tal cual y corregir los tres puntos al implementar: más barato ahora, pero fija en la aprobación un título contradictorio para E-DEMO-01 y un ejemplo de coincidencias con títulos duplicados.\",\"Corregir solo el contenido ficticio (hallazgos 1 y 2) y aceptar el recorte de 11 apoyándose en 07 para leer la ficha completa: reduce la re-exportación a cuatro PNG, a costa de que la pantalla de coincidencias en escritorio no se apruebe entera.\",\"Re-exportar 11 con el mismo criterio de par que en móvil (11 + un 11-bis desplazado) en lugar de ampliar la altura: mantiene el encuadre de viewport realista y evita una captura de 1500 px que ningún monitor reproduce.\"],\"riesgos\":[\"El PNG solo demuestra composición: no verifica permisos, RLS, implementación ni accesibilidad completa; el contraste sobre fotografía no se midió, solo se leyó.\",\"Todas las acciones dibujadas están inertes y las fotografías son genéricas de imagegen; nada de lo mostrado documenta trabajos, aprobaciones ni cantidades reales.\",\"'Trabajo sin referencia identificada' podría haberse escrito como rótulo de bucket y no como título; la corrección propuesta conserva esa intención moviendo la frase a la línea descriptiva.\",\"El contador por día (3 en el 4, 2 en el 11) es un elemento que no aparece en las tres capturas aprobadas: es la pieza nueva que hace legible la coincidencia y conviene aprobarla de forma explícita.\",\"No hay exportación móvil del detalle de Edición: la etiqueta 'Actividad atrasada' y el estado 'Enlace disponible al entregar' solo se ven a 1440 px.\",\"La revisión se limita a png-final/; no se cotejó png/ ni borrador-01/, ni se abrió la aplicación, datos o servicios.\"],\"verificacion\":[\"Abiertos con Read los 15 PNG de png-final: 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14 y 15.\",\"Abierto además el complemento 17-edicion-movil-vista-mayo.png para comprobar el colapso del shell a 390 px.\",\"Abiertas las tres referencias reales aprobadas: Revision-Visual-2026-09-05/admin-historico-desktop.png, admin-historico-mobile-viewport.png y admin-historico-detalle-mobile-viewport.png.\",\"Leídos png-final/verificacion.json (0 errores, 0 peticiones de red denegadas, sha256 por pieza, 12 meses en 07/08/09/10/11/12) y png-final/complementos-verificacion.json.\",\"Cotejadas las cadenas de auxiliar/maquetas.tsx con Grep: línea 6 (título canónico de E-DEMO-01), línea 83 (h3 divergente) y línea 10 (clon de G-DEMO-01 sin title propio).\",\"Recuentos verificados a mano contra las fechas de las tres actividades ficticias de coincidencias.\",\"No se escribió, ejecutó ni desplegó nada; no se abrió navegador ni aplicación.\"],\"gates\":[{\"name\":\"Shell, fuentes y paleta intactos\",\"status\":\"passed\",\"evidence\":\"Lockup, sidebar, avatar MA, nav móvil con indicador lima, cian de acento y verde lima de CTA idénticos a admin-historico-desktop.png y admin-historico-mobile-viewport.png.\"},{\"name\":\"Tres variantes distinguibles en ambos tamaños\",\"status\":\"passed\",\"evidence\":\"01/02 tarjetas blancas; 03/04 díptico oscuro con corte recto; 05/06 díptico oscuro con corte diagonal.\"},{\"name\":\"Texto legible sobre fotografía\",\"status\":\"passed\",\"evidence\":\"Velado oscuro en B y C; rótulos y párrafos legibles en 03, 04, 05 y 06.\"},{\"name\":\"Mismos 12 meses\",\"status\":\"passed\",\"evidence\":\"ENERO a DICIEMBRE completos en 07, 08, 09, 10, 11 y 12.\"},{\"name\":\"Detalle presente\",\"status\":\"passed\",\"evidence\":\"Completo en 07, 09 y en el par móvil 12+15; incompleto en 11 (ver hallazgo 3).\"},{\"name\":\"Filtro y recuentos coherentes\",\"status\":\"passed\",\"evidence\":\"07: 1 registro, enero 1 + febrero 1. 09: 1 registro, mayo 1. 11: 3 registros, enero 3, febrero 1, día 4 con 3 y día 11 con 2.\"},{\"name\":\"Coincidencias con código, título, persona, lugar y fechas sin confundir identidad y categoría\",\"status\":\"failed\",\"evidence\":\"Jerarquía correcta entre código y categoría, pero G-DEMO-01 y G-DEMO-02 comparten el título 'Cobertura ilustrativa Norte' en 11, 12 y 15.\"},{\"name\":\"Título y código estables entre pantallas\",\"status\":\"failed\",\"evidence\":\"E-DEMO-01 es 'Edición de pieza ilustrativa' en 09 y 'Trabajo sin referencia identificada' en 13 y 14.\"},{\"name\":\"Aunor conserva el original y no fabrica aprobaciones\",\"status\":\"passed\",\"evidence\":\"'Original conservado', 'Sin trabajo vinculado', 'Propuesto · sin aprobación registrada', 'Sin constancia' en conformidad y economía, sin importes ni cantidades.\"}],\"artifacts\":[{\"path\":\"Disenos-Historico-Aunor-2026-09-05/png-final/\",\"purpose\":\"Los 15 PNG de la versión final más los complementos 00, 16 y 17\",\"status\":\"reviewed\"},{\"path\":\"Disenos-Historico-Aunor-2026-09-05/png-final/verificacion.json\",\"purpose\":\"Medición de la exportación: tamaños, meses, textos, errores y sha256\",\"status\":\"reviewed\"},{\"path\":\"Disenos-Historico-Aunor-2026-09-05/auxiliar/maquetas.tsx\",\"purpose\":\"Origen de los dos defectos de contenido: línea 83 (título de E-DEMO-01) y línea 10 (clon sin title de G-DEMO-02)\",\"status\":\"reviewed\"},{\"path\":\"Revision-Visual-2026-09-05/admin-historico-desktop.png\",\"purpose\":\"Referencia real aprobada para el cotejo de escritorio\",\"status\":\"reviewed\"},{\"path\":\"Revision-Visual-2026-09-05/admin-historico-mobile-viewport.png\",\"purpose\":\"Referencia real aprobada para el cotejo del shell móvil\",\"status\":\"reviewed\"},{\"path\":\"Revision-Visual-2026-09-05/admin-historico-detalle-mobile-viewport.png\",\"purpose\":\"Referencia real aprobada para el cotejo del detalle móvil\",\"status\":\"reviewed\"}],\"deviations\":[{\"category\":\"defect\",\"before\":\"E-DEMO-01 titulado 'Trabajo sin referencia identificada' en 13 y 14\",\"after\":\"E-DEMO-01 titulado 'Edición de pieza ilustrativa', con la frase anterior en la línea descriptiva\",\"reason\":\"El gate exige que título y código de una misma actividad se mantengan entre pantallas\",\"impact\":\"Media: el mismo código se lee con dos nombres al comparar Histórico y Aunor\"},{\"category\":\"defect\",\"before\":\"G-DEMO-02 hereda el título de G-DEMO-01\",\"after\":\"G-DEMO-02 con título propio coherente con 'Sede Sur · ejemplo'\",\"reason\":\"Dos tarjetas contiguas con título idéntico anulan la demostración de coincidencias\",\"impact\":\"Media-baja: afecta a 11, 12 y 15\"},{\"category\":\"defect\",\"before\":\"11-coincidencias-escritorio.png corta la ficha en 'Opinión del operario'\",\"after\":\"Re-exportar con más altura o con un segundo fotograma desplazado, como el par 12+15\",\"reason\":\"La opinión y el CTA existen en el DOM pero no son visibles en el PNG que se aprueba\",\"impact\":\"Media: la única vista de detalle de coincidencias en escritorio queda incompleta\"}],\"confianza\":{\"nivel\":\"alta\",\"motivo\":\"Los 15 PNG y las tres referencias se abrieron directamente; los tres hallazgos se comprueban a la vez en la imagen, en png-final/verificacion.json y en líneas concretas de auxiliar/maquetas.tsx, y los recuentos se recalcularon a mano. La incertidumbre restante es de gusto y de medición de contraste, que quedan fuera del alcance.\"}}",
+  "structured_output": {
+    "input_class": "structured-component",
+    "pipeline": "core",
+    "supuestos": [
+      "El paquete no fija umbral numérico de contraste ni método de medición; 'texto legible sobre fotos' se evalúa por lectura visual de los PNG, no por cálculo WCAG.",
+      "'Mismos 12 meses y detalle' se interpreta a nivel de conjunto: los 12 meses en 08/10 y el detalle móvil en el par 12+15, según la convención de exportación declarada.",
+      "La etiqueta roja 'Actividad atrasada', el anillo de selección sobre el rango de mayo y el resaltado ámbar se aceptan como procedentes del calendario aprobado y quedan fuera de evaluación.",
+      "El indicador lima bajo 'Histórico' en la nav móvil se coteja contra admin-historico-mobile-viewport.png y se da por parte del shell aprobado.",
+      "El complemento 17 (390 px desde el HTML de escritorio) se abre solo para comprobar que el shell colapsa correctamente; no se evalúa como entregable.",
+      "La carpeta png/ y auxiliar/borrador-01/ quedan excluidas; solo se juzga png-final/."
+    ],
+    "propuesta": "APROBABLE CON CORRECCIONES MENORES. Shell, tipografías y paleta intactos frente a las tres referencias reales aprobadas: mismo lockup 'CONTROL DE ACTIVIDADES / RHINO AUDIOVISUALES', mismo sidebar con item activo cian, mismo avatar MA + 'Cerrar sesión'/'Salir', misma nav móvil fija con indicador lima, mismo verde lima de CTA, mismo cian de acento y misma familia de meses del calendario anual. Las tres variantes se distinguen en escritorio y en móvil: A tarjetas blancas enfrentadas con foto superior y texto sobre blanco, B díptico oscuro a sangre con corte recto y texto sobre foto, C díptico oscuro con corte diagonal. El texto blanco sobre fotografía es legible en B y C gracias al velado oscuro, en ambos tamaños. Los doce meses aparecen completos en 07, 08, 09, 10, 11 y 12. Filtro y recuentos coherentes: 07 declara 1 registro con leyenda 'Grabación 1' y badges enero 1 / febrero 1 para una sola actividad discontinua; 09 declara 1 registro con 'Edición 1' y badge mayo 1; 11 declara 3 registros con 'Grabación 3', badge enero 3, febrero 1 y contadores por día 3 en el 4 y 2 en el 11, que cuadran exactamente con las fechas de G-DEMO-01/02/03. La ficha de coincidencias muestra código, categoría, título, persona, lugar y fechas con jerarquía distinta para código (monoespaciada teal) y categoría (monoespaciada gris), sin confundir identidad con categoría. Aunor conserva el original (REF-DEMO-A 'Original conservado', REF-DEMO-B 'Sin trabajo vinculado'), vincula trabajo, cambio y evidencias, y separa EJECUCIÓN / CONFORMIDAD DEL CLIENTE / APROBACIÓN ECONÓMICA con 'Sin constancia', 'No hay aceptación documentada', 'No equivale a aprobado ni pagado' y 'Propuesto · sin aprobación registrada'; no hay importes, cantidades contractuales ni aprobaciones fabricadas, y todas las pantallas rotulan 'MAQUETA PARA APROBACIÓN' con la advertencia de datos ficticios. HALLAZGOS: (1) GRAVEDAD MEDIA — inestabilidad de título para un mismo código. E-DEMO-01 se titula 'Edición de pieza ilustrativa' en 09-historico-edicion-escritorio.png y 'Trabajo sin referencia identificada' en 13-aunor-escritorio.png y 14-aunor-movil.png, bajo el mismo rótulo 'E-DEMO-01 · EDICIÓN' y en la misma ranura tipográfica que los títulos de REF-DEMO-A y REF-DEMO-B. Origen: auxiliar/maquetas.tsx:83 fija ese h3 a mano, frente al título canónico de auxiliar/maquetas.tsx:6. Corrección mínima: poner en el h3 'Edición de pieza ilustrativa' y bajar 'Trabajo sin referencia identificada' a la línea descriptiva, que ya convive con el chip 'Pendiente de vincular'; re-exportar 13 y 14. (2) GRAVEDAD MEDIA-BAJA — dos actividades distintas con título idéntico. auxiliar/maquetas.tsx:10 clona G-DEMO-01 sin sobrescribir title, de modo que en 11-coincidencias-escritorio.png, 12-coincidencias-movil.png y 15-coincidencias-movil-detalle.png las dos primeras tarjetas dicen ambas 'Cobertura ilustrativa Norte' y solo se separan por código, responsable y sede. Debilita la lectura de coincidencias, que es lo que esas tres piezas deben demostrar. Corrección mínima: añadir un title propio en la línea 10 (por ejemplo 'Cobertura ilustrativa Sur', coherente con 'Sede Sur · ejemplo') y re-exportar 11, 12 y 15. (3) GRAVEDAD MEDIA — recorte de la ficha en 11-coincidencias-escritorio.png. El aside crece con la lista de tres actividades y la captura de página (1176 px CSS, igual que 07 y 09) corta la ficha en el encabezado 'Opinión del operario': no se ven ni la opinión ni el CTA 'Ver material · ejemplo', que sí están en el DOM según png-final/verificacion.json y sí se ven completos en 07. Corrección mínima: re-exportar 11 con altura mayor, o añadir un segundo fotograma con el aside desplazado, replicando la solución ya aplicada en móvil con el par 12+15. Sin estas tres correcciones el paquete sigue siendo comprensible, pero incumple el gate explícito de estabilidad de título y código y deja incompleta la única vista de detalle de coincidencias en escritorio.",
+    "alternativas": [
+      "Aprobar tal cual y corregir los tres puntos al implementar: más barato ahora, pero fija en la aprobación un título contradictorio para E-DEMO-01 y un ejemplo de coincidencias con títulos duplicados.",
+      "Corregir solo el contenido ficticio (hallazgos 1 y 2) y aceptar el recorte de 11 apoyándose en 07 para leer la ficha completa: reduce la re-exportación a cuatro PNG, a costa de que la pantalla de coincidencias en escritorio no se apruebe entera.",
+      "Re-exportar 11 con el mismo criterio de par que en móvil (11 + un 11-bis desplazado) en lugar de ampliar la altura: mantiene el encuadre de viewport realista y evita una captura de 1500 px que ningún monitor reproduce."
+    ],
+    "riesgos": [
+      "El PNG solo demuestra composición: no verifica permisos, RLS, implementación ni accesibilidad completa; el contraste sobre fotografía no se midió, solo se leyó.",
+      "Todas las acciones dibujadas están inertes y las fotografías son genéricas de imagegen; nada de lo mostrado documenta trabajos, aprobaciones ni cantidades reales.",
+      "'Trabajo sin referencia identificada' podría haberse escrito como rótulo de bucket y no como título; la corrección propuesta conserva esa intención moviendo la frase a la línea descriptiva.",
+      "El contador por día (3 en el 4, 2 en el 11) es un elemento que no aparece en las tres capturas aprobadas: es la pieza nueva que hace legible la coincidencia y conviene aprobarla de forma explícita.",
+      "No hay exportación móvil del detalle de Edición: la etiqueta 'Actividad atrasada' y el estado 'Enlace disponible al entregar' solo se ven a 1440 px.",
+      "La revisión se limita a png-final/; no se cotejó png/ ni borrador-01/, ni se abrió la aplicación, datos o servicios."
+    ],
+    "verificacion": [
+      "Abiertos con Read los 15 PNG de png-final: 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14 y 15.",
+      "Abierto además el complemento 17-edicion-movil-vista-mayo.png para comprobar el colapso del shell a 390 px.",
+      "Abiertas las tres referencias reales aprobadas: Revision-Visual-2026-09-05/admin-historico-desktop.png, admin-historico-mobile-viewport.png y admin-historico-detalle-mobile-viewport.png.",
+      "Leídos png-final/verificacion.json (0 errores, 0 peticiones de red denegadas, sha256 por pieza, 12 meses en 07/08/09/10/11/12) y png-final/complementos-verificacion.json.",
+      "Cotejadas las cadenas de auxiliar/maquetas.tsx con Grep: línea 6 (título canónico de E-DEMO-01), línea 83 (h3 divergente) y línea 10 (clon de G-DEMO-01 sin title propio).",
+      "Recuentos verificados a mano contra las fechas de las tres actividades ficticias de coincidencias.",
+      "No se escribió, ejecutó ni desplegó nada; no se abrió navegador ni aplicación."
+    ],
+    "gates": [
+      {
+        "name": "Shell, fuentes y paleta intactos",
+        "status": "passed",
+        "evidence": "Lockup, sidebar, avatar MA, nav móvil con indicador lima, cian de acento y verde lima de CTA idénticos a admin-historico-desktop.png y admin-historico-mobile-viewport.png."
+      },
+      {
+        "name": "Tres variantes distinguibles en ambos tamaños",
+        "status": "passed",
+        "evidence": "01/02 tarjetas blancas; 03/04 díptico oscuro con corte recto; 05/06 díptico oscuro con corte diagonal."
+      },
+      {
+        "name": "Texto legible sobre fotografía",
+        "status": "passed",
+        "evidence": "Velado oscuro en B y C; rótulos y párrafos legibles en 03, 04, 05 y 06."
+      },
+      {
+        "name": "Mismos 12 meses",
+        "status": "passed",
+        "evidence": "ENERO a DICIEMBRE completos en 07, 08, 09, 10, 11 y 12."
+      },
+      {
+        "name": "Detalle presente",
+        "status": "passed",
+        "evidence": "Completo en 07, 09 y en el par móvil 12+15; incompleto en 11 (ver hallazgo 3)."
+      },
+      {
+        "name": "Filtro y recuentos coherentes",
+        "status": "passed",
+        "evidence": "07: 1 registro, enero 1 + febrero 1. 09: 1 registro, mayo 1. 11: 3 registros, enero 3, febrero 1, día 4 con 3 y día 11 con 2."
+      },
+      {
+        "name": "Coincidencias con código, título, persona, lugar y fechas sin confundir identidad y categoría",
+        "status": "failed",
+        "evidence": "Jerarquía correcta entre código y categoría, pero G-DEMO-01 y G-DEMO-02 comparten el título 'Cobertura ilustrativa Norte' en 11, 12 y 15."
+      },
+      {
+        "name": "Título y código estables entre pantallas",
+        "status": "failed",
+        "evidence": "E-DEMO-01 es 'Edición de pieza ilustrativa' en 09 y 'Trabajo sin referencia identificada' en 13 y 14."
+      },
+      {
+        "name": "Aunor conserva el original y no fabrica aprobaciones",
+        "status": "passed",
+        "evidence": "'Original conservado', 'Sin trabajo vinculado', 'Propuesto · sin aprobación registrada', 'Sin constancia' en conformidad y economía, sin importes ni cantidades."
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "Disenos-Historico-Aunor-2026-09-05/png-final/",
+        "purpose": "Los 15 PNG de la versión final más los complementos 00, 16 y 17",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Historico-Aunor-2026-09-05/png-final/verificacion.json",
+        "purpose": "Medición de la exportación: tamaños, meses, textos, errores y sha256",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Historico-Aunor-2026-09-05/auxiliar/maquetas.tsx",
+        "purpose": "Origen de los dos defectos de contenido: línea 83 (título de E-DEMO-01) y línea 10 (clon sin title de G-DEMO-02)",
+        "status": "reviewed"
+      },
+      {
+        "path": "Revision-Visual-2026-09-05/admin-historico-desktop.png",
+        "purpose": "Referencia real aprobada para el cotejo de escritorio",
+        "status": "reviewed"
+      },
+      {
+        "path": "Revision-Visual-2026-09-05/admin-historico-mobile-viewport.png",
+        "purpose": "Referencia real aprobada para el cotejo del shell móvil",
+        "status": "reviewed"
+      },
+      {
+        "path": "Revision-Visual-2026-09-05/admin-historico-detalle-mobile-viewport.png",
+        "purpose": "Referencia real aprobada para el cotejo del detalle móvil",
+        "status": "reviewed"
+      }
+    ],
+    "deviations": [
+      {
+        "category": "defect",
+        "before": "E-DEMO-01 titulado 'Trabajo sin referencia identificada' en 13 y 14",
+        "after": "E-DEMO-01 titulado 'Edición de pieza ilustrativa', con la frase anterior en la línea descriptiva",
+        "reason": "El gate exige que título y código de una misma actividad se mantengan entre pantallas",
+        "impact": "Media: el mismo código se lee con dos nombres al comparar Histórico y Aunor"
+      },
+      {
+        "category": "defect",
+        "before": "G-DEMO-02 hereda el título de G-DEMO-01",
+        "after": "G-DEMO-02 con título propio coherente con 'Sede Sur · ejemplo'",
+        "reason": "Dos tarjetas contiguas con título idéntico anulan la demostración de coincidencias",
+        "impact": "Media-baja: afecta a 11, 12 y 15"
+      },
+      {
+        "category": "defect",
+        "before": "11-coincidencias-escritorio.png corta la ficha en 'Opinión del operario'",
+        "after": "Re-exportar con más altura o con un segundo fotograma desplazado, como el par 12+15",
+        "reason": "La opinión y el CTA existen en el DOM pero no son visibles en el PNG que se aprueba",
+        "impact": "Media: la única vista de detalle de coincidencias en escritorio queda incompleta"
+      }
+    ],
+    "confianza": {
+      "nivel": "alta",
+      "motivo": "Los 15 PNG y las tres referencias se abrieron directamente; los tres hallazgos se comprueban a la vez en la imagen, en png-final/verificacion.json y en líneas concretas de auxiliar/maquetas.tsx, y los recuentos se recalcularon a mano. La incertidumbre restante es de gusto y de medición de contraste, que quedan fuera del alcance."
+    }
+  },
+  "ttft_ms": 8128,
+  "ttft_stream_ms": 1060,
+  "time_to_request_ms": 34,
+  "type": "result",
+  "duration_ms": 318397,
+  "uuid": "3866347f-3df8-47bf-91a8-1aac82fbf76b"
+}

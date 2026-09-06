@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { formatActivitySpans } from "@/components/activity-card";
+import { ActivityJourneys } from "@/components/activity-journeys";
 import { Card } from "@/components/card";
 import { StatusPill } from "@/components/status-pill";
 import { useSimulatedActivities } from "@/lib/activity-simulation";
@@ -87,7 +87,7 @@ export function BursonRequestDetail({
               <div>
                 <dt className="data-label text-ink-muted">Jornadas</dt>
                 <dd className="mt-1.5 font-bold leading-5">
-                  {formatActivitySpans(request)}
+                  <ActivityJourneys activity={request} />
                 </dd>
               </div>
               <div>

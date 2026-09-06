@@ -62,7 +62,9 @@ function isActivityDraftFields(value: unknown): value is ActivityDraftFields {
         Boolean(span) &&
         typeof span === "object" &&
         typeof span.start === "string" &&
-        typeof span.end === "string",
+        typeof span.end === "string" &&
+        (span.place === undefined ||
+          (typeof span.place === "string" && span.place.length <= 300)),
     )
   );
 }

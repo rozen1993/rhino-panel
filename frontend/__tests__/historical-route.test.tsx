@@ -49,6 +49,7 @@ const activity: HistoricalActivity = {
   type: "Edición",
   title: "Actividad real",
   responsible: "Ana Torres",
+  place: "Lima",
   status: "Programada",
   origin: "operario",
   spans: [{ start: "2027-03-01", end: "2027-03-02" }],
@@ -66,6 +67,20 @@ async function renderPage(anio?: string) {
 }
 
 describe("ruta del Histórico", () => {
+  it("un filtro repetido o desconocido vuelve a la entrada sin leer actividades", async () => {
+    mocks.resolveDataSource.mockReturnValue("supabase");
+    render(await HistoricalPage({ params: Promise.resolve({}), searchParams: Promise.resolve({ tipo: ["todos", "x"], anio: "2026" }) } as never));
+    expect(mocks.listHistorical).not.toHaveBeenCalled();
+    expect(screen.getByRole("link", { name: "Ver histórico de grabación" })).toBeTruthy();
+  });
+  it("abre la entrada C sin consultar actividades y mantiene las dos rutas", async () => {
+    mocks.resolveDataSource.mockReturnValue("supabase");
+    await renderPage();
+    expect(mocks.listHistorical).not.toHaveBeenCalled();
+    expect(screen.getByRole("link", { name: "Ver histórico de grabación" }).getAttribute("href")).toContain("tipo=grabacion");
+    expect(screen.getByRole("link", { name: "Ver histórico de edición" }).getAttribute("href")).toContain("tipo=edicion");
+    expect(screen.getByRole("link", { name: /Ver todo el Histórico/ })).toBeTruthy();
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.requireRole.mockImplementation(

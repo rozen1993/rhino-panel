@@ -1,0 +1,26 @@
+[
+  {
+    "file": "15-coincidencias-movil-detalle.png",
+    "source": "12-coincidencias-movil.html",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    }
+  },
+  {
+    "file": "16-grabacion-movil-vista-inicial.png",
+    "source": "07-historico-grabacion-escritorio.html",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    }
+  },
+  {
+    "file": "17-edicion-movil-vista-mayo.png",
+    "source": "09-historico-edicion-escritorio.html",
+    "viewport": {
+      "width": 390,
+      "height": 844
+    }
+  }
+]

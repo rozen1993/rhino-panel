@@ -1,0 +1,169 @@
+{
+  "is_error": false,
+  "duration_api_ms": 281612,
+  "num_turns": 2,
+  "stop_reason": "tool_use",
+  "session_id": "ec030310-6228-4c32-a91e-6862624aff78",
+  "total_cost_usd": 1.1423629999999998,
+  "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 60572,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 21175,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 60572,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "not_available",
+    "iterations": [
+      {
+        "input_tokens": 2,
+        "output_tokens": 21175,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 60572,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 60572
+        },
+        "type": "message"
+      }
+    ],
+    "speed": "standard"
+  },
+  "modelUsage": {
+    "claude-haiku-4-5-20251001": {
+      "inputTokens": 7158,
+      "outputTokens": 20,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0.0072580000000000006,
+      "contextWindow": 200000,
+      "maxOutputTokens": 32000,
+      "canonicalModel": "claude-haiku-4-5",
+      "provider": "firstParty"
+    },
+    "claude-opus-5": {
+      "inputTokens": 2,
+      "outputTokens": 21175,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 60572,
+      "webSearchRequests": 0,
+      "costUSD": 1.1351049999999998,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 64000,
+      "canonicalModel": "claude-opus-5",
+      "provider": "firstParty"
+    }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"pipeline\":\"core\",\"coincidencias\":[\"Representación: columna `place` en `activity_date_spans`, `text not null default '' check (char_length(place) <= 300)`, espejo de `activities.place`. Migración aditiva, sin backfill, sin inventar datos para actividades existentes; hereda RLS y grant SELECT vigentes.\",\"Semántica: `activities.place` se conserva como lugar general y sigue siendo opcional; el lugar efectivo de una jornada es `span.place` si no está vacío y el global en caso contrario. `''` significa heredar, no un lugar inventado.\",\"Varias localizaciones el mismo día = dos filas de span con idénticas `start_date`/`end_date` y distinto `place`; la unicidad es `(activity_id, position)`, así que lo admite sin introducir horas. Límite de 100 posiciones intacto.\",\"El contador cuenta filas de `public.activities` (IDs únicos), no filas de spans; coincidencias no duplican actividades.\",\"Autoridad sin cambios: `update_execution_v1` y `advance_activity_v1` no reciben place ni spans; conversación, baja y restauración no tocan spans; el operario responsable sigue leyendo planificación pero sin ruta de escritura.\",\"Reemplazo atómico por `private.replace_activity_spans` preservado, con el incremento de versión en la misma transacción; no se exponen escrituras directas sobre la tabla de spans.\",\"Superficie versionada v2 explícita para que el frontend nuevo no pueda escribir contra un backend antiguo; prohibido el fallback silencioso a v1.\",\"Borradores v5 legibles, validación acepta `place` opcional ≤300 sin volverlo obligatorio, y los DTO (actividad, Burson, histórico) dejan de descartar metadatos.\",\"Idempotencia debe distinguir un cambio que sólo afecta al lugar; la versión sube atómicamente con ese cambio.\",\"Alternativas descartadas idénticas en ambas derivaciones: lista global de lugares (no ata fecha), tabla hija ligada a IDs de span (los IDs se reemplazan; exige RLS, grants y un join más), JSON libre (pierde validación) y array por fila (innecesario si se permite repetir rango).\",\"Sin migraciones remotas ni despliegues; pruebas locales y aisladas.\"],\"discrepancias\":[{\"punto\":\"Entorno de pruebas de la migración\",\"claude\":\"Prescribe `scripts/verify-local-supabase.mjs` como paso de verificación de la migración.\",\"codex\":\"Migración exclusivamente en base efímera aislada si está disponible; explícitamente 'no reset de BD existente'.\",\"evidencia\":\"Restricción del lanzador: el script resetea datos en inicio y en cleanup, por lo que ejecutarlo sobre el proyecto existente destruiría datos de Marco.\",\"resolucion\":\"Codex. Instancia/ref de proyecto efímera y separada. El script sólo es admisible apuntado a un proyecto desechable; nunca al local del usuario.\"},{\"punto\":\"Forma de la capa v2\",\"claude\":\"Cuatro funciones `_v2` nuevas y aditivas, sin especificar si duplican el cuerpo de las v1.\",\"codex\":\"Capa de RPC v2 que hereda las autorizaciones v1 y usa el escritor actualizado, con revokes explícitos antes de grants, en lugar de copiar cuerpos grandes.\",\"evidencia\":\"Duplicar cuatro cuerpos replica comprobaciones de autoridad, bump de versión, idempotencia y auditoría; cada copia exigiría reverificar RLS y derivaría con el tiempo.\",\"resolucion\":\"Codex. Envoltorios finos `security invoker`, `search_path` fijado, `revoke all from public, anon` + `grant execute to authenticated`, mismo tipo de retorno, sin capturar excepciones (los códigos SR de v1 se propagan intactos). El envoltorio sólo normaliza `p_spans` y delega.\"},{\"punto\":\"Dónde se canonicaliza el payload para la huella\",\"claude\":\"Las `_v2` recalculan `idempotency_hash` sobre un array canónico construido dentro de la propia v2.\",\"codex\":\"Conservar el fingerprint `p_spans` original de la RPC y no alterar replays legados.\",\"evidencia\":\"Ambos objetivos son compatibles si la canonicalización actúa sobre la entrada, no sobre el código de hash: v1 sigue hasheando lo que recibe.\",\"resolucion\":\"Híbrido con arquitectura de Codex y objetivo de Claude. v2 normaliza y pasa el jsonb canónico; v1 conserva su código de hash sin un solo cambio. Dentro de v2, omisión y `\\\"\\\"` dan el mismo hash; el replay legado byte-idéntico reproduce su hash histórico.\"},{\"punto\":\"Vacío omitido frente a vacío explícito en el escritor\",\"claude\":\"`coalesce(span->>'place','')` en el INSERT de `replace_activity_spans`.\",\"codex\":\"Hallazgo posterior: el escritor borra y recrea todas las filas, así que un `replan_activity_v1` legado sin `place` vaciaría lugares específicos en silencio.\",\"evidencia\":\"El `coalesce` no distingue clave ausente de valor vacío, y el reemplazo es total, no incremental.\",\"resolucion\":\"Codex. Discriminación por presencia de clave (`s ? 'place'`) más guard fail-closed. La preservación posicional se descarta: tras un reemplazo total pegaría un lugar a un rango distinto, es decir, inventaría datos.\"},{\"punto\":\"Decisiones elevadas a Marco\",\"claude\":\"Eleva cuatro: rol del lugar global, obligatoriedad en Grabación, representación en calendario e inclusión en Histórico.\",\"codex\":\"No eleva ninguna decisión de producto.\",\"evidencia\":\"El lanzador fija que el campo general es opcional hoy y permanece opcional, que mostrar lugares junto a jornadas ya cabe en lo aprobado y que el contador va por ID único.\",\"resolucion\":\"Codex. Ninguna requiere a Marco; no bloquean. El global queda como fallback opcional y el Histórico proyecta lugares por el mismo criterio ya aprobado.\"},{\"punto\":\"Detección de capacidad del backend\",\"claude\":\"Rechaza la sonda previa (round-trip extra, ventana de carrera, falla en abierto) y se apoya en `PGRST202`.\",\"codex\":\"Deja abierto 'evaluar el aumento de carga contra una comprobación de capacidad sin mutación'.\",\"evidencia\":\"Una sonda separada de la escritura introduce TOCTOU y puede fallar en abierto; la ausencia de función ya es un fallo ruidoso y atómico.\",\"resolucion\":\"Claude. Sin sonda. Ante `PGRST202` se muestra error y nunca se reintenta contra v1.\"},{\"punto\":\"Versión de borradores locales\",\"claude\":\"Sin bump: `isActivityDraftFields` (`activity-draft.ts:59-66`) sólo exige `start` y `end` como strings, así que v5 acepta borradores con y sin lugares; subir a v6 descartaría borradores en curso.\",\"codex\":\"Sólo exige que v5 siga siendo legible, sin pronunciarse sobre el bump.\",\"evidencia\":\"La comprobación de forma citada es permisiva y no rechaza claves adicionales.\",\"resolucion\":\"Claude. Mantener v5.\"},{\"punto\":\"Inventario concreto de puntos de pérdida en frontend\",\"claude\":\"Enumera tres selects de columnas explícitas (`activities.ts:235`, `historical.ts:58` y `:135`), la ausencia total de lugar en la proyección histórica (`historical.ts:229-240`) y seis rutas divergentes en `activity-simulation.ts` (390 y 403 recortan a `{start,end}`; 487, 549, 635 y 694 pasan el objeto entero).\",\"codex\":\"Enuncia el requisito de forma general: DTO conserva metadatos, demo normaliza sólo fechas.\",\"evidencia\":\"Los dos coinciden en el requisito; sólo Claude aporta la lista accionable.\",\"resolucion\":\"Claude. Adoptar el inventario como checklist de implementación, con un normalizador único compartido por las seis rutas.\"}],\"recomendacion\":\"CONTRATO EXACTO A IMPLEMENTAR.\\\\n\\\\n1) ESQUEMA. `alter table public.activity_date_spans add column place text not null default '' check (char_length(place) <= 300)`. Aditivo, metadata-only en PG11+, sin backfill; las filas existentes quedan con `''` = heredar `activities.place`. Hereda política y grant SELECT vigentes.\\\\n\\\\n2) SUPERFICIE v2 = ENVOLTORIOS, NO CUERPOS DUPLICADOS. `plan_activity_v2`, `create_own_activity_v2`, `replan_activity_v2`, `create_burson_request_v2`: `security invoker`, `search_path` fijado, `revoke all on function ... from public, anon` seguido de `grant execute ... to authenticated`, mismo tipo de retorno que su v1, sin capturar excepciones para que los códigos SR lleguen íntegros al cliente. Único trabajo: normalizar `p_spans` y delegar en la v1 correspondiente, que conserva sus comprobaciones de autoridad, su bump de versión y su idempotencia. La migración NO elimina las v1 (el precedente 202608280001:215-220 sí las borró; esta no debe repetirlo).\\\\n\\\\n3) NORMALIZACIÓN CANÓNICA EN v2. Por span: `place := btrim(coalesce(span->>'place',''))`; rechazo si la clave está presente y no es string JSON, o si supera 300, con código SR explícito en lugar de violación de constraint. Reconstrucción con `jsonb_build_object('start',…, 'end',…, 'place',…)` en orden de claves fijo y orden de array preservado. Dentro de v2, omitir `place` y enviar `\\\\\\\"\\\\\\\"` producen el mismo jsonb canónico, mismo hash y misma idempotencia. v1 NO SE TOCA: sigue hasheando el payload que recibe con el mismo código, así que cualquier replay legado byte-idéntico reproduce su hash histórico. Tradeoff aceptado y declarado: reutilizar una misma clave de idempotencia entre un cliente v1 y uno v2 devuelve SR006 (fail-closed), nunca un replay erróneo.\\\\n\\\\n4) ESCRITOR COMPARTIDO CON DISCRIMINACIÓN POR CLAVE. En `private.replace_activity_spans`: (a) primera sentencia `select 1 from public.activities where id = p_activity_id for update`; (b) `delete ... returning place` y `had_places := bool_or(place <> '')` sobre lo borrado; (c) `payload_declares := coalesce(bool_and(s ? 'place'), true)` sobre `jsonb_array_elements(p_spans)` — array vacío no dispara el guard; (d) si `had_places and not payload_declares` → `raise exception` con código SR dedicado de pérdida de metadatos; la transacción entera revierte, incluido el registro de idempotencia, de modo que el reintento legado devuelve el mismo error y no SR006; (e) insertar `place := btrim(coalesce(s->>'place',''))`. v2 siempre declara la clave, así que nunca dispara el guard; las creaciones tampoco (no hay filas previas). Sólo `replan` legado sobre actividades que ya tienen lugares queda bloqueado, ruidosamente. La preservación posicional se descarta: tras un reemplazo total ataría un lugar a un rango distinto.\\\\n\\\\n5) CONCURRENCIA Y LÍMITES. El `for update` sobre la fila padre serializa guard y reemplazo en todos los caminos y fija un único orden de bloqueo (sin deadlock, ya que los spans no tienen escritor independiente); el `expected_version` optimista existente resuelve el segundo replan concurrente con conflicto de versión. Coste: cero consultas adicionales (el chequeo va en el `RETURNING`) y un bloqueo de fila indexada. Límites vigentes intactos: ≤100 spans y `place` ≤300.\\\\n\\\\n6) FRONTEND. Sólo v2; ante `PGRST202`, error visible, sin sonda de capacidad y sin fallback a v1. Normalizador único compartido por las seis rutas de `activity-simulation.ts` (390 y 403 recortan hoy; 487, 549, 635 y 694 no) con el mismo guard replicado en demo. Ampliar los tres selects de columnas explícitas (`activities.ts:235`, `historical.ts:58` y `:135`), propagar `place` en el mapeo de `activities.ts:466-471` y proyectar en `HistoricalActivity` tanto el global como el de cada jornada (`historical.ts:229-240` hoy no proyecta ninguno). Borradores v5 sin bump. `validSpans` (`activity-validation.ts:19-37`) acepta `place` opcional y rechaza >300.\\\\n\\\\nPRUEBAS OBLIGATORIAS, en BD efímera separada y nunca con `verify-local-supabase.mjs` sobre el proyecto existente: roundtrip v2 crear/leer/replanificar con lugares distintos por jornada, incluidas dos filas con mismas fechas y distinto lugar; equivalencia en v2 de `place` omitido y `\\\\\\\"\\\\\\\"` bajo la misma clave (replay, no SR006); replay legado v1 byte-idéntico con el mismo hash que antes de la migración; guard disparado por `replan_activity_v1` sin claves sobre actividad con lugares, comprobando cero filas modificadas, versión sin incrementar e idempotencia no registrada; versión +1 exacto cuando lo único que cambia es un lugar y SR006 con misma clave y lugar distinto; dos replans concurrentes sobre la misma actividad (uno bloquea y falla por versión); `update_execution_v1` y `advance_activity_v1` incapaces de escribir place; papelera y restauración conservando lugares; lectura keyset multipágina conservando lugares en Burson e Histórico; paridad demo/supabase comparando el array de spans clave a clave.\",\"riesgos\":[\"BLOQUEANTE si se omite el guard: `replan_activity_v1` legado vacía lugares en silencio, porque el escritor reemplaza todas las filas y `coalesce` no distingue clave ausente de vacío.\",\"BLOQUEANTE si el hash se recalcula dentro de las v1: rompe los replays legados. La canonicalización debe vivir en el envoltorio v2 y v1 conservar su código de huella sin cambios.\",\"BLOQUEANTE de proceso: `verify-local-supabase.mjs` resetea datos al inicio y en cleanup; ejecutarlo sobre el proyecto existente destruye datos de Marco. Sólo BD efímera separada.\",\"BLOQUEANTE de alcance: si la migración vuelve a hacer `drop function` de las v1 siguiendo el precedente 202608280001:215-220, deja de ser aditiva y rompe clientes desplegados.\",\"Pérdida silenciosa en lectura: el `select('*')` de `fetchActivitySpans` funcionará y enmascarará el olvido de los tres selects con columnas explícitas; el fallo sólo se manifestaría en Burson e Histórico.\",\"Divergencia demo/supabase si se corrigen sólo 2 de las 6 rutas de normalización: el demo aceptaría lugares en unas operaciones y los descartaría en otras.\",\"Grants por defecto de funciones nuevas: sin `revoke all ... from public` explícito antes del grant, las v2 quedarían ejecutables por roles no previstos. No relajar roles ni añadir anon.\",\"TRADEOFF ACEPTADO: un cliente Admin legado deja de poder replanificar actividades que ya tengan lugares por jornada; falla ruidosamente y la vía es actualizar el cliente, no relajar el guard.\",\"TRADEOFF ACEPTADO: `''` significa heredar el global, así que no existe 'sin lugar y sin herencia'. No se requiere hoy.\",\"TRADEOFF ACEPTADO: la misma clave de idempotencia reutilizada entre canal v1 y v2 devuelve SR006 en lugar de replay. Es fail-closed y sólo ocurre por reutilización deliberada entre versiones de cliente.\",\"El `place` por jornada queda legible para el operario responsable y para Burson por las políticas existentes, igual que las fechas. Si algún lugar debiera ser interno haría falta una regla nueva que hoy no existe; no se introduce aquí.\"],\"confianza\":{\"nivel\":\"alta\",\"motivo\":\"Las dos derivaciones convergen en modelo de datos, autoridad, reemplazo atómico y alternativas descartadas; las diferencias son de implementación y quedan resueltas sin rediseño. La única corrección que altera el diseño es el hallazgo posterior de Codex sobre el reemplazo total de filas, y su solución (discriminación por presencia de clave más guard fail-closed y bloqueo de la fila padre) es verificable con pruebas concretas. Los dos supuestos que no puedo comprobar sin abrir el SQL están cubiertos por construcción: el `for update` se añade en el escritor compartido, con lo que da igual si las v1 ya bloqueaban, y el envoltorio `security invoker` es correcto tanto si las v1 son DEFINER como INVOKER, porque no añade privilegio y `auth.uid()` conserva su valor. Confianza media sólo en el código SR exacto a reutilizar para el guard, que depende de la convención del repositorio.\"}}",
+  "structured_output": {
+    "pipeline": "core",
+    "coincidencias": [
+      "Representación: columna `place` en `activity_date_spans`, `text not null default '' check (char_length(place) <= 300)`, espejo de `activities.place`. Migración aditiva, sin backfill, sin inventar datos para actividades existentes; hereda RLS y grant SELECT vigentes.",
+      "Semántica: `activities.place` se conserva como lugar general y sigue siendo opcional; el lugar efectivo de una jornada es `span.place` si no está vacío y el global en caso contrario. `''` significa heredar, no un lugar inventado.",
+      "Varias localizaciones el mismo día = dos filas de span con idénticas `start_date`/`end_date` y distinto `place`; la unicidad es `(activity_id, position)`, así que lo admite sin introducir horas. Límite de 100 posiciones intacto.",
+      "El contador cuenta filas de `public.activities` (IDs únicos), no filas de spans; coincidencias no duplican actividades.",
+      "Autoridad sin cambios: `update_execution_v1` y `advance_activity_v1` no reciben place ni spans; conversación, baja y restauración no tocan spans; el operario responsable sigue leyendo planificación pero sin ruta de escritura.",
+      "Reemplazo atómico por `private.replace_activity_spans` preservado, con el incremento de versión en la misma transacción; no se exponen escrituras directas sobre la tabla de spans.",
+      "Superficie versionada v2 explícita para que el frontend nuevo no pueda escribir contra un backend antiguo; prohibido el fallback silencioso a v1.",
+      "Borradores v5 legibles, validación acepta `place` opcional ≤300 sin volverlo obligatorio, y los DTO (actividad, Burson, histórico) dejan de descartar metadatos.",
+      "Idempotencia debe distinguir un cambio que sólo afecta al lugar; la versión sube atómicamente con ese cambio.",
+      "Alternativas descartadas idénticas en ambas derivaciones: lista global de lugares (no ata fecha), tabla hija ligada a IDs de span (los IDs se reemplazan; exige RLS, grants y un join más), JSON libre (pierde validación) y array por fila (innecesario si se permite repetir rango).",
+      "Sin migraciones remotas ni despliegues; pruebas locales y aisladas."
+    ],
+    "discrepancias": [
+      {
+        "punto": "Entorno de pruebas de la migración",
+        "claude": "Prescribe `scripts/verify-local-supabase.mjs` como paso de verificación de la migración.",
+        "codex": "Migración exclusivamente en base efímera aislada si está disponible; explícitamente 'no reset de BD existente'.",
+        "evidencia": "Restricción del lanzador: el script resetea datos en inicio y en cleanup, por lo que ejecutarlo sobre el proyecto existente destruiría datos de Marco.",
+        "resolucion": "Codex. Instancia/ref de proyecto efímera y separada. El script sólo es admisible apuntado a un proyecto desechable; nunca al local del usuario."
+      },
+      {
+        "punto": "Forma de la capa v2",
+        "claude": "Cuatro funciones `_v2` nuevas y aditivas, sin especificar si duplican el cuerpo de las v1.",
+        "codex": "Capa de RPC v2 que hereda las autorizaciones v1 y usa el escritor actualizado, con revokes explícitos antes de grants, en lugar de copiar cuerpos grandes.",
+        "evidencia": "Duplicar cuatro cuerpos replica comprobaciones de autoridad, bump de versión, idempotencia y auditoría; cada copia exigiría reverificar RLS y derivaría con el tiempo.",
+        "resolucion": "Codex. Envoltorios finos `security invoker`, `search_path` fijado, `revoke all from public, anon` + `grant execute to authenticated`, mismo tipo de retorno, sin capturar excepciones (los códigos SR de v1 se propagan intactos). El envoltorio sólo normaliza `p_spans` y delega."
+      },
+      {
+        "punto": "Dónde se canonicaliza el payload para la huella",
+        "claude": "Las `_v2` recalculan `idempotency_hash` sobre un array canónico construido dentro de la propia v2.",
+        "codex": "Conservar el fingerprint `p_spans` original de la RPC y no alterar replays legados.",
+        "evidencia": "Ambos objetivos son compatibles si la canonicalización actúa sobre la entrada, no sobre el código de hash: v1 sigue hasheando lo que recibe.",
+        "resolucion": "Híbrido con arquitectura de Codex y objetivo de Claude. v2 normaliza y pasa el jsonb canónico; v1 conserva su código de hash sin un solo cambio. Dentro de v2, omisión y `\"\"` dan el mismo hash; el replay legado byte-idéntico reproduce su hash histórico."
+      },
+      {
+        "punto": "Vacío omitido frente a vacío explícito en el escritor",
+        "claude": "`coalesce(span->>'place','')` en el INSERT de `replace_activity_spans`.",
+        "codex": "Hallazgo posterior: el escritor borra y recrea todas las filas, así que un `replan_activity_v1` legado sin `place` vaciaría lugares específicos en silencio.",
+        "evidencia": "El `coalesce` no distingue clave ausente de valor vacío, y el reemplazo es total, no incremental.",
+        "resolucion": "Codex. Discriminación por presencia de clave (`s ? 'place'`) más guard fail-closed. La preservación posicional se descarta: tras un reemplazo total pegaría un lugar a un rango distinto, es decir, inventaría datos."
+      },
+      {
+        "punto": "Decisiones elevadas a Marco",
+        "claude": "Eleva cuatro: rol del lugar global, obligatoriedad en Grabación, representación en calendario e inclusión en Histórico.",
+        "codex": "No eleva ninguna decisión de producto.",
+        "evidencia": "El lanzador fija que el campo general es opcional hoy y permanece opcional, que mostrar lugares junto a jornadas ya cabe en lo aprobado y que el contador va por ID único.",
+        "resolucion": "Codex. Ninguna requiere a Marco; no bloquean. El global queda como fallback opcional y el Histórico proyecta lugares por el mismo criterio ya aprobado."
+      },
+      {
+        "punto": "Detección de capacidad del backend",
+        "claude": "Rechaza la sonda previa (round-trip extra, ventana de carrera, falla en abierto) y se apoya en `PGRST202`.",
+        "codex": "Deja abierto 'evaluar el aumento de carga contra una comprobación de capacidad sin mutación'.",
+        "evidencia": "Una sonda separada de la escritura introduce TOCTOU y puede fallar en abierto; la ausencia de función ya es un fallo ruidoso y atómico.",
+        "resolucion": "Claude. Sin sonda. Ante `PGRST202` se muestra error y nunca se reintenta contra v1."
+      },
+      {
+        "punto": "Versión de borradores locales",
+        "claude": "Sin bump: `isActivityDraftFields` (`activity-draft.ts:59-66`) sólo exige `start` y `end` como strings, así que v5 acepta borradores con y sin lugares; subir a v6 descartaría borradores en curso.",
+        "codex": "Sólo exige que v5 siga siendo legible, sin pronunciarse sobre el bump.",
+        "evidencia": "La comprobación de forma citada es permisiva y no rechaza claves adicionales.",
+        "resolucion": "Claude. Mantener v5."
+      },
+      {
+        "punto": "Inventario concreto de puntos de pérdida en frontend",
+        "claude": "Enumera tres selects de columnas explícitas (`activities.ts:235`, `historical.ts:58` y `:135`), la ausencia total de lugar en la proyección histórica (`historical.ts:229-240`) y seis rutas divergentes en `activity-simulation.ts` (390 y 403 recortan a `{start,end}`; 487, 549, 635 y 694 pasan el objeto entero).",
+        "codex": "Enuncia el requisito de forma general: DTO conserva metadatos, demo normaliza sólo fechas.",
+        "evidencia": "Los dos coinciden en el requisito; sólo Claude aporta la lista accionable.",
+        "resolucion": "Claude. Adoptar el inventario como checklist de implementación, con un normalizador único compartido por las seis rutas."
+      }
+    ],
+    "recomendacion": "CONTRATO EXACTO A IMPLEMENTAR.\\n\\n1) ESQUEMA. `alter table public.activity_date_spans add column place text not null default '' check (char_length(place) <= 300)`. Aditivo, metadata-only en PG11+, sin backfill; las filas existentes quedan con `''` = heredar `activities.place`. Hereda política y grant SELECT vigentes.\\n\\n2) SUPERFICIE v2 = ENVOLTORIOS, NO CUERPOS DUPLICADOS. `plan_activity_v2`, `create_own_activity_v2`, `replan_activity_v2`, `create_burson_request_v2`: `security invoker`, `search_path` fijado, `revoke all on function ... from public, anon` seguido de `grant execute ... to authenticated`, mismo tipo de retorno que su v1, sin capturar excepciones para que los códigos SR lleguen íntegros al cliente. Único trabajo: normalizar `p_spans` y delegar en la v1 correspondiente, que conserva sus comprobaciones de autoridad, su bump de versión y su idempotencia. La migración NO elimina las v1 (el precedente 202608280001:215-220 sí las borró; esta no debe repetirlo).\\n\\n3) NORMALIZACIÓN CANÓNICA EN v2. Por span: `place := btrim(coalesce(span->>'place',''))`; rechazo si la clave está presente y no es string JSON, o si supera 300, con código SR explícito en lugar de violación de constraint. Reconstrucción con `jsonb_build_object('start',…, 'end',…, 'place',…)` en orden de claves fijo y orden de array preservado. Dentro de v2, omitir `place` y enviar `\\\"\\\"` producen el mismo jsonb canónico, mismo hash y misma idempotencia. v1 NO SE TOCA: sigue hasheando el payload que recibe con el mismo código, así que cualquier replay legado byte-idéntico reproduce su hash histórico. Tradeoff aceptado y declarado: reutilizar una misma clave de idempotencia entre un cliente v1 y uno v2 devuelve SR006 (fail-closed), nunca un replay erróneo.\\n\\n4) ESCRITOR COMPARTIDO CON DISCRIMINACIÓN POR CLAVE. En `private.replace_activity_spans`: (a) primera sentencia `select 1 from public.activities where id = p_activity_id for update`; (b) `delete ... returning place` y `had_places := bool_or(place <> '')` sobre lo borrado; (c) `payload_declares := coalesce(bool_and(s ? 'place'), true)` sobre `jsonb_array_elements(p_spans)` — array vacío no dispara el guard; (d) si `had_places and not payload_declares` → `raise exception` con código SR dedicado de pérdida de metadatos; la transacción entera revierte, incluido el registro de idempotencia, de modo que el reintento legado devuelve el mismo error y no SR006; (e) insertar `place := btrim(coalesce(s->>'place',''))`. v2 siempre declara la clave, así que nunca dispara el guard; las creaciones tampoco (no hay filas previas). Sólo `replan` legado sobre actividades que ya tienen lugares queda bloqueado, ruidosamente. La preservación posicional se descarta: tras un reemplazo total ataría un lugar a un rango distinto.\\n\\n5) CONCURRENCIA Y LÍMITES. El `for update` sobre la fila padre serializa guard y reemplazo en todos los caminos y fija un único orden de bloqueo (sin deadlock, ya que los spans no tienen escritor independiente); el `expected_version` optimista existente resuelve el segundo replan concurrente con conflicto de versión. Coste: cero consultas adicionales (el chequeo va en el `RETURNING`) y un bloqueo de fila indexada. Límites vigentes intactos: ≤100 spans y `place` ≤300.\\n\\n6) FRONTEND. Sólo v2; ante `PGRST202`, error visible, sin sonda de capacidad y sin fallback a v1. Normalizador único compartido por las seis rutas de `activity-simulation.ts` (390 y 403 recortan hoy; 487, 549, 635 y 694 no) con el mismo guard replicado en demo. Ampliar los tres selects de columnas explícitas (`activities.ts:235`, `historical.ts:58` y `:135`), propagar `place` en el mapeo de `activities.ts:466-471` y proyectar en `HistoricalActivity` tanto el global como el de cada jornada (`historical.ts:229-240` hoy no proyecta ninguno). Borradores v5 sin bump. `validSpans` (`activity-validation.ts:19-37`) acepta `place` opcional y rechaza >300.\\n\\nPRUEBAS OBLIGATORIAS, en BD efímera separada y nunca con `verify-local-supabase.mjs` sobre el proyecto existente: roundtrip v2 crear/leer/replanificar con lugares distintos por jornada, incluidas dos filas con mismas fechas y distinto lugar; equivalencia en v2 de `place` omitido y `\\\"\\\"` bajo la misma clave (replay, no SR006); replay legado v1 byte-idéntico con el mismo hash que antes de la migración; guard disparado por `replan_activity_v1` sin claves sobre actividad con lugares, comprobando cero filas modificadas, versión sin incrementar e idempotencia no registrada; versión +1 exacto cuando lo único que cambia es un lugar y SR006 con misma clave y lugar distinto; dos replans concurrentes sobre la misma actividad (uno bloquea y falla por versión); `update_execution_v1` y `advance_activity_v1` incapaces de escribir place; papelera y restauración conservando lugares; lectura keyset multipágina conservando lugares en Burson e Histórico; paridad demo/supabase comparando el array de spans clave a clave.",
+    "riesgos": [
+      "BLOQUEANTE si se omite el guard: `replan_activity_v1` legado vacía lugares en silencio, porque el escritor reemplaza todas las filas y `coalesce` no distingue clave ausente de vacío.",
+      "BLOQUEANTE si el hash se recalcula dentro de las v1: rompe los replays legados. La canonicalización debe vivir en el envoltorio v2 y v1 conservar su código de huella sin cambios.",
+      "BLOQUEANTE de proceso: `verify-local-supabase.mjs` resetea datos al inicio y en cleanup; ejecutarlo sobre el proyecto existente destruye datos de Marco. Sólo BD efímera separada.",
+      "BLOQUEANTE de alcance: si la migración vuelve a hacer `drop function` de las v1 siguiendo el precedente 202608280001:215-220, deja de ser aditiva y rompe clientes desplegados.",
+      "Pérdida silenciosa en lectura: el `select('*')` de `fetchActivitySpans` funcionará y enmascarará el olvido de los tres selects con columnas explícitas; el fallo sólo se manifestaría en Burson e Histórico.",
+      "Divergencia demo/supabase si se corrigen sólo 2 de las 6 rutas de normalización: el demo aceptaría lugares en unas operaciones y los descartaría en otras.",
+      "Grants por defecto de funciones nuevas: sin `revoke all ... from public` explícito antes del grant, las v2 quedarían ejecutables por roles no previstos. No relajar roles ni añadir anon.",
+      "TRADEOFF ACEPTADO: un cliente Admin legado deja de poder replanificar actividades que ya tengan lugares por jornada; falla ruidosamente y la vía es actualizar el cliente, no relajar el guard.",
+      "TRADEOFF ACEPTADO: `''` significa heredar el global, así que no existe 'sin lugar y sin herencia'. No se requiere hoy.",
+      "TRADEOFF ACEPTADO: la misma clave de idempotencia reutilizada entre canal v1 y v2 devuelve SR006 en lugar de replay. Es fail-closed y sólo ocurre por reutilización deliberada entre versiones de cliente.",
+      "El `place` por jornada queda legible para el operario responsable y para Burson por las políticas existentes, igual que las fechas. Si algún lugar debiera ser interno haría falta una regla nueva que hoy no existe; no se introduce aquí."
+    ],
+    "confianza": {
+      "nivel": "alta",
+      "motivo": "Las dos derivaciones convergen en modelo de datos, autoridad, reemplazo atómico y alternativas descartadas; las diferencias son de implementación y quedan resueltas sin rediseño. La única corrección que altera el diseño es el hallazgo posterior de Codex sobre el reemplazo total de filas, y su solución (discriminación por presencia de clave más guard fail-closed y bloqueo de la fila padre) es verificable con pruebas concretas. Los dos supuestos que no puedo comprobar sin abrir el SQL están cubiertos por construcción: el `for update` se añade en el escritor compartido, con lo que da igual si las v1 ya bloqueaban, y el envoltorio `security invoker` es correcto tanto si las v1 son DEFINER como INVOKER, porque no añade privilegio y `auth.uid()` conserva su valor. Confianza media sólo en el código SR exacto a reutilizar para el guard, que depende de la convención del repositorio."
+    }
+  },
+  "ttft_ms": 197517,
+  "ttft_stream_ms": 1319,
+  "time_to_request_ms": 96,
+  "type": "result",
+  "duration_ms": 280378,
+  "uuid": "a5b0bce1-fa21-4c11-9e73-8f9283aa8e6c"
+}

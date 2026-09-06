@@ -1,0 +1,247 @@
+{
+  "is_error": false,
+  "duration_api_ms": 325743,
+  "num_turns": 39,
+  "stop_reason": "tool_use",
+  "session_id": "1cc8ae42-29f5-4d82-9edc-c85853f9d0ef",
+  "total_cost_usd": 2.6720450000000002,
+  "usage": {
+    "input_tokens": 30,
+    "cache_creation_input_tokens": 87214,
+    "cache_read_input_tokens": 2389110,
+    "output_tokens": 24131,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 87214,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "not_available",
+    "iterations": [
+      {
+        "input_tokens": 2,
+        "output_tokens": 10432,
+        "cache_read_input_tokens": 190258,
+        "cache_creation_input_tokens": 1253,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 1253
+        },
+        "type": "message"
+      }
+    ],
+    "speed": "standard"
+  },
+  "modelUsage": {
+    "claude-haiku-4-5-20251001": {
+      "inputTokens": 1810,
+      "outputTokens": 23,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0.001925,
+      "contextWindow": 200000,
+      "maxOutputTokens": 32000,
+      "canonicalModel": "claude-haiku-4-5",
+      "provider": "firstParty"
+    },
+    "claude-opus-5": {
+      "inputTokens": 30,
+      "outputTokens": 24131,
+      "cacheReadInputTokens": 2389110,
+      "cacheCreationInputTokens": 87214,
+      "webSearchRequests": 0,
+      "costUSD": 2.6701200000000003,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 64000,
+      "canonicalModel": "claude-opus-5",
+      "provider": "firstParty"
+    }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"supuestos\":[\"El paquete no fijó umbrales de accesibilidad medibles (contraste numérico, foco, teclado); el pipeline core los pediría, así que el hallazgo de legibilidad se emite como observación visual, no como medición.\",\"El paquete no incluyó la imagen original de dirección visual aprobada, sólo los tres PNG de Revision-Visual-2026-09-05; la fidelidad se juzga contra esos tres.\",\"Se asume que la carpeta auxiliar/ (maquetas.tsx, maquetas.css) es la fuente que generó los PNG entregados, por coincidir literalmente con lo observado en imagen.\",\"Se asume que 'A/B/C distinguibles' exige que cada variante conserve su rasgo definitorio también en móvil, no sólo que las tres existan en ambos anchos.\"],\"propuesta\":\"VEREDICTO: aprobable con tres correcciones; una impide evaluar un eje pedido.\\n\\n[ALTO] C no se distingue de B en móvil. Archivos: png/06-C-entrada-movil.png frente a png/04-B-entrada-movil.png. En imagen la única diferencia es una sangría del bloque EDICIÓN y el ancho de los botones. Evidencia en fuente: auxiliar/maquetas.css:103-108 escribe todas las reglas móviles de C como selector compartido con B, y la línea 104 fija clip-path:none, anulando la diagonal que define C en escritorio (maquetas.css:41). Impacto: el eje 'A/B/C distinguibles en escritorio y adaptación móvil' no se puede evaluar, porque C móvil es B móvil por construcción. Corrección mínima: dar a .portal-C una costura angulada propia en el borde entre los dos paneles apilados, en vez de compartir el bloque de reglas con B.\\n\\n[MEDIO] El mismo código G-DEMO-01 aparece con dos títulos distintos. En png/11-coincidencias-escritorio.png y png/12-coincidencias-movil.png es 'Cobertura de jornada'; en png/07-historico-grabacion-escritorio.png, png/13-aunor-escritorio.png y png/14-aunor-movil.png es 'Cobertura ilustrativa Norte', con idéntico responsable, lugar y jornadas. Origen: auxiliar/maquetas.tsx:9 sobrescribe el title. Impacto: la pantalla de coincidencias existe para demostrar que el código identifica y el título no; que el código cambie de nombre entre pantallas debilita esa demostración. Corrección mínima: quitar el title: de maquetas.tsx:9 o renumerar ese registro a G-DEMO-04.\\n\\n[BAJO] Rótulo 'DEL MONTAJE A LA ENTREGA' sobre la zona clara del monitor. Archivos: png/04-B-entrada-movil.png y png/06-C-entrada-movil.png, panel EDICIÓN. El rótulo blanco pequeño cae sobre las miniaturas iluminadas de la línea de tiempo; el título EDICIÓN sí queda sobre zona oscura, y en escritorio (03, 05) el mismo rótulo cae sobre zona oscura. Corrección mínima: extender el degradado oscuro del panel unos píxeles hacia arriba en la regla móvil.\\n\\nCOMPROBADO Y CORRECTO: shell, cabecera, sidebar con Histórico activo, cápsula de año, leyenda y tarjetas de mes fieles a admin-historico-desktop.png y admin-historico-mobile-viewport.png. Doce meses contados en imagen en 07, 08, 09 y 10. Filtro limpio: 07/08 sólo leyenda 'Grabación 1', 09/10 sólo 'Edición 1', sin marcas de otro color. Recuento coherente: una actividad con tres jornadas discontinuas produce insignia 1 en enero y 1 en febrero, mismo comportamiento que la referencia aprobada. Coincidencias trae código, título, responsable, lugar y jornadas, con la categoría como token aparte tras el separador y no fundida con el título. El modal de 12 reproduce el patrón aprobado de admin-historico-detalle-mobile-viewport.png (asa, X, fondo atenuado, filo con degradado). Aunor 13/14 separa Ejecución, Conformidad del cliente y Aprobación económica en tres bloques, los dos últimos en 'Sin constancia', y cubre referencia sin trabajo y trabajo sin referencia. Sin cifras económicas inventadas.\\n\\nVERIFICADO COMO NO INVENTADO: la chapa roja 'Actividad atrasada' de 09/10 y el anillo oscuro de selección sobre el rango de mayo existen en frontend/components/annual-calendar.tsx:172 y :290. No se cuentan como desviación.\",\"alternativas\":[\"Para el hallazgo ALTO, en vez de añadir una diagonal a C en móvil, retirar C del juego de variantes y presentar sólo A y B, si se acepta que la diagonal es un rasgo exclusivo de escritorio.\",\"Para el hallazgo MEDIO, en vez de tocar los datos ficticios, mostrar el código con un tratamiento tipográfico distinto del título en la lista de coincidencias, dejando explícito que el código es la identidad.\"],\"riesgos\":[\"png/12-coincidencias-movil.png es captura de viewport y el detalle inferior del registro seleccionado (lugar, origen, descripción, opinión) queda fuera de cuadro; no puedo confirmar por imagen que ese bloque esté completo en móvil. Una segunda captura desplazada lo cerraría.\",\"Sólo se han inspeccionado los PNG y las fuentes de la carpeta de maquetas. No se ejecutó nada ni se abrió la aplicación: estas capturas no acreditan permisos, RLS, datos reales ni implementación.\",\"La fidelidad se juzgó contra los tres PNG de referencia indicados, no contra la imagen original de dirección visual aprobada, que no venía en el paquete; una deriva respecto de esa imagen quedaría fuera de esta revisión.\",\"No se midió contraste, foco ni recorrido de teclado; el hallazgo BAJO es observación visual sobre la captura, no una medición de accesibilidad.\",\"La distinción B/C en móvil se comprobó por imagen y se confirmó en maquetas.css; no se probó en navegador a otros anchos entre 390 y 1920 px.\"],\"verificacion\":[\"png/01-A-entrada-escritorio.png — abierta\",\"png/02-A-entrada-movil.png — abierta\",\"png/03-B-entrada-escritorio.png — abierta\",\"png/04-B-entrada-movil.png — abierta\",\"png/05-C-entrada-escritorio.png — abierta\",\"png/06-C-entrada-movil.png — abierta\",\"png/07-historico-grabacion-escritorio.png — abierta\",\"png/08-historico-grabacion-movil-12-meses.png — abierta\",\"png/09-historico-edicion-escritorio.png — abierta\",\"png/10-historico-edicion-movil-12-meses.png — abierta\",\"png/11-coincidencias-escritorio.png — abierta\",\"png/12-coincidencias-movil.png — abierta\",\"png/13-aunor-escritorio.png — abierta\",\"png/14-aunor-movil.png — abierta\",\"Revision-Visual-2026-09-05/admin-historico-desktop.png — referencia, abierta\",\"Revision-Visual-2026-09-05/admin-historico-mobile-viewport.png — referencia, abierta\",\"Revision-Visual-2026-09-05/admin-historico-detalle-mobile-viewport.png — referencia, abierta\",\"auxiliar/maquetas.css:41 y :103-108 — leídas para confirmar el hallazgo ALTO\",\"auxiliar/maquetas.tsx:9, :67, :92 — leídas para confirmar el hallazgo MEDIO\",\"frontend/components/annual-calendar.tsx:172 y :290 — leídas para descartar invención de 'Actividad atrasada' y del anillo de selección\"],\"confianza\":{\"nivel\":\"alta\",\"motivo\":\"Las 14 PNG entregadas y las 3 referencias se abrieron una a una, no se dedujo nada del inventario. Los dos hallazgos principales están confirmados dos veces: primero en la imagen y después en la fuente que la generó (maquetas.css:103-108 y maquetas.tsx:9), y un elemento que parecía añadido se descartó comprobándolo en annual-calendar.tsx. La confianza baja sólo en el detalle inferior del modal móvil, que no es visible en la captura entregada.\"},\"input_class\":\"structured-component\",\"pipeline\":\"core\",\"gates\":[{\"name\":\"Fidelidad al shell aprobado (cabecera, sidebar, tipografías, colores, cápsula de año)\",\"status\":\"passed\",\"evidence\":\"01-14 cotejadas contra admin-historico-desktop.png y admin-historico-mobile-viewport.png; sin desviaciones de shell.\"},{\"name\":\"Doce meses en los históricos\",\"status\":\"passed\",\"evidence\":\"Contados en imagen en 07, 08, 09 y 10: enero a diciembre presentes.\"},{\"name\":\"Filtro por categoría sin contaminación\",\"status\":\"passed\",\"evidence\":\"07/08 muestran sólo 'Grabación 1'; 09/10 sólo 'Edición 1'; ninguna marca de otro color en los calendarios.\"},{\"name\":\"A/B/C distinguibles en escritorio\",\"status\":\"passed\",\"evidence\":\"01 tarjetas separadas con cuerpo blanco; 03 díptico a sangre con corte vertical; 05 corte diagonal.\"},{\"name\":\"A/B/C distinguibles en la adaptación móvil\",\"status\":\"failed\",\"evidence\":\"04 y 06 son prácticamente idénticas; maquetas.css:103-108 comparte todas las reglas móviles entre B y C y la 104 fija clip-path:none.\"},{\"name\":\"Coincidencias con código, título, responsable, lugar y jornadas, categoría no confundida con identidad\",\"status\":\"passed\",\"evidence\":\"11 y 12 muestran los cinco campos; la categoría va como token aparte tras el separador. Salvedad: el título de G-DEMO-01 no coincide con el de 07/13/14.\"},{\"name\":\"Aunor: original conservado, cambio, evidencias, referencia sin trabajo y trabajo sin referencia\",\"status\":\"passed\",\"evidence\":\"13 y 14 incluyen 'Original conservado', 'Propuesto · sin aprobación registrada', 'Sin trabajo vinculado' y 'Pendiente de vincular'.\"},{\"name\":\"Ejecución distinta de conformidad y de aprobación económica\",\"status\":\"passed\",\"evidence\":\"13 y 14 separan EJECUCIÓN, CONFORMIDAD DEL CLIENTE y APROBACIÓN ECONÓMICA; las dos últimas en 'Sin constancia'.\"},{\"name\":\"Ninguna cantidad contractual, aprobación económica ni conformidad inventada\",\"status\":\"passed\",\"evidence\":\"Sin cifras en ninguna PNG; 07 y 11 declaran 'No representa un servicio contratado' y 13/14 'Maqueta sin importes, cantidades ni equivalencias contractuales'.\"},{\"name\":\"Maquetas identificadas como ejemplo ficticio\",\"status\":\"passed\",\"evidence\":\"Franja 'MAQUETA PARA APROBACIÓN' en las 14; sufijo '· ejemplo' en responsables y lugares; códigos G-DEMO / E-DEMO / REF-DEMO.\"},{\"name\":\"Contraste y accesibilidad medidos\",\"status\":\"not-run\",\"evidence\":\"El paquete no fijó umbrales ni se ejecutó herramienta alguna; sólo observación visual sobre las capturas.\"},{\"name\":\"Detalle inferior del modal móvil de coincidencias\",\"status\":\"not-applicable\",\"evidence\":\"12 es captura de viewport por diseño acordado; el contenido inferior queda fuera de cuadro y no se exige en 844 px.\"}],\"artifacts\":[{\"path\":\"Disenos-Historico-Aunor-2026-09-05/png/06-C-entrada-movil.png\",\"purpose\":\"Maqueta móvil de la variante C; hallazgo ALTO: indistinguible de la variante B\",\"status\":\"reviewed\"},{\"path\":\"Disenos-Historico-Aunor-2026-09-05/auxiliar/maquetas.css\",\"purpose\":\"Líneas 41 y 103-108: origen de la pérdida de la diagonal de C en móvil\",\"status\":\"reviewed\"},{\"path\":\"Disenos-Historico-Aunor-2026-09-05/png/11-coincidencias-escritorio.png\",\"purpose\":\"Detalle de varias actividades coincidentes; hallazgo MEDIO sobre el título de G-DEMO-01\",\"status\":\"reviewed\"},{\"path\":\"Disenos-Historico-Aunor-2026-09-05/png/12-coincidencias-movil.png\",\"purpose\":\"Modal móvil de coincidencias; mismo hallazgo MEDIO y límite de captura de viewport\",\"status\":\"reviewed\"},{\"path\":\"Disenos-Historico-Aunor-2026-09-05/auxiliar/maquetas.tsx\",\"purpose\":\"Línea 9: sobrescritura del título de G-DEMO-01 frente a las líneas 67 y 92\",\"status\":\"reviewed\"},{\"path\":\"Disenos-Historico-Aunor-2026-09-05/png/04-B-entrada-movil.png\",\"purpose\":\"Maqueta móvil B; comparación del hallazgo ALTO y sede del hallazgo BAJO de legibilidad\",\"status\":\"reviewed\"},{\"path\":\"frontend/components/annual-calendar.tsx\",\"purpose\":\"Líneas 172 y 290: confirman que 'Actividad atrasada' y el anillo de selección no son invenciones de la maqueta\",\"status\":\"reviewed\"}],\"deviations\":[{\"category\":\"defect\",\"before\":\"png/06-C-entrada-movil.png reutiliza íntegramente el bloque de reglas móviles de B (auxiliar/maquetas.css:103-108, con clip-path:none en :104)\",\"after\":\"Regla móvil propia para .portal-C con una costura angulada entre los dos paneles apilados\",\"reason\":\"La diagonal es el único rasgo que define la variante C; al anularse en móvil, C y B quedan indistinguibles\",\"impact\":\"Bloquea el eje de revisión 'A/B/C distinguibles en escritorio y adaptación móvil': Marco no puede juzgar la propuesta C en móvil porque lo que ve es B\"},{\"category\":\"defect\",\"before\":\"auxiliar/maquetas.tsx:9 asigna title:'Cobertura de jornada' al registro G-DEMO-01\",\"after\":\"Heredar el título 'Cobertura ilustrativa Norte' de demoActivities[0], o renumerar el registro a G-DEMO-04\",\"reason\":\"El mismo código aparece con dos títulos distintos entre 11/12 y 07/13/14, con idéntico responsable, lugar y jornadas\",\"impact\":\"Debilita justo la demostración que persigue la pantalla de coincidencias: que la identidad la da el código y no el título\"},{\"category\":\"accessibility\",\"before\":\"En png/04-B-entrada-movil.png y png/06-C-entrada-movil.png el rótulo 'DEL MONTAJE A LA ENTREGA' cae sobre las miniaturas iluminadas de la línea de tiempo\",\"after\":\"Extender el degradado oscuro del panel hacia arriba en la regla móvil, o subir el bloque de texto\",\"reason\":\"Es el punto más débil de lectura de las seis maquetas de entrada; en escritorio el mismo rótulo cae sobre zona oscura\",\"impact\":\"Legibilidad reducida del rótulo secundario en móvil; el título EDICIÓN y el botón no se ven afectados\"}]}",
+  "structured_output": {
+    "supuestos": [
+      "El paquete no fijó umbrales de accesibilidad medibles (contraste numérico, foco, teclado); el pipeline core los pediría, así que el hallazgo de legibilidad se emite como observación visual, no como medición.",
+      "El paquete no incluyó la imagen original de dirección visual aprobada, sólo los tres PNG de Revision-Visual-2026-09-05; la fidelidad se juzga contra esos tres.",
+      "Se asume que la carpeta auxiliar/ (maquetas.tsx, maquetas.css) es la fuente que generó los PNG entregados, por coincidir literalmente con lo observado en imagen.",
+      "Se asume que 'A/B/C distinguibles' exige que cada variante conserve su rasgo definitorio también en móvil, no sólo que las tres existan en ambos anchos."
+    ],
+    "propuesta": "VEREDICTO: aprobable con tres correcciones; una impide evaluar un eje pedido.\n\n[ALTO] C no se distingue de B en móvil. Archivos: png/06-C-entrada-movil.png frente a png/04-B-entrada-movil.png. En imagen la única diferencia es una sangría del bloque EDICIÓN y el ancho de los botones. Evidencia en fuente: auxiliar/maquetas.css:103-108 escribe todas las reglas móviles de C como selector compartido con B, y la línea 104 fija clip-path:none, anulando la diagonal que define C en escritorio (maquetas.css:41). Impacto: el eje 'A/B/C distinguibles en escritorio y adaptación móvil' no se puede evaluar, porque C móvil es B móvil por construcción. Corrección mínima: dar a .portal-C una costura angulada propia en el borde entre los dos paneles apilados, en vez de compartir el bloque de reglas con B.\n\n[MEDIO] El mismo código G-DEMO-01 aparece con dos títulos distintos. En png/11-coincidencias-escritorio.png y png/12-coincidencias-movil.png es 'Cobertura de jornada'; en png/07-historico-grabacion-escritorio.png, png/13-aunor-escritorio.png y png/14-aunor-movil.png es 'Cobertura ilustrativa Norte', con idéntico responsable, lugar y jornadas. Origen: auxiliar/maquetas.tsx:9 sobrescribe el title. Impacto: la pantalla de coincidencias existe para demostrar que el código identifica y el título no; que el código cambie de nombre entre pantallas debilita esa demostración. Corrección mínima: quitar el title: de maquetas.tsx:9 o renumerar ese registro a G-DEMO-04.\n\n[BAJO] Rótulo 'DEL MONTAJE A LA ENTREGA' sobre la zona clara del monitor. Archivos: png/04-B-entrada-movil.png y png/06-C-entrada-movil.png, panel EDICIÓN. El rótulo blanco pequeño cae sobre las miniaturas iluminadas de la línea de tiempo; el título EDICIÓN sí queda sobre zona oscura, y en escritorio (03, 05) el mismo rótulo cae sobre zona oscura. Corrección mínima: extender el degradado oscuro del panel unos píxeles hacia arriba en la regla móvil.\n\nCOMPROBADO Y CORRECTO: shell, cabecera, sidebar con Histórico activo, cápsula de año, leyenda y tarjetas de mes fieles a admin-historico-desktop.png y admin-historico-mobile-viewport.png. Doce meses contados en imagen en 07, 08, 09 y 10. Filtro limpio: 07/08 sólo leyenda 'Grabación 1', 09/10 sólo 'Edición 1', sin marcas de otro color. Recuento coherente: una actividad con tres jornadas discontinuas produce insignia 1 en enero y 1 en febrero, mismo comportamiento que la referencia aprobada. Coincidencias trae código, título, responsable, lugar y jornadas, con la categoría como token aparte tras el separador y no fundida con el título. El modal de 12 reproduce el patrón aprobado de admin-historico-detalle-mobile-viewport.png (asa, X, fondo atenuado, filo con degradado). Aunor 13/14 separa Ejecución, Conformidad del cliente y Aprobación económica en tres bloques, los dos últimos en 'Sin constancia', y cubre referencia sin trabajo y trabajo sin referencia. Sin cifras económicas inventadas.\n\nVERIFICADO COMO NO INVENTADO: la chapa roja 'Actividad atrasada' de 09/10 y el anillo oscuro de selección sobre el rango de mayo existen en frontend/components/annual-calendar.tsx:172 y :290. No se cuentan como desviación.",
+    "alternativas": [
+      "Para el hallazgo ALTO, en vez de añadir una diagonal a C en móvil, retirar C del juego de variantes y presentar sólo A y B, si se acepta que la diagonal es un rasgo exclusivo de escritorio.",
+      "Para el hallazgo MEDIO, en vez de tocar los datos ficticios, mostrar el código con un tratamiento tipográfico distinto del título en la lista de coincidencias, dejando explícito que el código es la identidad."
+    ],
+    "riesgos": [
+      "png/12-coincidencias-movil.png es captura de viewport y el detalle inferior del registro seleccionado (lugar, origen, descripción, opinión) queda fuera de cuadro; no puedo confirmar por imagen que ese bloque esté completo en móvil. Una segunda captura desplazada lo cerraría.",
+      "Sólo se han inspeccionado los PNG y las fuentes de la carpeta de maquetas. No se ejecutó nada ni se abrió la aplicación: estas capturas no acreditan permisos, RLS, datos reales ni implementación.",
+      "La fidelidad se juzgó contra los tres PNG de referencia indicados, no contra la imagen original de dirección visual aprobada, que no venía en el paquete; una deriva respecto de esa imagen quedaría fuera de esta revisión.",
+      "No se midió contraste, foco ni recorrido de teclado; el hallazgo BAJO es observación visual sobre la captura, no una medición de accesibilidad.",
+      "La distinción B/C en móvil se comprobó por imagen y se confirmó en maquetas.css; no se probó en navegador a otros anchos entre 390 y 1920 px."
+    ],
+    "verificacion": [
+      "png/01-A-entrada-escritorio.png — abierta",
+      "png/02-A-entrada-movil.png — abierta",
+      "png/03-B-entrada-escritorio.png — abierta",
+      "png/04-B-entrada-movil.png — abierta",
+      "png/05-C-entrada-escritorio.png — abierta",
+      "png/06-C-entrada-movil.png — abierta",
+      "png/07-historico-grabacion-escritorio.png — abierta",
+      "png/08-historico-grabacion-movil-12-meses.png — abierta",
+      "png/09-historico-edicion-escritorio.png — abierta",
+      "png/10-historico-edicion-movil-12-meses.png — abierta",
+      "png/11-coincidencias-escritorio.png — abierta",
+      "png/12-coincidencias-movil.png — abierta",
+      "png/13-aunor-escritorio.png — abierta",
+      "png/14-aunor-movil.png — abierta",
+      "Revision-Visual-2026-09-05/admin-historico-desktop.png — referencia, abierta",
+      "Revision-Visual-2026-09-05/admin-historico-mobile-viewport.png — referencia, abierta",
+      "Revision-Visual-2026-09-05/admin-historico-detalle-mobile-viewport.png — referencia, abierta",
+      "auxiliar/maquetas.css:41 y :103-108 — leídas para confirmar el hallazgo ALTO",
+      "auxiliar/maquetas.tsx:9, :67, :92 — leídas para confirmar el hallazgo MEDIO",
+      "frontend/components/annual-calendar.tsx:172 y :290 — leídas para descartar invención de 'Actividad atrasada' y del anillo de selección"
+    ],
+    "confianza": {
+      "nivel": "alta",
+      "motivo": "Las 14 PNG entregadas y las 3 referencias se abrieron una a una, no se dedujo nada del inventario. Los dos hallazgos principales están confirmados dos veces: primero en la imagen y después en la fuente que la generó (maquetas.css:103-108 y maquetas.tsx:9), y un elemento que parecía añadido se descartó comprobándolo en annual-calendar.tsx. La confianza baja sólo en el detalle inferior del modal móvil, que no es visible en la captura entregada."
+    },
+    "input_class": "structured-component",
+    "pipeline": "core",
+    "gates": [
+      {
+        "name": "Fidelidad al shell aprobado (cabecera, sidebar, tipografías, colores, cápsula de año)",
+        "status": "passed",
+        "evidence": "01-14 cotejadas contra admin-historico-desktop.png y admin-historico-mobile-viewport.png; sin desviaciones de shell."
+      },
+      {
+        "name": "Doce meses en los históricos",
+        "status": "passed",
+        "evidence": "Contados en imagen en 07, 08, 09 y 10: enero a diciembre presentes."
+      },
+      {
+        "name": "Filtro por categoría sin contaminación",
+        "status": "passed",
+        "evidence": "07/08 muestran sólo 'Grabación 1'; 09/10 sólo 'Edición 1'; ninguna marca de otro color en los calendarios."
+      },
+      {
+        "name": "A/B/C distinguibles en escritorio",
+        "status": "passed",
+        "evidence": "01 tarjetas separadas con cuerpo blanco; 03 díptico a sangre con corte vertical; 05 corte diagonal."
+      },
+      {
+        "name": "A/B/C distinguibles en la adaptación móvil",
+        "status": "failed",
+        "evidence": "04 y 06 son prácticamente idénticas; maquetas.css:103-108 comparte todas las reglas móviles entre B y C y la 104 fija clip-path:none."
+      },
+      {
+        "name": "Coincidencias con código, título, responsable, lugar y jornadas, categoría no confundida con identidad",
+        "status": "passed",
+        "evidence": "11 y 12 muestran los cinco campos; la categoría va como token aparte tras el separador. Salvedad: el título de G-DEMO-01 no coincide con el de 07/13/14."
+      },
+      {
+        "name": "Aunor: original conservado, cambio, evidencias, referencia sin trabajo y trabajo sin referencia",
+        "status": "passed",
+        "evidence": "13 y 14 incluyen 'Original conservado', 'Propuesto · sin aprobación registrada', 'Sin trabajo vinculado' y 'Pendiente de vincular'."
+      },
+      {
+        "name": "Ejecución distinta de conformidad y de aprobación económica",
+        "status": "passed",
+        "evidence": "13 y 14 separan EJECUCIÓN, CONFORMIDAD DEL CLIENTE y APROBACIÓN ECONÓMICA; las dos últimas en 'Sin constancia'."
+      },
+      {
+        "name": "Ninguna cantidad contractual, aprobación económica ni conformidad inventada",
+        "status": "passed",
+        "evidence": "Sin cifras en ninguna PNG; 07 y 11 declaran 'No representa un servicio contratado' y 13/14 'Maqueta sin importes, cantidades ni equivalencias contractuales'."
+      },
+      {
+        "name": "Maquetas identificadas como ejemplo ficticio",
+        "status": "passed",
+        "evidence": "Franja 'MAQUETA PARA APROBACIÓN' en las 14; sufijo '· ejemplo' en responsables y lugares; códigos G-DEMO / E-DEMO / REF-DEMO."
+      },
+      {
+        "name": "Contraste y accesibilidad medidos",
+        "status": "not-run",
+        "evidence": "El paquete no fijó umbrales ni se ejecutó herramienta alguna; sólo observación visual sobre las capturas."
+      },
+      {
+        "name": "Detalle inferior del modal móvil de coincidencias",
+        "status": "not-applicable",
+        "evidence": "12 es captura de viewport por diseño acordado; el contenido inferior queda fuera de cuadro y no se exige en 844 px."
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "Disenos-Historico-Aunor-2026-09-05/png/06-C-entrada-movil.png",
+        "purpose": "Maqueta móvil de la variante C; hallazgo ALTO: indistinguible de la variante B",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Historico-Aunor-2026-09-05/auxiliar/maquetas.css",
+        "purpose": "Líneas 41 y 103-108: origen de la pérdida de la diagonal de C en móvil",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Historico-Aunor-2026-09-05/png/11-coincidencias-escritorio.png",
+        "purpose": "Detalle de varias actividades coincidentes; hallazgo MEDIO sobre el título de G-DEMO-01",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Historico-Aunor-2026-09-05/png/12-coincidencias-movil.png",
+        "purpose": "Modal móvil de coincidencias; mismo hallazgo MEDIO y límite de captura de viewport",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Historico-Aunor-2026-09-05/auxiliar/maquetas.tsx",
+        "purpose": "Línea 9: sobrescritura del título de G-DEMO-01 frente a las líneas 67 y 92",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Historico-Aunor-2026-09-05/png/04-B-entrada-movil.png",
+        "purpose": "Maqueta móvil B; comparación del hallazgo ALTO y sede del hallazgo BAJO de legibilidad",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/components/annual-calendar.tsx",
+        "purpose": "Líneas 172 y 290: confirman que 'Actividad atrasada' y el anillo de selección no son invenciones de la maqueta",
+        "status": "reviewed"
+      }
+    ],
+    "deviations": [
+      {
+        "category": "defect",
+        "before": "png/06-C-entrada-movil.png reutiliza íntegramente el bloque de reglas móviles de B (auxiliar/maquetas.css:103-108, con clip-path:none en :104)",
+        "after": "Regla móvil propia para .portal-C con una costura angulada entre los dos paneles apilados",
+        "reason": "La diagonal es el único rasgo que define la variante C; al anularse en móvil, C y B quedan indistinguibles",
+        "impact": "Bloquea el eje de revisión 'A/B/C distinguibles en escritorio y adaptación móvil': Marco no puede juzgar la propuesta C en móvil porque lo que ve es B"
+      },
+      {
+        "category": "defect",
+        "before": "auxiliar/maquetas.tsx:9 asigna title:'Cobertura de jornada' al registro G-DEMO-01",
+        "after": "Heredar el título 'Cobertura ilustrativa Norte' de demoActivities[0], o renumerar el registro a G-DEMO-04",
+        "reason": "El mismo código aparece con dos títulos distintos entre 11/12 y 07/13/14, con idéntico responsable, lugar y jornadas",
+        "impact": "Debilita justo la demostración que persigue la pantalla de coincidencias: que la identidad la da el código y no el título"
+      },
+      {
+        "category": "accessibility",
+        "before": "En png/04-B-entrada-movil.png y png/06-C-entrada-movil.png el rótulo 'DEL MONTAJE A LA ENTREGA' cae sobre las miniaturas iluminadas de la línea de tiempo",
+        "after": "Extender el degradado oscuro del panel hacia arriba en la regla móvil, o subir el bloque de texto",
+        "reason": "Es el punto más débil de lectura de las seis maquetas de entrada; en escritorio el mismo rótulo cae sobre zona oscura",
+        "impact": "Legibilidad reducida del rótulo secundario en móvil; el título EDICIÓN y el botón no se ven afectados"
+      }
+    ]
+  },
+  "ttft_ms": 2696,
+  "ttft_stream_ms": 1243,
+  "time_to_request_ms": 53,
+  "type": "result",
+  "duration_ms": 326975,
+  "uuid": "dc8e298a-0cae-4f05-b951-7eebad5df053"
+}

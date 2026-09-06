@@ -2,6 +2,12 @@
 
 **Actualizado:** 2026-09-04
 
+**Checkpoint posterior:** Marco autorizó las cuentas/datos temporales y el uso
+en memoria de la credencial administrativa para el smoke. La derivación previa
+de Claude se interrumpió por cuota antes de crear fixtures; el intento está
+detenido, con autorización y reanudación exacta en
+[`checkpoint-smoke-autorizado-2026-09-04.md`](checkpoint-smoke-autorizado-2026-09-04.md).
+
 **Estado vigente:** el cierre está publicado en `equipo` como `c328b7d`; el
 Preview privado está `Ready` sobre staging con siete migraciones y ambas Edge
 Functions v2. Es un candidato técnico a RC1, pendiente del smoke autenticado.
@@ -33,8 +39,9 @@ rutas rechazan peticiones sin token con `401`. El nuevo Preview privado está
 local real aprobó 51 controles de Auth/RLS/RPC y completó el gate objetivo de
 31 puntos en una base desechable. La aceptación autenticada del Preview y las
 pruebas en dispositivos reales continúan pendientes. No se dispone de una
-sesión Admin autorizada para ejecutar ese recorrido desde el agente; no se
-extraerán credenciales ni se resetearán cuentas existentes para obtenerla.
+sesión Admin de prueba todavía: su bootstrap temporal ya está autorizado, pero
+debe completarse la derivación Claudex de limpieza antes de provisionarlo. No
+se extraerán credenciales ni se resetearán cuentas existentes para obtenerlo.
 
 ## Decisiones ya consolidadas
 
@@ -195,10 +202,10 @@ La fuente completa es `contrato-producto-vigente-2026-08-28.md`.
 
 ## Próximos gates
 
-1. Obtener un medio de prueba Admin autorizado o la ejecución del recorrido por
-   su titular. Probar alta temporal, login por username, cambio obligatorio y
-   acceso sin compartir contraseñas ni cookies.
-2. Preparar con autorización las identidades temporales restantes, incluida una
+1. Retomar la derivación Claudex después de renovarse su cuota y cerrar el plan
+   de bootstrap/limpieza autorizado. Probar alta temporal, login por username,
+   cambio obligatorio y acceso sin compartir contraseñas ni cookies.
+2. Preparar bajo la autorización concedida las identidades temporales, incluida una
    cuenta Burson, y su limpieza exacta de Auth/perfil para devolver staging a su
    baseline de seis perfiles.
 3. Completar el smoke autenticado no destructivo en el candidato publicado y

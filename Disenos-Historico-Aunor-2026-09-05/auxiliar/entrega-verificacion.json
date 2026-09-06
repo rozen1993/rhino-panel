@@ -1,0 +1,267 @@
+{
+  "folder": "Disenos-Historico-Aunor-2026-09-05",
+  "finalVersion": "png-final",
+  "count": 18,
+  "files": [
+    {
+      "name": "00-comparativa-entradas.png",
+      "bytes": 756566,
+      "width": 1920,
+      "height": 1345,
+      "validPNG": true,
+      "sha256": "271cd6f8125750099a1068122997e3430f3c3fa45b95121cdc0259d270bdde9f"
+    },
+    {
+      "name": "01-A-entrada-escritorio.png",
+      "bytes": 1552312,
+      "width": 2160,
+      "height": 1575,
+      "validPNG": true,
+      "sha256": "d1ea5c6462d70a0584ce0df30e512796a3587a99ea1e878fba56b817a3fbbf9c"
+    },
+    {
+      "name": "02-A-entrada-movil.png",
+      "bytes": 773651,
+      "width": 780,
+      "height": 2296,
+      "validPNG": true,
+      "sha256": "449e04af72726c1bdc35b0ca6eb2d76f419d3ebc99370dd7d0b9ed0d53958d98"
+    },
+    {
+      "name": "03-B-entrada-escritorio.png",
+      "bytes": 1788556,
+      "width": 2160,
+      "height": 1575,
+      "validPNG": true,
+      "sha256": "9d478be6976b243482c101388b6d8fe96b4a37218cc4f223adf7bf700b7970f4"
+    },
+    {
+      "name": "04-B-entrada-movil.png",
+      "bytes": 700239,
+      "width": 780,
+      "height": 2112,
+      "validPNG": true,
+      "sha256": "f43197583c7ba0a56c22b7ffa77401ff65242e8218ae6d4be0934e794cc31a58"
+    },
+    {
+      "name": "05-C-entrada-escritorio.png",
+      "bytes": 1788990,
+      "width": 2160,
+      "height": 1575,
+      "validPNG": true,
+      "sha256": "955bb3560dfda6b6646e3b022760046e9720bdb165a882c6ea1c990af12b20f1"
+    },
+    {
+      "name": "06-C-entrada-movil.png",
+      "bytes": 733483,
+      "width": 780,
+      "height": 2192,
+      "validPNG": true,
+      "sha256": "5c16f0d382ce259755cea93701e65ad6366f5510e4e4427a76965bc602219fda"
+    },
+    {
+      "name": "07-historico-grabacion-escritorio.png",
+      "bytes": 727916,
+      "width": 2160,
+      "height": 1764,
+      "validPNG": true,
+      "sha256": "8cbe5c207c04e1f489d5ca38af626b6c1cf0a771a833d6362ace803c637f2fba"
+    },
+    {
+      "name": "08-historico-grabacion-movil-12-meses.png",
+      "bytes": 420099,
+      "width": 780,
+      "height": 6372,
+      "validPNG": true,
+      "sha256": "f903be5f6b2a9dfbd9dceec181ec45ad13b58a6b8749c17890ca6d8a34bbe099"
+    },
+    {
+      "name": "09-historico-edicion-escritorio.png",
+      "bytes": 716341,
+      "width": 2160,
+      "height": 1764,
+      "validPNG": true,
+      "sha256": "224ac787daadbdb0d03a5aae984bd454b160209c5e97c02e0b64b6da36794b86"
+    },
+    {
+      "name": "10-historico-edicion-movil-12-meses.png",
+      "bytes": 411658,
+      "width": 780,
+      "height": 6332,
+      "validPNG": true,
+      "sha256": "35a7e3a4cc2e89713effad8c456140beefd2cce73bc00eb1f1be3790bc0f706d"
+    },
+    {
+      "name": "11-coincidencias-escritorio.png",
+      "bytes": 744426,
+      "width": 2160,
+      "height": 1764,
+      "validPNG": true,
+      "sha256": "d377d97b58722b516a4f9b330f28adfbf75c00cb847c913ac4100541f9fc28d9"
+    },
+    {
+      "name": "12-coincidencias-movil.png",
+      "bytes": 164655,
+      "width": 780,
+      "height": 1688,
+      "validPNG": true,
+      "sha256": "dff96ff418f85784c05ff29a246d76e1eabf2c99ec83d85e108dd9e64993eb71"
+    },
+    {
+      "name": "13-aunor-escritorio.png",
+      "bytes": 757675,
+      "width": 2160,
+      "height": 1841,
+      "validPNG": true,
+      "sha256": "ddabc9c3f70a5fa2f0b8d7574e9935edb650d6562392104f4d4be04d5f2a7066"
+    },
+    {
+      "name": "14-aunor-movil.png",
+      "bytes": 479960,
+      "width": 780,
+      "height": 4816,
+      "validPNG": true,
+      "sha256": "dc30c4a798dc7477b7c16390e0722a6a6a6c826b0aee631a7332220ce45778d8"
+    },
+    {
+      "name": "15-coincidencias-movil-detalle.png",
+      "bytes": 160916,
+      "width": 780,
+      "height": 1688,
+      "validPNG": true,
+      "sha256": "222ba4181287f7e50b8b1d24ea0bc44ef4aeef17b2928c1770e1dbcd2b561f4a"
+    },
+    {
+      "name": "16-grabacion-movil-vista-inicial.png",
+      "bytes": 242966,
+      "width": 780,
+      "height": 1688,
+      "validPNG": true,
+      "sha256": "3fe104f69be386892e159456761fc18b2f2a64a6fdcbd852d69500679f7ae5b3"
+    },
+    {
+      "name": "17-edicion-movil-vista-mayo.png",
+      "bytes": 87463,
+      "width": 780,
+      "height": 1688,
+      "validPNG": true,
+      "sha256": "75206b46050ceca55082b7bfeaed16b2c355f684d26064294f395d9f94389a7b"
+    }
+  ],
+  "checks": {
+    "pngSignatures": true,
+    "fourDestinationsTwelveMonths": true,
+    "allSixHistoryDOMsTwelveMonths": true,
+    "noHorizontalOverflow": true,
+    "noRenderErrors": true,
+    "noMissingPhotos": true,
+    "offlineRendering": true,
+    "approvedCopiesUnchanged": true,
+    "gallery18Links": true,
+    "galleryAllImagesLoaded": true,
+    "galleryAllLinksExist": true,
+    "galleryNoOverflow": true,
+    "galleryNoNetwork": true,
+    "galleryNoPageErrors": true
+  },
+  "copies": [
+    {
+      "source": "frontend\\components\\activity-card.tsx",
+      "copy": "auxiliar\\componentes\\activity-card.tsx",
+      "sameBytes": true
+    },
+    {
+      "source": "frontend\\components\\annual-calendar.tsx",
+      "copy": "auxiliar\\componentes\\annual-calendar.tsx",
+      "sameBytes": true
+    },
+    {
+      "source": "frontend\\components\\avatar.tsx",
+      "copy": "auxiliar\\componentes\\avatar.tsx",
+      "sameBytes": true
+    },
+    {
+      "source": "frontend\\components\\card.tsx",
+      "copy": "auxiliar\\componentes\\card.tsx",
+      "sameBytes": true
+    },
+    {
+      "source": "frontend\\components\\mobile-shell.tsx",
+      "copy": "auxiliar\\componentes\\mobile-shell.tsx",
+      "sameBytes": true
+    },
+    {
+      "source": "frontend\\components\\nav-bar.tsx",
+      "copy": "auxiliar\\componentes\\nav-bar.tsx",
+      "sameBytes": true
+    },
+    {
+      "source": "frontend\\components\\status-pill.tsx",
+      "copy": "auxiliar\\componentes\\status-pill.tsx",
+      "sameBytes": true
+    },
+    {
+      "source": "frontend\\components\\system-icon.tsx",
+      "copy": "auxiliar\\componentes\\system-icon.tsx",
+      "sameBytes": true
+    },
+    {
+      "source": "frontend\\components\\top-bar.tsx",
+      "copy": "auxiliar\\componentes\\top-bar.tsx",
+      "sameBytes": true
+    },
+    {
+      "source": "frontend\\lib\\activities.ts",
+      "copy": "auxiliar\\lib\\activities.ts",
+      "sameBytes": true
+    },
+    {
+      "source": "frontend\\lib\\external-link.ts",
+      "copy": "auxiliar\\lib\\external-link.ts",
+      "sameBytes": true
+    },
+    {
+      "source": "frontend\\lib\\historical.ts",
+      "copy": "auxiliar\\lib\\historical.ts",
+      "sameBytes": true
+    },
+    {
+      "source": "frontend\\lib\\roles.ts",
+      "copy": "auxiliar\\lib\\roles.ts",
+      "sameBytes": true
+    },
+    {
+      "source": "frontend\\.next\\static\\chunks\\1hkd14dy8gdti.css",
+      "copy": "auxiliar/estilos-aprobados.css",
+      "sameBytes": true
+    }
+  ],
+  "gallery": {
+    "links": [
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/00-comparativa-entradas.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/01-A-entrada-escritorio.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/02-A-entrada-movil.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/03-B-entrada-escritorio.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/04-B-entrada-movil.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/05-C-entrada-escritorio.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/06-C-entrada-movil.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/07-historico-grabacion-escritorio.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/08-historico-grabacion-movil-12-meses.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/09-historico-edicion-escritorio.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/10-historico-edicion-movil-12-meses.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/11-coincidencias-escritorio.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/12-coincidencias-movil.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/13-aunor-escritorio.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/14-aunor-movil.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/15-coincidencias-movil-detalle.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/16-grabacion-movil-vista-inicial.png",
+      "file:///C:/Users/MARCO/Desktop/Sistema_R/Disenos-Historico-Aunor-2026-09-05/png-final/17-edicion-movil-vista-mayo.png"
+    ],
+    "imageCount": 18,
+    "missingImages": [],
+    "width": 1440,
+    "scrollWidth": 1440,
+    "brokenLinks": []
+  },
+  "pageErrors": []
+}

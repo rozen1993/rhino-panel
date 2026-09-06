@@ -1,0 +1,110 @@
+{
+  "profile": "o/max",
+  "pipeline": "core",
+  "context": "neutral",
+  "phase": "compare",
+  "tools": [],
+  "exitCode": 0,
+  "duration_ms": 174287,
+  "recoveryFile": "C:\\Users\\MARCO\\AppData\\Local\\Claudex\\recovery\\claudex-20260905T081756912Z-b486fd84e20b49219655c275511f47ee.jsonl",
+  "inputs": [
+    "paquete-neutral.md",
+    "derivacion-codex-original.md",
+    "derivacion-claude.json:structured_output"
+  ],
+  "structured_output": {
+    "pipeline": "core",
+    "coincidencias": [
+      "Conserva idéntico en ambas: cabecera, navegación por rol, tipografías, colores, calendario anual de doce meses, panel de detalle y separación Admin/Operario/Burson.",
+      "Ambas ubican las dos entradas fotográficas Grabación/Edición dentro del contenido del Histórico, no como calendario rediseñado ni ruta paralela, y cada entrada abre el mismo calendario anual filtrado por categoría.",
+      "Ambas conservan una salida hacia el Histórico completo para que Creatividad y Locución no queden inalcanzables (Codex mediante enlace 'Ver todo el Histórico'; Claude mediante ficha descartable más leyenda visible).",
+      "Hecho de código coincidente y decisivo: matches[0] gobierna en solitario el fondo y la forma del rango de la celda, mientras el selector del panel ya entrega todas las actividades de la fecha; el problema es de representación visual, no de pérdida de datos.",
+      "Ambas rechazan asignar colores individuales por actividad y apoyan la identidad en texto: responsable, título, identificador y datos adicionales. El rojo conserva su significado de demora, no de identidad.",
+      "Ambas verifican que HistoricalActivity es una proyección que excluye 'place' y no contiene ningún campo contractual, de cliente ni de sustitución, por lo que cualquier referencia Aunor exige extender proyección y consulta.",
+      "Ambas verifican que la ruta del Histórico está restringida a Admin y parametrizada por 'anio', y que las fechas son por día, sin horarios.",
+      "Modelo Aunor coincidente en su núcleo: tres ejes independientes (Ejecución, Conformidad, Aprobación económica) que nunca se funden en una sola insignia; 'Entregada' no completa los otros dos.",
+      "Ambas conservan el original de forma inalterable: la sustitución crea vínculo o puntero recíproco, la propuesta rechazada permanece registrada y ninguna actividad desaparece del registro.",
+      "Ambas evitan inventar cantidades, tarifas, equivalencias, saldos, porcentajes de cumplimiento y aprobaciones, porque Marco no los suministró.",
+      "Ambas proponen evidencias como enlaces asociados a documentos con autor y fecha, reutilizando el patrón de material ya existente, y descartan cargas de archivo en esta fase.",
+      "Ambas mantienen el canal Burson separado de cliente y de referencia contractual.",
+      "Misma observación de defecto preexistente ajeno a la ampliación: truncamiento de etiquetas KPI ('Progr…', 'En pr…', 'Entre…') en burson-encargos-mobile.png a 390px.",
+      "Misma limitación declarada: ninguna navegó localhost:3000 por carecer de herramientas de navegador; ambas trabajaron sobre las capturas reales, que la orden autoriza expresamente.",
+      "Ambas declaran haber abierto individualmente las 15 capturas obligatorias y usan admin-historico-detalle-mobile-viewport.png como referencia canónica del modal en lugar de la fullPage.",
+      "Ambas coinciden en que las coincidencias no existen en la semilla, por lo que esa propuesta se apoya solo en lectura de código, y ninguna fabricó datos para simularlas.",
+      "Ambas coinciden en que las barras fijas sobre capturas móviles largas no demuestran inaccesibilidad real.",
+      "Ambas listan pendientes equivalentes: coincidencias reales, volumen de datos, Auth/RLS remoto, mutaciones, dispositivos físicos, Safari/iOS, tablet y aceptación del equipo, además de los pendientes de Preview y Producción documentados.",
+      "Los briefs convergen: ambas recomiendan como opción más segura dos piezas fotográficas enfrentadas con costura central y velo oscuro sobre azul noche, y ambas incluyen una variante diagonal que debe degradarse a corte horizontal en móvil.",
+      "Ninguna generó imágenes, implementó cambios, modificó datos, goal o protocolo, ni realizó commit o despliegue; en ambas la selección fotográfica queda pendiente de aprobación de Marco."
+    ],
+    "discrepancias": [
+      {
+        "punto": "Modelo de la referencia contractual Aunor: entidad relacionada N:M frente a campo de texto libre en la actividad",
+        "claude": "Referencia contractual opcional dentro de la actividad, como texto libre más tipo de vínculo (Prevista / Sustituye a / Adicional) y puntero recíproco 'Sustituida por'. No contempla una vista de conciliación.",
+        "codex": "Tres entidades separadas y relacionadas —referencia contractual original, actividad ejecutada y propuesta de cambio/reemplazo— con cardinalidad N:M explícita ('no asumir correspondencia uno a uno') y una vista de conciliación que incluye actividades sin referencia y referencias sin actividad.",
+        "evidencia": "Ambas verifican el mismo hecho de código: el modelo de actividad leído no contiene referencias contractuales ni decisiones económicas, y la proyección del Histórico ni siquiera hereda 'place'. El problema que Marco describe es que el supervisor solo ve lo previsto/no realizado y no reconoce el trabajo ejecutado en su lugar.",
+        "resolucion": "Un campo de texto libre no permite listar referencias huérfanas, que es exactamente lo que el supervisor necesita ver junto a lo ejecutado. Recomiendo adoptar la entidad y la vista de conciliación de Codex como esqueleto de datos, y la capa de presentación de Claude (evento inmutable con actor y momento, dos píldoras contorneadas visualmente distintas de las de estado) como interfaz. La elección es de Marco porque condiciona el esquema y el coste."
+      },
+      {
+        "punto": "Tratamiento visual de la celda con varias actividades el mismo día",
+        "claude": "Concreta tres capas: relleno partido con parada dura al 50% entre las dos primeras categorías distintas, número del día sobre pastilla sólida, contador subido a 16px con tabular-nums y retirada de aria-hidden, más anillo en la celda para distinguir días múltiples en escala de grises. Descarta apilar franjas horizontales porque cada una quedaría en ~11px.",
+        "codex": "Deja el tratamiento abierto: cantidad neutral cuando coinciden varias actividades y 'pequeños marcadores de las categorías presentes', sin comprometerse con una técnica concreta.",
+        "evidencia": "Hecho de código que ambas comparten: matches[0] decide relleno y forma de rango. Claude añade que el contador que delataría la pluralidad está marcado aria-hidden y que la celda mide ~24px; Codex no cita ese detalle. Ninguna pudo validarlo visualmente porque la semilla no contiene coincidencias.",
+        "resolucion": "Compatibles: son dos implementaciones del mismo requisito. La retirada de aria-hidden y el contador anunciado deben adoptarse por ser una corrección de accesibilidad verificable. La elección entre relleno partido y marcadores queda pendiente de medición real de contraste sobre dos fondos; no debe darse por resuelta sin esa medición ni sin datos de prueba autorizados por Marco."
+      },
+      {
+        "punto": "Alcance de acceso de las nuevas entradas",
+        "claude": "No lo plantea. Sitúa las entradas en la ruta del Histórico y justifica no convertirlas en pestañas porque la barra inferior móvil pasaría de cinco a siete ítems a 390px.",
+        "codex": "Señala expresamente que Admin sería el punto inicial del nuevo acceso porque la ruta del Histórico está restringida a ese rol, y que cualquier extensión de acceso a otros roles necesita una decisión expresa de Marco.",
+        "evidencia": "Ambas verifican en código que la página del Histórico exige rol Admin.",
+        "resolucion": "Omisión relevante en la derivación de Claude. Incorporar la advertencia de Codex: decidir si las entradas quedan solo en Admin o se extienden a Operario/Burson es una decisión de Marco, no un detalle de implementación. La restricción de la barra móvil que aporta Claude sigue siendo válida y se acumula."
+      },
+      {
+        "punto": "Trazabilidad Aunor frente a la baja lógica de actividades",
+        "claude": "Menciona que la baja lógica sigue siendo exclusiva de Admin y queda aparte, pero no advierte del efecto sobre la trazabilidad.",
+        "codex": "Advierte que el Histórico excluye actividades eliminadas según el código leído, y que un registro Aunor necesita preservar su referencia y trazabilidad aunque la actividad salga de la consulta operativa habitual.",
+        "evidencia": "Lectura de código de la consulta del Histórico, declarada por Codex. No reverificada en esta comparación.",
+        "resolucion": "Riesgo real y alineado con el requisito de Marco de que ningún trabajo desaparezca del registro. Debe incorporarse a la lista de riesgos y a los criterios de aceptación: una actividad dada de baja no puede llevarse consigo su referencia contractual ni su historial."
+      },
+      {
+        "punto": "Semántica de los estados de conformidad y aprobación",
+        "claude": "Reserva íntegramente el vocabulario a Marco y solo fija 'Sin registrar' como valor por defecto de la aprobación económica.",
+        "codex": "Reserva las cantidades pero propone distinciones semánticas concretas: 'sin constancia' debe distinguirse de 'rechazada', y una sustitución parcial debe conservar visible el alcance pendiente.",
+        "evidencia": "Ninguna dispone de cantidades, tarifas ni aprobaciones; el paquete no las suministra.",
+        "resolucion": "Compatibles y complementarias. Adoptar las distinciones semánticas de Codex como requisito funcional —codifican el problema real de Aunor— y el aplazamiento de etiquetas de Claude como procedimiento: Marco decide los rótulos finales."
+      },
+      {
+        "punto": "Riesgos exclusivos de cada derivación",
+        "claude": "Colisión del lima de Creatividad con el lima reservado a acción primaria por el contrato visual; peso y CLS de dos fotografías sobre una página móvil ya muy larga, con exigencia de aspect-ratio explícito; posible rotura del remontaje por clave al añadir el parámetro de tipo junto al de año.",
+        "codex": "La selección fotográfica podría dominar una herramienta operativa, por lo que debe limitarse a la entrada y no repetirse sobre cada calendario; y el recuento del Histórico filtrado debe indicar que corresponde solo a esa categoría para no inducir a error.",
+        "evidencia": "Ninguno de estos riesgos contradice al otro; proceden de planos distintos (contrato visual y rendimiento frente a criterio de producto y legibilidad de datos).",
+        "resolucion": "La unión de ambas listas es la lista correcta. Ninguno debe descartarse por no aparecer en la otra derivación."
+      },
+      {
+        "punto": "Granularidad de la evidencia de código y afirmación sobre el esquema",
+        "claude": "Cita números de línea concretos y afirma que el tipo de actividad es un enum de exactamente cuatro valores, de lo que deduce que la ampliación de entradas no requiere migración de esquema.",
+        "codex": "Cita los mismos archivos sin números de línea y no se pronuncia sobre el enum ni sobre la necesidad de migración.",
+        "evidencia": "No dispongo de herramientas en esta comparación y no pude reverificar líneas ni el esquema.",
+        "resolucion": "La afirmación de Claude reduce el coste percibido de la primera prioridad y debe confirmarse en el código antes de planificar. Si es correcta, la ampliación de entradas es de coste bajo; si no, la prioridad se reordena."
+      }
+    ],
+    "recomendacion": "Fusionar, no elegir. Tomar de la derivación de Claude la especificación visual y de accesibilidad —ubicación de las dos entradas dentro del Histórico con costura central, filtro propagado desde la lista visible sin tocar los subcomponentes, contador de coincidencias anunciado a lectores de pantalla y corrección de los extremos del rango— y de la de Codex el modelo de datos Aunor: referencia contractual como entidad con relaciones N:M, propuesta de cambio como registro propio y vista de conciliación que muestre tanto actividades sin referencia como referencias sin actividad. Orden sugerido: (1) entradas fotográficas y filtro por categoría, sin cambio de esquema si se confirma el enum de cuatro valores; (2) coincidencias, adoptando ya la corrección de accesibilidad y dejando la técnica de relleno pendiente de medición de contraste; (3) referencia y sustitución; (4) ejes de conformidad y aprobación económica, con vocabulario decidido por Marco. Antes de implementar, cerrar cuatro decisiones de Marco: alcance de acceso a las entradas, referencia como texto o entidad, rótulos de los dos ejes no operativos, y autorización de datos de prueba para validar coincidencias visualmente. Mantener la parada para aprobación: ninguna derivación implementó, escribió ni generó imágenes, y esta comparación tampoco.",
+    "riesgos": [
+      "Ninguna de las dos derivaciones pudo validar visualmente el comportamiento con coincidencias, porque la semilla demo no las contiene. La propuesta de celda múltiple se apoya solo en lectura de código en ambos casos y no debe considerarse resuelta.",
+      "El modelo Aunor diverge estructuralmente entre las dos derivaciones. Elegir el campo de texto libre impediría después listar referencias sin actividad, que es justamente lo que hace visible el trabajo no reconocido; corregirlo más tarde implica migración.",
+      "Riesgo de que una actividad dada de baja arrastre consigo su referencia contractual y su historial fuera del registro, incumpliendo el requisito de que ningún trabajo desaparezca. Solo una derivación lo advierte.",
+      "Los ejes de conformidad y aprobación económica pueden leerse como estados operativos si se estilan como píldoras de estado, lo que anularía el propósito de la trazabilidad.",
+      "Colisión de color: la categoría Creatividad usa el mismo lima que el contrato visual reserva a la acción primaria, y las fotografías saturadas la harán más visible aunque Creatividad quede fuera de esta ampliación.",
+      "Dos fotografías empujan hacia abajo un Histórico móvil que ya es una página muy larga y pueden introducir desplazamiento de contenido si no se fija la relación de aspecto.",
+      "Añadir un segundo parámetro de tipo junto al de año puede interferir con el remontaje del calendario por clave; debe comprobarse.",
+      "La fotografía puede dominar una herramienta operativa si se repite más allá de la entrada.",
+      "El recuento del Histórico filtrado puede inducir a error si no indica que corresponde solo a la categoría seleccionada.",
+      "Los números de línea y la afirmación sobre el enum de cuatro valores proceden de una sola derivación y no se reverificaron en esta comparación; condicionan la estimación de coste de la primera prioridad.",
+      "Defecto preexistente ajeno a la ampliación, observado por ambas: truncamiento de etiquetas KPI en la vista móvil de encargos de Burson.",
+      "Continúan abiertos los pendientes documentados que esta ampliación no cierra: smoke autenticado de Preview, bootstrap y limpieza de cuentas temporales, dispositivos reales y Safari/iOS, aceptación del equipo y Go/No-Go de Producción con autorización separada."
+    ],
+    "confianza": {
+      "nivel": "media",
+      "motivo": "Alta en el bloque de conservación, ubicación de las entradas y diagnóstico de coincidencias: las dos derivaciones llegaron de forma independiente a los mismos hechos de código y a las mismas restricciones visuales, lo que es una convergencia significativa aunque no sea evidencia por sí misma. Media-baja en el bloque Aunor, donde divergen estructuralmente y ninguna dispone de cantidades, tarifas, equivalencias ni aprobaciones. No dispuse de herramientas en esta comparación: no abrí las capturas ni el código, de modo que no reverifiqué los números de línea, la afirmación sobre el enum de tipos de actividad ni las descripciones de píxel; ambas derivaciones declaran haber abierto las 15 capturas obligatorias y esa declaración se toma como dada, no como comprobada por mí."
+    }
+  }
+}

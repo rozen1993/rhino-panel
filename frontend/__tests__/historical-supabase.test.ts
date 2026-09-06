@@ -168,6 +168,23 @@ function spanRow(
 }
 
 describe("lector Supabase del Histórico", () => {
+  it("no pierde lugares bajo paginación ni duplica una actividad multisede", async () => {
+    const setup = behavioralClient({
+      activities: [{ ...activityRow(1), place: "General", deleted_at: null }],
+      activity_date_spans: [
+        { ...spanRow(1,1,"2026-09-10"), place: "Norte" },
+        { ...spanRow(2,2,"2026-09-10"), place: "Sur" },
+      ],
+    }, 1);
+    mocks.createServerClient.mockResolvedValue(setup.client);
+    const result = await listSupabaseHistoricalActivities(2026);
+    expect(result).toHaveLength(1);
+    expect(result[0].place).toBe("General");
+    expect(result[0].spans.map(s=>s.place)).toEqual(["Norte","Sur"]);
+    for (const query of setup.calls.filter(q=>q.table === "activity_date_spans")) {
+      expect(query.operations.find(o=>o.name === "select")?.args[0]).toContain("place");
+    }
+  });
   beforeEach(() => {
     vi.clearAllMocks();
   });

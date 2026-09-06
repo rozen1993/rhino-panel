@@ -25,6 +25,8 @@ export function validSpans(spans: unknown): spans is DateSpan[] {
       (span) =>
         typeof span === "object" &&
         span !== null &&
+        (span.place === undefined ||
+          (typeof span.place === "string" && span.place.length <= 300)) &&
         validCalendarDate(span.start) &&
         validCalendarDate(span.end) &&
         span.start >= activityHistoryFloor &&

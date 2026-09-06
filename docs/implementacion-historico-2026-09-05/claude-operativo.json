@@ -1,0 +1,112 @@
+{
+  "is_error": false,
+  "duration_api_ms": 16567,
+  "num_turns": 3,
+  "stop_reason": "tool_use",
+  "session_id": "d4793d72-b80a-4cc2-931f-ce76618c4062",
+  "total_cost_usd": 1.5207189999999997,
+  "usage": {
+    "input_tokens": 3,
+    "cache_creation_input_tokens": 149254,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 1093,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 149254,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "not_available",
+    "iterations": [
+      {
+        "input_tokens": 1,
+        "output_tokens": 608,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 133014,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 133014
+        },
+        "type": "message"
+      }
+    ],
+    "speed": "standard"
+  },
+  "modelUsage": {
+    "claude-haiku-4-5-20251001": {
+      "inputTokens": 734,
+      "outputTokens": 21,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0.0008389999999999999,
+      "contextWindow": 200000,
+      "maxOutputTokens": 32000,
+      "canonicalModel": "claude-haiku-4-5",
+      "provider": "firstParty"
+    },
+    "claude-opus-5": {
+      "inputTokens": 3,
+      "outputTokens": 1093,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 149254,
+      "webSearchRequests": 0,
+      "costUSD": 1.51988,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 64000,
+      "canonicalModel": "claude-opus-5",
+      "provider": "firstParty"
+    }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"supuestos\":[\"El paquete de lanzamiento no define gates para esta prueba: se ejecuta solo la lectura solicitada, sin auditoría, escritura ni subagentes.\",\"La versión de Next se toma de dependencies, no del árbol instalado.\"],\"propuesta\":\"OPERATIVO — paquete \\\"frontend\\\" (version 0.1.0), Next 16.3.1.\",\"alternativas\":[],\"riesgos\":[\"No se ha probado navegador ni backend.\"],\"verificacion\":[\"Ruta leída: C:\\\\Users\\\\MARCO\\\\Desktop\\\\Sistema_R\\\\frontend\\\\package.json\"],\"confianza\":{\"nivel\":\"alta\",\"motivo\":\"Dato leído directamente del archivo indicado, sin inferencia.\"},\"pipeline\":\"core\",\"input_class\":\"not-applicable\",\"artifacts\":[{\"path\":\"frontend/package.json\",\"purpose\":\"Lectura de nombre de paquete y versión de Next\",\"status\":\"reviewed\"}],\"gates\":[{\"name\":\"lectura-unica\",\"status\":\"passed\",\"evidence\":\"Se leyó exclusivamente frontend/package.json\"}],\"deviations\":[]}",
+  "structured_output": {
+    "supuestos": [
+      "El paquete de lanzamiento no define gates para esta prueba: se ejecuta solo la lectura solicitada, sin auditoría, escritura ni subagentes.",
+      "La versión de Next se toma de dependencies, no del árbol instalado."
+    ],
+    "propuesta": "OPERATIVO — paquete \"frontend\" (version 0.1.0), Next 16.3.1.",
+    "alternativas": [],
+    "riesgos": [
+      "No se ha probado navegador ni backend."
+    ],
+    "verificacion": [
+      "Ruta leída: C:\\Users\\MARCO\\Desktop\\Sistema_R\\frontend\\package.json"
+    ],
+    "confianza": {
+      "nivel": "alta",
+      "motivo": "Dato leído directamente del archivo indicado, sin inferencia."
+    },
+    "pipeline": "core",
+    "input_class": "not-applicable",
+    "artifacts": [
+      {
+        "path": "frontend/package.json",
+        "purpose": "Lectura de nombre de paquete y versión de Next",
+        "status": "reviewed"
+      }
+    ],
+    "gates": [
+      {
+        "name": "lectura-unica",
+        "status": "passed",
+        "evidence": "Se leyó exclusivamente frontend/package.json"
+      }
+    ],
+    "deviations": []
+  },
+  "ttft_ms": 6790,
+  "ttft_stream_ms": 1146,
+  "time_to_request_ms": 85,
+  "type": "result",
+  "duration_ms": 15754,
+  "uuid": "3d538219-5e53-4b8b-996c-207c9ba47551"
+}

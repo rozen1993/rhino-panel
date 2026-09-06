@@ -1,0 +1,124 @@
+{
+  "profile": "o/max",
+  "pipeline": "core",
+  "context": "project",
+  "phase": "derive",
+  "exitCode": 0,
+  "duration_ms": 501845,
+  "recoveryFile": "C:\\Users\\MARCO\\AppData\\Local\\Claudex\\recovery\\claudex-20260905T080838055Z-037a16cc0119468f9e68d4fdedc0cb5f.jsonl",
+  "structured_output": {
+    "pipeline": "core",
+    "input_class": "application",
+    "supuestos": [
+      "Write está deshabilitada en esta sesión, así que la orden 'Ninguna escritura' se cumple por construcción: no se creó archivo de plan ni salida en disco. La derivación va íntegra aquí.",
+      "El paquete no define gates propios; declaro cuatro ad hoc: acceso-visual-propio, cobertura-capturas-obligatorias, hechos-codigo-verificados y no-mutacion.",
+      "No leí derivacion-codex.md, evidencia-factual.md, inventario-capturas.json ni huellas-capturas.json: son derivaciones o inventarios ajenos y la orden exige ver las imágenes, no sustituirlas por inventario. Sí leí claude-capacidad-visual.json porque el paquete lo nombra como archivo técnico de capacidad.",
+      "'Composición tipo VS' se interpreta como dos piezas enfrentadas con costura central, no como comparativa de métricas. Si Marco quería otra cosa, P1 cambia de forma pero no de ubicación ni de comportamiento.",
+      "El vocabulario exacto de conformidad y aprobación económica NO se propone como decidido: queda como decisión pendiente de Marco. Solo registro la estructura de tres ejes independientes, que es lo que su descripción del problema exige.",
+      "Las fotografías de las dos entradas no existen y no se generan aquí; los briefs describen qué debe mostrar cada una."
+    ],
+    "propuesta": "CONSERVA (verificado en píxel). Cabecera azul noche con líneas técnicas diagonales y ornamento de chevrones; marca condensada CONTROL DE ACTIVIDADES / RHINO AUDIOVISUALES. Barra lateral oscura en escritorio con navegación por rol (Admin 5 ítems: Mi panel, Burson, Cuentas, Histórico, Papelera; Carlos 1; Ana 1; Luis 2; Burson 1) y barra inferior fija en móvil con etiquetas cortas (nav-bar.tsx:44-45 mapea Papelera→'Bajas'; es decisión de diseño, no defecto). Tarjetas blancas radio ~10px, borde fino, sombra fría. Antetítulo data-label en versalitas cian espaciadas; section-title con subrayado cian corto. Lima #84D600 reservado a acción primaria. Paneles de detalle con barra superior degradada cian→lima (annual-calendar.tsx:122). En móvil el detalle es hoja inferior con asa, max-h-[82dvh], trampa de foco y Escape (líneas 602-628). Calendario anual: 12 MiniMonth md:grid-cols-2 xl:grid-cols-4, leyenda de 4 puntos con recuentos, píldora de año ‹2026›, panel derecho persistente con Responsable/Fechas/Origen/Descripción/Opinión/CTA de material.\n\nAÑADE — P1, dos entradas fotográficas Grabación/Edición. Ubicación: banda nueva dentro de /historico, entre la cabecera y la leyenda. NO son pestañas de navegación: la barra móvil ya lleva 5 ítems y 7 no caben a 390px. Composición VS: dos mosaicos a sangre, md:grid-cols-2 en escritorio y apilados en móvil, separados por costura central con insignia circular que reutiliza el ornamento de chevrones de la marca. Cada mosaico: velo degradado a #021326 desde abajo (garantiza contraste AA sea cual sea la foto), antetítulo data-label con el punto de color de colors[type].marker, título condensado GRABACIÓN / EDICIÓN y recuento tabular-nums reutilizando el cálculo que ya existe en la leyenda (línea 559). Comportamiento: el mosaico entero es un Link a /historico?anio=YYYY&tipo=Grabación que renderiza EL MISMO AnnualCalendar con un filtro sobre 'visible' (línea 342). Verificado: calendarIndex, monthTotals, recuentos de leyenda y selectedId derivan todos de 'visible', así que un único filtro ahí se propaga sin tocar MiniMonth ni DetailPanel — es el Histórico actual filtrado, no un calendario rediseñado. Ficha descartable 'Grabación ×' junto a la píldora de año; la leyenda permanece visible para que Creatividad y Locución (fuera de alcance) no queden inalcanzables. Sin cambio de esquema: ambos tipos ya son valores del enum Postgres activity_type.\n\nAÑADE — P2, coincidencias. Hecho: el día ocupa ~24px y hoy matches[0] decide en solitario relleno y forma de rango; la segunda categoría no se dibuja y el contador que lo delataría es un círculo de 14px marcado aria-hidden. Tres capas, ninguna oculta nada: (1) relleno partido con parada dura al 50% entre las dos primeras categorías distintas del día — con tres o más, el par se mantiene y el contador carga el resto; el número del día va sobre pastilla sólida para no perder contraste sobre dos fondos; (2) contador real y anunciado: quitar aria-hidden, subirlo a 16px con tabular-nums y añadir ring-1 ring-night/25 a la celda, de modo que los días múltiples se distingan también en escala de grises — criterio 4 del contrato visual; (3) identidad fuera del color: el selector 'choices' ya lista {tipo} · {título} (línea 151); añadirle iniciales del responsable y píldora de estado, para que lo que distinga las entradas sea la persona, no el color de categoría. Corregir además la forma del rango: before/after se calculan solo desde found.dates (líneas 279-280), así que un rango continuo cuya actividad no es la primera pierde sus extremos redondeados.\n\nAÑADE — P3/P4, seguimiento Aunor. Estructura, sin cantidades, tarifas, equivalencias ni aprobaciones (Marco no las suministró). Referencia contractual opcional en la actividad: texto libre más tipo de vínculo Prevista / Sustituye a / Adicional. El original nunca se edita: una actividad sustituida conserva su registro y gana un puntero recíproco 'Sustituida por'; ambas siguen en el Histórico; la baja lógica sigue siendo Admin-only y aparte. Tres ejes independientes, nunca fundidos en una insignia — es el núcleo del problema descrito: Ejecución (los tres estados actuales, intactos), Conformidad del cliente, y Aprobación económica, esta última 'Sin registrar' por defecto; el vocabulario exacto de los dos últimos lo decide Marco. Evidencias: reutilizar el patrón materialLink (enlace HTTPS; el contrato visual prohíbe subir archivos) y el bloque 'Trazabilidad completa · N EVENTOS' ya visible en las fichas de Carlos y Luis, y 'Auditoría · N eventos' por cuenta en Cuentas. Cada cambio de eje escribe un evento inmutable con actor y momento. Dónde se ve: cuarta fila 'Referencia' en el dl del panel del Histórico y dos píldoras contorneadas neutras bajo la de estado, visualmente distintas para que nunca se lean como estado. Coste real: exige extender el Pick de HistoricalActivity y la consulta Supabase, porque hoy ese proyección ni siquiera hereda 'place'.\n\nPRIORIDAD Y PANTALLAS. P1 entradas + filtro tipo (sin esquema, un componente) → pantalla /historico. P2 coincidencias → MiniMonth y DetailPanel. P3 referencia y sustitución (esquema) → ficha de actividad, panel del Histórico, planificar. P4 ejes de conformidad y aprobación (esquema + auditoría + decisión de vocabulario de Marco) → ficha de actividad y panel del Histórico.",
+    "alternativas": [
+      "BRIEF A — 'Oficio contrapuesto'. Dos fotografías horizontales de igual peso: izquierda, manos sobre cámara en rodaje con luz de día; derecha, monitor de edición con línea de tiempo y luz de sala oscura. Costura central: regla vertical de 1px en border-line con insignia circular azul noche que lleva el ornamento de chevrones. Rótulos condensados en blanco sobre el velo inferior, antetítulo con el punto cian/naranja y recuento tabular-nums. Máximo respeto al contrato; menor carga expresiva. Móvil: se apilan y la costura pasa a horizontal.",
+      "BRIEF B — 'Diagonal técnica'. Las dos fotos comparten una costura diagonal que continúa el ángulo de las líneas técnicas ya presentes en la cabecera, de modo que el VS nace del propio lenguaje de marca en vez de añadir un recurso nuevo. Cada mitad conserva su velo a #021326. Riesgo declarado: la diagonal complica los rótulos en móvil, donde debe degradarse a corte horizontal recto.",
+      "BRIEF C — 'Placa de archivo'. Las fotos se tratan en duotono (cian para Grabación, naranja para Edición) sobre azul noche, con grano fino, y el rótulo se compone como placa de archivo con año y recuento. Es el que menos compite con el lima de acción y el que mejor resuelve la colisión de color con Creatividad, pero es el que más se aleja del realismo fotográfico que pide la orden.",
+      "ALTERNATIVA DE COINCIDENCIAS descartada: apilar dos franjas horizontales dentro de la celda de 24px. Se descarta porque cada franja quedaría en ~11px y el número del día perdería legibilidad, incumpliendo el criterio 5 del contrato (390 a 1920px).",
+      "ALTERNATIVA DE UBICACIÓN descartada: dos pestañas nuevas de navegación. Se descarta porque llevaría la barra inferior móvil a 7 ítems y porque convertiría el filtro en una ruta paralela, contra la orden de reutilizar el Histórico actual."
+    ],
+    "riesgos": [
+      "Creatividad usa lima #84D600, el mismo lima que el contrato visual reserva a acción primaria (criterio 3). Las fotografías saturadas agravarán la colisión. No lo resuelvo aquí porque Creatividad queda fuera de esta ampliación, pero P1 lo hace más visible.",
+      "El Histórico móvil ya mide ~3105px de alto con 12 meses apilados. Dos fotografías arriba empujan el calendario más abajo y añaden peso; exigen next/image con aspect-ratio explícito para no introducir CLS.",
+      "El relleno partido puede romper contraste del número del día sobre dos fondos distintos; por eso la propuesta incluye pastilla sólida bajo el número, pero debe medirse con contraste real antes de aceptarse.",
+      "Añadir 'tipo' a la URL crea una segunda dimensión junto a 'anio'; hay que revisar que no rompa el key={dataSource-year} que fuerza el remontaje del calendario.",
+      "Los ejes de conformidad y aprobación económica corren riesgo de leerse como estados si se estilan como píldoras de estado. Es exactamente el error que haría inútil la trazabilidad Aunor.",
+      "La semilla demo no contiene coincidencias, así que P2 no se puede validar visualmente sin que Marco autorice datos de prueba. No los fabriqué bajo esta orden.",
+      "Observación de píxel en burson-encargos-mobile.png: las etiquetas de las tres tarjetas KPI se truncan a 390px ('Progr…', 'En pr…', 'Entre…'). Es un defecto preexistente ajeno a esta ampliación, pero conviene registrarlo."
+    ],
+    "verificacion": [
+      "PNG REALMENTE VISTOS (15/15 obligatorias, abiertas por mí con Read, no por inventario): admin-historico-desktop.png; admin-historico-edicion-desktop.png; admin-historico-mobile.png; admin-historico-mobile-viewport.png; admin-historico-detalle-mobile-viewport.png; admin-panel-con-actividad-desktop.png; admin-cuentas-desktop.png; admin-planificar-desktop.png; carlos-panel-con-actividad-desktop.png; carlos-actividad-mobile.png; ana-creacion-propia-desktop.png; luis-actividad-burson-desktop.png; burson-encargos-desktop.png; burson-encargos-mobile.png; burson-detalle-mobile.png.",
+      "HECHO VISUAL — admin-historico-desktop.png: 12 minimeses en malla 4x3; enero 4 y 11 y febrero 2 en cian sólido con anillo oscuro de selección (jornada discontinua); mayo 12-19 en franja ámbar pálida con puntos rojos; octubre 13-15 verde; noviembre 9-11 violeta. Panel derecho: 'Entregada', GRABACIÓN, 'Cobertura audiovisual Norte', Fechas '4 ene. 2026 · 11 ene. 2026 · 2 feb. 2026', Origen 'Operario', botón lima 'Abrir material ↗'.",
+      "HECHO VISUAL — admin-historico-edicion-desktop.png: el rango de mayo pasa a llevar el anillo oscuro y enero/febrero lo pierden, lo que confirma que el anillo es selección y el relleno es categoría. Panel: 'En proceso', chip rojo contorneado 'Actividad atrasada', Fechas '12 may. – 19 may. 2026', caja discontinua 'Enlace disponible al entregar'.",
+      "HECHO VISUAL — admin-historico-mobile.png y -viewport: 12 meses en una sola columna, página larga; barra inferior fija Panel/Burson/Cuentas/Histórico/Bajas. La barra aparece sobre contenido intermedio en la captura fullPage; no infiero inaccesibilidad. Visible también el enlace 'Saltar al contenido'.",
+      "HECHO VISUAL — admin-historico-detalle-mobile-viewport.png: hoja inferior con asa, barra superior degradada cian→lima, botón × circular, mismos campos que el panel de escritorio.",
+      "HECHO CÓDIGO-ONLY — annual-calendar.tsx:274 'const found = matches[0]' decide relleno y forma de rango; línea 290 aplica colors[found.item.type][before||after ? 'range':'solid']; línea 303 el badge de recuento es aria-hidden; línea 312 el punto rojo de demora; línea 289 el aria-label sí enumera todas; líneas 134-156 el panel muestra 'N actividades en esta fecha' con botones {tipo} · {título} y aria-pressed. No verificable visualmente: la semilla no tiene coincidencias.",
+      "HECHO CÓDIGO-ONLY — historical.ts:13 HistoricalActivity es un Pick que excluye 'place'; activities.ts:5 muestra que Activity sí lo tiene. No existe ningún campo contractual, de cliente ni de sustitución.",
+      "HECHO CÓDIGO-ONLY — historico/page.tsx:10 requireRole(item.id === 'admin') confirma que el Histórico es exclusivo de Admin; parámetro 'anio'; piso 2026 y techo 9999 en historical.ts:3-4.",
+      "HECHO CÓDIGO-ONLY — supabase/database.types.ts:356 activity_type es enum Postgres de exactamente cuatro valores, luego P1 no requiere migración pero cualquier categoría nueva sí.",
+      "COBERTURA — revisados Admin (panel, planificar, cuentas, Histórico), Carlos operario sin creación, Ana con creación propia, Luis operario especial Burson y Burson. Escritorio 1440x1000 y móvil 390x844.",
+      "OMISIONES DECLARADAS — no navegué localhost:3000: mi lanzador no expone herramientas de navegador; solo analicé capturas ya existentes. No vi papelera con contenido, ni coincidencias reales, ni Supabase/Auth/RLS, ni mutaciones, ni cambio de clave, ni tablet, ni Safari/iOS físico. No se ejecutaron los pendientes de docs/estado.md (smoke autenticado de Preview, bootstrap de cuentas temporales, dispositivos reales, Go/No-Go de Producción).",
+      "ACEPTACIÓN PARA LA FASE POSTERIOR — (1) npm run verify y npm run test:e2e desde frontend/ en verde; (2) cada entrada conduce al Histórico ACTUAL filtrado y la ficha × lo restaura, sin ruta ni calendario nuevos; (3) un día con dos actividades muestra ambas categorías, y el recuento se anuncia a lectores de pantalla; (4) los tres ejes Aunor se leen como tres cosas distintas y ninguno muestra importes; (5) cada tanda se compara contra la imagen aprobada original, nunca contra la entrega anterior; (6) 390 a 1920px con foco visible y contraste medido."
+    ],
+    "gates": [
+      {
+        "name": "acceso-visual-propio",
+        "status": "passed",
+        "evidence": "Abrí las imágenes con Read y describí del píxel rasgos no deducibles del código: anillo de selección que migra de enero/febrero a mayo entre dos capturas, puntos rojos sobre mayo 12-19, truncamiento 'Progr…/En pr…/Entre…' en burson-encargos-mobile.png. No usé el inventario como sustituto."
+      },
+      {
+        "name": "cobertura-capturas-obligatorias",
+        "status": "passed",
+        "evidence": "15 de 15 capturas obligatorias abiertas individualmente; se usó admin-historico-detalle-mobile-viewport.png como referencia canónica del modal, no la fullPage."
+      },
+      {
+        "name": "hechos-codigo-verificados",
+        "status": "passed",
+        "evidence": "Leídos annual-calendar.tsx, historical.ts, historico/page.tsx y grep sobre activities.ts, roles.ts, nav-bar.tsx y database.types.ts. Solo código de consulta y presentación; ningún secreto."
+      },
+      {
+        "name": "no-mutacion",
+        "status": "passed",
+        "evidence": "Solo Read, Glob y Grep. Write está deshabilitada; no se creó carpeta ni archivo, no se navegó HTTP, no se tocaron datos, goal ni protocolo."
+      },
+      {
+        "name": "navegacion-en-vivo-localhost",
+        "status": "not-applicable",
+        "evidence": "El lanzador no expone herramientas de navegador. Limitación declarada; se continuó con capturas reales, que la orden autoriza expresamente."
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "Revision-Visual-2026-09-05/admin-historico-desktop.png",
+        "purpose": "Calendario anual con jornada discontinua Grabación seleccionada y panel derecho; base de conserva y de P1.",
+        "status": "reviewed"
+      },
+      {
+        "path": "Revision-Visual-2026-09-05/admin-historico-edicion-desktop.png",
+        "purpose": "Rango continuo Edición seleccionado; prueba que el anillo es selección y el relleno es categoría.",
+        "status": "reviewed"
+      },
+      {
+        "path": "Revision-Visual-2026-09-05/admin-historico-detalle-mobile-viewport.png",
+        "purpose": "Hoja inferior de detalle en móvil; referencia canónica del modal.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/components/annual-calendar.tsx",
+        "purpose": "Verificación del comportamiento real de coincidencias, rangos, selección y panel de detalle.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/lib/historical.ts",
+        "purpose": "Confirma que HistoricalActivity excluye 'place' y no tiene campo contractual; piso 2026.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/app/historico/page.tsx",
+        "purpose": "Confirma restricción a Admin y parámetro 'anio' sobre el que se apoyaría el filtro 'tipo'.",
+        "status": "reviewed"
+      }
+    ],
+    "deviations": [
+      {
+        "category": "other",
+        "before": "El flujo del lanzador pide escribir el plan en C:/Users/MARCO/.claude/plans/ y cerrar con ExitPlanMode.",
+        "after": "No se escribió ningún archivo; la derivación se entrega como salida estructurada y en el mensaje.",
+        "reason": "La herramienta Write está deshabilitada en esta sesión y la orden de Marco prohíbe expresamente cualquier escritura y exige detenerse para aprobación.",
+        "impact": "Ninguno sobre el contenido: la propuesta completa, sus prioridades y sus criterios de aceptación quedan en esta salida. Marco aprueba desde el mensaje en vez de desde un archivo de plan."
+      }
+    ],
+    "confianza": {
+      "nivel": "media",
+      "motivo": "Alta en lo observado: vi las 15 capturas obligatorias y verifiqué en código los cuatro hechos decisivos (matches[0] gobierna el relleno, el badge es aria-hidden, HistoricalActivity no hereda 'place', activity_type es enum de cuatro valores). Baja donde la evidencia no existe: las coincidencias no aparecen en ninguna captura porque la semilla no las produce, de modo que P2 se apoya solo en lectura de código; y todo el bloque Aunor se propone sin cantidades, tarifas ni aprobaciones porque Marco no las suministró, así que su vocabulario final es decisión suya, no mía."
+    }
+  }
+}

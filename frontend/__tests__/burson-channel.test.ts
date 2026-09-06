@@ -102,7 +102,7 @@ describe("canal Burson real", () => {
   it("la acción reautoriza, valida y no envía campos internos", () => {
     expect(action).toContain('role?.id !== "burson"');
     expect(action).toContain("role.mustChangePassword");
-    expect(action).toContain('supabase.rpc("create_burson_request_v1"');
+    expect(action).toContain('supabase.rpc("create_burson_request_v2"');
     expect(action).toContain("p_reference_link: referenceLink");
     expect(action).not.toContain("p_responsible_id");
     expect(action).not.toContain("p_material_link");

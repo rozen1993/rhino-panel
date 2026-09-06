@@ -1,0 +1,543 @@
+[
+  {
+    "file": "png-aprobacion\\01-A-entrada-escritorio.png",
+    "html": "png-aprobacion\\01-A-entrada-escritorio.html",
+    "name": "01-A-entrada-escritorio",
+    "kind": "portal",
+    "variant": "A",
+    "width": 1440,
+    "height": 1050,
+    "scrollWidth": 1440,
+    "scrollHeight": 1050,
+    "months": [],
+    "headings": [
+      "Histórico 2026",
+      "Grabación",
+      "Edición"
+    ],
+    "hasImages": [
+      {
+        "loaded": true,
+        "alt": "Fotografía ilustrativa de grabación"
+      },
+      {
+        "loaded": true,
+        "alt": "Fotografía ilustrativa de edición"
+      }
+    ],
+    "nav": [
+      "Panel",
+      "Burson",
+      "Cuentas",
+      "Histórico",
+      "Bajas"
+    ],
+    "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\nMAQUETA PARA APROBACIÓN\nVariante A · Tarjetas enfrentadas · fotos ilustrativas\n\nARCHIVO OPERATIVO\n\nHistórico 2026\n\nElige el histórico que deseas consultar.\n\n‹\n2026\n›\n\nDEL RODAJE AL ARCHIVO\n\nGRABACIÓN\n\nConsulta coberturas y jornadas de grabación.\n\nVer histórico de grabación\n↗\n\nDEL MONTAJE A LA ENTREGA\n\nEDICIÓN\n\nConsulta las jornadas de edición y sus entregas.\n\nVer histórico de edición\n↗\nVS\nEl mismo calendario anual, organizado por categoría.\nVer todo el Histórico\n→\n\nPropuesta visual. Las fotografías son ilustrativas; no documentan trabajos reales.",
+    "errors": [],
+    "deniedNetworkRequests": 0,
+    "sha256": "d1ea5c6462d70a0584ce0df30e512796a3587a99ea1e878fba56b817a3fbbf9c"
+  },
+  {
+    "file": "png-aprobacion\\02-A-entrada-movil.png",
+    "html": "png-aprobacion\\02-A-entrada-movil.html",
+    "name": "02-A-entrada-movil",
+    "kind": "portal",
+    "variant": "A",
+    "mobile": true,
+    "width": 390,
+    "height": 844,
+    "scrollWidth": 390,
+    "scrollHeight": 1148,
+    "months": [],
+    "headings": [
+      "Histórico 2026",
+      "Grabación",
+      "Edición"
+    ],
+    "hasImages": [
+      {
+        "loaded": true,
+        "alt": "Fotografía ilustrativa de grabación"
+      },
+      {
+        "loaded": true,
+        "alt": "Fotografía ilustrativa de edición"
+      }
+    ],
+    "nav": [
+      "Panel",
+      "Burson",
+      "Cuentas",
+      "Histórico",
+      "Bajas"
+    ],
+    "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\nMAQUETA PARA APROBACIÓN\nVariante A · Tarjetas enfrentadas · fotos ilustrativas\n\nARCHIVO OPERATIVO\n\nHistórico 2026\n\nElige el histórico que deseas consultar.\n\nDEL RODAJE AL ARCHIVO\n\nGRABACIÓN\n\nConsulta coberturas y jornadas de grabación.\n\nVer histórico de grabación\n↗\n\nDEL MONTAJE A LA ENTREGA\n\nEDICIÓN\n\nConsulta las jornadas de edición y sus entregas.\n\nVer histórico de edición\n↗\nVS\nEl mismo calendario anual, organizado por categoría.\nVer todo el Histórico\n→\n\nPropuesta visual. Las fotografías son ilustrativas; no documentan trabajos reales.\n\nPanel\nBurson\nCuentas\nHistórico\nBajas",
+    "errors": [],
+    "deniedNetworkRequests": 0,
+    "sha256": "449e04af72726c1bdc35b0ca6eb2d76f419d3ebc99370dd7d0b9ed0d53958d98"
+  },
+  {
+    "file": "png-aprobacion\\03-B-entrada-escritorio.png",
+    "html": "png-aprobacion\\03-B-entrada-escritorio.html",
+    "name": "03-B-entrada-escritorio",
+    "kind": "portal",
+    "variant": "B",
+    "width": 1440,
+    "height": 1050,
+    "scrollWidth": 1440,
+    "scrollHeight": 1050,
+    "months": [],
+    "headings": [
+      "Histórico 2026",
+      "Grabación",
+      "Edición"
+    ],
+    "hasImages": [
+      {
+        "loaded": true,
+        "alt": "Fotografía ilustrativa de grabación"
+      },
+      {
+        "loaded": true,
+        "alt": "Fotografía ilustrativa de edición"
+      }
+    ],
+    "nav": [
+      "Panel",
+      "Burson",
+      "Cuentas",
+      "Histórico",
+      "Bajas"
+    ],
+    "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\nMAQUETA PARA APROBACIÓN\nVariante B · Díptico cinematográfico · fotos ilustrativas\n\nARCHIVO OPERATIVO\n\nHistórico 2026\n\nElige el histórico que deseas consultar.\n\n‹\n2026\n›\n\nDEL RODAJE AL ARCHIVO\n\nGRABACIÓN\n\nConsulta coberturas y jornadas de grabación.\n\nVer histórico de grabación\n↗\n\nDEL MONTAJE A LA ENTREGA\n\nEDICIÓN\n\nConsulta las jornadas de edición y sus entregas.\n\nVer histórico de edición\n↗\nVS\nEl mismo calendario anual, organizado por categoría.\nVer todo el Histórico\n→\n\nPropuesta visual. Las fotografías son ilustrativas; no documentan trabajos reales.",
+    "errors": [],
+    "deniedNetworkRequests": 0,
+    "sha256": "9d478be6976b243482c101388b6d8fe96b4a37218cc4f223adf7bf700b7970f4"
+  },
+  {
+    "file": "png-aprobacion\\04-B-entrada-movil.png",
+    "html": "png-aprobacion\\04-B-entrada-movil.html",
+    "name": "04-B-entrada-movil",
+    "kind": "portal",
+    "variant": "B",
+    "mobile": true,
+    "width": 390,
+    "height": 844,
+    "scrollWidth": 390,
+    "scrollHeight": 1056,
+    "months": [],
+    "headings": [
+      "Histórico 2026",
+      "Grabación",
+      "Edición"
+    ],
+    "hasImages": [
+      {
+        "loaded": true,
+        "alt": "Fotografía ilustrativa de grabación"
+      },
+      {
+        "loaded": true,
+        "alt": "Fotografía ilustrativa de edición"
+      }
+    ],
+    "nav": [
+      "Panel",
+      "Burson",
+      "Cuentas",
+      "Histórico",
+      "Bajas"
+    ],
+    "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\nMAQUETA PARA APROBACIÓN\nVariante B · Díptico cinematográfico · fotos ilustrativas\n\nARCHIVO OPERATIVO\n\nHistórico 2026\n\nElige el histórico que deseas consultar.\n\nDEL RODAJE AL ARCHIVO\n\nGRABACIÓN\n\nConsulta coberturas y jornadas de grabación.\n\nVer histórico de grabación\n↗\n\nDEL MONTAJE A LA ENTREGA\n\nEDICIÓN\n\nConsulta las jornadas de edición y sus entregas.\n\nVer histórico de edición\n↗\nVS\nEl mismo calendario anual, organizado por categoría.\nVer todo el Histórico\n→\n\nPropuesta visual. Las fotografías son ilustrativas; no documentan trabajos reales.\n\nPanel\nBurson\nCuentas\nHistórico\nBajas",
+    "errors": [],
+    "deniedNetworkRequests": 0,
+    "sha256": "f43197583c7ba0a56c22b7ffa77401ff65242e8218ae6d4be0934e794cc31a58"
+  },
+  {
+    "file": "png-aprobacion\\05-C-entrada-escritorio.png",
+    "html": "png-aprobacion\\05-C-entrada-escritorio.html",
+    "name": "05-C-entrada-escritorio",
+    "kind": "portal",
+    "variant": "C",
+    "width": 1440,
+    "height": 1050,
+    "scrollWidth": 1440,
+    "scrollHeight": 1050,
+    "months": [],
+    "headings": [
+      "Histórico 2026",
+      "Grabación",
+      "Edición"
+    ],
+    "hasImages": [
+      {
+        "loaded": true,
+        "alt": "Fotografía ilustrativa de grabación"
+      },
+      {
+        "loaded": true,
+        "alt": "Fotografía ilustrativa de edición"
+      }
+    ],
+    "nav": [
+      "Panel",
+      "Burson",
+      "Cuentas",
+      "Histórico",
+      "Bajas"
+    ],
+    "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\nMAQUETA PARA APROBACIÓN\nVariante C · Diagonal Rhino · fotos ilustrativas\n\nARCHIVO OPERATIVO\n\nHistórico 2026\n\nElige el histórico que deseas consultar.\n\n‹\n2026\n›\n\nDEL RODAJE AL ARCHIVO\n\nGRABACIÓN\n\nConsulta coberturas y jornadas de grabación.\n\nVer histórico de grabación\n↗\n\nDEL MONTAJE A LA ENTREGA\n\nEDICIÓN\n\nConsulta las jornadas de edición y sus entregas.\n\nVer histórico de edición\n↗\nVS\nEl mismo calendario anual, organizado por categoría.\nVer todo el Histórico\n→\n\nPropuesta visual. Las fotografías son ilustrativas; no documentan trabajos reales.",
+    "errors": [],
+    "deniedNetworkRequests": 0,
+    "sha256": "6a93ac1826ccba0b600f9e61229087e4bf401f6a1e96c55ebcc128b921da360f"
+  },
+  {
+    "file": "png-aprobacion\\06-C-entrada-movil.png",
+    "html": "png-aprobacion\\06-C-entrada-movil.html",
+    "name": "06-C-entrada-movil",
+    "kind": "portal",
+    "variant": "C",
+    "mobile": true,
+    "width": 390,
+    "height": 844,
+    "scrollWidth": 390,
+    "scrollHeight": 1096,
+    "months": [],
+    "headings": [
+      "Histórico 2026",
+      "Grabación",
+      "Edición"
+    ],
+    "hasImages": [
+      {
+        "loaded": true,
+        "alt": "Fotografía ilustrativa de grabación"
+      },
+      {
+        "loaded": true,
+        "alt": "Fotografía ilustrativa de edición"
+      }
+    ],
+    "nav": [
+      "Panel",
+      "Burson",
+      "Cuentas",
+      "Histórico",
+      "Bajas"
+    ],
+    "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\nMAQUETA PARA APROBACIÓN\nVariante C · Diagonal Rhino · fotos ilustrativas\n\nARCHIVO OPERATIVO\n\nHistórico 2026\n\nElige el histórico que deseas consultar.\n\nDEL RODAJE AL ARCHIVO\n\nGRABACIÓN\n\nConsulta coberturas y jornadas de grabación.\n\nVer histórico de grabación\n↗\n\nDEL MONTAJE A LA ENTREGA\n\nEDICIÓN\n\nConsulta las jornadas de edición y sus entregas.\n\nVer histórico de edición\n↗\nVS\nEl mismo calendario anual, organizado por categoría.\nVer todo el Histórico\n→\n\nPropuesta visual. Las fotografías son ilustrativas; no documentan trabajos reales.\n\nPanel\nBurson\nCuentas\nHistórico\nBajas",
+    "errors": [],
+    "deniedNetworkRequests": 0,
+    "sha256": "5c16f0d382ce259755cea93701e65ad6366f5510e4e4427a76965bc602219fda"
+  },
+  {
+    "file": "png-aprobacion\\07-historico-grabacion-escritorio.png",
+    "html": "png-aprobacion\\07-historico-grabacion-escritorio.html",
+    "name": "07-historico-grabacion-escritorio",
+    "kind": "history",
+    "categoryLabel": "Grabación",
+    "width": 1440,
+    "height": 1050,
+    "scrollWidth": 1440,
+    "scrollHeight": 1176,
+    "months": [
+      "ENERO",
+      "FEBRERO",
+      "MARZO",
+      "ABRIL",
+      "MAYO",
+      "JUNIO",
+      "JULIO",
+      "AGOSTO",
+      "SEPTIEMBRE",
+      "OCTUBRE",
+      "NOVIEMBRE",
+      "DICIEMBRE"
+    ],
+    "headings": [
+      "Histórico 2026Grabación",
+      "Cobertura ilustrativa Norte"
+    ],
+    "hasImages": [],
+    "nav": [
+      "Panel",
+      "Burson",
+      "Cuentas",
+      "Histórico",
+      "Bajas"
+    ],
+    "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\nMAQUETA PARA APROBACIÓN\nDatos ficticios · no son registros de la aplicación\n← Cambiar categoría\nFiltro: Grabación · Ver todo el Histórico\n\nARCHIVO OPERATIVO · 1 REGISTRO DE EJEMPLO\n\nHistórico 2026Grabación\n\nTodas las jornadas de grabación del año en una sola vista.\n\n‹\n2026\n›\nGrabación\n1\nENERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nFEBRERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\nMARZO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nABRIL\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nMAYO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nJUNIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nJULIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nAGOSTO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nSEPTIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nOCTUBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nNOVIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nDICIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n●\nEntregada\n\nG-DEMO-01 · EJEMPLO FICTICIO\n\nGRABACIÓN\n\nCobertura ilustrativa Norte\nRESPONSABLE\nAna · ejemplo\nFECHAS\n4 ene. 2026 · 11 ene. 2026 · 2 feb. 2026\nLUGAR\nSede Norte · lugar ficticio\nORIGEN\nOperario\nDescripción\n\nCobertura de ejemplo para visualizar jornadas discontinuas. No representa un servicio contratado.\n\nOpinión del operario\n\nEjemplo de una actividad entregada. No implica conformidad ni aprobación económica.\n\nVer material · ejemplo ↗",
+    "errors": [],
+    "deniedNetworkRequests": 0,
+    "sha256": "8cbe5c207c04e1f489d5ca38af626b6c1cf0a771a833d6362ace803c637f2fba"
+  },
+  {
+    "file": "png-aprobacion\\08-historico-grabacion-movil-12-meses.png",
+    "html": "png-aprobacion\\08-historico-grabacion-movil-12-meses.html",
+    "name": "08-historico-grabacion-movil-12-meses",
+    "kind": "history",
+    "categoryLabel": "Grabación",
+    "mobile": true,
+    "width": 390,
+    "height": 844,
+    "scrollWidth": 390,
+    "scrollHeight": 3186,
+    "months": [
+      "ENERO",
+      "FEBRERO",
+      "MARZO",
+      "ABRIL",
+      "MAYO",
+      "JUNIO",
+      "JULIO",
+      "AGOSTO",
+      "SEPTIEMBRE",
+      "OCTUBRE",
+      "NOVIEMBRE",
+      "DICIEMBRE"
+    ],
+    "headings": [
+      "Histórico 2026Grabación",
+      "Cobertura ilustrativa Norte"
+    ],
+    "hasImages": [],
+    "nav": [
+      "Panel",
+      "Burson",
+      "Cuentas",
+      "Histórico",
+      "Bajas"
+    ],
+    "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\nMAQUETA PARA APROBACIÓN\nDatos ficticios · no son registros de la aplicación\n← Cambiar categoría\nFiltro: Grabación · Ver todo el Histórico\n\nARCHIVO OPERATIVO · 1 REGISTRO DE EJEMPLO\n\nHistórico 2026Grabación\n\nTodas las jornadas de grabación del año en una sola vista.\n\n‹\n2026\n›\nGrabación\n1\nENERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nFEBRERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\nMARZO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nABRIL\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nMAYO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nJUNIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nJULIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nAGOSTO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nSEPTIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nOCTUBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nNOVIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nDICIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nPanel\nBurson\nCuentas\nHistórico\nBajas",
+    "errors": [],
+    "deniedNetworkRequests": 0,
+    "sha256": "f903be5f6b2a9dfbd9dceec181ec45ad13b58a6b8749c17890ca6d8a34bbe099"
+  },
+  {
+    "file": "png-aprobacion\\09-historico-edicion-escritorio.png",
+    "html": "png-aprobacion\\09-historico-edicion-escritorio.html",
+    "name": "09-historico-edicion-escritorio",
+    "kind": "history",
+    "categoryLabel": "Edición",
+    "width": 1440,
+    "height": 1050,
+    "scrollWidth": 1440,
+    "scrollHeight": 1176,
+    "months": [
+      "ENERO",
+      "FEBRERO",
+      "MARZO",
+      "ABRIL",
+      "MAYO",
+      "JUNIO",
+      "JULIO",
+      "AGOSTO",
+      "SEPTIEMBRE",
+      "OCTUBRE",
+      "NOVIEMBRE",
+      "DICIEMBRE"
+    ],
+    "headings": [
+      "Histórico 2026Edición",
+      "Edición de pieza ilustrativa"
+    ],
+    "hasImages": [],
+    "nav": [
+      "Panel",
+      "Burson",
+      "Cuentas",
+      "Histórico",
+      "Bajas"
+    ],
+    "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\nMAQUETA PARA APROBACIÓN\nDatos ficticios · no son registros de la aplicación\n← Cambiar categoría\nFiltro: Edición · Ver todo el Histórico\n\nARCHIVO OPERATIVO · 1 REGISTRO DE EJEMPLO\n\nHistórico 2026Edición\n\nTodas las jornadas de edición del año en una sola vista.\n\n‹\n2026\n›\nEdición\n1\nENERO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nFEBRERO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\nMARZO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nABRIL\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nMAYO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nJUNIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nJULIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nAGOSTO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nSEPTIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nOCTUBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nNOVIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nDICIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n◐\nEn proceso\n\nE-DEMO-01 · EJEMPLO FICTICIO\n\nEDICIÓN\n\nEdición de pieza ilustrativa\n\nActividad atrasada\n\nRESPONSABLE\nCarlos · ejemplo\nFECHAS\n12 may. – 19 may. 2026\nLUGAR\nSala de edición · ejemplo\nORIGEN\nOperario\nDescripción\n\nMontaje de ejemplo con jornadas continuas. Las fechas y el contenido son ficticios.\n\nOpinión del operario\n\nTodavía no dejó una opinión.\n\nEnlace disponible al entregar",
+    "errors": [],
+    "deniedNetworkRequests": 0,
+    "sha256": "224ac787daadbdb0d03a5aae984bd454b160209c5e97c02e0b64b6da36794b86"
+  },
+  {
+    "file": "png-aprobacion\\10-historico-edicion-movil-12-meses.png",
+    "html": "png-aprobacion\\10-historico-edicion-movil-12-meses.html",
+    "name": "10-historico-edicion-movil-12-meses",
+    "kind": "history",
+    "categoryLabel": "Edición",
+    "mobile": true,
+    "width": 390,
+    "height": 844,
+    "scrollWidth": 390,
+    "scrollHeight": 3166,
+    "months": [
+      "ENERO",
+      "FEBRERO",
+      "MARZO",
+      "ABRIL",
+      "MAYO",
+      "JUNIO",
+      "JULIO",
+      "AGOSTO",
+      "SEPTIEMBRE",
+      "OCTUBRE",
+      "NOVIEMBRE",
+      "DICIEMBRE"
+    ],
+    "headings": [
+      "Histórico 2026Edición",
+      "Edición de pieza ilustrativa"
+    ],
+    "hasImages": [],
+    "nav": [
+      "Panel",
+      "Burson",
+      "Cuentas",
+      "Histórico",
+      "Bajas"
+    ],
+    "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\nMAQUETA PARA APROBACIÓN\nDatos ficticios · no son registros de la aplicación\n← Cambiar categoría\nFiltro: Edición · Ver todo el Histórico\n\nARCHIVO OPERATIVO · 1 REGISTRO DE EJEMPLO\n\nHistórico 2026Edición\n\nTodas las jornadas de edición del año en una sola vista.\n\n‹\n2026\n›\nEdición\n1\nENERO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nFEBRERO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\nMARZO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nABRIL\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nMAYO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nJUNIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nJULIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nAGOSTO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nSEPTIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nOCTUBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nNOVIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nDICIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nPanel\nBurson\nCuentas\nHistórico\nBajas",
+    "errors": [],
+    "deniedNetworkRequests": 0,
+    "sha256": "35a7e3a4cc2e89713effad8c456140beefd2cce73bc00eb1f1be3790bc0f706d"
+  },
+  {
+    "file": "png-aprobacion\\11-coincidencias-escritorio.png",
+    "html": "png-aprobacion\\11-coincidencias-escritorio.html",
+    "name": "11-coincidencias-escritorio",
+    "kind": "history",
+    "categoryLabel": "Grabación",
+    "coincidences": true,
+    "width": 1440,
+    "height": 1440,
+    "scrollWidth": 1440,
+    "scrollHeight": 1566,
+    "months": [
+      "ENERO",
+      "FEBRERO",
+      "MARZO",
+      "ABRIL",
+      "MAYO",
+      "JUNIO",
+      "JULIO",
+      "AGOSTO",
+      "SEPTIEMBRE",
+      "OCTUBRE",
+      "NOVIEMBRE",
+      "DICIEMBRE"
+    ],
+    "headings": [
+      "Histórico 2026Grabación",
+      "Cobertura ilustrativa Norte"
+    ],
+    "hasImages": [],
+    "nav": [
+      "Panel",
+      "Burson",
+      "Cuentas",
+      "Histórico",
+      "Bajas"
+    ],
+    "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\nMAQUETA PARA APROBACIÓN\nDatos ficticios · no son registros de la aplicación\n← Cambiar categoría\n4 de enero · tres actividades de ejemplo\n\nARCHIVO OPERATIVO · 3 REGISTROS DE EJEMPLO\n\nHistórico 2026Grabación\n\nMisma fecha, actividades distintas. Selecciona una para ver sus jornadas.\n\n‹\n2026\n›\nGrabación\n3\nENERO\n3\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n3\n5\n6\n7\n8\n9\n10\n11\n2\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nFEBRERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\nMARZO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nABRIL\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nMAYO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nJUNIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nJULIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nAGOSTO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nSEPTIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nOCTUBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nNOVIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nDICIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n\n3 ACTIVIDADES EN ESTA FECHA\n\nG-DEMO-01 · Grabación\nCobertura ilustrativa Norte\nAna · ejemplo\nSede Norte · lugar ficticio\n4 ene. 2026 · 11 ene. 2026 · 2 feb. 2026\nG-DEMO-02 · Grabación\nCobertura ilustrativa Sur\nLuis · ejemplo\nSede Sur · ejemplo\n4 ene. 2026 · 11 ene. 2026\nG-DEMO-03 · Grabación\nEntrevista de ejemplo\nAna · ejemplo\nEstudio · ejemplo\n4 ene. 2026\n●\nEntregada\n\nG-DEMO-01 · EJEMPLO FICTICIO\n\nGRABACIÓN\n\nCobertura ilustrativa Norte\nRESPONSABLE\nAna · ejemplo\nFECHAS\n4 ene. 2026 · 11 ene. 2026 · 2 feb. 2026\nLUGAR\nSede Norte · lugar ficticio\nORIGEN\nOperario\nDescripción\n\nCobertura de ejemplo para visualizar jornadas discontinuas. No representa un servicio contratado.\n\nOpinión del operario\n\nEjemplo de una actividad entregada. No implica conformidad ni aprobación económica.\n\nVer material · ejemplo ↗",
+    "errors": [],
+    "deniedNetworkRequests": 0,
+    "sha256": "5df880fd717d3e5c4a3ab78b07992631ffaf2edd1d281abeb317466c55f3f65a"
+  },
+  {
+    "file": "png-aprobacion\\12-coincidencias-movil.png",
+    "html": "png-aprobacion\\12-coincidencias-movil.html",
+    "name": "12-coincidencias-movil",
+    "kind": "history",
+    "categoryLabel": "Grabación",
+    "coincidences": true,
+    "mobile": true,
+    "mobileDetail": true,
+    "width": 390,
+    "height": 844,
+    "scrollWidth": 390,
+    "scrollHeight": 3186,
+    "months": [
+      "ENERO",
+      "FEBRERO",
+      "MARZO",
+      "ABRIL",
+      "MAYO",
+      "JUNIO",
+      "JULIO",
+      "AGOSTO",
+      "SEPTIEMBRE",
+      "OCTUBRE",
+      "NOVIEMBRE",
+      "DICIEMBRE"
+    ],
+    "headings": [
+      "Histórico 2026Grabación",
+      "Cobertura ilustrativa Norte",
+      "Cobertura ilustrativa Norte"
+    ],
+    "hasImages": [],
+    "nav": [
+      "Panel",
+      "Burson",
+      "Cuentas",
+      "Histórico",
+      "Bajas"
+    ],
+    "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\nMAQUETA PARA APROBACIÓN\nDatos ficticios · no son registros de la aplicación\n← Cambiar categoría\n4 de enero · tres actividades de ejemplo\n\nARCHIVO OPERATIVO · 3 REGISTROS DE EJEMPLO\n\nHistórico 2026Grabación\n\nMisma fecha, actividades distintas. Selecciona una para ver sus jornadas.\n\n‹\n2026\n›\nGrabación\n3\nENERO\n3\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n3\n5\n6\n7\n8\n9\n10\n11\n2\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nFEBRERO\n1\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\nMARZO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nABRIL\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nMAYO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nJUNIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nJULIO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nAGOSTO\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nSEPTIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nOCTUBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\nNOVIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\nDICIEMBRE\nL\nM\nX\nJ\nV\nS\nD\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n28\n29\n30\n31\n×\n\n3 ACTIVIDADES EN ESTA FECHA\n\nG-DEMO-01 · Grabación\nCobertura ilustrativa Norte\nAna · ejemplo\nSede Norte · lugar ficticio\n4 ene. 2026 · 11 ene. 2026 · 2 feb. 2026\nG-DEMO-02 · Grabación\nCobertura ilustrativa Sur\nLuis · ejemplo\nSede Sur · ejemplo\n4 ene. 2026 · 11 ene. 2026\nG-DEMO-03 · Grabación\nEntrevista de ejemplo\nAna · ejemplo\nEstudio · ejemplo\n4 ene. 2026\n●\nEntregada\n\nG-DEMO-01 · EJEMPLO FICTICIO\n\nGRABACIÓN\n\nCobertura ilustrativa Norte\nRESPONSABLE\nAna · ejemplo\nFECHAS\n4 ene. 2026 · 11 ene. 2026 · 2 feb. 2026\nLUGAR\nSede Norte · lugar ficticio\nORIGEN\nOperario\nDescripción\n\nCobertura de ejemplo para visualizar jornadas discontinuas. No representa un servicio contratado.\n\nOpinión del operario\n\nEjemplo de una actividad entregada. No implica conformidad ni aprobación económica.\n\nVer material · ejemplo ↗\nPanel\nBurson\nCuentas\nHistórico\nBajas",
+    "errors": [],
+    "deniedNetworkRequests": 0,
+    "sha256": "20c042179eb8e599e9a79c0f1ccbcde97d0a88d47e5de661fb048151424a3ff4"
+  },
+  {
+    "file": "png-aprobacion\\13-aunor-escritorio.png",
+    "html": "png-aprobacion\\13-aunor-escritorio.html",
+    "name": "13-aunor-escritorio",
+    "kind": "aunor",
+    "width": 1440,
+    "height": 1050,
+    "scrollWidth": 1440,
+    "scrollHeight": 1227,
+    "months": [],
+    "headings": [
+      "Seguimiento Aunor",
+      "Referencias y trabajos",
+      "Cobertura ilustrativa Norte"
+    ],
+    "hasImages": [],
+    "nav": [
+      "Panel",
+      "Burson",
+      "Cuentas",
+      "Histórico",
+      "Bajas"
+    ],
+    "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nMarco Admin\nAdmin\nCerrar sesión\nMi panel\nBurson\nCuentas\nHistórico\nPapelera\nMAQUETA PARA APROBACIÓN\nDatos ficticios · no transcribe el contrato ni registra aprobaciones\n\nMI PANEL / SEGUIMIENTO DOCUMENTAL\n\nSeguimiento Aunor\n\nLo previsto, lo realizado y los cambios, en un mismo registro.\n\nVolver a mi panel\n↗\nReferencias y trabajos\nEjemplo de consulta · 2026\n\nVincula el trabajo realizado sin sustituir el documento original.\n\nREF-DEMO-A · REFERENCIA ORIGINAL\n\nOriginal conservado\nActividad prevista · ejemplo\n\nTexto, cláusula y alcance del contrato: por incorporar y verificar.\n\nG-DEMO-01 · GRABACIÓN\n\nCobertura ilustrativa Norte\n\nActividad vinculada en esta maqueta.\n\nEntregada · ejemplo\n\nCAMBIO-DEMO-A · PROPUESTA DE REEMPLAZO\n\nActividad prevista\n→\nCobertura alternativa · ejemplo\n\nMotivo: cambio de necesidad ilustrativo. Solicitante y respaldo: por registrar.\n\nPropuesto · sin aprobación registrada\n\nREF-DEMO-B · REFERENCIA ORIGINAL\n\nReferencia sin actividad vinculada\n\nTambién permanece visible. Alcance y situación: por verificar.\n\nSin trabajo vinculado\n\nE-DEMO-01 · EDICIÓN\n\nEdición de pieza ilustrativa\n\nTrabajo sin referencia identificada. No desaparece del registro ni se clasifica automáticamente como trabajo fuera del contrato.\n\nPendiente de vincular\nEl original se conserva. Un cambio propuesto, un rechazo o una baja operativa no borra la referencia ni las evidencias.\n\nG-DEMO-01 · TRABAJO SELECCIONADO\n\nCobertura ilustrativa Norte\nReferencia\nREF-DEMO-A · ejemplo\nResponsable\nAna · ejemplo\nLugar\nSede Norte · ejemplo\n\nEJECUCIÓN\n\nEntregada · ejemplo\n\nDescribe el avance del trabajo.\n\nCONFORMIDAD DEL CLIENTE\n\nSin constancia\n\nNo hay aceptación documentada.\n\nAPROBACIÓN ECONÓMICA\n\nSin constancia\n\nNo equivale a aprobado ni pagado.\n\nEvidencias relacionadas\nMaterial entregado\nEnlace por adjuntar\nConformidad\nSin documento\nAprobación económica\nSin documento\nRegistrar evidencia\n↗\n\nMaqueta sin importes, cantidades ni equivalencias contractuales. Los ejemplos no acreditan aprobaciones.",
+    "errors": [],
+    "deniedNetworkRequests": 0,
+    "sha256": "9e1885c925d801792acc0f4c2393de03f35de923fdf67ed33963f4303b7bf077"
+  },
+  {
+    "file": "png-aprobacion\\14-aunor-movil.png",
+    "html": "png-aprobacion\\14-aunor-movil.html",
+    "name": "14-aunor-movil",
+    "kind": "aunor",
+    "mobile": true,
+    "width": 390,
+    "height": 844,
+    "scrollWidth": 390,
+    "scrollHeight": 2428,
+    "months": [],
+    "headings": [
+      "Seguimiento Aunor",
+      "Referencias y trabajos",
+      "Cobertura ilustrativa Norte"
+    ],
+    "hasImages": [],
+    "nav": [
+      "Panel",
+      "Burson",
+      "Cuentas",
+      "Histórico",
+      "Bajas"
+    ],
+    "text": "Saltar al contenido\nCONTROL DE ACTIVIDADES\nRHINO AUDIOVISUALES\nMA\nSalir\nMAQUETA PARA APROBACIÓN\nDatos ficticios · no transcribe el contrato ni registra aprobaciones\n\nMI PANEL / SEGUIMIENTO DOCUMENTAL\n\nSeguimiento Aunor\n\nLo previsto, lo realizado y los cambios, en un mismo registro.\n\nVolver a mi panel\n↗\nReferencias y trabajos\nEjemplo de consulta · 2026\n\nVincula el trabajo realizado sin sustituir el documento original.\n\nREF-DEMO-A · REFERENCIA ORIGINAL\n\nOriginal conservado\nActividad prevista · ejemplo\n\nTexto, cláusula y alcance del contrato: por incorporar y verificar.\n\nG-DEMO-01 · GRABACIÓN\n\nCobertura ilustrativa Norte\n\nActividad vinculada en esta maqueta.\n\nEntregada · ejemplo\n\nCAMBIO-DEMO-A · PROPUESTA DE REEMPLAZO\n\nActividad prevista\n→\nCobertura alternativa · ejemplo\n\nMotivo: cambio de necesidad ilustrativo. Solicitante y respaldo: por registrar.\n\nPropuesto · sin aprobación registrada\n\nREF-DEMO-B · REFERENCIA ORIGINAL\n\nReferencia sin actividad vinculada\n\nTambién permanece visible. Alcance y situación: por verificar.\n\nSin trabajo vinculado\n\nE-DEMO-01 · EDICIÓN\n\nEdición de pieza ilustrativa\n\nTrabajo sin referencia identificada. No desaparece del registro ni se clasifica automáticamente como trabajo fuera del contrato.\n\nPendiente de vincular\nEl original se conserva. Un cambio propuesto, un rechazo o una baja operativa no borra la referencia ni las evidencias.\n\nG-DEMO-01 · TRABAJO SELECCIONADO\n\nCobertura ilustrativa Norte\nReferencia\nREF-DEMO-A · ejemplo\nResponsable\nAna · ejemplo\nLugar\nSede Norte · ejemplo\n\nEJECUCIÓN\n\nEntregada · ejemplo\n\nDescribe el avance del trabajo.\n\nCONFORMIDAD DEL CLIENTE\n\nSin constancia\n\nNo hay aceptación documentada.\n\nAPROBACIÓN ECONÓMICA\n\nSin constancia\n\nNo equivale a aprobado ni pagado.\n\nEvidencias relacionadas\nMaterial entregado\nEnlace por adjuntar\nConformidad\nSin documento\nAprobación económica\nSin documento\nRegistrar evidencia\n↗\n\nMaqueta sin importes, cantidades ni equivalencias contractuales. Los ejemplos no acreditan aprobaciones.\n\nPanel\nBurson\nCuentas\nHistórico\nBajas",
+    "errors": [],
+    "deniedNetworkRequests": 0,
+    "sha256": "3b0decb907b269f600c827f2c2500c67ddcd009f0b1f9294300ee55d7559ab07"
+  }
+]

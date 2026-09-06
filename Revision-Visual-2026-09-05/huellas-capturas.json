@@ -1,0 +1,187 @@
+[
+  {
+    "file": "01-acceso-desktop.png",
+    "bytes": 504202,
+    "sha256": "0BAB4BFBDD952AF72785A30ADE4F0DCFAC8DFEA2AD8A49713ECE13AA40158FDB"
+  },
+  {
+    "file": "admin-actividad-desktop.png",
+    "bytes": 416107,
+    "sha256": "F402882C82BD04DCC16928586122702C841ADE982F277F50F46B61B127A41BC4"
+  },
+  {
+    "file": "admin-actividad-mobile.png",
+    "bytes": 180412,
+    "sha256": "CBC6F84425EC5A8DB77D7A79FF1292B1FE3BB5EBDDDB9A001F62911B5708E573"
+  },
+  {
+    "file": "admin-cuentas-desktop.png",
+    "bytes": 352611,
+    "sha256": "A7435C98980873FF3F8FC9BD533520303BD19BB9EAC43EEB336B612264710839"
+  },
+  {
+    "file": "admin-cuentas-mobile.png",
+    "bytes": 183081,
+    "sha256": "95A8E4CF51FFE9BD6BFBAC6027C9A0ADFD37513ACF3F52790FF5E927CB9790D7"
+  },
+  {
+    "file": "admin-historico-desktop.png",
+    "bytes": 336714,
+    "sha256": "C5B3B70511DA2772C273D739407A9C6FAD68A215D7507252FCA922704E0D4108"
+  },
+  {
+    "file": "admin-historico-detalle-mobile-viewport.png",
+    "bytes": 57626,
+    "sha256": "F798D8ED5E620F61DDC56E6282B272EA647E461F9943FFB4FB1B415703E41BF1"
+  },
+  {
+    "file": "admin-historico-detalle-mobile.png",
+    "bytes": 149405,
+    "sha256": "6024E42CEE9F41D49B93BFFE079537AB647F0647D4BAE325D2C435E8CF723A54"
+  },
+  {
+    "file": "admin-historico-edicion-desktop.png",
+    "bytes": 329740,
+    "sha256": "79AD59A54373F81F9621555F0D351FBFCA703469322B1CE5F41B6D8F6E26CE2E"
+  },
+  {
+    "file": "admin-historico-mobile-viewport.png",
+    "bytes": 74062,
+    "sha256": "7D36588A0EDC1C81B665E8DBC1A7F461360F82FA178C4F1F68D2EAECB6740C2D"
+  },
+  {
+    "file": "admin-historico-mobile.png",
+    "bytes": 150456,
+    "sha256": "A6E7C9ED08CCAD902388B001560BD0A736785E74EB6D4264BBBF5EC998D39D9D"
+  },
+  {
+    "file": "admin-panel-con-actividad-desktop.png",
+    "bytes": 337713,
+    "sha256": "794C3D52B11A9852D9D2E18C688E9B5AECC379CD42B4095BC3A9621EA43B0BB5"
+  },
+  {
+    "file": "admin-panel-con-actividad-mobile.png",
+    "bytes": 98540,
+    "sha256": "86EEC4322A10EFB924E59B3986E00FDB47165B681347758F1582C4393A1779B0"
+  },
+  {
+    "file": "admin-panel-vacio-desktop.png",
+    "bytes": 310712,
+    "sha256": "BBF573C4AE43A61EFCD522197D4266F7DFE849DE362F0654B958E532FFAE070A"
+  },
+  {
+    "file": "admin-panel-vacio-mobile.png",
+    "bytes": 94674,
+    "sha256": "D5ABB2696F28E6D33D6609F51A3BBC295383EEB02A391B74384CD8637BC7A762"
+  },
+  {
+    "file": "admin-papelera-desktop.png",
+    "bytes": 278362,
+    "sha256": "552FCBD37B212C30843CE307919034CE4620B4D18039E0D858127B1394C2A1E8"
+  },
+  {
+    "file": "admin-papelera-mobile.png",
+    "bytes": 70873,
+    "sha256": "F5544EEB814154674B4EB8D8ADFA088E74D6AEF8CB8B0924BB60EBB205F8C00C"
+  },
+  {
+    "file": "admin-planificar-desktop.png",
+    "bytes": 322497,
+    "sha256": "3261A3356DE5BD1B51A51A4449B86ED30D66FA6487BB01787D4FE56199FDEE89"
+  },
+  {
+    "file": "admin-planificar-mobile.png",
+    "bytes": 94513,
+    "sha256": "F8E79872A8F62BA10F2F2AE0AB47E883A2FCBC33E943B28A11BE5AE1D6E8F066"
+  },
+  {
+    "file": "ana-creacion-propia-desktop.png",
+    "bytes": 317449,
+    "sha256": "3DAB9A257AB6449B21D031F9930258C4C8A64B288522EB101DC723BA856B39BC"
+  },
+  {
+    "file": "ana-creacion-propia-mobile.png",
+    "bytes": 90106,
+    "sha256": "9181553B9323B8A21F84A1B34C957F2E4617CFCB54B8017EA62F49A7CEBD4A47"
+  },
+  {
+    "file": "ana-panel-con-actividad-desktop.png",
+    "bytes": 317834,
+    "sha256": "234B167D880EABCE13913BB3E1B8FA3BBEE218D2F3D8BEDC36C214AC279253B3"
+  },
+  {
+    "file": "ana-panel-con-actividad-mobile.png",
+    "bytes": 99903,
+    "sha256": "517ED50876C00D1BAE465644E8570A4275D7EB11C16D69C5C047613752B30941"
+  },
+  {
+    "file": "ana-panel-vacio-desktop.png",
+    "bytes": 312523,
+    "sha256": "F0B52DF6D14948DFF24FAA232EADC923ED60A3411215CD540068F4B83415E2FB"
+  },
+  {
+    "file": "ana-panel-vacio-mobile.png",
+    "bytes": 95856,
+    "sha256": "166AB353BA9E0B3871F2426A1B96279980E9AB6C475F44C9A8F112DC45EB7DE6"
+  },
+  {
+    "file": "burson-detalle-desktop.png",
+    "bytes": 382517,
+    "sha256": "AA140E6F87C05072F59A1E7ACA6E5A298206874F692B2E355CC86595B9CA80D3"
+  },
+  {
+    "file": "burson-detalle-mobile.png",
+    "bytes": 122960,
+    "sha256": "DAC02A2E4A546AB21ADCD52658AF8F80494232FC755440BA81F29D08E29D7962"
+  },
+  {
+    "file": "burson-encargos-desktop.png",
+    "bytes": 517068,
+    "sha256": "2011A84E70DAC227E284BB0E884356C3557779B6267D9F4BEF293A1793F46953"
+  },
+  {
+    "file": "burson-encargos-mobile.png",
+    "bytes": 123934,
+    "sha256": "2EDC916B4D9DAF9A74EF0451FB8315D8B2D9497A25E83609AD11C5FE839E00E0"
+  },
+  {
+    "file": "carlos-actividad-desktop.png",
+    "bytes": 388657,
+    "sha256": "F8DBBBB2974B82962AE78B172E023070B2464026BE24BBCCE27E51CCE31447B8"
+  },
+  {
+    "file": "carlos-actividad-mobile.png",
+    "bytes": 151121,
+    "sha256": "FCC21D813B48C8E623C1BDEF9451AC9C4FDE19B3A1F385A4746004DCE6D60CDA"
+  },
+  {
+    "file": "carlos-panel-con-actividad-desktop.png",
+    "bytes": 310703,
+    "sha256": "9033C74518CCFE415CE4134F42AB74E6E1422AF3C68B7E37BE81928D62B3C369"
+  },
+  {
+    "file": "carlos-panel-con-actividad-mobile.png",
+    "bytes": 95251,
+    "sha256": "4F44027533F38F9A829A0072D2853C57DEEA7493BF270B7ED6A7A7728B1AB74B"
+  },
+  {
+    "file": "carlos-panel-vacio-desktop.png",
+    "bytes": 306260,
+    "sha256": "8F41402496FA9614959A4587634A602B775235FD21495881AAE629F130C0A833"
+  },
+  {
+    "file": "carlos-panel-vacio-mobile.png",
+    "bytes": 92129,
+    "sha256": "B6DDA95D1B76635D7F7455FE650FE71F4F36759D1245A87520D88950ACE15F91"
+  },
+  {
+    "file": "luis-actividad-burson-desktop.png",
+    "bytes": 388631,
+    "sha256": "027580075F6A78E1D88AE02FA39FEF595B5897BD3F9D20A04AC7EE5F5CACC764"
+  },
+  {
+    "file": "luis-actividad-burson-mobile.png",
+    "bytes": 149684,
+    "sha256": "9D9E8AF981A061DC3989F22261B647601B99E2DAB94750AFC779449AC55E5099"
+  }
+]

@@ -1,0 +1,57 @@
+{
+  "pipeline": "core",
+  "coincidencias": [
+    "Panel con calendario anual de 12 meses + panel de detalle, sobre el esqueleto ya aprobado (navy 72px, sidebar 218, fondo paper, tarjetas blancas).",
+    "Escritorio multicolumna y móvil en una sola columna; ambas descartan la rejilla de meses a dos columnas en móvil.",
+    "Entrega y confirmación rotuladas y separadas visualmente de la ejecución.",
+    "'Lo acordado' como sección de primer nivel con las líneas de servicio de la cláusula 2.2, sin cantidades, vigencia ni equivalencias.",
+    "Originales y sustitutos juntos; motivo de no realizado, evidencia y confirmación en bloques separados; 'Por relacionar' presente como grupo propio.",
+    "Mensajes anclados a la actividad, no como módulo desacoplado.",
+    "Admin responde al cliente y registra llamada y reemplazo, con solicitante declarado distinguido del Admin registrador.",
+    "Sin contadores, cuotas ni cálculo de cumplimiento; sin botón 'pedir trabajo'; sin datos reales."
+  ],
+  "discrepancias": [
+    {
+      "punto": "Identidad individual en la confirmación",
+      "claude": "Campo 'Confirma en nombre de Aunor: ____' y sello 'Confirmado · cuenta compartida Aunor · declarado: A. Ruiz'.",
+      "codex": "Confirmación con atribución a la cuenta Aunor y sin ningún dato de identidad personal.",
+      "evidencia": "Decisión cerrada por Marco: un acceso compartido Aunor, acciones atribuidas a Aunor sin identidad individual comprobada. El patrón 'solicitante declarado vs registrador' está definido para la llamada, no para la confirmación.",
+      "resolucion": "Se adopta Codex. Se elimina el campo de nombre y el 'declarado' del sello. El sello queda: 'Confirmado · cuenta Aunor · fecha y hora'. Un campo de texto libre con nombre simula una firma personal no comprobable y contradice la atribución cerrada."
+    },
+    {
+      "punto": "Ítems de navegación del rol Aunor",
+      "claude": "Cuatro ítems en bottom-nav (Actividades, Lo acordado, Calendario, Mensajes) y a la vez 'sin bandeja global' de mensajes.",
+      "codex": "Tres ítems (Mi panel, Lo acordado, Mensajes) con bandeja de hilos anclados a la actividad.",
+      "evidencia": "El calendario anual de 12 meses forma parte del panel aprobado, por lo que un ítem 'Calendario' duplica destino; y un ítem 'Mensajes' que no lleva a ninguna lista deja la navegación sin destino coherente.",
+      "resolucion": "Tres ítems idénticos en sidebar 218 y en bottom-nav: Mi panel (calendario embebido), Lo acordado, Mensajes. 'Mensajes' lista hilos ya anclados a actividades; no introduce enrutado nuevo ni módulo no decidido."
+    },
+    {
+      "punto": "Representación del acto de confirmar",
+      "claude": "Raíl derecho accionable en escritorio y barra fija (sticky) sobre el bottom-nav en móvil.",
+      "codex": "Dos escenas explícitas: previa (qué se confirma, atribución, botón) y posterior (confirmado, fecha).",
+      "evidencia": "El lanzador pide alcance visual con estados antes/después; una barra flotante no es demostrable en un PNG estático y compite con el bottom-nav ya aprobado.",
+      "resolucion": "Se combinan: raíl derecho ~320px como única superficie accionable en escritorio (con estado explícito 'Nada pendiente de confirmación' cuando está vacío) y dos escenas antes/después. En móvil el bloque va tras la entrega y antes de la conversación colapsada, sin barra flotante."
+    },
+    {
+      "punto": "Inventario de piezas",
+      "claude": "Fija un set mínimo de 5 escenas x 2 anchos = 10 PNG.",
+      "codex": "No fija número; enumera escenas por contenido.",
+      "evidencia": "El lanzador pide alcance visual suficiente sin forzar un total.",
+      "resolucion": "El número de piezas es consecuencia de la cobertura de contenidos exigida, no un objetivo. Se enumeran escenas por contenido en escritorio y móvil; no se fuerza total de 8 ni de 10."
+    }
+  ],
+  "recomendacion": "Mantener el esqueleto aprobado y componer así: sidebar 218 y bottom-nav con los mismos tres destinos (Mi panel con calendario anual de 12 meses embebido, Lo acordado, Mensajes). El detalle de actividad se parte en relato de solo lectura a la izquierda (jornadas, lugares, estados, entrega, conversación externa con Admin, original+sustituto, evidencia, llamada registrada) y raíl derecho de ~320px como única superficie accionable, dedicado a confirmación de entrega o reemplazo, nunca a pagos. La confirmación se muestra en dos estados, antes y después, y su sello se atribuye solo a la cuenta Aunor con fecha y hora, sin nombre de persona ni campo de identidad. 'Lo acordado' vive como sección propia con las líneas de servicio 2.2, actividades relacionadas colgando y 'Por relacionar' como último grupo, sin ningún contador. En móvil, una columna, conversación colapsada a los dos últimos mensajes y bloque de confirmación situado tras la entrega, antes de la conversación. Cobertura: panel, detalle con entrega y conversación, Lo acordado con relacionados y Por relacionar, trabajo no realizado con motivo y evidencia, Admin responde y registra llamada y reemplazo, y confirmación antes/después, en escritorio y móvil. El número de PNG se deriva de esa cobertura, sin total impuesto.",
+  "riesgos": [
+    "Cualquier reescritura posterior del copy de confirmación puede reintroducir un nombre personal y convertir el registro en una firma individual prohibida.",
+    "La escena densa (original + sustituto + motivo + evidencia + confirmación + llamada) es la que puede desbordar el móvil; si crece, colapsar primero la evidencia, nunca la separación entre ejecución y confirmación.",
+    "Un contador junto a una línea de servicio en 'Lo acordado' se leería como cuota o cálculo de cumplimiento; el riesgo reaparece cada vez que se quiera 'dar contexto' numérico.",
+    "El raíl derecho vacío invita a rellenarse con controles no autorizados si no lleva estado explícito 'Nada pendiente de confirmación'.",
+    "'Publicada' y 'Por relacionar' pueden leerse como estado contractual; el cliente ve sus actividades publicadas incluso sin contrato, y el copy debe evitar sugerir lo contrario.",
+    "Deriva visual si las piezas se generan en tandas tomando como referencia la anterior en lugar de las tres capturas aprobadas.",
+    "Codificación por color que confunda estado de ejecución con estado de confirmación."
+  ],
+  "confianza": {
+    "nivel": "alta",
+    "motivo": "Las dos propuestas coinciden en estructura, y las tres divergencias reales se resuelven de forma directa contra decisiones ya cerradas por Marco (atribución exclusiva a la cuenta Aunor, calendario dentro del panel, estados antes y después), sin necesidad de reabrir permisos ni inventar módulos, servicios o auditorías. La única incertidumbre remanente es de legibilidad en la escena móvil más densa, verificable al renderizar los PNG."
+  }
+}

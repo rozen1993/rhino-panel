@@ -1,0 +1,232 @@
+{
+  "is_error": false,
+  "duration_api_ms": 429664,
+  "num_turns": 47,
+  "stop_reason": "tool_use",
+  "session_id": "f8662b43-0ede-4ee6-8ba0-829941799d47",
+  "total_cost_usd": 4.479337,
+  "usage": {
+    "input_tokens": 59,
+    "cache_creation_input_tokens": 112927,
+    "cache_read_input_tokens": 5089926,
+    "output_tokens": 32124,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 112927,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "not_available",
+    "iterations": [
+      {
+        "input_tokens": 2,
+        "output_tokens": 10116,
+        "cache_read_input_tokens": 213596,
+        "cache_creation_input_tokens": 3136,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 3136
+        },
+        "type": "message"
+      }
+    ],
+    "speed": "standard"
+  },
+  "modelUsage": {
+    "claude-haiku-4-5-20251001": {
+      "inputTokens": 1594,
+      "outputTokens": 23,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0.001709,
+      "contextWindow": 200000,
+      "maxOutputTokens": 32000,
+      "canonicalModel": "claude-haiku-4-5",
+      "provider": "firstParty"
+    },
+    "claude-opus-5": {
+      "inputTokens": 59,
+      "outputTokens": 32124,
+      "cacheReadInputTokens": 5089926,
+      "cacheCreationInputTokens": 112927,
+      "webSearchRequests": 0,
+      "costUSD": 4.477628,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 64000,
+      "canonicalModel": "claude-opus-5",
+      "provider": "firstParty"
+    }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"supuestos\":[\"El paquete pidió revisión independiente, no derivación: no ejecuté pruebas, no usé navegador ni otros agentes, y no escribí ningún archivo (Codex es el único escritor).\",\"Tomé como evidencia declarada —no verificada por mí— el baseline de 198 tests, el PASS del ensayo SQL en la base efímera y la ejecución en curso de Playwright en el puerto 3107. No afirmo smoke HTTP contra Supabase real.\",\"Asumo que las funciones v1 siguen concedidas a `authenticated` (no vi revocación en la migración nueva), que es la premisa que da sentido al guard SR011.\",\"No audité rol Aunor, seguimiento contractual, ni partes fuera del alcance de Histórico C y lugares por jornada.\",\"La revisión visual de 05-C-entrada-escritorio.png y 06-C-entrada-movil.png queda para la evidencia de navegador; mis observaciones de CSS son riesgos legibles en código, no juicios sobre la vista renderizada.\"],\"propuesta\":\"\\nNo hay bloqueantes en el alcance revisado. El patrón v1-intacto + wrappers v2 INVOKER + helper puro `private.normalize_activity_spans_v2` es correcto y el guard SR011 no puede producir falsos positivos sobre el tráfico de la propia aplicación, porque los wrappers normalizan antes de invocar v1 (migración 202609050001 líneas 97, 116, 137, 157); por eso `declares_places = bool_and(span ? 'place')` siempre es verdadero en la ruta v2, incluso cuando el formulario añade una jornada sin clave `place` (activity-form.tsx:522) y las Server Actions envían `fields.spans` crudo sin `normalizeSpans`. Verifiqué además: autoridad (replan_activity_v1 abre con require_admin_profile, 202608280001:443, y la UI lo replica en activity-form.tsx:121-122); ausencia de pérdida de datos (place not null default '', activity_date_spans con Insert: never, replace_activity_spans revocada a authenticated); idempotencia coherente (el hash cubre 'spans', p_spans en :263, de modo que {start,end} y {start,end,place:\\\"\\\"} colapsan al mismo replay y un cambio solo de lugar invalida con SR006); conservación del calendario de doce meses y del acceso secundario a todo el Histórico vía tipo=todos (historico/page.tsx:16); conteo por actividad y no por jornada (annual-calendar.tsx:78-101); y lectura histórica con keyset y revalidación de version tras paginar (lib/supabase/historical.ts:262-267). Se reportan cinco observaciones —dos de severidad media, ambas operativas y no defectos de código— y cinco pruebas mínimas ausentes, sin implementar ninguna.\\n\",\"alternativas\":[\"Llamar a normalizeSpans en las Server Actions antes del RPC, para que el payload enviado sea idéntico al que el SQL canonicaliza. No corrige ningún defecto actual, pero eliminaría la dependencia implícita entre el formulario y la normalización del wrapper.\",\"Mover el aislamiento de pruebas (distDir e includes de tsconfig) a un archivo de configuración separado, ya que existe playwright.historico.config.ts, en vez de condicionarlo por variable de entorno dentro de next.config.ts.\",\"Filtrar por fecha los lugares mostrados en la lista de coincidencias, en lugar de mostrar todos los de la actividad. Es criterio de producto, no incumplimiento del acuerdo registrado.\"],\"riesgos\":[\"Orden de despliegue: las cuatro rutas de escritura son v2 exclusivas sin fallback (actividades/actions.ts:105,135,167; burson/actions.ts:61). Sin la migración 202609050001 aplicada, toda creación y replanificación falla con PGRST202. El fallo es limpio y mensajeado, pero convierte 'migración antes que frontend' en un gate duro.\",\"Frontera de despliegue: una petición enviada por el cliente v1 y reintentada por el v2 con la misma clave de idempotencia produce hashes distintos y devuelve SR006. Es intencional y está documentado en la migración, pero es visible al usuario durante el cambio y ninguna prueba lo fija.\",\"historical-entry.module.css fija alturas (versus 560px, móvil 622px, card 334px, divisor top:311px); con zoom 200% o textos más largos el bloque .copy puede desbordar en 390px. Pendiente de confirmación con evidencia de navegador.\",\"next.config.ts:6 hace depender distDir de SISTEMA_R_ISOLATED_TEST: si esa variable llegara a un entorno de despliegue, cambiaría el directorio de salida del build en silencio.\",\"La corrección del guard depende de que los wrappers v2 normalicen antes de llamar a v1; un cambio futuro que invierta ese orden reintroduciría el falso positivo SR011 sin que el formulario lo delate.\"],\"verificacion\":[\"Prueba faltante a: replan por v1 sobre una actividad cuyos lugares estén todos vacíos debe tener éxito, para demostrar que had_places=false no dispara SR011 de más. El script solo cubre el caso positivo (verify-journey-places.mjs:77-83).\",\"Prueba faltante b: replace_activity_spans con payload parcialmente declarado, del tipo [{start,end,place:'X'},{start,end}], única vía que alcanza bool_and=false con lugares reales.\",\"Prueba faltante c: idempotencia entre versiones, misma clave por plan_activity_v1 y después por plan_activity_v2, esperando SR006.\",\"Prueba faltante d: Server Action de replan_activity_v2 también fail-closed ante PGRST202 sin reintento en v1; hoy solo se cubre plan_activity_v2 (server-actions-authority.test.ts:92-101).\",\"Prueba faltante e: historico/page.tsx:16 con tipo como array (?tipo=todos&tipo=x), que hoy cae a la entrada C de forma segura pero sin cobertura.\",\"Confirmar con evidencia de navegador la entrada C en 390px y con zoom 200%, y el anillo de foco reubicado en .action (historical-entry.module.css:19), antes de dar por buena la revisión visual.\"],\"confianza\":{\"nivel\":\"alta\",\"motivo\":\"Las conclusiones sobre guard, autoridad, idempotencia, conteo y paginación se sostienen en lectura directa de la migración nueva, de las migraciones v1 vigentes, de las Server Actions, de los componentes y de las pruebas, con líneas citadas y verificables. La confianza baja solo en lo visual y en el smoke autenticado, que quedan explícitamente fuera por falta de evidencia de navegador y de entorno real.\"},\"input_class\":\"application\",\"pipeline\":\"core\",\"gates\":[{\"name\":\"Revisión de pérdida de datos y lugares\",\"status\":\"passed\",\"evidence\":\"place not null default '' hereda en filas legadas (aserción verify-journey-places.mjs:59); activity_date_spans con Insert: never en database.types.ts; private.replace_activity_spans revocada a authenticated; ejecución, papelera y restauración conservan array['Norte','Sur'] (script 130-142).\"},{\"name\":\"Guard SR011 real (cliente v1 antiguo)\",\"status\":\"passed\",\"evidence\":\"El ensayo llama al punto de entrada real replan_activity_v1 con spans legados sobre una actividad creada por v2 y comprueba SR011 con version, audit y spans intactos (verify-journey-places.mjs:77-83). Falta el caso negativo simétrico (lugares todos vacíos).\"},{\"name\":\"Idempotencia y compatibilidad v1/v2\",\"status\":\"passed\",\"evidence\":\"El hash cubre 'spans', p_spans (202608280001:263); v2 hashea el array normalizado, de modo que replay legado y canónico coinciden (script 90-92) y el cambio solo de lugar da SR006 (script 73-74). No cubierta la reutilización de clave entre v1 y v2.\"},{\"name\":\"Autoridad: sin planificación de operario tras crear\",\"status\":\"passed\",\"evidence\":\"replan_activity_v1 abre con private.require_admin_profile() (202608280001:443); UI con planningMode = !executionMode y executionMode = editing && role.id === 'operario' (activity-form.tsx:121-122); roles 2/3/4 obtienen SR002 en el ensayo (script 110-113).\"},{\"name\":\"Calendario de doce meses y acceso completo al Histórico\",\"status\":\"passed\",\"evidence\":\"historico/page.tsx:16 mantiene enlaces antiguos ?anio= en el calendario y tipo=todos alcanza Creatividad y Locución; filtro visible con !category || item.type === category (annual-calendar.tsx:355).\"},{\"name\":\"Conteo por actividad y metadata de coincidencias\",\"status\":\"passed\",\"evidence\":\"datesForYear devuelve Set de fechas por actividad y activitiesByDate guarda una entrada por actividad (annual-calendar.tsx:78-101); la lista muestra ID, título, responsable, lugares y jornadas (149-160); cubierto en annual-calendar.test.tsx:79-92.\"},{\"name\":\"DTOs y paginación keyset del Histórico\",\"status\":\"passed\",\"evidence\":\"Keyset numérico y por cadena con revalidación de version tras paginar (lib/supabase/historical.ts:262-267); historical-supabase.test.ts:171-187 fuerza page size 1 y exige place en todos los sele…1460 tokens truncated…y del acceso secundario a todo el Histórico vía tipo=todos (historico/page.tsx:16); conteo por actividad y no por jornada (annual-calendar.tsx:78-101); y lectura histórica con keyset y revalidación de version tras paginar (lib/supabase/historical.ts:262-267). Se reportan cinco observaciones —dos de severidad media, ambas operativas y no defectos de código— y cinco pruebas mínimas ausentes, sin implementar ninguna.\n",
+  "alternativas": [
+    "Llamar a normalizeSpans en las Server Actions antes del RPC, para que el payload enviado sea idéntico al que el SQL canonicaliza. No corrige ningún defecto actual, pero eliminaría la dependencia implícita entre el formulario y la normalización del wrapper.",
+    "Mover el aislamiento de pruebas (distDir e includes de tsconfig) a un archivo de configuración separado, ya que existe playwright.historico.config.ts, en vez de condicionarlo por variable de entorno dentro de next.config.ts.",
+    "Filtrar por fecha los lugares mostrados en la lista de coincidencias, en lugar de mostrar todos los de la actividad. Es criterio de producto, no incumplimiento del acuerdo registrado."
+  ],
+  "riesgos": [
+    "Orden de despliegue: las cuatro rutas de escritura son v2 exclusivas sin fallback (actividades/actions.ts:105,135,167; burson/actions.ts:61). Sin la migración 202609050001 aplicada, toda creación y replanificación falla con PGRST202. El fallo es limpio y mensajeado, pero convierte 'migración antes que frontend' en un gate duro.",
+    "Frontera de despliegue: una petición enviada por el cliente v1 y reintentada por el v2 con la misma clave de idempotencia produce hashes distintos y devuelve SR006. Es intencional y está documentado en la migración, pero es visible al usuario durante el cambio y ninguna prueba lo fija.",
+    "historical-entry.module.css fija alturas (versus 560px, móvil 622px, card 334px, divisor top:311px); con zoom 200% o textos más largos el bloque .copy puede desbordar en 390px. Pendiente de confirmación con evidencia de navegador.",
+    "next.config.ts:6 hace depender distDir de SISTEMA_R_ISOLATED_TEST: si esa variable llegara a un entorno de despliegue, cambiaría el directorio de salida del build en silencio.",
+    "La corrección del guard depende de que los wrappers v2 normalicen antes de llamar a v1; un cambio futuro que invierta ese orden reintroduciría el falso positivo SR011 sin que el formulario lo delate."
+  ],
+  "verificacion": [
+    "Prueba faltante a: replan por v1 sobre una actividad cuyos lugares estén todos vacíos debe tener éxito, para demostrar que had_places=false no dispara SR011 de más. El script solo cubre el caso positivo (verify-journey-places.mjs:77-83).",
+    "Prueba faltante b: replace_activity_spans con payload parcialmente declarado, del tipo [{start,end,place:'X'},{start,end}], única vía que alcanza bool_and=false con lugares reales.",
+    "Prueba faltante c: idempotencia entre versiones, misma clave por plan_activity_v1 y después por plan_activity_v2, esperando SR006.",
+    "Prueba faltante d: Server Action de replan_activity_v2 también fail-closed ante PGRST202 sin reintento en v1; hoy solo se cubre plan_activity_v2 (server-actions-authority.test.ts:92-101).",
+    "Prueba faltante e: historico/page.tsx:16 con tipo como array (?tipo=todos&tipo=x), que hoy cae a la entrada C de forma segura pero sin cobertura.",
+    "Confirmar con evidencia de navegador la entrada C en 390px y con zoom 200%, y el anillo de foco reubicado en .action (historical-entry.module.css:19), antes de dar por buena la revisión visual."
+  ],
+  "confianza": {
+    "nivel": "alta",
+    "motivo": "Las conclusiones sobre guard, autoridad, idempotencia, conteo y paginación se sostienen en lectura directa de la migración nueva, de las migraciones v1 vigentes, de las Server Actions, de los componentes y de las pruebas, con líneas citadas y verificables. La confianza baja solo en lo visual y en el smoke autenticado, que quedan explícitamente fuera por falta de evidencia de navegador y de entorno real."
+  },
+  "input_class": "application",
+  "pipeline": "core",
+  "gates": [
+    {
+      "name": "Revisión de pérdida de datos y lugares",
+      "status": "passed",
+      "evidence": "place not null default '' hereda en filas legadas (aserción verify-journey-places.mjs:59); activity_date_spans con Insert: never en database.types.ts; private.replace_activity_spans revocada a authenticated; ejecución, papelera y restauración conservan array['Norte','Sur'] (script 130-142)."
+    },
+    {
+      "name": "Guard SR011 real (cliente v1 antiguo)",
+      "status": "passed",
+      "evidence": "El ensayo llama al punto de entrada real replan_activity_v1 con spans legados sobre una actividad creada por v2 y comprueba SR011 con version, audit y spans intactos (verify-journey-places.mjs:77-83). Falta el caso negativo simétrico (lugares todos vacíos)."
+    },
+    {
+      "name": "Idempotencia y compatibilidad v1/v2",
+      "status": "passed",
+      "evidence": "El hash cubre 'spans', p_spans (202608280001:263); v2 hashea el array normalizado, de modo que replay legado y canónico coinciden (script 90-92) y el cambio solo de lugar da SR006 (script 73-74). No cubierta la reutilización de clave entre v1 y v2."
+    },
+    {
+      "name": "Autoridad: sin planificación de operario tras crear",
+      "status": "passed",
+      "evidence": "replan_activity_v1 abre con private.require_admin_profile() (202608280001:443); UI con planningMode = !executionMode y executionMode = editing && role.id === 'operario' (activity-form.tsx:121-122); roles 2/3/4 obtienen SR002 en el ensayo (script 110-113)."
+    },
+    {
+      "name": "Calendario de doce meses y acceso completo al Histórico",
+      "status": "passed",
+      "evidence": "historico/page.tsx:16 mantiene enlaces antiguos ?anio= en el calendario y tipo=todos alcanza Creatividad y Locución; filtro visible con !category || item.type === category (annual-calendar.tsx:355)."
+    },
+    {
+      "name": "Conteo por actividad y metadata de coincidencias",
+      "status": "passed",
+      "evidence": "datesForYear devuelve Set de fechas por actividad y activitiesByDate guarda una entrada por actividad (annual-calendar.tsx:78-101); la lista muestra ID, título, responsable, lugares y jornadas (149-160); cubierto en annual-calendar.test.tsx:79-92."
+    },
+    {
+      "name": "DTOs y paginación keyset del Histórico",
+      "status": "passed",
+      "evidence": "Keyset numérico y por cadena con revalidación de version tras paginar (lib/supabase/historical.ts:262-267); historical-supabase.test.ts:171-187 fuerza page size 1 y exige place en todos los select de jornadas."
+    },
+    {
+      "name": "Ruta v2 fail-closed",
+      "status": "passed",
+      "evidence": "Las cuatro escrituras usan v2 sin fallback; errorMessage mapea PGRST202 y SR011 (actions.ts:38-39); server-actions-authority.test.ts:92-101 verifica una sola llamada y ningún reintento en v1. Falta el equivalente para replan_activity_v2."
+    },
+    {
+      "name": "Revisión visual de la entrada C",
+      "status": "not-run",
+      "evidence": "Se hará con evidencia de navegador. Solo se leyó historical-entry.module.css; se anotan alturas fijas y anillo de foco reubicado como riesgos a confirmar, sin afirmar nada sobre la vista renderizada."
+    },
+    {
+      "name": "Smoke HTTP autenticado contra Supabase real",
+      "status": "not-applicable",
+      "evidence": "Fuera de alcance por instrucción; la migración solo se aplicó a una base efímera creada y eliminada por el propio script."
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "supabase/migrations/202609050001_activity_journey_places.sql",
+      "purpose": "Columna place aditiva, helper puro normalize_activity_spans_v2, guard SR011 en replace_activity_spans y cuatro wrappers v2 INVOKER.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/app/actividades/actions.ts",
+      "purpose": "Server Actions de planificación, creación propia y replanificación; enrutadas a v2 y con mensajes PGRST202/SR011.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/app/burson/actions.ts",
+      "purpose": "Creación de encargos Burson por create_burson_request_v2.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/lib/activities.ts",
+      "purpose": "Tipo DateSpan con place opcional, normalizeSpans y spanPlace con herencia del lugar general.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/lib/activity-validation.ts",
+      "purpose": "validSpans acepta place opcional de hasta 300 caracteres; espejo de la validación SQL.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/lib/supabase/historical.ts",
+      "purpose": "Lectura del Histórico con keyset, place en todos los select y revalidación de version.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/components/annual-calendar.tsx",
+      "purpose": "Calendario de doce meses, conteo por actividad, lista de coincidencias y panel de detalle.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/components/activity-journeys.tsx",
+      "purpose": "Listado de pares fecha-lugar reutilizado en detalle, formulario, Burson y calendario.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/components/historical-entry.tsx",
+      "purpose": "Entrada C con fotografías ilustrativas y acceso secundario a todo el Histórico.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/components/historical-entry.module.css",
+      "purpose": "Estilos de la entrada C; alturas fijas pendientes de confirmar en navegador.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/scripts/verify-journey-places.mjs",
+      "purpose": "Ensayo SQL en base efímera: legado, multisede, guard, permisos, RLS y concurrencia.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/__tests__/journey-places.test.tsx",
+      "purpose": "Cobertura de validación, borradores v5, render de jornadas y simulación demo.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/__tests__/server-actions-authority.test.ts",
+      "purpose": "Enrutado a v2 y fail-closed ante PGRST202 sin reintento en v1.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/__tests__/historical-supabase.test.ts",
+      "purpose": "Paginación keyset sin pérdida de lugares ni duplicado de actividad multisede.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/next.config.ts",
+      "purpose": "distDir condicionado por SISTEMA_R_ISOLATED_TEST para la verificación aislada.",
+      "status": "reviewed"
+    },
+    {
+      "path": "frontend/tsconfig.json",
+      "purpose": "Includes añadidos para los tipos del build de prueba aislado.",
+      "status": "reviewed"
+    }
+  ],
+  "deviations": []
+}

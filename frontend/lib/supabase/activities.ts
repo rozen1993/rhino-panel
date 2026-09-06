@@ -46,7 +46,7 @@ type BursonRequestRow = Pick<
 >;
 type BursonSpanRow = Pick<
   Database["public"]["Tables"]["activity_date_spans"]["Row"],
-  "id" | "activity_id" | "position" | "start_date" | "end_date"
+  "id" | "activity_id" | "position" | "start_date" | "end_date" | "place"
 >;
 type ActivityMessageRow = Pick<
   Database["public"]["Tables"]["activity_messages"]["Row"],
@@ -232,7 +232,7 @@ async function hydrateBursonRequests(
       for (;;) {
         const { data, error } = await supabase
           .from("activity_date_spans")
-          .select("id, activity_id, position, start_date, end_date")
+          .select("id, activity_id, position, start_date, end_date, place")
           .in("activity_id", batchIds)
           .gt("id", cursor)
           .order("id", { ascending: true })
@@ -268,7 +268,7 @@ async function hydrateBursonRequests(
         (left, right) =>
           left.position - right.position || left.id - right.id,
       )
-      .map((span) => ({ start: span.start_date, end: span.end_date })),
+      .map((span) => ({ start: span.start_date, end: span.end_date, place: span.place })),
     description: row.description,
     place: row.place,
     materialLink: row.material_link,
@@ -468,7 +468,7 @@ async function hydrateActivities(
         (left, right) =>
           left.position - right.position || left.id - right.id,
       )
-      .map((span) => ({ start: span.start_date, end: span.end_date }));
+      .map((span) => ({ start: span.start_date, end: span.end_date, place: span.place }));
     const audit: AuditEntry[] = (auditsByActivity.get(row.id) ?? [])
       .sort(
         (left, right) =>

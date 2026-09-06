@@ -20,9 +20,18 @@ export type HistoricalActivity = Pick<
   | "origin"
   | "spans"
   | "description"
+  | "place"
   | "materialLink"
   | "operatorOpinion"
 >;
+
+export type HistoricalCategory = "Grabación" | "Edición";
+export function parseHistoricalCategory(value: string | string[] | undefined): HistoricalCategory | undefined {
+  return value === "grabacion" ? "Grabación" : value === "edicion" ? "Edición" : undefined;
+}
+export function historicalCategorySlug(category: HistoricalCategory) {
+  return category === "Grabación" ? "grabacion" : "edicion";
+}
 
 export function calendarDateInLima(now = new Date()) {
   const parts = limaCalendarFormatter.formatToParts(now);
