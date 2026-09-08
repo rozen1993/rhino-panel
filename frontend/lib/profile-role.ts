@@ -11,11 +11,11 @@ export type ProfileRoleRow = {
 };
 
 export function profileToRole(profile: ProfileRoleRow): Role | null {
-  if (!profile.is_active) return null;
+  if (!profile.is_active || !roles[profile.role]) return null;
   return {
     ...roles[profile.role],
     accountId: profile.id,
-    accountName: profile.display_name,
+    accountName: profile.role === "aunor" ? "Aunor" : profile.display_name,
     bursonLinked: profile.is_burson_operator,
     canCreateOwnActivities: profile.can_create_own_activities,
     mustChangePassword: profile.must_change_password,

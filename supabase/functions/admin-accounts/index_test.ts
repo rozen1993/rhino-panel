@@ -192,6 +192,26 @@ for (const cleanupFails of [false, true]) {
   );
 }
 
+for (const cleanupFails of [false, true]) {
+  Deno.test(`Aunor duplicado conserva compensación Auth (cleanup=${cleanupFails})`, async () => {
+    const calls: string[]=[];
+    const ctx={userClaims:{id:adminId},supabase:profileReader(),supabaseAdmin:{
+      auth:{admin:{
+        async createUser(){calls.push("auth:create");return {data:{user:{id:targetId}},error:null};},
+        async deleteUser(id:string){calls.push(`auth:delete:${id}`);return {error:cleanupFails?new Error("cleanup failed"):null};},
+      }},
+      async rpc(name:string,payload:Record<string,unknown>){
+        assert.equal(name,"create_account_profile_v1");assert.equal(payload.p_role,"aunor");
+        return {error:{code:"SR009",message:"only one active Aunor account"}};
+      },
+    }};
+    const result=await handleAdminAccountsRequest(post({...validCreate,role:"aunor"}),ctx);
+    assert.equal(result.status,409);
+    assert.deepEqual(await result.json(),{ok:false,code:cleanupFails?"profile_create_cleanup_pending":"aunor_account_exists"});
+    assert.deepEqual(calls,["auth:create",`auth:delete:${targetId}`]);
+  });
+}
+
 const orphanAuthUser = {
   id: targetId,
   email: "OPERADOR.PRUEBA@AUTH.SISTEMA-R.INVALID",

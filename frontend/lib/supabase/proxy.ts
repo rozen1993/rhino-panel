@@ -4,8 +4,10 @@ import { appSessionCookieOptions } from "@/lib/supabase/cookie-options";
 import type { Database } from "@/lib/supabase/database.types";
 import { getSupabaseEnvironment } from "@/lib/supabase/env";
 import { applySecurityHeaders } from "@/lib/security-headers";
+import { roleHome } from "@/lib/roles";
 
 const protectedPrefixes = [
+  "/aunor",
   "/actividades",
   "/burson",
   "/cuentas",
@@ -79,7 +81,7 @@ export async function updateSupabaseSession(request: NextRequest) {
     }
     if (!profile.must_change_password && changingPassword) {
       const url = request.nextUrl.clone();
-      url.pathname = profile.role === "burson" ? "/burson" : "/actividades";
+      url.pathname = roleHome(profile.role);
       url.search = "";
       return secureRedirect(url);
     }

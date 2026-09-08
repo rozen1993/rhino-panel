@@ -1,9 +1,10 @@
-export type IconName = "activities" | "calendar" | "progress" | "complete" | "add" | "history" | "profile" | "burson" | "accounts" | "import" | "search" | "link" | "location" | "trash";
+export type IconName = "activities" | "calendar" | "progress" | "complete" | "add" | "history" | "profile" | "burson" | "accounts" | "import" | "search" | "link" | "location" | "trash" | "messages";
 
 export function SystemIcon({ name, className = "size-6" }: { name: IconName; className?: string }) {
   const common = { fill: "none", stroke: "currentColor", strokeLinecap: "round" as const, strokeLinejoin: "round" as const, strokeWidth: 1.8 };
   return (
     <svg aria-hidden="true" className={className} viewBox="0 0 24 24" {...common}>
+      {name === "messages" && <><path d="M3 4h18v13H9l-6 4V4Z" /><path d="M7 8h10M7 12h7" /></>}
       {name === "activities" && <><path d="M4 8h16v11H4z" /><path d="m4 8 2-4h14l-2 4M7 4l2 4m3-4 2 4m3-4 2 4" /></>}
       {name === "calendar" && <><rect height="16" rx="1" width="18" x="3" y="5" /><path d="M7 3v4m10-4v4M3 10h18" /></>}
       {name === "progress" && <><path d="M4 19V9m6 10V5m6 14v-7m4 7V3" /></>}

@@ -357,7 +357,7 @@ export function canViewActivity(item: SimulatedActivity, role: Role) {
       item.origin === "burson" && item.createdByAccountId === role.accountId
     );
   return (
-    item.responsibleAccountId === role.accountId
+    role.id === "operario" && item.responsibleAccountId === role.accountId
   );
 }
 export function canEditActivity(item: SimulatedActivity, role: Role) {
@@ -890,7 +890,7 @@ export function addThreadMessage(
     if (item.status !== "Entregada")
       return "La conversación se habilita cuando la actividad está entregada.";
     const first = !item.threadOpenedAt;
-    if (actor.roleId === "burson")
+    if (actor.roleId !== "admin" && actor.roleId !== "operario")
       return "Burson no puede acceder a esta conversación.";
     if (
       actor.roleId === "operario" &&
@@ -942,7 +942,7 @@ export function editThreadMessage(
 ): Result {
   return update(storage, id, (item) => {
     if (
-      actor.roleId === "burson" ||
+      (actor.roleId !== "admin" && actor.roleId !== "operario") ||
       (actor.roleId === "operario" &&
         item.responsibleAccountId !== actor.accountId)
     )
@@ -980,7 +980,7 @@ export function deleteThreadMessage(
 ): Result {
   return update(storage, id, (item) => {
     if (
-      actor.roleId === "burson" ||
+      (actor.roleId !== "admin" && actor.roleId !== "operario") ||
       (actor.roleId === "operario" &&
         item.responsibleAccountId !== actor.accountId)
     )

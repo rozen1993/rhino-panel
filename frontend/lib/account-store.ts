@@ -88,6 +88,8 @@ export function upsertAccount(
 
   const now = new Date().toISOString();
   const accountId = previous?.id ?? `account-${Date.now().toString(36)}`;
+  if (fields.roleId === "aunor" && (previous?.active ?? true) && current.some((item) => item.id !== id && item.active && item.roleId === "aunor"))
+    return { ok: false as const, error: "Ya existe un acceso Aunor activo. Utiliza o reactiva la cuenta compartida." };
   const next: Account = {
     id: accountId,
     name: fields.name.trim(),
@@ -194,6 +196,8 @@ export function toggleAccount(
   const current = readAccounts(storage);
   const found = current.find((item) => item.id === id);
   if (!found) return { ok: false as const, error: "La cuenta no existe." };
+  if (!found.active && found.roleId === "aunor" && current.some((item) => item.id !== id && item.active && item.roleId === "aunor"))
+    return { ok: false as const, error: "Ya existe un acceso Aunor activo." };
   if (found.active && found.roleId === "operario" && hasOpenActivities)
     return {
       ok: false as const,

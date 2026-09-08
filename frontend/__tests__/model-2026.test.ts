@@ -72,8 +72,10 @@ const regularOperator = {
 };
 
 describe("modelo operativo vigente desde el 2026-08-28", () => {
-  it("conserva tres roles y desactiva la creación propia por defecto", () => {
-    expect(roleIds).toEqual(["operario", "admin", "burson"]);
+  it("conserva los roles internos y añade el acceso Aunor aprobado", () => {
+    expect(roleIds).toEqual(["operario", "admin", "burson", "aunor"]);
+    expect(roles.aunor.administers).toBe(false);
+    expect(roles.aunor.canCreateOwnActivities).toBe(false);
     expect(roles.operario.canCreateOwnActivities).toBe(false);
     expect(roles.admin.administers).toBe(true);
     expect(roles.burson.createsBursonRequests).toBe(true);

@@ -9,7 +9,7 @@ import { Card } from "@/components/card";
 import { completeDemoPasswordChange } from "@/lib/account-store";
 import type { DataSource } from "@/lib/data-source";
 import { passwordPolicyError } from "@/lib/password-policy";
-import type { Role } from "@/lib/roles";
+import { roleHome, type Role } from "@/lib/roles";
 
 export function TemporaryPasswordGate({
   dataSource,
@@ -45,9 +45,7 @@ export function TemporaryPasswordGate({
       router.replace(
         dataSource === "supabase"
           ? "/acceso?clave=actualizada"
-          : role.id === "burson"
-            ? "/burson"
-            : "/actividades",
+          : roleHome(role.id),
       );
       router.refresh();
     });

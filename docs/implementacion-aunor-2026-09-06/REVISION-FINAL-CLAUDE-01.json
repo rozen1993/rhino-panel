@@ -1,0 +1,219 @@
+{
+  "type": "result",
+  "subtype": "success",
+  "is_error": false,
+  "result": "{\"pipeline\":\"core\",\"input_class\":\"server-data-coupled\",\"supuestos\":[\"El paquete no incluía criterios explícitos de severidad ni umbral de bloqueo; apliqué el criterio de que solo bloquea lo que viola un requisito declarado o rompe una garantía de autorización, y clasifiqué el resto como desviación de diseño para decisión de Marco.\",\"Asumo como ciertos, sin reproducirlos, los resultados de host reportados (typecheck/build/lint, 218 unitarios, 20 Edge, 20 Playwright, cadena SQL en base UUID nueva). No ejecuté nada.\",\"Asumo que la referencia visual vinculante es Disenos-Rol-Aunor-2026-09-06/png (borrador-03 es idéntico en nombres; auxiliar/ no es la fuente aprobada).\",\"Asumo que la barra inferior fija en las capturas móviles largas está capturada a la altura del viewport y no flota a mitad de página, conforme a la indicación del encargo y al diseño aprobado 01-panel-actividades-movil.png.\",\"Asumo que los pasos 1 y 2 del panel Admin (publicar actividad y publicar entrega) no tienen maqueta aprobada porque el modelo de publicación los exige y el aprobado 06 solo cubre acuerdo y reemplazo.\"],\"propuesta\":\"Revisión final de solo lectura sobre la implementación nueva del rol Aunor (frontend/app/aunor, components/admin-aunor-panel|aunor-space|annual-calendar-view, lib/aunor*, lib/supabase/aunor.ts, migraciones 202609060001/2, verify-aunor.mjs) contrastada contra los requisitos y contra el diseño aprobado leyendo realmente las 16 capturas de docs/implementacion-aunor-2026-09-06/capturas-01 y 6 PNG aprobados.\\n\\nVeredicto: sin defectos bloqueantes para el preview local. El contrato de permisos se autoriza en SQL (vistas SECURITY DEFINER + aunor_mutate_v1 + RLS con rama else false para el rol nuevo), no en la UI.\\n\\nUn defecto de severidad media, demostrable con archivo/línea e imagen: frontend/components/aunor-space.tsx:105 llama aunorCode() sin el argumento type, por lo que frontend/lib/aunor.ts:59 cae al prefijo \\\"AC\\\" y la misma actividad aparece como GR-IGINAL/GR-ANORTE en 01-panel-1366.png y como AC-IGINAL/AC-ANORTE en 03-acordado-1366.png y 04-reemplazo-1366.png. Rompe el emparejamiento visual entre la tarjeta y el registro de reemplazo, que es justo la trazabilidad que la función aporta. Fix mínimo: resolver ambas actividades en w.activities (el lookup del original ya existe en la línea 104) y pasar .type; es seguro porque la vista SQL exige acceso a las dos actividades (202609060002_aunor_space.sql:250-251).\\n\\nCuatro desviaciones respecto al diseño aprobado, todas de baja severidad o informativas: detalle de día móvil como modal en vez de bloque en línea; CTA secundarios en contorno blanco en vez de verde sólido; ausencia del filtro de categoría en la pestaña Calendario; y panel Admin ampliado de 3 a 4 pasos con conversaciones apiladas en vez de tabuladas.\\n\\nBloqueantes para publicar (distintos de preview) siguen siendo los ya declarados y fuera de mi autoridad: migración no aplicada a la base existente y ausencia de smoke real de Data API/Auth.\",\"alternativas\":[\"Fijar aunorCode con un prefijo neutro estable (p. ej. 'ACT-') en todas las pantallas en vez de propagar el type: elimina la inconsistencia con un cambio único, pero pierde la señal de categoría que el diseño aprobado sí muestra en el panel.\",\"Persistir type de original y sustituto en private.aunor_replacements junto a original_title/substitute_title: más robusto si en el futuro un lado deja de ser accesible, pero exige migración nueva y hoy es innecesario porque la vista ya garantiza acceso a ambos lados.\",\"Dejar el modal móvil del calendario tal cual y actualizar el diseño aprobado: el modal tiene trampa de foco y aria-modal correctos; la alternativa es alinear el código al PNG aprobado y perder ese comportamiento ya construido.\",\"Aceptar las cuatro desviaciones visuales sin cambios y registrarlas como decisión, en lugar de reabrir maquetación en la recta final del preview.\"],\"riesgos\":[\"Alto valor de contexto, baja verificabilidad: no apliqué la migración ni ejecuté smoke contra Data API/Auth, así que la corrección de la cadena SQL descansa en los resultados de host que reportaste, no en observación propia.\",\"07-admin-390.png (390x7244) se entregó escalada a 108 px de ancho: pude leer estructura pero no el texto de los campos, de modo que la revisión del panel Admin en móvil se apoya en la captura de escritorio y en el código.\",\"La corrección de aunorCode toca ReplacementSummary, que se comparte entre el espacio Aunor y el panel Admin (admin=true): un cambio descuidado altera las dos vistas a la vez.\",\"private.aunor_requests no tiene purga y crece de forma indefinida; no propongo tocarlo por falta de autoridad, pero conviene tenerlo en el radar antes de producción.\",\"readSupabaseAunor carga todos los mensajes del espacio en cada render sin acotar por actividad; aceptable en preview, degradable con volumen.\"],\"verificacion\":[\"Leer las 16 PNG de docs/implementacion-aunor-2026-09-06/capturas-01 y comparar los códigos de actividad entre 01-panel-1366.png y 03-acordado-1366.png / 04-reemplazo-1366.png: deben coincidir tras el fix (GR-… en ambas).\",\"Contrastar 06-calendario-390.png con el aprobado 07-calendario-movil.png para decidir si el detalle de día móvil se mantiene como modal o vuelve a bloque en línea.\",\"Releer 202609060002_aunor_space.sql:186-196 y 250-253 para confirmar que toda lectura Aunor pasa por can_access_aunor_activity y que el reemplazo exige acceso a original, sustituto y acuerdo.\",\"Confirmar en 202609030001_rls_visibility_performance.sql:25 que la rama else false deja al rol aunor sin acceso directo a public.activities.\",\"Revisar supabase/functions/admin-accounts/index.ts:219-228 y el test index_test.ts:195-212 para confirmar que aunor_account_exists no adelanta a profile_create_cleanup_pending y que la compensación Auth se ejecuta en ambos escenarios.\",\"Tras cualquier cambio, ejecutar npm run verify desde frontend/ y npm run test:e2e; la cadena SQL debe recrearse desde cero en una base local antes de declararse lista.\"],\"confianza\":{\"nivel\":\"alta\",\"motivo\":\"Leí realmente las 16 capturas y 6 diseños aprobados, y el defecto principal está confirmado por dos vías independientes (código en aunor-space.tsx:105 más lib/aunor.ts:59, y evidencia visual en tres imágenes distintas). Las garantías de autorización las verifiqué en el SQL fuente, incluida la cadena current_app_role -> has_active_app_session y la rama else false de la policy de activities. La confianza no es total porque no apliqué la migración ni ejecuté ninguna prueba, y porque no pude leer el texto de la captura Admin móvil.\"},\"gates\":[{\"name\":\"Lectura visual obligatoria (16 capturas + >=4 aprobados)\",\"status\":\"passed\",\"evidence\":\"Inventario por Glob y lectura efectiva de las 16 PNG de capturas-01 (01..06 en 1366 y 390, 07-admin-1366/390, entrega-pendiente-desktop, reemplazo-pendiente-desktop) y de 6 aprobados: 01-panel, 02-entrega, 07-calendario, 06-admin escritorio; 01-panel y 07-calendario móvil. Excepción declarada: 07-admin-390.png (390x7244) legible en estructura, no en texto de campos.\"},{\"name\":\"Autorización en SQL, no en la UI\",\"status\":\"passed\",\"evidence\":\"can_access_aunor_activity (202609060002:186-196) exige publicación viva, deleted_at is null y origin<>'burson'; aunor_mutate_v1 revalida rol por comando (607, 629-632); RLS de activities deja al rol aunor en else false (202609030001:25).\"},{\"name\":\"Chat externo aislado (Admin-Aunor, sin operarios ni Burson)\",\"status\":\"passed\",\"evidence\":\"aunor_mutate_v1:607 restringe a admin/aunor; post_activity_message_v1:322 restringe el hilo interno a admin/operario; audit_events se reescribe a admin/operario (272-276).\"},{\"name\":\"Admin no modifica ejecución ni bloqueos\",\"status\":\"passed\",\"evidence\":\"aunor_mutate_v1 no ejecuta ningún UPDATE sobre public.activities (solo for update como cerrojo); admin-aunor-panel.tsx:81 deshabilita publicar entrega salvo status Entregada con materialLink; 01-panel-1366.png muestra la actividad con llamada registrada aún en Programada.\"},{\"name\":\"Confirmación de objetos específicos, sin pagos ni equivalencias\",\"status\":\"passed\",\"evidence\":\"confirm-delivery exige objectId, version y acknowledged:true y revalida version, material_link, material_revision y ausencia de entrega posterior (785-801); disclaimer en lib/aunor.ts:57 visible en 02-entrega-1366.png y 04-reemplazo-1366.png.\"},{\"name\":\"Originales, correcciones y pruebas preservados\",\"status\":\"passed\",\"evidence\":\"on delete restrict en todas las FK; cadenas corrects_id con índices únicos de corrección única (202609060002:123-126); sin API de despublicación voluntaria (comentario línea 44).\"},{\"name\":\"Unicidad de cuenta Aunor y compensación Auth en alta\",\"status\":\"passed\",\"evidence\":\"Índice único parcial y trigger (202609060002:4-19); admin-accounts/index.ts:223-224 sitúa aunor_account_exists tras la rama cleanupError; index_test.ts:195-212 cubre cleanup ok y cleanup fallido asertando calls ['auth:create','auth:delete:<id>'].\"},{\"name\":\"Calendario de 12 meses y detail conservados\",\"status\":\"passed\",\"evidence\":\"annual-calendar-view.tsx:457 recorre monthNames completo; lo consumen Histórico (annual-calendar.tsx:141) y Aunor (aunor-space.tsx:179); 06-calendario-1366.png y 06-calendario-390.png muestran los 12 meses.\"},{\"name\":\"Supabase nunca cae a fixtures y demo no contamina\",\"status\":\"passed\",\"evidence\":\"lib/supabase/aunor.ts:10 lanza error en vez de degradar; app/aunor/actions.ts:27-35 no lee demoSource en modo supabase.\"},{\"name\":\"Consistencia de identificadores entre pantallas\",\"status\":\"failed\",\"evidence\":\"aunor-space.tsx:105 omite el argumento type y lib/aunor.ts:59 cae al prefijo AC: 01-panel-1366.png muestra GR-IGINAL/GR-ANORTE y 03-acordado-1366.png / 04-reemplazo-1366.png muestran AC-IGINAL/AC-ANORTE para las mismas actividades.\"},{\"name\":\"Fidelidad al diseño aprobado\",\"status\":\"failed\",\"evidence\":\"Cuatro desviaciones verificadas por comparación de imágenes: detalle de día móvil como modal (06-calendario-390.png vs 07-calendario-movil.png), CTA secundarios en contorno (02-entrega-1366.png vs 02-entrega-pendiente-escritorio.png), filtro de categoría ausente en Calendario (06-calendario-1366.png vs 07-calendario-escritorio.png), panel Admin de 4 pasos con conversaciones apiladas (07-admin-1366.png vs 06-admin-respuesta-reemplazo-escritorio.png).\"},{\"name\":\"typecheck / build / lint / 218 unitarios / 20 Edge / 20 Playwright\",\"status\":\"not-run\",\"evidence\":\"Resultados reportados por el host; no los reproduje. Revisión de solo lectura, sin ejecución.\"},{\"name\":\"Migración aplicada a base existente y smoke Data API/Auth\",\"status\":\"not-applicable\",\"evidence\":\"Explícitamente fuera de alcance por falta de autorización; sigue siendo gate abierto para publicar, no para preview.\"}],\"artifacts\":[{\"path\":\"frontend/components/aunor-space.tsx\",\"purpose\":\"Espacio Aunor completo (panel, detalle, Lo acordado, mensajes, calendario). Contiene el defecto de código de actividad en la línea 105 (ReplacementSummary).\",\"status\":\"reviewed\"},{\"path\":\"frontend/lib/aunor.ts\",\"purpose\":\"Tipos, comandos, gates canUseAunor/canMutateAunor, disclaimer y aunorCode (línea 58-60: prefijo AC por defecto).\",\"status\":\"reviewed\"},{\"path\":\"frontend/app/aunor/actions.ts\",\"purpose\":\"Server actions de lectura y mutación; doble validación de rol y forma antes de llegar a aunor_mutate_v1; demoSource ignorado en modo supabase.\",\"status\":\"reviewed\"},{\"path\":\"frontend/app/aunor/page.tsx\",\"purpose\":\"Entrada del espacio; delega en AunorPage.\",\"status\":\"reviewed\"},{\"path\":\"frontend/components/aunor-page.tsx\",\"purpose\":\"Gate de rol (requireRole aunor) y carga inicial; notFound para detalle o reemplazo no accesibles.\",\"status\":\"reviewed\"},{\"path\":\"frontend/lib/supabase/aunor.ts\",\"purpose\":\"Lectura paginada de las siete vistas públicas con columnas enumeradas; lanza error en vez de degradar a fixtures.\",\"status\":\"reviewed\"},{\"path\":\"frontend/components/admin-aunor-panel.tsx\",\"purpose\":\"Panel Admin de publicación, entrega, acuerdo y reemplazo; no toca ejecución ni estado.\",\"status\":\"reviewed\"},{\"path\":\"frontend/components/annual-calendar-view.tsx\",\"purpose\":\"Calendario anual de 12 meses compartido por Histórico y Aunor; modal accesible para el detalle de día en móvil.\",\"status\":\"reviewed\"},{\"path\":\"supabase/migrations/202609060002_aunor_space.sql\",\"purpose\":\"Núcleo de autorización: tablas privadas, vistas SECURITY DEFINER, aunor_mutate_v1, defensa ABA, unicidad Aunor y reescritura de la policy de audit_events.\",\"status\":\"reviewed\"},{\"path\":\"supabase/migrations/202609060001_aunor_role.sql\",\"purpose\":\"Adición del valor 'aunor' al enum app_role, aislada en su propia migración.\",\"status\":\"reviewed\"},{\"path\":\"supabase/functions/admin-accounts/index.ts\",\"purpose\":\"Alta de cuentas: nuevo código aunor_account_exists sin desplazar la compensación Auth.\",\"status\":\"reviewed\"},{\"path\":\"frontend/scripts/verify-aunor.mjs\",\"purpose\":\"Script de verificación de la cadena SQL en base efímera; declara los PASS reportados por el host.\",\"status\":\"reviewed\"},{\"path\":\"docs/implementacion-aunor-2026-09-06/capturas-01\",\"purpose\":\"16 capturas de la implementación (escritorio 1366 y móvil 390) leídas para la revisión visual.\",\"status\":\"reviewed\"},{\"path\":\"Disenos-Rol-Aunor-2026-09-06/png\",\"purpose\":\"Diseño aprobado usado como referencia de comparación (panel, entrega, calendario y Admin en escritorio; panel y calendario en móvil).\",\"status\":\"reviewed\"}],\"deviations\":[{\"category\":\"defect\",\"before\":\"frontend/components/aunor-space.tsx:105 — <p className=\\\"data-label\\\">Original · {aunorCode(r.original_activity_id)}</p> ... <p>Sustituto · {aunorCode(r.substitute_activity_id)}</p>\",\"after\":\"Resolver ambas actividades en w.activities (el lookup de original ya existe en la línea 104) y pasar el tipo: aunorCode(r.original_activity_id, original?.type) y aunorCode(r.substitute_activity_id, substitute?.type).\",\"reason\":\"Sin el segundo argumento, lib/aunor.ts:59 aplica el prefijo por defecto 'AC'. En 01-panel-1366.png las actividades son GR-IGINAL y GR-ANORTE, y en 03-acordado-1366.png y 04-reemplazo-1366.png las mismas aparecen como AC-IGINAL y AC-ANORTE.\",\"impact\":\"El cliente no puede emparejar el registro de reemplazo con la tarjeta de la actividad, que es precisamente la trazabilidad que la función aporta. Afecta también al panel Admin, que reutiliza ReplacementSummary con admin=true.\"},{\"category\":\"other\",\"before\":\"Detalle de día en móvil renderizado como diálogo modal con oscurecido y trampa de foco (annual-calendar-view.tsx:480-487 y 274-336), visible en 06-calendario-390.png.\",\"after\":\"El diseño aprobado 07-calendario-movil.png lo presenta como bloque en línea encima del listado de meses, sin superposición ni oscurecido.\",\"reason\":\"Cambio de patrón de interacción respecto al PNG aprobado; no viola ningún requisito de producto.\",\"impact\":\"Baja. El modal implementado es correcto en accesibilidad (aria-modal, foco atrapado, botón de cierre etiquetado); la decisión de alinear o actualizar el diseño aprobado es de Marco.\"},{\"category\":\"other\",\"before\":\"«Abrir material ↗» y «Ver entrega y conversación →» renderizados como botones de contorno blanco (02-entrega-1366.png, 06-calendario-1366.png).\",\"after\":\"El diseño aprobado los muestra como botones verdes sólidos (02-entrega-pendiente-escritorio.png, 07-calendario-escritorio.png).\",\"reason\":\"Desviación de jerarquía visual respecto al diseño aprobado.\",\"impact\":\"Baja. El verde primario se conserva donde más pesa: «Confirmar esta entrega» sí aparece verde sólido en entrega-pendiente-desktop.png, así que el token no se ha perdido.\"},{\"category\":\"other\",\"before\":\"La pestaña Calendario anual solo ofrece las pestañas y el botón «Actualizar» (06-calendario-1366.png).\",\"after\":\"El diseño aprobado incluye además un filtro de categoría («Grabación ⌄») junto a las pestañas (07-calendario-escritorio.png).\",\"reason\":\"Control presente en el diseño aprobado y ausente en la implementación.\",\"impact\":\"Baja. La leyenda del calendario sigue mostrando el recuento por categoría, de modo que no se pierde información, solo la capacidad de filtrar dentro de la vista anual.\"},{\"category\":\"other\",\"before\":\"Panel Admin con cuatro pasos numerados y las dos conversaciones (externa con Aunor e interna con el responsable) apiladas verticalmente (07-admin-1366.png).\",\"after\":\"El diseño aprobado 06-admin-respuesta-reemplazo-escritorio.png tiene tres pasos y un conmutador de pestañas «Conversación con Aunor / Conversación interna».\",\"reason\":\"Los pasos 1 y 2 (publicar actividad y publicar entrega identificada) los exige el modelo de publicación y no tienen maqueta aprobada; el paso de tabulado a apilado sí es una desviación deliberada.\",\"impact\":\"Informativo. No afecta permisos ni contenido publicado; la vista previa «Qué verá Aunor» sigue advirtiendo que opinión, conversación interna y auditoría nunca se publican.\"}]}",
+  "structured_output": {
+    "pipeline": "core",
+    "input_class": "server-data-coupled",
+    "supuestos": [
+      "El paquete no incluía criterios explícitos de severidad ni umbral de bloqueo; apliqué el criterio de que solo bloquea lo que viola un requisito declarado o rompe una garantía de autorización, y clasifiqué el resto como desviación de diseño para decisión de Marco.",
+      "Asumo como ciertos, sin reproducirlos, los resultados de host reportados (typecheck/build/lint, 218 unitarios, 20 Edge, 20 Playwright, cadena SQL en base UUID nueva). No ejecuté nada.",
+      "Asumo que la referencia visual vinculante es Disenos-Rol-Aunor-2026-09-06/png (borrador-03 es idéntico en nombres; auxiliar/ no es la fuente aprobada).",
+      "Asumo que la barra inferior fija en las capturas móviles largas está capturada a la altura del viewport y no flota a mitad de página, conforme a la indicación del encargo y al diseño aprobado 01-panel-actividades-movil.png.",
+      "Asumo que los pasos 1 y 2 del panel Admin (publicar actividad y publicar entrega) no tienen maqueta aprobada porque el modelo de publicación los exige y el aprobado 06 solo cubre acuerdo y reemplazo."
+    ],
+    "propuesta": "Revisión final de solo lectura sobre la implementación nueva del rol Aunor (frontend/app/aunor, components/admin-aunor-panel|aunor-space|annual-calendar-view, lib/aunor*, lib/supabase/aunor.ts, migraciones 202609060001/2, verify-aunor.mjs) contrastada contra los requisitos y contra el diseño aprobado leyendo realmente las 16 capturas de docs/implementacion-aunor-2026-09-06/capturas-01 y 6 PNG aprobados.\n\nVeredicto: sin defectos bloqueantes para el preview local. El contrato de permisos se autoriza en SQL (vistas SECURITY DEFINER + aunor_mutate_v1 + RLS con rama else false para el rol nuevo), no en la UI.\n\nUn defecto de severidad media, demostrable con archivo/línea e imagen: frontend/components/aunor-space.tsx:105 llama aunorCode() sin el argumento type, por lo que frontend/lib/aunor.ts:59 cae al prefijo \"AC\" y la misma actividad aparece como GR-IGINAL/GR-ANORTE en 01-panel-1366.png y como AC-IGINAL/AC-ANORTE en 03-acordado-1366.png y 04-reemplazo-1366.png. Rompe el emparejamiento visual entre la tarjeta y el registro de reemplazo, que es justo la trazabilidad que la función aporta. Fix mínimo: resolver ambas actividades en w.activities (el lookup del original ya existe en la línea 104) y pasar .type; es seguro porque la vista SQL exige acceso a las dos actividades (202609060002_aunor_space.sql:250-251).\n\nCuatro desviaciones respecto al diseño aprobado, todas de baja severidad o informativas: detalle de día móvil como modal en vez de bloque en línea; CTA secundarios en contorno blanco en vez de verde sólido; ausencia del filtro de categoría en la pestaña Calendario; y panel Admin ampliado de 3 a 4 pasos con conversaciones apiladas en vez de tabuladas.\n\nBloqueantes para publicar (distintos de preview) siguen siendo los ya declarados y fuera de mi autoridad: migración no aplicada a la base existente y ausencia de smoke real de Data API/Auth.",
+    "alternativas": [
+      "Fijar aunorCode con un prefijo neutro estable (p. ej. 'ACT-') en todas las pantallas en vez de propagar el type: elimina la inconsistencia con un cambio único, pero pierde la señal de categoría que el diseño aprobado sí muestra en el panel.",
+      "Persistir type de original y sustituto en private.aunor_replacements junto a original_title/substitute_title: más robusto si en el futuro un lado deja de ser accesible, pero exige migración nueva y hoy es innecesario porque la vista ya garantiza acceso a ambos lados.",
+      "Dejar el modal móvil del calendario tal cual y actualizar el diseño aprobado: el modal tiene trampa de foco y aria-modal correctos; la alternativa es alinear el código al PNG aprobado y perder ese comportamiento ya construido.",
+      "Aceptar las cuatro desviaciones visuales sin cambios y registrarlas como decisión, en lugar de reabrir maquetación en la recta final del preview."
+    ],
+    "riesgos": [
+      "Alto valor de contexto, baja verificabilidad: no apliqué la migración ni ejecuté smoke contra Data API/Auth, así que la corrección de la cadena SQL descansa en los resultados de host que reportaste, no en observación propia.",
+      "07-admin-390.png (390x7244) se entregó escalada a 108 px de ancho: pude leer estructura pero no el texto de los campos, de modo que la revisión del panel Admin en móvil se apoya en la captura de escritorio y en el código.",
+      "La corrección de aunorCode toca ReplacementSummary, que se comparte entre el espacio Aunor y el panel Admin (admin=true): un cambio descuidado altera las dos vistas a la vez.",
+      "private.aunor_requests no tiene purga y crece de forma indefinida; no propongo tocarlo por falta de autoridad, pero conviene tenerlo en el radar antes de producción.",
+      "readSupabaseAunor carga todos los mensajes del espacio en cada render sin acotar por actividad; aceptable en preview, degradable con volumen."
+    ],
+    "verificacion": [
+      "Leer las 16 PNG de docs/implementacion-aunor-2026-09-06/capturas-01 y comparar los códigos de actividad entre 01-panel-1366.png y 03-acordado-1366.png / 04-reemplazo-1366.png: deben coincidir tras el fix (GR-… en ambas).",
+      "Contrastar 06-calendario-390.png con el aprobado 07-calendario-movil.png para decidir si el detalle de día móvil se mantiene como modal o vuelve a bloque en línea.",
+      "Releer 202609060002_aunor_space.sql:186-196 y 250-253 para confirmar que toda lectura Aunor pasa por can_access_aunor_activity y que el reemplazo exige acceso a original, sustituto y acuerdo.",
+      "Confirmar en 202609030001_rls_visibility_performance.sql:25 que la rama else false deja al rol aunor sin acceso directo a public.activities.",
+      "Revisar supabase/functions/admin-accounts/index.ts:219-228 y el test index_test.ts:195-212 para confirmar que aunor_account_exists no adelanta a profile_create_cleanup_pending y que la compensación Auth se ejecuta en ambos escenarios.",
+      "Tras cualquier cambio, ejecutar npm run verify desde frontend/ y npm run test:e2e; la cadena SQL debe recrearse desde cero en una base local antes de declararse lista."
+    ],
+    "confianza": {
+      "nivel": "alta",
+      "motivo": "Leí realmente las 16 capturas y 6 diseños aprobados, y el defecto principal está confirmado por dos vías independientes (código en aunor-space.tsx:105 más lib/aunor.ts:59, y evidencia visual en tres imágenes distintas). Las garantías de autorización las verifiqué en el SQL fuente, incluida la cadena current_app_role -> has_active_app_session y la rama else false de la policy de activities. La confianza no es total porque no apliqué la migración ni ejecuté ninguna prueba, y porque no pude leer el texto de la captura Admin móvil."
+    },
+    "gates": [
+      {
+        "name": "Lectura visual obligatoria (16 capturas + >=4 aprobados)",
+        "status": "passed",
+        "evidence": "Inventario por Glob y lectura efectiva de las 16 PNG de capturas-01 (01..06 en 1366 y 390, 07-admin-1366/390, entrega-pendiente-desktop, reemplazo-pendiente-desktop) y de 6 aprobados: 01-panel, 02-entrega, 07-calendario, 06-admin escritorio; 01-panel y 07-calendario móvil. Excepción declarada: 07-admin-390.png (390x7244) legible en estructura, no en texto de campos."
+      },
+      {
+        "name": "Autorización en SQL, no en la UI",
+        "status": "passed",
+        "evidence": "can_access_aunor_activity (202609060002:186-196) exige publicación viva, deleted_at is null y origin<>'burson'; aunor_mutate_v1 revalida rol por comando (607, 629-632); RLS de activities deja al rol aunor en else false (202609030001:25)."
+      },
+      {
+        "name": "Chat externo aislado (Admin-Aunor, sin operarios ni Burson)",
+        "status": "passed",
+        "evidence": "aunor_mutate_v1:607 restringe a admin/aunor; post_activity_message_v1:322 restringe el hilo interno a admin/operario; audit_events se reescribe a admin/operario (272-276)."
+      },
+      {
+        "name": "Admin no modifica ejecución ni bloqueos",
+        "status": "passed",
+        "evidence": "aunor_mutate_v1 no ejecuta ningún UPDATE sobre public.activities (solo for update como cerrojo); admin-aunor-panel.tsx:81 deshabilita publicar entrega salvo status Entregada con materialLink; 01-panel-1366.png muestra la actividad con llamada registrada aún en Programada."
+      },
+      {
+        "name": "Confirmación de objetos específicos, sin pagos ni equivalencias",
+        "status": "passed",
+        "evidence": "confirm-delivery exige objectId, version y acknowledged:true y revalida version, material_link, material_revision y ausencia de entrega posterior (785-801); disclaimer en lib/aunor.ts:57 visible en 02-entrega-1366.png y 04-reemplazo-1366.png."
+      },
+      {
+        "name": "Originales, correcciones y pruebas preservados",
+        "status": "passed",
+        "evidence": "on delete restrict en todas las FK; cadenas corrects_id con índices únicos de corrección única (202609060002:123-126); sin API de despublicación voluntaria (comentario línea 44)."
+      },
+      {
+        "name": "Unicidad de cuenta Aunor y compensación Auth en alta",
+        "status": "passed",
+        "evidence": "Índice único parcial y trigger (202609060002:4-19); admin-accounts/index.ts:223-224 sitúa aunor_account_exists tras la rama cleanupError; index_test.ts:195-212 cubre cleanup ok y cleanup fallido asertando calls ['auth:create','auth:delete:<id>']."
+      },
+      {
+        "name": "Calendario de 12 meses y detail conservados",
+        "status": "passed",
+        "evidence": "annual-calendar-view.tsx:457 recorre monthNames completo; lo consumen Histórico (annual-calendar.tsx:141) y Aunor (aunor-space.tsx:179); 06-calendario-1366.png y 06-calendario-390.png muestran los 12 meses."
+      },
+      {
+        "name": "Supabase nunca cae a fixtures y demo no contamina",
+        "status": "passed",
+        "evidence": "lib/supabase/aunor.ts:10 lanza error en vez de degradar; app/aunor/actions.ts:27-35 no lee demoSource en modo supabase."
+      },
+      {
+        "name": "Consistencia de identificadores entre pantallas",
+        "status": "failed",
+        "evidence": "aunor-space.tsx:105 omite el argumento type y lib/aunor.ts:59 cae al prefijo AC: 01-panel-1366.png muestra GR-IGINAL/GR-ANORTE y 03-acordado-1366.png / 04-reemplazo-1366.png muestran AC-IGINAL/AC-ANORTE para las mismas actividades."
+      },
+      {
+        "name": "Fidelidad al diseño aprobado",
+        "status": "failed",
+        "evidence": "Cuatro desviaciones verificadas por comparación de imágenes: detalle de día móvil como modal (06-calendario-390.png vs 07-calendario-movil.png), CTA secundarios en contorno (02-entrega-1366.png vs 02-entrega-pendiente-escritorio.png), filtro de categoría ausente en Calendario (06-calendario-1366.png vs 07-calendario-escritorio.png), panel Admin de 4 pasos con conversaciones apiladas (07-admin-1366.png vs 06-admin-respuesta-reemplazo-escritorio.png)."
+      },
+      {
+        "name": "typecheck / build / lint / 218 unitarios / 20 Edge / 20 Playwright",
+        "status": "not-run",
+        "evidence": "Resultados reportados por el host; no los reproduje. Revisión de solo lectura, sin ejecución."
+      },
+      {
+        "name": "Migración aplicada a base existente y smoke Data API/Auth",
+        "status": "not-applicable",
+        "evidence": "Explícitamente fuera de alcance por falta de autorización; sigue siendo gate abierto para publicar, no para preview."
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "frontend/components/aunor-space.tsx",
+        "purpose": "Espacio Aunor completo (panel, detalle, Lo acordado, mensajes, calendario). Contiene el defecto de código de actividad en la línea 105 (ReplacementSummary).",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/lib/aunor.ts",
+        "purpose": "Tipos, comandos, gates canUseAunor/canMutateAunor, disclaimer y aunorCode (línea 58-60: prefijo AC por defecto).",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/app/aunor/actions.ts",
+        "purpose": "Server actions de lectura y mutación; doble validación de rol y forma antes de llegar a aunor_mutate_v1; demoSource ignorado en modo supabase.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/app/aunor/page.tsx",
+        "purpose": "Entrada del espacio; delega en AunorPage.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/components/aunor-page.tsx",
+        "purpose": "Gate de rol (requireRole aunor) y carga inicial; notFound para detalle o reemplazo no accesibles.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/lib/supabase/aunor.ts",
+        "purpose": "Lectura paginada de las siete vistas públicas con columnas enumeradas; lanza error en vez de degradar a fixtures.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/components/admin-aunor-panel.tsx",
+        "purpose": "Panel Admin de publicación, entrega, acuerdo y reemplazo; no toca ejecución ni estado.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/components/annual-calendar-view.tsx",
+        "purpose": "Calendario anual de 12 meses compartido por Histórico y Aunor; modal accesible para el detalle de día en móvil.",
+        "status": "reviewed"
+      },
+      {
+        "path": "supabase/migrations/202609060002_aunor_space.sql",
+        "purpose": "Núcleo de autorización: tablas privadas, vistas SECURITY DEFINER, aunor_mutate_v1, defensa ABA, unicidad Aunor y reescritura de la policy de audit_events.",
+        "status": "reviewed"
+      },
+      {
+        "path": "supabase/migrations/202609060001_aunor_role.sql",
+        "purpose": "Adición del valor 'aunor' al enum app_role, aislada en su propia migración.",
+        "status": "reviewed"
+      },
+      {
+        "path": "supabase/functions/admin-accounts/index.ts",
+        "purpose": "Alta de cuentas: nuevo código aunor_account_exists sin desplazar la compensación Auth.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/scripts/verify-aunor.mjs",
+        "purpose": "Script de verificación de la cadena SQL en base efímera; declara los PASS reportados por el host.",
+        "status": "reviewed"
+      },
+      {
+        "path": "docs/implementacion-aunor-2026-09-06/capturas-01",
+        "purpose": "16 capturas de la implementación (escritorio 1366 y móvil 390) leídas para la revisión visual.",
+        "status": "reviewed"
+      },
+      {
+        "path": "Disenos-Rol-Aunor-2026-09-06/png",
+        "purpose": "Diseño aprobado usado como referencia de comparación (panel, entrega, calendario y Admin en escritorio; panel y calendario en móvil).",
+        "status": "reviewed"
+      }
+    ],
+    "deviations": [
+      {
+        "category": "defect",
+        "before": "frontend/components/aunor-space.tsx:105 — <p className=\"data-label\">Original · {aunorCode(r.original_activity_id)}</p> ... <p>Sustituto · {aunorCode(r.substitute_activity_id)}</p>",
+        "after": "Resolver ambas actividades en w.activities (el lookup de original ya existe en la línea 104) y pasar el tipo: aunorCode(r.original_activity_id, original?.type) y aunorCode(r.substitute_activity_id, substitute?.type).",
+        "reason": "Sin el segundo argumento, lib/aunor.ts:59 aplica el prefijo por defecto 'AC'. En 01-panel-1366.png las actividades son GR-IGINAL y GR-ANORTE, y en 03-acordado-1366.png y 04-reemplazo-1366.png las mismas aparecen como AC-IGINAL y AC-ANORTE.",
+        "impact": "El cliente no puede emparejar el registro de reemplazo con la tarjeta de la actividad, que es precisamente la trazabilidad que la función aporta. Afecta también al panel Admin, que reutiliza ReplacementSummary con admin=true."
+      },
+      {
+        "category": "other",
+        "before": "Detalle de día en móvil renderizado como diálogo modal con oscurecido y trampa de foco (annual-calendar-view.tsx:480-487 y 274-336), visible en 06-calendario-390.png.",
+        "after": "El diseño aprobado 07-calendario-movil.png lo presenta como bloque en línea encima del listado de meses, sin superposición ni oscurecido.",
+        "reason": "Cambio de patrón de interacción respecto al PNG aprobado; no viola ningún requisito de producto.",
+        "impact": "Baja. El modal implementado es correcto en accesibilidad (aria-modal, foco atrapado, botón de cierre etiquetado); la decisión de alinear o actualizar el diseño aprobado es de Marco."
+      },
+      {
+        "category": "other",
+        "before": "«Abrir material ↗» y «Ver entrega y conversación →» renderizados como botones de contorno blanco (02-entrega-1366.png, 06-calendario-1366.png).",
+        "after": "El diseño aprobado los muestra como botones verdes sólidos (02-entrega-pendiente-escritorio.png, 07-calendario-escritorio.png).",
+        "reason": "Desviación de jerarquía visual respecto al diseño aprobado.",
+        "impact": "Baja. El verde primario se conserva donde más pesa: «Confirmar esta entrega» sí aparece verde sólido en entrega-pendiente-desktop.png, así que el token no se ha perdido."
+      },
+      {
+        "category": "other",
+        "before": "La pestaña Calendario anual solo ofrece las pestañas y el botón «Actualizar» (06-calendario-1366.png).",
+        "after": "El diseño aprobado incluye además un filtro de categoría («Grabación ⌄») junto a las pestañas (07-calendario-escritorio.png).",
+        "reason": "Control presente en el diseño aprobado y ausente en la implementación.",
+        "impact": "Baja. La leyenda del calendario sigue mostrando el recuento por categoría, de modo que no se pierde información, solo la capacidad de filtrar dentro de la vista anual."
+      },
+      {
+        "category": "other",
+        "before": "Panel Admin con cuatro pasos numerados y las dos conversaciones (externa con Aunor e interna con el responsable) apiladas verticalmente (07-admin-1366.png).",
+        "after": "El diseño aprobado 06-admin-respuesta-reemplazo-escritorio.png tiene tres pasos y un conmutador de pestañas «Conversación con Aunor / Conversación interna».",
+        "reason": "Los pasos 1 y 2 (publicar actividad y publicar entrega identificada) los exige el modelo de publicación y no tienen maqueta aprobada; el paso de tabulado a apilado sí es una desviación deliberada.",
+        "impact": "Informativo. No afecta permisos ni contenido publicado; la vista previa «Qué verá Aunor» sigue advirtiendo que opinión, conversación interna y auditoría nunca se publican."
+      }
+    ]
+  }
+}

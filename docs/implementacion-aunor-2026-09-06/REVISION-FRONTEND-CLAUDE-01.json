@@ -1,0 +1,195 @@
+{
+  "type": "result",
+  "subtype": "success",
+  "is_error": false,
+  "result": "{\"supuestos\":[\"El paquete no fijó gates ejecutables para esta revisión: se me indicó que build y typecheck pasaron y que lint/tests estaban en curso, y que soy revisor de solo lectura. Asumo por tanto que ningún gate de ejecución me corresponde y los declaro not-run en lugar de simularlos.\",\"Asumo que la doble derivación y la comparación independiente previas ya cubrieron el contraste requisito-a-requisito, por lo que esta pasada busca defectos demostrables y no reconstruye esas conclusiones.\",\"Asumo que 'no atribuyas revisión visual' excluye juicios sobre apariencia renderizada, pero no excluye defectos de contenido y estructura de encabezados legibles en el código (D1).\",\"Asumo que el runner de migraciones aplica cada archivo en su propia transacción, requisito para que 202609060001 (alter type add value) confirme antes de que 202609060002 use el literal 'aunor'. No pude verificarlo desde el repositorio.\",\"Asumo que el modo demo no contiene datos reales, por lo que la paridad demo/Supabase (D4) se califica como baja pese a incumplir el contrato de CLAUDE.md.\"],\"propuesta\":\"Revisión estática de solo lectura de la implementación Aunor contra los requisitos indicados. El aislamiento se sostiene: `private.can_access_aunor_activity` (202609060002:186-196) exige publicación vigente, actividad no borrada y origen distinto de burson, y las siete vistas `public.aunor_*` filtran por ella sobre tablas `private` revocadas a `authenticated`. Las tablas internas quedan cerradas al rol nuevo por caída explícita a `else false` en `private.can_view_activity` (202608220001:229-249) y en `private.can_access_activity_conversation` (202608300002:58-64), y `profiles_select_authorized` limita a Aunor a su propia fila. El cambio de `actor.role = 'burson'` a `actor.role not in ('admin','operario')` en los tres RPC de mensajes (202609060002:322,432,519) es una corrección de seguridad real: la comprobación negativa anterior habría admitido a Aunor en el hilo interno Admin-Operario; lo mismo aplica a la política `audit_events_select_authorized` (:272-276). Ningún otro RPC regresa, porque todos fijan `require_admin_profile()` o `require_operator_profile()`. Las rutas son listas de permitidos y ni opiniones, ni descripción, ni responsable, ni enlace de material, ni auditoría, ni papelera aparecen en la proyección externa; el material solo llega por `aunor_deliveries` publicada. La confirmación es por objeto concreto con `acknowledged:true` y comprobación de versión y revisión de material, con descargo de no-pago. 'Por relacionar' es visible y los originales se conservan por `on delete restrict`, instantáneas de título, cadenas `corrects_id` y `superseded_at`. Se reportan siete defectos: D1 (media) el flag `publicMode` de annual-calendar-view.tsx:364-378 solo cambia el enlace de vuelta y deja al cliente un segundo `<h1>Histórico {year}</h1>` junto a 'Archivo operativo' y 'Todas las actividades del año', sobre una página que ya emitió `<h1>Calendario anual</h1>` en aunor-space.tsx:157; D2 (media) admin-aunor-panel.tsx:88,91 comparte el estado `evidence` entre el formulario de acuerdo y el de reemplazo, sin limpiarlo al guardar, de modo que un enlace se adjunta al registro equivocado; D3 (baja-media) admin-aunor-panel.tsx:81 lanza RangeError no capturado si `contact` no es fecha válida; D4 (baja) aunor-demo.server.ts:29 confía en `demoSource` del cliente y rompe la paridad de contrato con el modo real; D5 (baja) actions.ts:23,37 no aplica la forma UUID fuera de Supabase antes de `revalidatePath`; D6 y D7 (bajas) son límites operativos del cerrojo consultivo global y del crecimiento sin purga de `private.aunor_requests`.\",\"alternativas\":[\"Para D1, en lugar de ramificar el bloque de cabecera con `publicMode`, extraer `title`, `subtitle` y `countLabel` como props de AnnualCalendarView y que cada consumidor los provea; es más limpio pero toca la llamada de /historico y amplía el diámetro del cambio.\",\"Para D1, dejar que AunorSpace omita su propio encabezado cuando scene === 'calendar' y quedarse con el del calendario; se descarta porque conservaría el vocabulario 'Histórico' y 'Archivo operativo' frente al cliente externo.\",\"Para D4, aceptar la divergencia demo/real como deuda documentada en vez de resolver la actividad en el servidor; sería válido si Marco decide que la demo no debe replicar el contrato, pero contradice CLAUDE.md tal como está escrito hoy.\",\"Para D2, un único campo de evidencia compartido y explícitamente etiquetado como tal en ambos formularios, en vez de dos estados separados; más simple pero mantiene el acoplamiento que causa la atribución equivocada.\"],\"riesgos\":[\"No ejecuté nada: ni build, ni typecheck, ni lint, ni tests, ni aplicación de migraciones, ni navegador. Todo hallazgo proviene de lectura estática de los archivos citados y no sustituye la verificación.\",\"No verifiqué que las migraciones apliquen. 202609060001 debe confirmar antes de que 202609060002 use el literal 'aunor'; si el runner agrupara ambos archivos en una transacción, la migración fallaría al arrancar.\",\"No leí aunor-examples.ts, aunor-space.module.css, scripts/verify-aunor.mjs, ni las rutas app/aunor/{loading,error,acordado,mensajes,reemplazos} más allá del enrutado, ni account-store.ts/accounts.ts más allá de las líneas del invariante Aunor. No emito conclusión sobre ellos.\",\"Queda sin resolver si el error SR009 del invariante 'un solo Aunor activo' llega a Admin con un mensaje útil: la regla está en SQL (202609060002:4-19) y en el almacén demo, pero _shared/account-validation.ts acepta 'aunor' sin comprobación equivalente y no pude leer el handler de la Edge Function que lo consume.\",\"Las vistas exponen title, status, place y jornadas en vivo desde la actividad interna, no desde una instantánea de la publicación; es coherente con el texto del panel ('Se publicarán título, categoría, estado, días y lugares'), pero implica que replanificar o renombrar cambia lo que ve el cliente sin republicar. Lo señalo como consecuencia de diseño, no como defecto, porque no tengo la decisión de Marco al respecto.\",\"No audité el resto del repositorio, conforme a la instrucción.\"],\"verificacion\":[\"Aplicar las migraciones desde cero en Supabase local (supabase db reset) para confirmar que 202609060001 confirma antes de 202609060002 y que el trigger, el índice único y las diez tablas privadas se crean sin error.\",\"Con una cuenta Aunor real contra la Data API: SELECT sobre activities, activity_date_spans, activity_messages, audit_events y profiles debe devolver cero filas ajenas; y aunor_activities solo las publicadas y no borradas.\",\"Llamar post_activity_message_v1 y edit/delete con la sesión Aunor y comprobar que devuelven SR002, verificando la corrección de 202609060002:322,432,519.\",\"Publicar una actividad, darla de baja y confirmar que desaparece por completo del espacio Aunor sin filtrar existencia ni motivo.\",\"Ejecutar `npm run verify` y `npm run test:e2e` desde frontend/ para cerrar los gates que quedaron not-run en esta revisión.\",\"Reproducir D2 manualmente: escribir un enlace en 'Enlace de evidencia' del formulario de acuerdo, guardar, y publicar después un reemplazo sin tocar ese campo; el enlace debe aparecer indebidamente en el reemplazo.\",\"Reproducir D1 abriendo /aunor/calendario e inspeccionando el DOM: deben aparecer dos elementos h1, el segundo con el texto 'Histórico' seguido del año.\"],\"confianza\":{\"nivel\":\"media\",\"motivo\":\"Alta en las conclusiones de autorización: se apoyan en lectura directa de las funciones de visibilidad, las políticas RLS y las cláusulas de rol de cada RPC, y los puntos decisivos (else false en can_view_activity y can_access_activity_conversation, cambio de la comprobación negativa de burson) son verificables línea a línea. Media en el conjunto porque no ejecuté ningún gate, no confirmé que las migraciones apliquen, dejé sin leer varios archivos del paquete y queda abierto el comportamiento del handler de la Edge Function ante SR009.\"},\"input_class\":\"application\",\"pipeline\":\"core\",\"gates\":[{\"name\":\"build\",\"status\":\"not-run\",\"evidence\":\"Reportado como aprobado en el encargo; no lo ejecuté ni lo verifiqué. No reclamo evidencia propia.\"},{\"name\":\"typecheck\",\"status\":\"not-run\",\"evidence\":\"Reportado como aprobado en el encargo; no lo ejecuté. Sí revisé por lectura la varianza de onChoose entre CalendarActivity y HistoricalActivity en annual-calendar.tsx:144, que es asignable.\"},{\"name\":\"lint\",\"status\":\"not-run\",\"evidence\":\"Indicado como recién corregido en el encargo; no lo ejecuté.\"},{\"name\":\"tests\",\"status\":\"not-run\",\"evidence\":\"Indicados como en curso en el encargo; no los ejecuté ni conozco su resultado.\"},{\"name\":\"migraciones desde cero\",\"status\":\"not-run\",\"evidence\":\"No apliqué 202609060001 ni 202609060002. Riesgo pendiente: el literal 'aunor' solo es usable si el alter type confirmó en una transacción anterior.\"},{\"name\":\"revisión visual\",\"status\":\"not-applicable\",\"evidence\":\"Excluida por instrucción explícita: aún no existen capturas reales finales.\"},{\"name\":\"revisión de autorización de solo lectura\",\"status\":\"passed\",\"evidence\":\"private.can_view_activity 202608220001:229-249 y can_access_activity_conversation 202608300002:58-64 terminan en else false; can_access_aunor_activity 202609060002:186-196 exige publicación vigente, deleted_at null y origin<>burson; los tres RPC de mensajes pasan de = 'burson' a not in ('admin','operario') en :322,:432,:519; audit_events_select_authorized reescrita en :272-276; el resto de RPC fija require_admin_profile/require_operator_profile.\"}],\"artifacts\":[{\"path\":\"supabase/migrations/202609060002_aunor_space.sql\",\"purpose\":\"Autorización real del canal Aunor: tablas privadas, vistas públicas de proyección, aunor_mutate_v1 y el endurecimiento de los RPC de mensajes y de la política de auditoría.\",\"status\":\"reviewed\"},{\"path\":\"supabase/migrations/202609060001_aunor_role.sql\",\"purpose\":\"Adición del valor de enum 'aunor'; debe confirmar en transacción propia antes de la migración siguiente.\",\"status\":\"reviewed\"},{\"path\":\"frontend/components/annual-calendar-view.tsx\",\"purpose\":\"Calendario anual extraído y reutilizado por Aunor; sede del defecto D1 (publicMode no cubre la cabecera).\",\"status\":\"reviewed\"},{\"path\":\"frontend/components/admin-aunor-panel.tsx\",\"purpose\":\"Panel de gestión Aunor dentro de la ficha de actividad; sede de los defectos D2 y D3.\",\"status\":\"reviewed\"},{\"path\":\"frontend/components/aunor-space.tsx\",\"purpose\":\"Espacio del cliente: tarjetas, detalle, confirmación, conversación y calendario público.\",\"status\":\"reviewed\"},{\"path\":\"frontend/app/aunor/actions.ts\",\"purpose\":\"Server actions del canal; sede del defecto D5 y de la traducción de códigos SR a mensajes.\",\"status\":\"reviewed\"},{\"path\":\"frontend/lib/aunor-demo.server.ts\",\"purpose\":\"Simulación aislada del canal; sede del defecto D4 de paridad con el contrato real.\",\"status\":\"reviewed\"},{\"path\":\"frontend/lib/aunor.ts\",\"purpose\":\"Tipos de la proyección externa y puertas canUseAunor/canMutateAunor, coherentes con las del RPC.\",\"status\":\"reviewed\"},{\"path\":\"frontend/lib/supabase/aunor.ts\",\"purpose\":\"Lectura paginada exclusivamente sobre las vistas públicas, nunca sobre tablas internas.\",\"status\":\"reviewed\"},{\"path\":\"frontend/components/aunor-page.tsx\",\"purpose\":\"Guardia de ruta requireRole(r=>r.id==='aunor') para todo el espacio.\",\"status\":\"reviewed\"},{\"path\":\"supabase/migrations/202608220001_backend_foundation.sql\",\"purpose\":\"Referencia de autorización preexistente: can_view_activity, can_view_activity_id y políticas RLS base.\",\"status\":\"reviewed\"},{\"path\":\"supabase/migrations/202608300002_private_conversations.sql\",\"purpose\":\"Referencia para comparar los RPC de mensajes antes y después del endurecimiento.\",\"status\":\"reviewed\"}],\"deviations\":[{\"category\":\"defect\",\"before\":\"annual-calendar-view.tsx:364-378 aplica publicMode solo al enlace de vuelta; la cabecera emite siempre 'Archivo operativo · N registros', '<h1>Histórico {year}</h1>' y 'Todas las actividades del año en una sola vista', mientras aunor-space.tsx:157 ya emitió '<h1>Calendario anual</h1>'.\",\"after\":\"Ramificar el bloque de cabecera (líneas 367-379) según publicMode con texto propio del cliente, y degradar el segundo encabezado a h2 en modo público.\",\"reason\":\"El cliente externo ve vocabulario interno ('Histórico', 'Archivo operativo') y una afirmación falsa de alcance, ya que solo ve lo publicado; además la página queda con dos h1.\",\"impact\":\"Contenido incorrecto frente a un tercero y estructura de encabezados duplicada que degrada la navegación por lector de pantalla.\"},{\"category\":\"defect\",\"before\":\"admin-aunor-panel.tsx:88 vincula 'Enlace de evidencia' al estado `evidence` y :91 envía `evidenceLink: evidence` desde el formulario de reemplazo, que carece de campo propio; :81 limpia solo `body` al guardar.\",\"after\":\"Añadir un estado `replacementEvidence` para el formulario de reemplazo y limpiar `evidence` en la rama de éxito del acuerdo.\",\"reason\":\"Un enlace escrito para un acuerdo se adjunta silenciosamente a acuerdos posteriores y al registro de reemplazo.\",\"impact\":\"Evidencia atribuida al registro equivocado en un canal cuyo valor depende de la trazabilidad de lo acordado.\"},{\"category\":\"defect\",\"before\":\"admin-aunor-panel.tsx:81 evalúa `new Date(contact).toISOString()` dentro del manejador asíncrono de envío.\",\"after\":\"Comprobar `Date.parse(contact)` con `Number.isFinite` antes de construir el payload y, si falla, fijar el error visible y detener el envío.\",\"reason\":\"Donde datetime-local degrada a input de texto, `required` acepta cualquier cadena no vacía y la conversión lanza RangeError antes de llamar a mutate, dejando la promesa sin capturar.\",\"impact\":\"El formulario no hace nada y no muestra error; el Admin no puede distinguir el fallo de una operación lenta.\"},{\"category\":\"defect\",\"before\":\"aunor-demo.server.ts:29 acepta `demoSource` del cliente (status, materialLink, version, title, spans) comprobando solo rol admin, coincidencia de id, origen no burson y ausencia de baja.\",\"after\":\"Resolver la actividad en el servidor desde el almacén de la simulación, o revalidar status, materialLink y version contra `s.sources` antes de publicar entrega.\",\"reason\":\"En modo Supabase esos campos se leen de la fila (202609060002:648,700-708); en demo llegan en el cuerpo de la petición, de modo que el contrato de permisos no es el mismo en ambos modos.\",\"impact\":\"Incumple la regla de CLAUDE.md de que la simulación refleje el contrato real; permite publicar una entrega de una actividad que no está Entregada dentro de la demo.\"},{\"category\":\"defect\",\"before\":\"app/aunor/actions.ts:23 valida activityId solo por longitud fuera de Supabase y :37 lo concatena en `revalidatePath('/actividades/'+id)`; la forma UUID solo se exige en :28.\",\"after\":\"Aplicar la expresión UUID en la validación general de entrada, o codificar el segmento antes de revalidatePath.\",\"reason\":\"La validación estricta existe pero está condicionada al modo de datos, sin motivo aparente: los identificadores de la demo también son UUID.\",\"impact\":\"Bajo. No es una frontera de privilegio, pero deja entrar a la capa de caché una cadena arbitraria de hasta 100 caracteres.\"},{\"category\":\"performance\",\"before\":\"202609060002:603-604 toma un único cerrojo consultivo global para toda escritura del canal, incluidos los marcadores de lectura que el cliente dispara solo al abrir un hilo (aunor-space.tsx:45-52).\",\"after\":\"Sin cambio ahora; revisar si el volumen de escritura crece, por ejemplo acotando el cerrojo por actividad para los comandos que no cruzan dos actividades.\",\"reason\":\"La serialización global simplifica el orden de bloqueo y hoy es correcta, pero convierte cada apertura de conversación en una escritura serializada con todas las demás.\",\"impact\":\"Ninguno al volumen actual; límite de escalado conocido.\"},{\"category\":\"other\",\"before\":\"private.aunor_requests (202609060002:156-163) almacena una fila por mutación sin política de retención.\",\"after\":\"Purga periódica de filas anteriores a la ventana de reintento.\",\"reason\":\"La tabla solo sirve para idempotencia de reintentos, cuya utilidad expira en minutos.\",\"impact\":\"Crecimiento monótono de una tabla interna; sin efecto funcional a corto plazo.\"}]}",
+  "structured_output": {
+    "supuestos": [
+      "El paquete no fijó gates ejecutables para esta revisión: se me indicó que build y typecheck pasaron y que lint/tests estaban en curso, y que soy revisor de solo lectura. Asumo por tanto que ningún gate de ejecución me corresponde y los declaro not-run en lugar de simularlos.",
+      "Asumo que la doble derivación y la comparación independiente previas ya cubrieron el contraste requisito-a-requisito, por lo que esta pasada busca defectos demostrables y no reconstruye esas conclusiones.",
+      "Asumo que 'no atribuyas revisión visual' excluye juicios sobre apariencia renderizada, pero no excluye defectos de contenido y estructura de encabezados legibles en el código (D1).",
+      "Asumo que el runner de migraciones aplica cada archivo en su propia transacción, requisito para que 202609060001 (alter type add value) confirme antes de que 202609060002 use el literal 'aunor'. No pude verificarlo desde el repositorio.",
+      "Asumo que el modo demo no contiene datos reales, por lo que la paridad demo/Supabase (D4) se califica como baja pese a incumplir el contrato de CLAUDE.md."
+    ],
+    "propuesta": "Revisión estática de solo lectura de la implementación Aunor contra los requisitos indicados. El aislamiento se sostiene: `private.can_access_aunor_activity` (202609060002:186-196) exige publicación vigente, actividad no borrada y origen distinto de burson, y las siete vistas `public.aunor_*` filtran por ella sobre tablas `private` revocadas a `authenticated`. Las tablas internas quedan cerradas al rol nuevo por caída explícita a `else false` en `private.can_view_activity` (202608220001:229-249) y en `private.can_access_activity_conversation` (202608300002:58-64), y `profiles_select_authorized` limita a Aunor a su propia fila. El cambio de `actor.role = 'burson'` a `actor.role not in ('admin','operario')` en los tres RPC de mensajes (202609060002:322,432,519) es una corrección de seguridad real: la comprobación negativa anterior habría admitido a Aunor en el hilo interno Admin-Operario; lo mismo aplica a la política `audit_events_select_authorized` (:272-276). Ningún otro RPC regresa, porque todos fijan `require_admin_profile()` o `require_operator_profile()`. Las rutas son listas de permitidos y ni opiniones, ni descripción, ni responsable, ni enlace de material, ni auditoría, ni papelera aparecen en la proyección externa; el material solo llega por `aunor_deliveries` publicada. La confirmación es por objeto concreto con `acknowledged:true` y comprobación de versión y revisión de material, con descargo de no-pago. 'Por relacionar' es visible y los originales se conservan por `on delete restrict`, instantáneas de título, cadenas `corrects_id` y `superseded_at`. Se reportan siete defectos: D1 (media) el flag `publicMode` de annual-calendar-view.tsx:364-378 solo cambia el enlace de vuelta y deja al cliente un segundo `<h1>Histórico {year}</h1>` junto a 'Archivo operativo' y 'Todas las actividades del año', sobre una página que ya emitió `<h1>Calendario anual</h1>` en aunor-space.tsx:157; D2 (media) admin-aunor-panel.tsx:88,91 comparte el estado `evidence` entre el formulario de acuerdo y el de reemplazo, sin limpiarlo al guardar, de modo que un enlace se adjunta al registro equivocado; D3 (baja-media) admin-aunor-panel.tsx:81 lanza RangeError no capturado si `contact` no es fecha válida; D4 (baja) aunor-demo.server.ts:29 confía en `demoSource` del cliente y rompe la paridad de contrato con el modo real; D5 (baja) actions.ts:23,37 no aplica la forma UUID fuera de Supabase antes de `revalidatePath`; D6 y D7 (bajas) son límites operativos del cerrojo consultivo global y del crecimiento sin purga de `private.aunor_requests`.",
+    "alternativas": [
+      "Para D1, en lugar de ramificar el bloque de cabecera con `publicMode`, extraer `title`, `subtitle` y `countLabel` como props de AnnualCalendarView y que cada consumidor los provea; es más limpio pero toca la llamada de /historico y amplía el diámetro del cambio.",
+      "Para D1, dejar que AunorSpace omita su propio encabezado cuando scene === 'calendar' y quedarse con el del calendario; se descarta porque conservaría el vocabulario 'Histórico' y 'Archivo operativo' frente al cliente externo.",
+      "Para D4, aceptar la divergencia demo/real como deuda documentada en vez de resolver la actividad en el servidor; sería válido si Marco decide que la demo no debe replicar el contrato, pero contradice CLAUDE.md tal como está escrito hoy.",
+      "Para D2, un único campo de evidencia compartido y explícitamente etiquetado como tal en ambos formularios, en vez de dos estados separados; más simple pero mantiene el acoplamiento que causa la atribución equivocada."
+    ],
+    "riesgos": [
+      "No ejecuté nada: ni build, ni typecheck, ni lint, ni tests, ni aplicación de migraciones, ni navegador. Todo hallazgo proviene de lectura estática de los archivos citados y no sustituye la verificación.",
+      "No verifiqué que las migraciones apliquen. 202609060001 debe confirmar antes de que 202609060002 use el literal 'aunor'; si el runner agrupara ambos archivos en una transacción, la migración fallaría al arrancar.",
+      "No leí aunor-examples.ts, aunor-space.module.css, scripts/verify-aunor.mjs, ni las rutas app/aunor/{loading,error,acordado,mensajes,reemplazos} más allá del enrutado, ni account-store.ts/accounts.ts más allá de las líneas del invariante Aunor. No emito conclusión sobre ellos.",
+      "Queda sin resolver si el error SR009 del invariante 'un solo Aunor activo' llega a Admin con un mensaje útil: la regla está en SQL (202609060002:4-19) y en el almacén demo, pero _shared/account-validation.ts acepta 'aunor' sin comprobación equivalente y no pude leer el handler de la Edge Function que lo consume.",
+      "Las vistas exponen title, status, place y jornadas en vivo desde la actividad interna, no desde una instantánea de la publicación; es coherente con el texto del panel ('Se publicarán título, categoría, estado, días y lugares'), pero implica que replanificar o renombrar cambia lo que ve el cliente sin republicar. Lo señalo como consecuencia de diseño, no como defecto, porque no tengo la decisión de Marco al respecto.",
+      "No audité el resto del repositorio, conforme a la instrucción."
+    ],
+    "verificacion": [
+      "Aplicar las migraciones desde cero en Supabase local (supabase db reset) para confirmar que 202609060001 confirma antes de 202609060002 y que el trigger, el índice único y las diez tablas privadas se crean sin error.",
+      "Con una cuenta Aunor real contra la Data API: SELECT sobre activities, activity_date_spans, activity_messages, audit_events y profiles debe devolver cero filas ajenas; y aunor_activities solo las publicadas y no borradas.",
+      "Llamar post_activity_message_v1 y edit/delete con la sesión Aunor y comprobar que devuelven SR002, verificando la corrección de 202609060002:322,432,519.",
+      "Publicar una actividad, darla de baja y confirmar que desaparece por completo del espacio Aunor sin filtrar existencia ni motivo.",
+      "Ejecutar `npm run verify` y `npm run test:e2e` desde frontend/ para cerrar los gates que quedaron not-run en esta revisión.",
+      "Reproducir D2 manualmente: escribir un enlace en 'Enlace de evidencia' del formulario de acuerdo, guardar, y publicar después un reemplazo sin tocar ese campo; el enlace debe aparecer indebidamente en el reemplazo.",
+      "Reproducir D1 abriendo /aunor/calendario e inspeccionando el DOM: deben aparecer dos elementos h1, el segundo con el texto 'Histórico' seguido del año."
+    ],
+    "confianza": {
+      "nivel": "media",
+      "motivo": "Alta en las conclusiones de autorización: se apoyan en lectura directa de las funciones de visibilidad, las políticas RLS y las cláusulas de rol de cada RPC, y los puntos decisivos (else false en can_view_activity y can_access_activity_conversation, cambio de la comprobación negativa de burson) son verificables línea a línea. Media en el conjunto porque no ejecuté ningún gate, no confirmé que las migraciones apliquen, dejé sin leer varios archivos del paquete y queda abierto el comportamiento del handler de la Edge Function ante SR009."
+    },
+    "input_class": "application",
+    "pipeline": "core",
+    "gates": [
+      {
+        "name": "build",
+        "status": "not-run",
+        "evidence": "Reportado como aprobado en el encargo; no lo ejecuté ni lo verifiqué. No reclamo evidencia propia."
+      },
+      {
+        "name": "typecheck",
+        "status": "not-run",
+        "evidence": "Reportado como aprobado en el encargo; no lo ejecuté. Sí revisé por lectura la varianza de onChoose entre CalendarActivity y HistoricalActivity en annual-calendar.tsx:144, que es asignable."
+      },
+      {
+        "name": "lint",
+        "status": "not-run",
+        "evidence": "Indicado como recién corregido en el encargo; no lo ejecuté."
+      },
+      {
+        "name": "tests",
+        "status": "not-run",
+        "evidence": "Indicados como en curso en el encargo; no los ejecuté ni conozco su resultado."
+      },
+      {
+        "name": "migraciones desde cero",
+        "status": "not-run",
+        "evidence": "No apliqué 202609060001 ni 202609060002. Riesgo pendiente: el literal 'aunor' solo es usable si el alter type confirmó en una transacción anterior."
+      },
+      {
+        "name": "revisión visual",
+        "status": "not-applicable",
+        "evidence": "Excluida por instrucción explícita: aún no existen capturas reales finales."
+      },
+      {
+        "name": "revisión de autorización de solo lectura",
+        "status": "passed",
+        "evidence": "private.can_view_activity 202608220001:229-249 y can_access_activity_conversation 202608300002:58-64 terminan en else false; can_access_aunor_activity 202609060002:186-196 exige publicación vigente, deleted_at null y origin<>burson; los tres RPC de mensajes pasan de = 'burson' a not in ('admin','operario') en :322,:432,:519; audit_events_select_authorized reescrita en :272-276; el resto de RPC fija require_admin_profile/require_operator_profile."
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "supabase/migrations/202609060002_aunor_space.sql",
+        "purpose": "Autorización real del canal Aunor: tablas privadas, vistas públicas de proyección, aunor_mutate_v1 y el endurecimiento de los RPC de mensajes y de la política de auditoría.",
+        "status": "reviewed"
+      },
+      {
+        "path": "supabase/migrations/202609060001_aunor_role.sql",
+        "purpose": "Adición del valor de enum 'aunor'; debe confirmar en transacción propia antes de la migración siguiente.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/components/annual-calendar-view.tsx",
+        "purpose": "Calendario anual extraído y reutilizado por Aunor; sede del defecto D1 (publicMode no cubre la cabecera).",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/components/admin-aunor-panel.tsx",
+        "purpose": "Panel de gestión Aunor dentro de la ficha de actividad; sede de los defectos D2 y D3.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/components/aunor-space.tsx",
+        "purpose": "Espacio del cliente: tarjetas, detalle, confirmación, conversación y calendario público.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/app/aunor/actions.ts",
+        "purpose": "Server actions del canal; sede del defecto D5 y de la traducción de códigos SR a mensajes.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/lib/aunor-demo.server.ts",
+        "purpose": "Simulación aislada del canal; sede del defecto D4 de paridad con el contrato real.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/lib/aunor.ts",
+        "purpose": "Tipos de la proyección externa y puertas canUseAunor/canMutateAunor, coherentes con las del RPC.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/lib/supabase/aunor.ts",
+        "purpose": "Lectura paginada exclusivamente sobre las vistas públicas, nunca sobre tablas internas.",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/components/aunor-page.tsx",
+        "purpose": "Guardia de ruta requireRole(r=>r.id==='aunor') para todo el espacio.",
+        "status": "reviewed"
+      },
+      {
+        "path": "supabase/migrations/202608220001_backend_foundation.sql",
+        "purpose": "Referencia de autorización preexistente: can_view_activity, can_view_activity_id y políticas RLS base.",
+        "status": "reviewed"
+      },
+      {
+        "path": "supabase/migrations/202608300002_private_conversations.sql",
+        "purpose": "Referencia para comparar los RPC de mensajes antes y después del endurecimiento.",
+        "status": "reviewed"
+      }
+    ],
+    "deviations": [
+      {
+        "category": "defect",
+        "before": "annual-calendar-view.tsx:364-378 aplica publicMode solo al enlace de vuelta; la cabecera emite siempre 'Archivo operativo · N registros', '<h1>Histórico {year}</h1>' y 'Todas las actividades del año en una sola vista', mientras aunor-space.tsx:157 ya emitió '<h1>Calendario anual</h1>'.",
+        "after": "Ramificar el bloque de cabecera (líneas 367-379) según publicMode con texto propio del cliente, y degradar el segundo encabezado a h2 en modo público.",
+        "reason": "El cliente externo ve vocabulario interno ('Histórico', 'Archivo operativo') y una afirmación falsa de alcance, ya que solo ve lo publicado; además la página queda con dos h1.",
+        "impact": "Contenido incorrecto frente a un tercero y estructura de encabezados duplicada que degrada la navegación por lector de pantalla."
+      },
+      {
+        "category": "defect",
+        "before": "admin-aunor-panel.tsx:88 vincula 'Enlace de evidencia' al estado `evidence` y :91 envía `evidenceLink: evidence` desde el formulario de reemplazo, que carece de campo propio; :81 limpia solo `body` al guardar.",
+        "after": "Añadir un estado `replacementEvidence` para el formulario de reemplazo y limpiar `evidence` en la rama de éxito del acuerdo.",
+        "reason": "Un enlace escrito para un acuerdo se adjunta silenciosamente a acuerdos posteriores y al registro de reemplazo.",
+        "impact": "Evidencia atribuida al registro equivocado en un canal cuyo valor depende de la trazabilidad de lo acordado."
+      },
+      {
+        "category": "defect",
+        "before": "admin-aunor-panel.tsx:81 evalúa `new Date(contact).toISOString()` dentro del manejador asíncrono de envío.",
+        "after": "Comprobar `Date.parse(contact)` con `Number.isFinite` antes de construir el payload y, si falla, fijar el error visible y detener el envío.",
+        "reason": "Donde datetime-local degrada a input de texto, `required` acepta cualquier cadena no vacía y la conversión lanza RangeError antes de llamar a mutate, dejando la promesa sin capturar.",
+        "impact": "El formulario no hace nada y no muestra error; el Admin no puede distinguir el fallo de una operación lenta."
+      },
+      {
+        "category": "defect",
+        "before": "aunor-demo.server.ts:29 acepta `demoSource` del cliente (status, materialLink, version, title, spans) comprobando solo rol admin, coincidencia de id, origen no burson y ausencia de baja.",
+        "after": "Resolver la actividad en el servidor desde el almacén de la simulación, o revalidar status, materialLink y version contra `s.sources` antes de publicar entrega.",
+        "reason": "En modo Supabase esos campos se leen de la fila (202609060002:648,700-708); en demo llegan en el cuerpo de la petición, de modo que el contrato de permisos no es el mismo en ambos modos.",
+        "impact": "Incumple la regla de CLAUDE.md de que la simulación refleje el contrato real; permite publicar una entrega de una actividad que no está Entregada dentro de la demo."
+      },
+      {
+        "category": "defect",
+        "before": "app/aunor/actions.ts:23 valida activityId solo por longitud fuera de Supabase y :37 lo concatena en `revalidatePath('/actividades/'+id)`; la forma UUID solo se exige en :28.",
+        "after": "Aplicar la expresión UUID en la validación general de entrada, o codificar el segmento antes de revalidatePath.",
+        "reason": "La validación estricta existe pero está condicionada al modo de datos, sin motivo aparente: los identificadores de la demo también son UUID.",
+        "impact": "Bajo. No es una frontera de privilegio, pero deja entrar a la capa de caché una cadena arbitraria de hasta 100 caracteres."
+      },
+      {
+        "category": "performance",
+        "before": "202609060002:603-604 toma un único cerrojo consultivo global para toda escritura del canal, incluidos los marcadores de lectura que el cliente dispara solo al abrir un hilo (aunor-space.tsx:45-52).",
+        "after": "Sin cambio ahora; revisar si el volumen de escritura crece, por ejemplo acotando el cerrojo por actividad para los comandos que no cruzan dos actividades.",
+        "reason": "La serialización global simplifica el orden de bloqueo y hoy es correcta, pero convierte cada apertura de conversación en una escritura serializada con todas las demás.",
+        "impact": "Ninguno al volumen actual; límite de escalado conocido."
+      },
+      {
+        "category": "other",
+        "before": "private.aunor_requests (202609060002:156-163) almacena una fila por mutación sin política de retención.",
+        "after": "Purga periódica de filas anteriores a la ventana de reintento.",
+        "reason": "La tabla solo sirve para idempotencia de reintentos, cuya utilidad expira en minutos.",
+        "impact": "Crecimiento monótono de una tabla interna; sin efecto funcional a corto plazo."
+      }
+    ]
+  }
+}

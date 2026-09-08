@@ -220,6 +220,8 @@ export async function handleAdminAccountsRequest(request: Request, ctx: any) {
           ok: false,
           code: cleanupError
             ? "profile_create_cleanup_pending"
+            : body.role === "aunor" && profileError.code === "SR009"
+            ? "aunor_account_exists"
             : "profile_create_failed",
         },
         409,

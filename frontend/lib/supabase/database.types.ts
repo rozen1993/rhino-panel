@@ -1,3 +1,5 @@
+import type { AunorViews } from "@/lib/aunor";
+
 export type Json =
   | string
   | number
@@ -148,8 +150,12 @@ export type Database = {
         Relationships: [];
       };
     };
-    Views: Record<string, never>;
+    Views: AunorViews;
     Functions: {
+      aunor_mutate_v1: {
+        Args: { p_command: string; p_activity_id: string; p_request_id: string; p_payload: Json };
+        Returns: Json;
+      };
       register_app_session: { Args: Record<string, never>; Returns: undefined };
       revoke_current_app_session: {
         Args: Record<string, never>;
@@ -356,7 +362,7 @@ export type Database = {
       };
     };
     Enums: {
-      app_role: "operario" | "admin" | "burson";
+      app_role: "operario" | "admin" | "burson" | "aunor";
       activity_status: "Programada" | "En proceso" | "Entregada";
       activity_type: "Grabación" | "Edición" | "Creatividad" | "Locución";
       activity_origin: "operario" | "burson";

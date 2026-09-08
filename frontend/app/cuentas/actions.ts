@@ -79,6 +79,7 @@ const createFunctionErrors: Record<string, string> = {
   auth_repair_failed: "No se pudo recuperar el usuario pendiente; reintenta.",
   profile_lookup_failed: "No se pudo comprobar el perfil de la cuenta.",
   profile_create_failed: "No se creó el perfil; el usuario Auth fue retirado.",
+  aunor_account_exists: "Ya existe una cuenta activa de Aunor. Utiliza ese acceso compartido.",
   profile_create_cleanup_pending:
     "No se creó el perfil y la limpieza quedó pendiente; reintenta el mismo usuario.",
 };

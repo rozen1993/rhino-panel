@@ -1,4 +1,5 @@
 "use client";
+import { AdminAunorPanel } from "@/components/admin-aunor-panel";
 import { ActivityJourneys } from "@/components/activity-journeys";
 
 import Link from "next/link";
@@ -402,6 +403,8 @@ export function ActivityDetail({
           )}
         </aside>
       </div>
+
+      {role.id === "admin" && item.origin !== "burson" && !item.deletedAt && <AdminAunorPanel item={item} role={role} />}
 
       {canThread && item.status === "Entregada" && (
         <Card className="overflow-hidden shadow-[var(--shadow-2)]">

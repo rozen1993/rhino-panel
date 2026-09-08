@@ -1,4 +1,4 @@
-export const roleIds = ["operario", "admin", "burson"] as const;
+export const roleIds = ["operario", "admin", "burson", "aunor"] as const;
 export type RoleId = (typeof roleIds)[number];
 
 export const activityTypes = [
@@ -24,6 +24,12 @@ export type Role = {
 };
 
 export const roles: Record<RoleId, Role> = {
+  aunor: {
+    id: "aunor", label: "Aunor", seesAllActivities: false,
+    administers: false, canCreateOwnActivities: false,
+    createsBursonRequests: false, mustChangePassword: false,
+    summary: "Consulta sus actividades publicadas y conversa con Rhino.",
+  },
   operario: {
     id: "operario",
     label: "Operario",
@@ -57,6 +63,10 @@ export const roles: Record<RoleId, Role> = {
 };
 
 export const roleList = roleIds.map((id) => roles[id]);
+
+export function roleHome(roleId: RoleId) {
+  return roleId === "aunor" ? "/aunor" : roleId === "burson" ? "/burson" : "/actividades";
+}
 
 export function allowedActivityTypes() {
   return activityTypes;

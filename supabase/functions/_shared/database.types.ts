@@ -50,7 +50,7 @@ export type EdgeDatabase = {
       };
     };
     Enums: {
-      app_role: "operario" | "admin" | "burson";
+      app_role: "operario" | "admin" | "burson" | "aunor";
     };
     CompositeTypes: Record<string, never>;
   };

@@ -1,0 +1,126 @@
+{
+  "type": "result",
+  "subtype": "success",
+  "is_error": false,
+  "result": "{\"supuestos\":[\"El paquete acota el alcance a tres cambios; no repito revisión general de SQL ni de frontend.\",\"Consulté una sola definición fuera de los dos archivos indicados (la firma de aunorCode en frontend/lib/aunor.ts) porque sin ella no se puede juzgar si pasar el tipo corrige el prefijo; ninguna otra lectura externa.\",\"Doy por buenos, sin verificarlos, los resultados reportados en el paquete: 20 Playwright, 218 unit, 22 Edge, SQL y el recorrido de demo aislada.\",\"Los sufijos legibles de los códigos (IGINAL, ANORTE, ZACION) se deben a los identificadores de la demo, no al algoritmo; con UUID reales serían alfanuméricos.\",\"AdminUI con conversaciones apiladas y el modal del calendario móvil quedan fuera de juicio por indicación expresa.\"],\"propuesta\":\"Los tres cambios quedan verificados. (1) Códigos: aunor-space.tsx:106 resuelve original y sustituto en w.activities y pasa su tipo a aunorCode(id, type?), cuyo fallback sin tipo era el AC- defectuoso; las capturas confirman GR-ANORTE, GR-IGINAL y GR-ZACION idénticos en las cuatro vistas (acordado, reemplazo 390, entrega, calendario) y coherentes con la leyenda \\\"Grabación 3\\\". (2) Color: .primary usa var(--amber) y se aplica a \\\"Abrir material\\\" y al CTA del detalle de calendario; ambos se ven con el mismo verde y texto oscuro, alineados con los gradientes blue→amber de las tarjetas de confirmación. (3) Selector de categoría: está fuera del condicional de panel y dentro del bloque panel||calendar, y filtra las actividades del calendario en tsx:180; visible en 06-calendario. Las cinco capturas nativas de formulario móvil se leen: etiquetas, ayudas y controles completos a 390 px, cerrando la limitación de la revisión anterior. Sin bloqueantes nuevos para preview local: los cambios son aditivos y de bajo riesgo.\",\"alternativas\":[],\"riesgos\":[\"El tipo se obtiene de w.activities.find(...): si el original o el sustituto no están en el workspace servido, ?.type queda indefinido y el código vuelve a AC-. Caso no cubierto por las capturas.\",\"En las capturas 2 y 4 la barra inferior fija tapa el pie de la tarjeta y su CTA. Al ser recortes por elemento no se distingue artefacto de captura de solape real a 390 px; conviene mirarlo en navegador.\",\"El CTA deshabilitado (Enviar respuesta / Enviar comentario) queda en verde pálido con texto blanco, contraste bajo frente al verde saturado con texto oscuro del estado activo.\"],\"verificacion\":[\"Leído frontend/components/aunor-space.tsx:106 (par original/sustituto con tipo), :86 y :134 (CTA con s.primary), :174 y :180 (selector de categoría y filtro en calendario).\",\"Leído frontend/components/aunor-space.module.css:4 (.primary con var(--amber)).\",\"Leída la firma de aunorCode en frontend/lib/aunor.ts:58 para confirmar el fallback AC- sin tipo.\",\"Vistas 03-acordado-1366, 04-reemplazo-390, 02-entrega-1366 y 06-calendario-1366: códigos cruzados entre vistas, verde de los CTA y presencia del selector.\",\"Vistas las 5 capturas 08-admin-form-1..5-390: legibilidad de etiquetas, ayudas y controles.\",\"No ejecuté navegación, build ni pruebas en esta revisión.\"],\"confianza\":{\"nivel\":\"alta\",\"motivo\":\"Los tres cambios se comprueban por lectura directa del código y se confirman visualmente en capturas reales; los códigos coinciden en cuatro vistas independientes. La confianza no es total en dos puntos que la evidencia disponible no puede resolver: el solape de la barra inferior en recortes por elemento y el caso de una actividad ausente del workspace.\"},\"input_class\":\"structured-component\",\"pipeline\":\"core\",\"gates\":[{\"name\":\"Defecto de códigos corregido\",\"status\":\"passed\",\"evidence\":\"tsx:106 pasa original?.type y substitute?.type; GR-ANORTE/GR-IGINAL/GR-ZACION consistentes en 03-acordado-1366, 04-reemplazo-390, 02-entrega-1366 y 06-calendario-1366; ningún AC- residual en las capturas.\"},{\"name\":\"CTA de material y calendario con var(--amber)\",\"status\":\"passed\",\"evidence\":\"CSS:4 .primary{background:var(--amber);color:var(--night)}; aplicado en tsx:86 y tsx:134; verde idéntico con texto oscuro en 02-entrega-1366 y 06-calendario-1366.\"},{\"name\":\"Selector de categoría restituido en calendario\",\"status\":\"passed\",\"evidence\":\"tsx:174 lo sitúa fuera del condicional de panel dentro del bloque panel||calendar; tsx:180 aplica el filtro; visible como 'Todas las categorías' en 06-calendario-1366.\"},{\"name\":\"Legibilidad de los 5 formularios móviles\",\"status\":\"passed\",\"evidence\":\"08-admin-form-1..5-390 leídas: etiquetas, textos de ayuda y controles completos y sin truncar a 390 px; solo los CTA de las tarjetas 2 y 4 quedan cubiertos por la barra inferior.\"},{\"name\":\"Bloqueantes nuevos para preview local\",\"status\":\"passed\",\"evidence\":\"Ninguno: un argumento extra en una función pura, una clase CSS preexistente y un condicional ampliado.\"},{\"name\":\"Pruebas y recorridos\",\"status\":\"not-run\",\"evidence\":\"No ejecuté navegación, build ni suites; los resultados citados (20 Playwright, 218 unit, 22 Edge, SQL, demo aislada) provienen del paquete.\"}],\"artifacts\":[{\"path\":\"frontend/components/aunor-space.tsx\",\"purpose\":\"Códigos con tipo en ReplacementSummary (106), CTA .primary (86, 134), selector de categoría y filtro del calendario (174, 180).\",\"status\":\"reviewed\"},{\"path\":\"frontend/components/aunor-space.module.css\",\"purpose\":\".primary con var(--amber) y texto var(--night).\",\"status\":\"reviewed\"},{\"path\":\"docs/implementacion-aunor-2026-09-06/capturas-02/03-acordado-1366.png\",\"purpose\":\"Códigos del par original/sustituto en Lo acordado.\",\"status\":\"reviewed\"},{\"path\":\"docs/implementacion-aunor-2026-09-06/capturas-02/04-reemplazo-390.png\",\"purpose\":\"Códigos del par en móvil; solape de la barra inferior.\",\"status\":\"reviewed\"},{\"path\":\"docs/implementacion-aunor-2026-09-06/capturas-02/02-entrega-1366.png\",\"purpose\":\"Código en cabecera y CTA verde 'Abrir material'.\",\"status\":\"reviewed\"},{\"path\":\"docs/implementacion-aunor-2026-09-06/capturas-02/06-calendario-1366.png\",\"purpose\":\"Selector de categoría, CTA verde y códigos de la fecha múltiple.\",\"status\":\"reviewed\"},{\"path\":\"docs/implementacion-aunor-2026-09-06/capturas-02/08-admin-form-1-390.png\",\"purpose\":\"Formulario 1 de Admin móvil; legible por completo.\",\"status\":\"reviewed\"},{\"path\":\"docs/implementacion-aunor-2026-09-06/capturas-02/08-admin-form-2-390.png\",\"purpose\":\"Formulario 2; CTA cubierto por la barra inferior.\",\"status\":\"reviewed\"},{\"path\":\"docs/implementacion-aunor-2026-09-06/capturas-02/08-admin-form-3-390.png\",\"purpose\":\"Formulario 3; legible por completo.\",\"status\":\"reviewed\"},{\"path\":\"docs/implementacion-aunor-2026-09-06/capturas-02/08-admin-form-4-390.png\",\"purpose\":\"Formulario 4; CTA cubierto por la barra inferior.\",\"status\":\"reviewed\"},{\"path\":\"docs/implementacion-aunor-2026-09-06/capturas-02/08-admin-form-5-390.png\",\"purpose\":\"Formulario 5; legible, con el CTA deshabilitado de contraste bajo.\",\"status\":\"reviewed\"}],\"deviations\":[]}",
+  "structured_output": {
+    "supuestos": [
+      "El paquete acota el alcance a tres cambios; no repito revisión general de SQL ni de frontend.",
+      "Consulté una sola definición fuera de los dos archivos indicados (la firma de aunorCode en frontend/lib/aunor.ts) porque sin ella no se puede juzgar si pasar el tipo corrige el prefijo; ninguna otra lectura externa.",
+      "Doy por buenos, sin verificarlos, los resultados reportados en el paquete: 20 Playwright, 218 unit, 22 Edge, SQL y el recorrido de demo aislada.",
+      "Los sufijos legibles de los códigos (IGINAL, ANORTE, ZACION) se deben a los identificadores de la demo, no al algoritmo; con UUID reales serían alfanuméricos.",
+      "AdminUI con conversaciones apiladas y el modal del calendario móvil quedan fuera de juicio por indicación expresa."
+    ],
+    "propuesta": "Los tres cambios quedan verificados. (1) Códigos: aunor-space.tsx:106 resuelve original y sustituto en w.activities y pasa su tipo a aunorCode(id, type?), cuyo fallback sin tipo era el AC- defectuoso; las capturas confirman GR-ANORTE, GR-IGINAL y GR-ZACION idénticos en las cuatro vistas (acordado, reemplazo 390, entrega, calendario) y coherentes con la leyenda \"Grabación 3\". (2) Color: .primary usa var(--amber) y se aplica a \"Abrir material\" y al CTA del detalle de calendario; ambos se ven con el mismo verde y texto oscuro, alineados con los gradientes blue→amber de las tarjetas de confirmación. (3) Selector de categoría: está fuera del condicional de panel y dentro del bloque panel||calendar, y filtra las actividades del calendario en tsx:180; visible en 06-calendario. Las cinco capturas nativas de formulario móvil se leen: etiquetas, ayudas y controles completos a 390 px, cerrando la limitación de la revisión anterior. Sin bloqueantes nuevos para preview local: los cambios son aditivos y de bajo riesgo.",
+    "alternativas": [],
+    "riesgos": [
+      "El tipo se obtiene de w.activities.find(...): si el original o el sustituto no están en el workspace servido, ?.type queda indefinido y el código vuelve a AC-. Caso no cubierto por las capturas.",
+      "En las capturas 2 y 4 la barra inferior fija tapa el pie de la tarjeta y su CTA. Al ser recortes por elemento no se distingue artefacto de captura de solape real a 390 px; conviene mirarlo en navegador.",
+      "El CTA deshabilitado (Enviar respuesta / Enviar comentario) queda en verde pálido con texto blanco, contraste bajo frente al verde saturado con texto oscuro del estado activo."
+    ],
+    "verificacion": [
+      "Leído frontend/components/aunor-space.tsx:106 (par original/sustituto con tipo), :86 y :134 (CTA con s.primary), :174 y :180 (selector de categoría y filtro en calendario).",
+      "Leído frontend/components/aunor-space.module.css:4 (.primary con var(--amber)).",
+      "Leída la firma de aunorCode en frontend/lib/aunor.ts:58 para confirmar el fallback AC- sin tipo.",
+      "Vistas 03-acordado-1366, 04-reemplazo-390, 02-entrega-1366 y 06-calendario-1366: códigos cruzados entre vistas, verde de los CTA y presencia del selector.",
+      "Vistas las 5 capturas 08-admin-form-1..5-390: legibilidad de etiquetas, ayudas y controles.",
+      "No ejecuté navegación, build ni pruebas en esta revisión."
+    ],
+    "confianza": {
+      "nivel": "alta",
+      "motivo": "Los tres cambios se comprueban por lectura directa del código y se confirman visualmente en capturas reales; los códigos coinciden en cuatro vistas independientes. La confianza no es total en dos puntos que la evidencia disponible no puede resolver: el solape de la barra inferior en recortes por elemento y el caso de una actividad ausente del workspace."
+    },
+    "input_class": "structured-component",
+    "pipeline": "core",
+    "gates": [
+      {
+        "name": "Defecto de códigos corregido",
+        "status": "passed",
+        "evidence": "tsx:106 pasa original?.type y substitute?.type; GR-ANORTE/GR-IGINAL/GR-ZACION consistentes en 03-acordado-1366, 04-reemplazo-390, 02-entrega-1366 y 06-calendario-1366; ningún AC- residual en las capturas."
+      },
+      {
+        "name": "CTA de material y calendario con var(--amber)",
+        "status": "passed",
+        "evidence": "CSS:4 .primary{background:var(--amber);color:var(--night)}; aplicado en tsx:86 y tsx:134; verde idéntico con texto oscuro en 02-entrega-1366 y 06-calendario-1366."
+      },
+      {
+        "name": "Selector de categoría restituido en calendario",
+        "status": "passed",
+        "evidence": "tsx:174 lo sitúa fuera del condicional de panel dentro del bloque panel||calendar; tsx:180 aplica el filtro; visible como 'Todas las categorías' en 06-calendario-1366."
+      },
+      {
+        "name": "Legibilidad de los 5 formularios móviles",
+        "status": "passed",
+        "evidence": "08-admin-form-1..5-390 leídas: etiquetas, textos de ayuda y controles completos y sin truncar a 390 px; solo los CTA de las tarjetas 2 y 4 quedan cubiertos por la barra inferior."
+      },
+      {
+        "name": "Bloqueantes nuevos para preview local",
+        "status": "passed",
+        "evidence": "Ninguno: un argumento extra en una función pura, una clase CSS preexistente y un condicional ampliado."
+      },
+      {
+        "name": "Pruebas y recorridos",
+        "status": "not-run",
+        "evidence": "No ejecuté navegación, build ni suites; los resultados citados (20 Playwright, 218 unit, 22 Edge, SQL, demo aislada) provienen del paquete."
+      }
+    ],
+    "artifacts": [
+      {
+        "path": "frontend/components/aunor-space.tsx",
+        "purpose": "Códigos con tipo en ReplacementSummary (106), CTA .primary (86, 134), selector de categoría y filtro del calendario (174, 180).",
+        "status": "reviewed"
+      },
+      {
+        "path": "frontend/components/aunor-space.module.css",
+        "purpose": ".primary con var(--amber) y texto var(--night).",
+        "status": "reviewed"
+      },
+      {
+        "path": "docs/implementacion-aunor-2026-09-06/capturas-02/03-acordado-1366.png",
+        "purpose": "Códigos del par original/sustituto en Lo acordado.",
+        "status": "reviewed"
+      },
+      {
+        "path": "docs/implementacion-aunor-2026-09-06/capturas-02/04-reemplazo-390.png",
+        "purpose": "Códigos del par en móvil; solape de la barra inferior.",
+        "status": "reviewed"
+      },
+      {
+        "path": "docs/implementacion-aunor-2026-09-06/capturas-02/02-entrega-1366.png",
+        "purpose": "Código en cabecera y CTA verde 'Abrir material'.",
+        "status": "reviewed"
+      },
+      {
+        "path": "docs/implementacion-aunor-2026-09-06/capturas-02/06-calendario-1366.png",
+        "purpose": "Selector de categoría, CTA verde y códigos de la fecha múltiple.",
+        "status": "reviewed"
+      },
+      {
+        "path": "docs/implementacion-aunor-2026-09-06/capturas-02/08-admin-form-1-390.png",
+        "purpose": "Formulario 1 de Admin móvil; legible por completo.",
+        "status": "reviewed"
+      },
+      {
+        "path": "docs/implementacion-aunor-2026-09-06/capturas-02/08-admin-form-2-390.png",
+        "purpose": "Formulario 2; CTA cubierto por la barra inferior.",
+        "status": "reviewed"
+      },
+      {
+        "path": "docs/implementacion-aunor-2026-09-06/capturas-02/08-admin-form-3-390.png",
+        "purpose": "Formulario 3; legible por completo.",
+        "status": "reviewed"
+      },
+      {
+        "path": "docs/implementacion-aunor-2026-09-06/capturas-02/08-admin-form-4-390.png",
+        "purpose": "Formulario 4; CTA cubierto por la barra inferior.",
+        "status": "reviewed"
+      },
+      {
+        "path": "docs/implementacion-aunor-2026-09-06/capturas-02/08-admin-form-5-390.png",
+        "purpose": "Formulario 5; legible, con el CTA deshabilitado de contraste bajo.",
+        "status": "reviewed"
+      }
+    ],
+    "deviations": []
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "is_error": false,
+  "duration_api_ms": 185220,
+  "num_turns": 2,
+  "stop_reason": "tool_use",
+  "session_id": "dbf167cd-78af-48fc-88f2-a7119b7429cd",
+  "total_cost_usd": 0.9595910000000001,
+  "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 62860,
+    "cache_read_input_tokens": 0,
+    "output_tokens": 12881,
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 62860,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "not_available",
+    "iterations": [
+      {
+        "input_tokens": 2,
+        "output_tokens": 12881,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 62860,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 62860
+        },
+        "type": "message"
+      }
+    ],
+    "speed": "standard"
+  },
+  "modelUsage": {
+    "claude-haiku-4-5-20251001": {
+      "inputTokens": 8866,
+      "outputTokens": 18,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0.008956,
+      "contextWindow": 200000,
+      "maxOutputTokens": 32000,
+      "canonicalModel": "claude-haiku-4-5",
+      "provider": "firstParty"
+    },
+    "claude-opus-5": {
+      "inputTokens": 2,
+      "outputTokens": 12881,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 62860,
+      "webSearchRequests": 0,
+      "costUSD": 0.9506350000000001,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 64000,
+      "canonicalModel": "claude-opus-5",
+      "provider": "firstParty"
+    }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "{\"pipeline\":\"core\",\"coincidencias\":[\"Aunor nunca entra en las policies de activities/jornadas/auditoria/mensajes internos: toda lectura pasa por objetos nuevos. Ambos descartan ampliar el CASE de activities_select_authorized porque el grant de SELECT es de tabla completa y PostgREST permite pedir columnas arbitrarias.\",\"El valor de enum 'aunor' va en migracion propia y separada del resto (Claude explicita la causa: alter type ... add value no es usable en la misma transaccion).\",\"Cuenta unica compartida con indice unico parcial sobre perfil activo, calcado del patron ya probado de Burson; desactivable y reutilizable.\",\"Entregas y reemplazos como objetos externos inmutables con identidad propia; la confirmacion Aunor apunta al objeto concreto, nunca a la actividad generica, nunca implica pago ni se infiere de un mensaje.\",\"Conversacion externa en tabla NUEVA, no reutilizando activity_messages (su CHECK es in ('admin','operario') y sus RPC son denylist de burson).\",\"Solicitante declarado (texto libre no verificado) separado estructuralmente del registrador (uuid Admin); etiqueta Aunor fija y atribucion colectiva sin identidad personal.\",\"update_execution_v1, thread_opened_at, bloqueo de entregas, planificacion Admin, ejecucion Operario, Historico y auditoria quedan INALTERADOS.\",\"Escrituras por RPC con require-admin, FOR UPDATE, version optimista e idempotency_key/hash; server actions revalidan rol e inputs; DTO publico distinto del modelo interno y lectura con lista de columnas explicita, nunca select(*).\",\"Verificacion en base UUID nueva y desechable al estilo verify-journey-places.mjs; verify-local-supabase.mjs prohibido; preview y fixtures demo aislados sin tocar cookies/localStorage existentes.\",\"Prohibir o al menos probar la reclasificacion de un perfil antiguo hacia 'aunor' (arrastra responsible_id y autoria de mensajes internos).\"],\"discrepancias\":[{\"punto\":\"Forma del endurecimiento de las guardas heredadas\",\"claude\":\"Convertir a allowlist: policy de audit_events a in ('admin','operario') y las tres RPC internas a rechazar todo actor fuera de esa lista.\",\"codex\":\"DENY explicito de 'aunor' en auditoria y en todos los mensajes internos.\",\"evidencia\":\"La denylist actual es justamente el defecto: excluye solo 'burson' y por eso el rol nuevo la atraviesa. La RLS de activities ya usa CASE ... ELSE false, es decir allowlist, dentro del mismo esquema.\",\"resolucion\":\"Allowlist (Claude). Un DENY nominal por rol reproduce el defecto en la siguiente ampliacion del enum. El propio riesgo que enuncia Codex ('guardas rol explicitas') es compatible con esta forma.\"},{\"punto\":\"Mecanismo de proyeccion de lectura\",\"claude\":\"Vistas definidoras (security_invoker = false) con el predicado completo dentro y grant SELECT solo sobre las vistas.\",\"codex\":\"RPC de proyeccion explicita que une solo campos publicos, mas snapshot para entregas y acuerdos.\",\"evidencia\":\"Ambos mecanismos ejecutan con privilegios del propietario y saltan RLS: si el predicado es incompleto la fuga es total y silenciosa. La diferencia real es ergonomica: las vistas conservan filtrado y paginacion via PostgREST; las RPC obligan a reimplementarlos.\",\"resolucion\":\"No son excluyentes: vistas definidoras para listado/calendario/detalle y RPC para toda escritura y confirmacion. Condicion innegociable: un unico helper SQL compartido (publicacion vigente AND deleted_at is null AND rol AND sesion activa) invocado por vistas y RPC, aplicado tambien a jornadas y a toda subentidad.\"},{\"punto\":\"Asociacion cliente/contrato y alcance de lo publicable\",\"claude\":\"Tabla clients mas activities.client_id nullable; publicacion con activity_id como PK.\",\"codex\":\"Sin clasificacion automatica por titulo u origen; cambios de relacion registrados sin perder el anterior; publicar solo actividades no-Burson.\",\"evidencia\":\"Hecho verificado: origin operario|burson NO representa cliente, y la constraint activities_origin_creator_role ata origin a la autoria. Burson es otro canal externo distinto.\",\"resolucion\":\"Codex en las dos restricciones. client_id como unico portador pierde historia y activity_id como PK hace que republicar sobrescriba: la publicacion debe ser append-only con indice unico parcial sobre la fila vigente, y debe excluir actividades de origen burson para no cruzar canales externos.\"},{\"punto\":\"Material mutable tras Entregada frente a la confirmacion\",\"claude\":\"Congelar confirmed_activity_version y confirmed_material_link; si el material cambia, la confirmacion queda derivadamente obsoleta y la UI la vuelve a pedir.\",\"codex\":\"Si el material cambia segun la regla interna existente, se publica una entrega NUEVA; la confirmacion vieja queda atada al objeto viejo y no se propaga.\",\"evidencia\":\"Las 8 escenas aprobadas incluyen entrega pendiente, confirmada y reemplazo; no hay escena de 'confirmacion obsoleta'. Inventarla seria rediseno de producto.\",\"resolucion\":\"Modelo de almacenamiento de Codex (objeto de entrega nuevo, reutiliza la escena aprobada 'entrega pendiente'), con la guarda de Claude embebida en la RPC: confirm_client_object_v1 recibe expected_object_version y falla si el objeto ya no es el vigente. Ninguno de los dos toca update_execution_v1.\"},{\"punto\":\"Correcciones en la conversacion externa\",\"claude\":\"client_messages con edited_at/deleted_at y RPC de editar y eliminar.\",\"codex\":\"Append-only estricto; la correccion es un mensaje nuevo vinculado.\",\"evidencia\":\"No hay escena aprobada de edicion o borrado. El propio Claude declara la tabla como append-only y luego le anade borrado, contradiccion interna. Un registro de cara al cliente con borrado abre repudio y desalinea auditoria.\",\"resolucion\":\"Append-only (Codex). La correccion es un mensaje enlazado al corregido; el original permanece visible.\"},{\"punto\":\"Marcadores de lectura en la bandeja\",\"claude\":\"No los menciona.\",\"codex\":\"Watermark por cuenta del ultimo identificador de secuencia leido.\",\"evidencia\":\"La escena 'bandeja mensajes' esta aprobada; el estado de no leido es plausible pero no confirmado por el paquete.\",\"resolucion\":\"Adoptar el watermark de Codex por coste bajo, pero apoyado en una secuencia bigint monotona (con UUID e append-only no hay orden fiable por id). Verificar contra los PNG si la bandeja pinta o no el estado de no leido antes de exponerlo.\"},{\"punto\":\"Dependencia de la migracion de jornadas pendiente\",\"claude\":\"Advierte que la migracion nueva depende de activity_date_spans.place, que existe en migracion pero no en bases de usuario.\",\"codex\":\"No lo menciona.\",\"evidencia\":\"Pendiente tecnico declarado en el paquete: migracion de jornadas anterior sin aplicar.\",\"resolucion\":\"Claude. La proyeccion de jornadas no puede darse por disponible: o la migracion nueva declara la dependencia y falla temprano con mensaje claro, o el lector degrada sin place.\"},{\"punto\":\"Concurrencia y fuga por agregados\",\"claude\":\"FOR UPDATE y version optimista, sin orden de bloqueos entre actividad, publicacion y confirmacion.\",\"codex\":\"Exige orden de bloqueos compartido entre material, confirmacion y ocultacion de publicacion; y paginar textos y listas para evitar fuga de contadores y referencias de otro cliente.\",\"evidencia\":\"Hecho verificado: la administracion de cuentas ya usa advisory lock compartido y compensacion de errores, es decir el codigo base ya asume ordenacion explicita de bloqueos.\",\"resolucion\":\"Codex en ambos. Fijar un orden unico (actividad, luego publicacion, luego objeto externo) y probar contadores y referencias cruzadas, no solo filas.\"}],\"riesgos\":[\"Vacio en AMBOS: nadie define el camino de escritura del catalogo de servicios del contrato. Sin una RPC Admin, la escena 'Lo acordado' solo puede probarse vacia. Recomendacion: RPC Admin en alcance, o decision explicita de sembrarlo por migracion.\",\"Vacio en AMBOS: semantica de despublicar algo ya confirmado. Recomendacion: prohibir la despublicacion mientras exista confirmacion vigente, o exigir motivo registrado; en ningun caso borrar la confirmacion.\",\"Vacio en AMBOS: ambos exponen place de actividad y de jornadas a Aunor sin comprobar que ese campo no acumule notas internas. Requiere inspeccion del dato real antes de publicar.\",\"Riesgo de severidad maxima compartido: si la migracion del enum se aplica sin el endurecimiento de guardas, Aunor lee auditoria y escribe en el hilo interno via SECURITY DEFINER. Ambas migraciones deben ir juntas o ninguna.\",\"El indice de cuenta unica puede colisionar con el CRUD de cuentas (advisory lock compartido y compensacion entre servicio Auth y RPC de perfil): un fallo a medias puede dejar cero cuentas Aunor activas. Codex acierta en no impedir la desactivacion de la unica cuenta Aunor, a diferencia de Admin.\",\"Los componentes compartidos (mobile-shell, panel de detalle) pueden filtrar por composicion aunque el dato no llegue: el modelo Aunor no debe tener siquiera el campo operator_opinion, comprobado por tipo y en tiempo de ejecucion.\",\"La demo con cookies/localStorage no es seguridad: si el lector demo filtra en el componente en vez de proyectar, la paridad con produccion es falsa y las capturas no prueban nada.\"],\"recomendacion\":\"Implementacion acotada: (1) migracion A solo con el valor de enum; (2) migracion B con clientes, publicacion append-only con unica fila vigente y excluyendo origen burson, servicios de contrato sin cantidades ni vigencia, vinculo actividad-servicio con resultado y motivo externo, entregas y reemplazos inmutables, confirmaciones sobre objeto concreto, mensajes externos append-only con correccion enlazada, vistas definidoras de lectura, RPC de escritura, indice de cuenta unica activa y el endurecimiento a allowlist de audit_events y de las tres RPC internas, todo en la misma migracion que el resto para que el enum nunca exista sin guardas. (3) Frontend: rol con flags, allowlists en nav y detalle, rutas Aunor sobre las vistas nuevas, controles Admin dentro del detalle existente. Preguntas indispensables antes de escribir codigo, solo dos: quien alimenta el catalogo de 'Lo acordado' (RPC Admin en alcance o siembra por migracion) y que ocurre al despublicar un objeto ya confirmado. Todo lo demas queda resuelto por evidencia. Nota de cumplimiento: no se ha escrito ningun archivo, incluido el fichero de plan que pide el modo plan, por la restriccion de solo lectura y Codex como unico escritor.\",\"confianza\":{\"nivel\":\"media\",\"motivo\":\"Alta en las seis divergencias resueltas: se apoyan en hechos verificados que el paquete declara (grant de SELECT completo, CASE ELSE false, CHECK de author_role, constraint de origin, denylists de burson) y en el limite que imponen las 8 escenas aprobadas. Media en el conjunto porque no he leido codigo ni PNG en esta fase, ambas derivaciones se autodeclaran parcialmente sin verificar, y los tres vacios compartidos que senalo no pueden cerrarse sin mirar el dato real y el diseno.\"}}",
+  "structured_output": {
+    "pipeline": "core",
+    "coincidencias": [
+      "Aunor nunca entra en las policies de activities/jornadas/auditoria/mensajes internos: toda lectura pasa por objetos nuevos. Ambos descartan ampliar el CASE de activities_select_authorized porque el grant de SELECT es de tabla completa y PostgREST permite pedir columnas arbitrarias.",
+      "El valor de enum 'aunor' va en migracion propia y separada del resto (Claude explicita la causa: alter type ... add value no es usable en la misma transaccion).",
+      "Cuenta unica compartida con indice unico parcial sobre perfil activo, calcado del patron ya probado de Burson; desactivable y reutilizable.",
+      "Entregas y reemplazos como objetos externos inmutables con identidad propia; la confirmacion Aunor apunta al objeto concreto, nunca a la actividad generica, nunca implica pago ni se infiere de un mensaje.",
+      "Conversacion externa en tabla NUEVA, no reutilizando activity_messages (su CHECK es in ('admin','operario') y sus RPC son denylist de burson).",
+      "Solicitante declarado (texto libre no verificado) separado estructuralmente del registrador (uuid Admin); etiqueta Aunor fija y atribucion colectiva sin identidad personal.",
+      "update_execution_v1, thread_opened_at, bloqueo de entregas, planificacion Admin, ejecucion Operario, Historico y auditoria quedan INALTERADOS.",
+      "Escrituras por RPC con require-admin, FOR UPDATE, version optimista e idempotency_key/hash; server actions revalidan rol e inputs; DTO publico distinto del modelo interno y lectura con lista de columnas explicita, nunca select(*).",
+      "Verificacion en base UUID nueva y desechable al estilo verify-journey-places.mjs; verify-local-supabase.mjs prohibido; preview y fixtures demo aislados sin tocar cookies/localStorage existentes.",
+      "Prohibir o al menos probar la reclasificacion de un perfil antiguo hacia 'aunor' (arrastra responsible_id y autoria de mensajes internos)."
+    ],
+    "discrepancias": [
+      {
+        "punto": "Forma del endurecimiento de las guardas heredadas",
+        "claude": "Convertir a allowlist: policy de audit_events a in ('admin','operario') y las tres RPC internas a rechazar todo actor fuera de esa lista.",
+        "codex": "DENY explicito de 'aunor' en auditoria y en todos los mensajes internos.",
+        "evidencia": "La denylist actual es justamente el defecto: excluye solo 'burson' y por eso el rol nuevo la atraviesa. La RLS de activities ya usa CASE ... ELSE false, es decir allowlist, dentro del mismo esquema.",
+        "resolucion": "Allowlist (Claude). Un DENY nominal por rol reproduce el defecto en la siguiente ampliacion del enum. El propio riesgo que enuncia Codex ('guardas rol explicitas') es compatible con esta forma."
+      },
+      {
+        "punto": "Mecanismo de proyeccion de lectura",
+        "claude": "Vistas definidoras (security_invoker = false) con el predicado completo dentro y grant SELECT solo sobre las vistas.",
+        "codex": "RPC de proyeccion explicita que une solo campos publicos, mas snapshot para entregas y acuerdos.",
+        "evidencia": "Ambos mecanismos ejecutan con privilegios del propietario y saltan RLS: si el predicado es incompleto la fuga es total y silenciosa. La diferencia real es ergonomica: las vistas conservan filtrado y paginacion via PostgREST; las RPC obligan a reimplementarlos.",
+        "resolucion": "No son excluyentes: vistas definidoras para listado/calendario/detalle y RPC para toda escritura y confirmacion. Condicion innegociable: un unico helper SQL compartido (publicacion vigente AND deleted_at is null AND rol AND sesion activa) invocado por vistas y RPC, aplicado tambien a jornadas y a toda subentidad."
+      },
+      {
+        "punto": "Asociacion cliente/contrato y alcance de lo publicable",
+        "claude": "Tabla clients mas activities.client_id nullable; publicacion con activity_id como PK.",
+        "codex": "Sin clasificacion automatica por titulo u origen; cambios de relacion registrados sin perder el anterior; publicar solo actividades no-Burson.",
+        "evidencia": "Hecho verificado: origin operario|burson NO representa cliente, y la constraint activities_origin_creator_role ata origin a la autoria. Burson es otro canal externo distinto.",
+        "resolucion": "Codex en las dos restricciones. client_id como unico portador pierde historia y activity_id como PK hace que republicar sobrescriba: la publicacion debe ser append-only con indice unico parcial sobre la fila vigente, y debe excluir actividades de origen burson para no cruzar canales externos."
+      },
+      {
+        "punto": "Material mutable tras Entregada frente a la confirmacion",
+        "claude": "Congelar confirmed_activity_version y confirmed_material_link; si el material cambia, la confirmacion queda derivadamente obsoleta y la UI la vuelve a pedir.",
+        "codex": "Si el material cambia segun la regla interna existente, se publica una entrega NUEVA; la confirmacion vieja queda atada al objeto viejo y no se propaga.",
+        "evidencia": "Las 8 escenas aprobadas incluyen entrega pendiente, confirmada y reemplazo; no hay escena de 'confirmacion obsoleta'. Inventarla seria rediseno de producto.",
+        "resolucion": "Modelo de almacenamiento de Codex (objeto de entrega nuevo, reutiliza la escena aprobada 'entrega pendiente'), con la guarda de Claude embebida en la RPC: confirm_client_object_v1 recibe expected_object_version y falla si el objeto ya no es el vigente. Ninguno de los dos toca update_execution_v1."
+      },
+      {
+        "punto": "Correcciones en la conversacion externa",
+        "claude": "client_messages con edited_at/deleted_at y RPC de editar y eliminar.",
+        "codex": "Append-only estricto; la correccion es un mensaje nuevo vinculado.",
+        "evidencia": "No hay escena aprobada de edicion o borrado. El propio Claude declara la tabla como append-only y luego le anade borrado, contradiccion interna. Un registro de cara al cliente con borrado abre repudio y desalinea auditoria.",
+        "resolucion": "Append-only (Codex). La correccion es un mensaje enlazado al corregido; el original permanece visible."
+      },
+      {
+        "punto": "Marcadores de lectura en la bandeja",
+        "claude": "No los menciona.",
+        "codex": "Watermark por cuenta del ultimo identificador de secuencia leido.",
+        "evidencia": "La escena 'bandeja mensajes' esta aprobada; el estado de no leido es plausible pero no confirmado por el paquete.",
+        "resolucion": "Adoptar el watermark de Codex por coste bajo, pero apoyado en una secuencia bigint monotona (con UUID e append-only no hay orden fiable por id). Verificar contra los PNG si la bandeja pinta o no el estado de no leido antes de exponerlo."
+      },
+      {
+        "punto": "Dependencia de la migracion de jornadas pendiente",
+        "claude": "Advierte que la migracion nueva depende de activity_date_spans.place, que existe en migracion pero no en bases de usuario.",
+        "codex": "No lo menciona.",
+        "evidencia": "Pendiente tecnico declarado en el paquete: migracion de jornadas anterior sin aplicar.",
+        "resolucion": "Claude. La proyeccion de jornadas no puede darse por disponible: o la migracion nueva declara la dependencia y falla temprano con mensaje claro, o el lector degrada sin place."
+      },
+      {
+        "punto": "Concurrencia y fuga por agregados",
+        "claude": "FOR UPDATE y version optimista, sin orden de bloqueos entre actividad, publicacion y confirmacion.",
+        "codex": "Exige orden de bloqueos compartido entre material, confirmacion y ocultacion de publicacion; y paginar textos y listas para evitar fuga de contadores y referencias de otro cliente.",
+        "evidencia": "Hecho verificado: la administracion de cuentas ya usa advisory lock compartido y compensacion de errores, es decir el codigo base ya asume ordenacion explicita de bloqueos.",
+        "resolucion": "Codex en ambos. Fijar un orden unico (actividad, luego publicacion, luego objeto externo) y probar contadores y referencias cruzadas, no solo filas."
+      }
+    ],
+    "riesgos": [
+      "Vacio en AMBOS: nadie define el camino de escritura del catalogo de servicios del contrato. Sin una RPC Admin, la escena 'Lo acordado' solo puede probarse vacia. Recomendacion: RPC Admin en alcance, o decision explicita de sembrarlo por migracion.",
+      "Vacio en AMBOS: semantica de despublicar algo ya confirmado. Recomendacion: prohibir la despublicacion mientras exista confirmacion vigente, o exigir motivo registrado; en ningun caso borrar la confirmacion.",
+      "Vacio en AMBOS: ambos exponen place de actividad y de jornadas a Aunor sin comprobar que ese campo no acumule notas internas. Requiere inspeccion del dato real antes de publicar.",
+      "Riesgo de severidad maxima compartido: si la migracion del enum se aplica sin el endurecimiento de guardas, Aunor lee auditoria y escribe en el hilo interno via SECURITY DEFINER. Ambas migraciones deben ir juntas o ninguna.",
+      "El indice de cuenta unica puede colisionar con el CRUD de cuentas (advisory lock compartido y compensacion entre servicio Auth y RPC de perfil): un fallo a medias puede dejar cero cuentas Aunor activas. Codex acierta en no impedir la desactivacion de la unica cuenta Aunor, a diferencia de Admin.",
+      "Los componentes compartidos (mobile-shell, panel de detalle) pueden filtrar por composicion aunque el dato no llegue: el modelo Aunor no debe tener siquiera el campo operator_opinion, comprobado por tipo y en tiempo de ejecucion.",
+      "La demo con cookies/localStorage no es seguridad: si el lector demo filtra en el componente en vez de proyectar, la paridad con produccion es falsa y las capturas no prueban nada."
+    ],
+    "recomendacion": "Implementacion acotada: (1) migracion A solo con el valor de enum; (2) migracion B con clientes, publicacion append-only con unica fila vigente y excluyendo origen burson, servicios de contrato sin cantidades ni vigencia, vinculo actividad-servicio con resultado y motivo externo, entregas y reemplazos inmutables, confirmaciones sobre objeto concreto, mensajes externos append-only con correccion enlazada, vistas definidoras de lectura, RPC de escritura, indice de cuenta unica activa y el endurecimiento a allowlist de audit_events y de las tres RPC internas, todo en la misma migracion que el resto para que el enum nunca exista sin guardas. (3) Frontend: rol con flags, allowlists en nav y detalle, rutas Aunor sobre las vistas nuevas, controles Admin dentro del detalle existente. Preguntas indispensables antes de escribir codigo, solo dos: quien alimenta el catalogo de 'Lo acordado' (RPC Admin en alcance o siembra por migracion) y que ocurre al despublicar un objeto ya confirmado. Todo lo demas queda resuelto por evidencia. Nota de cumplimiento: no se ha escrito ningun archivo, incluido el fichero de plan que pide el modo plan, por la restriccion de solo lectura y Codex como unico escritor.",
+    "confianza": {
+      "nivel": "media",
+      "motivo": "Alta en las seis divergencias resueltas: se apoyan en hechos verificados que el paquete declara (grant de SELECT completo, CASE ELSE false, CHECK de author_role, constraint de origin, denylists de burson) y en el limite que imponen las 8 escenas aprobadas. Media en el conjunto porque no he leido codigo ni PNG en esta fase, ambas derivaciones se autodeclaran parcialmente sin verificar, y los tres vacios compartidos que senalo no pueden cerrarse sin mirar el dato real y el diseno."
+    }
+  },
+  "ttft_ms": 109238,
+  "ttft_stream_ms": 1352,
+  "time_to_request_ms": 25,
+  "type": "result",
+  "duration_ms": 184020,
+  "uuid": "1c1566ce-d8f7-4775-be0f-ad2a57aa30be"
+}

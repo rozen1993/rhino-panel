@@ -36,7 +36,9 @@
     "**/*.mts",
     ".next/dev/types/**/*.ts",
     ".next-historical-test/types/**/*.ts",
-    ".next-historical-test/dev/types/**/*.ts"
+    ".next-historical-test/dev/types/**/*.ts",
+    ".next-aunor-test/types/**/*.ts",
+    ".next-aunor-test/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

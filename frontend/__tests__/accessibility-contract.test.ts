@@ -80,7 +80,7 @@ describe("contrato mínimo de accesibilidad", () => {
     );
     expect(interfaceSource).not.toContain("placeholder:text-ink-muted/");
     expect(interfaceSource).not.toMatch(/\btext-orange\b/);
-    expect(readFileSync(join(frontend, "components", "annual-calendar.tsx"), "utf8"))
+    expect(readFileSync(join(frontend, "components", "annual-calendar-view.tsx"), "utf8"))
       .toContain('range: "bg-cyan/20 text-cyan-ink"');
   });
 

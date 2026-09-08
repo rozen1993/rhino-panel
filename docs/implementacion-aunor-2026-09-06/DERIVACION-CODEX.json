@@ -1,0 +1,41 @@
+{
+  "supuestos": [
+    "Aunor cuarto rol independiente y nueva cuenta compartida; la orden actual aprueba los PNG aunque sus pies digan propuesta.",
+    "Se publican explícitamente actividades y material; publicación no es relación contractual ni aprobación económica.",
+    "No se modifica el bloqueo de entregas, se mantiene historial de objetos externos."
+  ],
+  "propuesta": [
+    "Añadir enum aunor en migración separada; índice único de perfil aunor (como máximo un perfil reutilizable/desactivable) y validación flags. Reutilizar creación Auth Admin y clave temporal, nunca provisionar usuario real en esta tarea.",
+    "No dar a aunor SELECT sobre filas activities internas. Nuevo vínculo aunor_publications activity_id exclusivo y estado publicado, y API/RPC de proyección explícita que une solo campos públicos de planificación/ejecución. Tablas externas con RLS deny-by-default y escritura solo funciones autorizadas. Guardas helpers basadas Auth sesiónperfilvigente; DENY explícito a aunor en auditoría y todos mensajes internos.",
+    "Admin elige publicación en detalle existente, solo actividades noBurson; resumen externo explícito, servicios relaciónopcional y no-realizada motivo externo separados del statusoperativo. Ninguna clasificación contractual por título/origen automático. Cambios a relaciones registrados sin perder anterior. Proyección debe excluir siempre deleted/no publicada en TODAS las subentidades y consultas.",
+    "Entregas externas inmutables identificadas UUID y enlace snapshot publicados por Admin. Confirmación Aunor transaccional bloquea actividad/objeto y valida publicación y enlace actual; confirmar id preciso no actividad genérica. Si cambia material según reglas internas existentes, nueva entrega a publicar, vieja confirmación queda vinculada únicamente a viejo objeto y no se propaga. No tocar thread_opened_at.",
+    "Reemplazos inmutables con original+sustituto publicados Aunor distintos, razón, evidencia HTTPS y acuerdo registrado; ambas tarjetas preservadas. Confirmación objeto reemplazo distinto de entrega; no efecto automático sobre estado/serviciocantidades/economía. Correcciones por nueva revisión vinculada, no sobrescritura.",
+    "Mensajes externos append-only Admin/Aunor, correcciones como mensaje vinculado; watermark por cuenta de último id de secuencia leído. Separar receptor, actor realAuth, etiqueta Aunor fija; acuerdos externos Admin con canal, fecha, solicitante declarado y registrador seguro.",
+    "Rutas /aunor (lista/calendario), /aunor/actividades/[id], /aunor/acordado, /aunor/mensajes; Admin sección externa aislada dentro ficha, no nuevo dashboard sobrecargado. Serveractions validan otra vez roles/inputs, RPC autoriza DB; DTO público distinto de SimulatedActivity.",
+    "Preview nueva instancia puerto/builddir y sesióncookiescontextPlaywright aislados; fixtures exclusivas ficticias Aunor no migrar ni tocar cookies/localStorage usuario. Tests SQL DBnuevaefímera/template0, RLS+RPC porroles, concurrencyduplicates y antiguooperarioreclasificado, interfaces y DBerrorfailclosed; tests sin alterar basesexistentes."
+  ],
+  "alternativas": [
+    "Proyección por tabla pública snapshot completa facilita RLS pero exige sincronizar cada campo de estado/jornadas; prefiero RPC explícita para datos vivos + snapshot solo entregas/acuerdos.",
+    "Vista de securityinvoker sobre activities no sirve sin otorgar lectura interna; aumentar RLS interna prohibido por filtración columnas.",
+    "Una confirmación booleana en activity insuficiente: confunde entregas/reemplazos/versiones.",
+    "No introduzco edit/delete chat ni nuevos workflows de reapertura. Corrección append-only conserva historia."
+  ],
+  "riesgos": [
+    "Todo helper viejo que excluya soloBurson debe recibirguardasrol explícitas sin cambiar otrospermisos.",
+    "Índice único totalAunor vs activo: reusar/desactivar/reactivar cuenta única cumple decisión, no impedir desactivación si es únicoAunor (distinto de Admin).",
+    "Concurrencia material/confirmación y ocultación publicación deben compartir ordenlocks yvalidación transaccional.",
+    "Paginar textos/listas, impedirfiltraciones de contadores/referencias porrelaciones y clienteajeno.",
+    "Demo no es seguridad deproducción; no presentar fixture como usuarioAuthprovisionado."
+  ],
+  "verificacion": [
+    "Unit tests roles/validaciones/DTO/node servidor",
+    "DB RLS SELECTdirecto a internal/externals, RPC denegados a operario y burson, usuariosinactivos, UUIDajenos, unpublished/delete",
+    "Idempotencia exacta/reintentos/collisionparametros+confirmación vieja vs nuevolink, estadoentregasinmutación",
+    "Playwright desktopmobile equivalentePNGs y rutasdirectas roles, mensajes/correcciones/readmarkers, original/sustituto, catálogo vacío y Porrelacionar",
+    "Claude revisión independiente código y capturas reales postimplementación"
+  ],
+  "confianza": {
+    "nivel": "media-alta",
+    "motivo": "Fuentes puntuales verificadas; probar atomicidad y proyección antes de habilitar ambiente real."
+  }
+}

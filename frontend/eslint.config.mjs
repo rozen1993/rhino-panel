@@ -10,6 +10,7 @@ const eslintConfig = defineConfig([
     // Default ignores of eslint-config-next:
     ".next/**",
     ".next-historical-test/**",
+    ".next-aunor-test/**",
     "out/**",
     "build/**",
     ".verificacion/**",

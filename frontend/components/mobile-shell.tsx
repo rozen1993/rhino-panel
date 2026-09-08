@@ -39,10 +39,10 @@ export async function MobileShell({
       </a>
       <TopBar
         backHref={backHref}
-        initials={initials}
-        name={role.accountName ?? role.label}
+        initials={role.id === "aunor" ? "AU" : initials}
+        name={role.id === "aunor" ? "Aunor" : role.accountName ?? role.label}
         roleLabel={
-          role.bursonLinked
+          role.id === "aunor" ? "Acceso compartido" : role.bursonLinked
             ? "Operario especial · encargos Burson"
             : role.id === "operario" && role.canCreateOwnActivities
               ? "Operario · creación propia autorizada"

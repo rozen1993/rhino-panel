@@ -88,6 +88,7 @@ export const defaultAccounts: Account[] = [
   account("account-carlos", "Carlos Vega", "carlos", "operario"),
   account("account-burson", "Equipo Burson", "burson", "burson"),
   account("account-luis", "Luis Mendoza", "luis", "operario", true),
+  account("account-aunor", "Aunor", "aunor", "aunor"),
 ];
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -153,6 +154,7 @@ export function parseAccounts(raw: string | null): Account[] {
     return hasAdmin &&
       special.length === 1 &&
       activeBurson.length === 1 &&
+      value.filter((item) => item.active && item.roleId === "aunor").length <= 1 &&
       capabilitiesMatchRole
       ? value
       : defaultAccounts;
@@ -193,6 +195,7 @@ function hasCompactAccountInvariants(accounts: CompactAccount[]) {
     accounts.length > 0 &&
     accounts.some((item) => item.a && item.r === "admin") &&
     accounts.filter((item) => item.a && item.r === "burson").length === 1 &&
+    accounts.filter((item) => item.a && item.r === "aunor").length <= 1 &&
     accounts.filter((item) => item.a && item.r === "operario" && item.b)
       .length === 1 &&
     accounts.every(

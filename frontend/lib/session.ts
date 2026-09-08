@@ -83,7 +83,7 @@ export async function currentRole(): Promise<Role | null> {
   return {
     ...roles[roleId],
     accountId,
-    accountName: account.n,
+    accountName: roleId === "aunor" ? "Aunor" : account.n,
     bursonLinked: account.b,
     canCreateOwnActivities: account.c,
     mustChangePassword: account.m,

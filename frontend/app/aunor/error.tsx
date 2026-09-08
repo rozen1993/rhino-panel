@@ -1,0 +1,2 @@
+"use client";
+export default function ErrorPage({reset}:{reset:()=>void}){return <main className="mx-auto max-w-lg p-6"><h1 className="section-title text-2xl">No se pudo cargar Aunor</h1><p className="my-4">No se mostraron datos parciales. Comprueba la conexión y que las migraciones estén instaladas.</p><button className="min-h-11 rounded border border-line bg-panel px-4" onClick={reset}>Reintentar</button></main>;}

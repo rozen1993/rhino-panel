@@ -19,6 +19,8 @@
 # next.js
 /.next/
 /.next-historical-test/
+/.next-aunor-test/
+/.verificacion/aunor-*/
 /.verificacion/historico-*/
 /out/
 

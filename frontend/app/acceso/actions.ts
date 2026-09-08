@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { accountsCookieName } from "@/lib/accounts";
 import { resolveDataSource } from "@/lib/data-source";
+import { roleHome } from "@/lib/roles";
 import { SESSION_ACCOUNT_COOKIE, SESSION_COOKIE, findTestUser } from "@/lib/session";
 import { getSupabaseEnvironment } from "@/lib/supabase/env";
 import { usernameToAuthEmail } from "@/lib/supabase/identity";
@@ -56,8 +57,7 @@ export async function entrar(
       return invalidCredentials;
     }
     if (profile.must_change_password) redirect("/cambiar-clave");
-    if (profile.role === "burson") redirect("/burson");
-    redirect("/actividades");
+    redirect(roleHome(profile.role));
   }
 
   const store = await cookies();
@@ -74,8 +74,7 @@ export async function entrar(
     demoSessionCookieOptions,
   );
   if (match.mustChangePassword) redirect("/cambiar-clave");
-  if (match.roleId === "burson") redirect("/burson");
-  redirect("/actividades");
+  redirect(roleHome(match.roleId));
 }
 
 export async function salir() {
