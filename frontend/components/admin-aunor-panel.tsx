@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import { getAunorWorkspaceAction, performAunorAction } from "@/app/aunor/actions";
-import { AunorConversation, AgreementList, AunorJourneys, ReplacementSummary } from "@/components/aunor-space";
+import { AgreementList, AunorJourneys, ReplacementSummary } from "@/components/aunor-space";
 import { Button } from "@/components/button";
 import { emptyAunorWorkspace, type AunorWorkspace, type AunorCommand } from "@/lib/aunor";
 import type { SimulatedActivity } from "@/lib/activity-simulation";
@@ -61,7 +61,7 @@ export function AdminAunorPanel({item,role}:{item:SimulatedActivity;role:Role}) 
   },[item,load]);
   if(role.id!=="admin"||item.origin==="burson"||item.deletedAt)return null;
   return <section aria-label="Gestión Aunor" className={s.stack}>
-    <header className={s.head}><p className="data-label text-cyan-ink">Ficha de actividad · gestión Admin</p><h2 className="section-title text-2xl">Acuerdo y respuesta a Aunor</h2><p className={s.muted}>La planificación y la ejecución no cambian. Publica únicamente información que el cliente pueda ver.</p></header>
+    <header className={s.head}><p className="data-label text-cyan-ink">Ficha de actividad · gestión Admin</p><h2 className="section-title text-2xl">Contrato y entregas de Aunor</h2><p className={s.muted}>La planificación y la ejecución no cambian. Publica únicamente información que el cliente pueda ver.</p></header>
     {error&&<div className={s.error} role="alert">{error} <button type="button" onClick={()=>void load()}>Reintentar</button></div>}{notice&&<p className={s.notice} role="status">{notice}</p>}
     {!loaded?<p role="status">Cargando información del canal Aunor…</p>:<>
     <div className={s.detail}>
@@ -107,7 +107,6 @@ export function AdminAunorPanel({item,role}:{item:SimulatedActivity;role:Role}) 
           </div><p className={s.footnote}>Se conservan las dos actividades. La confirmación de Aunor quedará pendiente; no se calcula una equivalencia ni se modifican entregas.</p><Button className="mt-4" type="submit" disabled={pending||!substitute||!agreement}>Publicar reemplazo para Aunor</Button>
         </form>
       </div><aside className={s.card+" "+s.pad}><h2 className="section-title">Revisar antes de publicar</h2><div className={s.box}><strong>Original conservado</strong>{w.activities.find(a=>a.id===original)?.title}</div><p className="py-3 text-center text-cyan-ink">↓</p><div className={s.box}><strong>Sustituto identificado</strong>{w.activities.find(a=>a.id===substitute)?.title??"Selecciona el sustituto"}</div>{substitute&&<AunorJourneys w={w} id={substitute}/>}<div className={s.stamp+" "+s.sectionGap}><strong>Pendiente de confirmación por Aunor</strong>Admin registra; no confirma en nombre del cliente.</div></aside></div>
-      <AunorConversation w={w} id={item.id} role={role} mutate={mutate} pending={pending}/>
       <AgreementList w={w} id={item.id}/>
       {w.replacements.filter(r=>r.original_activity_id===item.id||r.substitute_activity_id===item.id).map(r=><section className={s.card+" "+s.pad} key={r.id}><p className="data-label text-cyan-ink">Reemplazo {r.id.slice(-8)}</p><ReplacementSummary r={r} w={w} admin/></section>)}
     </>}

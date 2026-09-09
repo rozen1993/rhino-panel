@@ -11,7 +11,7 @@ try {
     await page.getByRole("button",{name:"Entrar",exact:true}).click();
     await page.waitForURL("http://127.0.0.1:3108"+path);
     if(user==="aunor") {
-      for(const route of ["/aunor/acordado","/aunor/calendario","/aunor/mensajes"]) {
+      for(const route of ["/aunor/contrato","/aunor/calendario"]) {
         await page.goto("http://127.0.0.1:3108"+route);
         if(await page.getByRole("alert").filter({hasText:/No se pudo|Error inesperado/}).count())throw Error("Preview failed at "+route);
       }

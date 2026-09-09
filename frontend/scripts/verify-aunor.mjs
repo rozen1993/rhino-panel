@@ -44,9 +44,9 @@ try {
     "grant usage on schema public,auth,extensions to anon,authenticated,service_role; "+
     "revoke all on function auth.jwt(),auth.uid() from public; grant execute on function auth.jwt(),auth.uid() to anon,authenticated,service_role;");
   const files=readdirSync(migrations).filter(n=>n.endsWith(".sql")).sort();
-  if(files.at(-1)!=="202609060002_aunor_space.sql") throw Error("Revise schema boundary before running this verifier.");
-  for(const name of files) sql(readFileSync(migrations+"/"+name,"utf8"));
-  console.log("PASS: cadena completa de migraciones, exclusivamente en DB nueva.");
+  if(files.at(-1)!=="202609080001_retire_burson_external_chat.sql") throw Error("Revise schema boundary before running this verifier.");
+  for(const name of files.filter(n=>n<"202609080001")) sql(readFileSync(migrations+"/"+name,"utf8"));
+  console.log("PASS: cadena anterior de migraciones, exclusivamente en DB nueva.");
   sql("insert into auth.users values "+[1,2,3,4,5,6].map(n=>"('"+id(100+n)+"')").join(",")+";"+
     "insert into public.profiles(id,username,display_name,role,is_burson_operator) values "+
     [ ["admin","Admin","admin",false],["operator","Operator","operario",true],["other","Other","operario",false],["burson","Burson","burson",false],["aunor","Aunor","aunor",false],["former","Former Operator","operario",false] ].map((v,i)=>"('"+id(101+i)+"','test."+v[0]+"','"+v[1]+"','"+v[2]+"',"+v[3]+")").join(",")+";"+
@@ -150,6 +150,38 @@ try {
   for(const view of views) sql(as(5,"do $$ begin assert (select count(*)=0 from public."+view+"); end $$;"));
   console.log("PASS: concurrencia real, anon, unicidad Aunor, ABA, correcciones lineales y datos internos existentes.");
   console.log("PASS: acuerdos, reemplazos, exoperario reclasificado, baja interna y sesión revocada.");
+
+  // Test the forward retirement against populated historical records in THIS disposable DB.
+  const archivedCount=Number(sql("select count(*) from private.aunor_messages;").match(/\n\s*(\d+)\s*\n/)[1]);
+  sql(readFileSync(migrations+"/202609080001_retire_burson_external_chat.sql","utf8"));
+  sql("do $$ begin assert (select count(*)=6 from public.profiles); assert (select not is_active from public.profiles where role='burson'); assert not exists(select 1 from public.profiles where is_burson_operator); assert (select is_active and role='operario' from public.profiles where id='"+id(102)+"'); assert (select count(*)="+archivedCount+" from private.aunor_messages); assert (select count(*)=5 from public.activities); assert (select origin='burson' and responsible_id='"+id(102)+"' from public.activities where id='"+id(304)+"'); assert (select revoked_at is not null from public.app_sessions where user_id='"+id(102)+"'); end $$;");
+  for(const apiRole of ["anon","authenticated","service_role"]) {
+    sql("do $$ begin assert not has_table_privilege('"+apiRole+"','public.aunor_messages','select'); assert not has_function_privilege('"+apiRole+"','public.create_burson_request_v2(uuid,public.activity_type,text,text,text,jsonb,text)','execute'); end $$;");
+  }
+  // Fresh test sessions only; old Burson session must remain unusable.
+  sql("update public.app_sessions set revoked_at=null where user_id in ('"+id(102)+"','"+id(105)+"');");
+  sql(as(4,"do $$ begin assert (select count(*)=0 from public.activities); assert (select count(*)=0 from public.aunor_activities); end $$;"));
+  for(const actor of [1,5]) {
+    deny(actor,mutate("message",301,{body:"¿Podemos revisar este material?"},messageKey));
+    deny(actor,mutate("read",301,{sequence:own.sequence}));
+  }
+  deny(1,"public.update_account_v1('"+id(102)+"',(select updated_at from public.profiles where id='"+id(102)+"'),'Operator','operario',true,true,false)","SR009");
+  deny(1,"public.update_account_v1('"+id(104)+"',(select updated_at from public.profiles where id='"+id(104)+"'),'Burson','burson',true,false,false)","SR009");
+  sql("begin; set local role service_role; do $$ begin begin perform public.create_account_profile_v1('"+id(107)+"','test.retired','Retired','burson',false,false,'"+id(101)+"'); raise exception 'EXPECTED SR009'; exception when sqlstate 'SR009' then null; end; end $$; commit;");
+  sql(as(1,"select public.replan_activity_v2('"+id(304)+"',1,'"+id(103)+"','Grabación','Encargo histórico','Se conserva el origen','Lima','[{\"start\":\"2026-06-16\",\"end\":\"2026-06-16\",\"place\":\"Lima\"}]'::jsonb);"));
+  sql(as(3,"do $$ begin assert exists(select 1 from public.activities where id='"+id(304)+"'); end $$;"));
+  sql(as(1,"select public.soft_delete_activity_v1('"+id(304)+"',2,'Archivo temporal de prueba'); select public.restore_activity_v1('"+id(304)+"',3,'"+id(102)+"');"));
+  sql("do $$ begin assert (select origin='burson' and created_by='"+id(104)+"' and responsible_id='"+id(102)+"' and deleted_at is null from public.activities where id='"+id(304)+"'); end $$;");
+  // Confirmations stay available without a chat. Duplicate requests don't create another confirmation.
+  sql(as(1,"select public.restore_activity_v1('"+id(301)+"',3,null); select "+mutate("delivery",301,{expectedActivityVersion:4,label:"Entrega sin chat"})+";"));
+  const currentDelivery=JSON.parse(sql("select jsonb_build_object('id',id,'version',version) from private.aunor_deliveries where activity_id='"+id(301)+"' order by version desc limit 1;").match(/\{[^\n]+\}/)[0]);
+  await concurrentConfirm("confirm-delivery",301,{objectId:currentDelivery.id,version:currentDelivery.version,acknowledged:true});
+  const currentReplacement=sql("select r.id from private.aunor_replacements r where not exists(select 1 from private.aunor_replacements c where c.corrects_id=r.id) limit 1;").match(/[a-f0-9]{8}-[a-f0-9-]{27,}/)[0];
+  await concurrentConfirm("confirm-replacement",302,{objectId:currentReplacement,acknowledged:true});
+  sql(as(5,"do $$ begin assert (select confirmed_by='Aunor' from public.aunor_deliveries where id='"+currentDelivery.id+"'); assert (select confirmed_by='Aunor' from public.aunor_replacements where id='"+currentReplacement+"'); assert not exists(select 1 from public.aunor_activities where unread_count<>0); assert (select count(*)=0 from public.activity_messages); assert (select count(*)=0 from public.audit_events); end $$;"));
+  sql("do $$ begin assert (select count(*)="+archivedCount+" from private.aunor_messages); assert (select count(*)=2 from public.activity_messages where activity_id='"+id(303)+"'); end $$;");
+  console.log("PASS: retirada Burson, sesiones antiguas, operarios normales, chat archivado y bloqueado incluso ante replay, confirmaciones concurrentes e historial conservados.");
+
 } finally {
   if(created && /^sr_aunor_test_[a-f0-9]{32}$/.test(database)) {
     run(["dropdb","-U","postgres",database]);

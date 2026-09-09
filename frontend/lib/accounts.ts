@@ -86,10 +86,17 @@ export const defaultAccounts: Account[] = [
   account("account-admin", "Marco Admin", "admin", "admin"),
   account("account-ana", "Ana Torres", "ana", "operario", false, true),
   account("account-carlos", "Carlos Vega", "carlos", "operario"),
-  account("account-burson", "Equipo Burson", "burson", "burson"),
-  account("account-luis", "Luis Mendoza", "luis", "operario", true),
+  { ...account("account-burson", "Equipo Burson", "burson", "burson"), active: false },
+  account("account-luis", "Luis Mendoza", "luis", "operario"),
   account("account-aunor", "Aunor", "aunor", "aunor"),
 ];
+
+// Normalize legacy accounts in memory only; never discard their IDs or history.
+export function retireBursonAccounts(accounts: Account[]): Account[] {
+  return accounts.map(item => item.roleId === "burson"
+    ? { ...item, active: false, bursonLinked: false, canCreateOwnActivities: false }
+    : item.bursonLinked ? { ...item, bursonLinked: false } : item);
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object";
@@ -134,17 +141,11 @@ export function parseAccounts(raw: string | null): Account[] {
     const value: unknown = JSON.parse(raw);
     if (!Array.isArray(value) || !value.length || !value.every(isAccount))
       return defaultAccounts;
-    const hasAdmin = value.some(
+    const normalized = retireBursonAccounts(value);
+    const hasAdmin = normalized.some(
       (item) => item.active && item.roleId === "admin",
     );
-    const special = value.filter(
-      (item) =>
-        item.active && item.roleId === "operario" && item.bursonLinked,
-    );
-    const activeBurson = value.filter(
-      (item) => item.active && item.roleId === "burson",
-    );
-    const capabilitiesMatchRole = value.every(
+    const capabilitiesMatchRole = normalized.every(
       (item) =>
         (!item.bursonLinked ||
           (item.active && item.roleId === "operario")) &&
@@ -152,11 +153,9 @@ export function parseAccounts(raw: string | null): Account[] {
           (item.active && item.roleId === "operario")),
     );
     return hasAdmin &&
-      special.length === 1 &&
-      activeBurson.length === 1 &&
       value.filter((item) => item.active && item.roleId === "aunor").length <= 1 &&
       capabilitiesMatchRole
-      ? value
+      ? normalized
       : defaultAccounts;
   } catch {
     return defaultAccounts;
@@ -194,10 +193,9 @@ function hasCompactAccountInvariants(accounts: CompactAccount[]) {
   return (
     accounts.length > 0 &&
     accounts.some((item) => item.a && item.r === "admin") &&
-    accounts.filter((item) => item.a && item.r === "burson").length === 1 &&
+    accounts.every((item) => item.r !== "burson" || !item.a) &&
     accounts.filter((item) => item.a && item.r === "aunor").length <= 1 &&
-    accounts.filter((item) => item.a && item.r === "operario" && item.b)
-      .length === 1 &&
+    accounts.every((item) => !item.b) &&
     accounts.every(
       (item) =>
         (!item.b || (item.a && item.r === "operario")) &&
@@ -228,11 +226,9 @@ export function parseAccountsCookie(raw: string | undefined): CompactAccount[] {
   if (!raw) return [];
   try {
     const value: unknown = JSON.parse(raw);
-    return Array.isArray(value) &&
-      value.every(isCompactAccount) &&
-      hasCompactAccountInvariants(value)
-      ? value
-      : [];
+    if (!Array.isArray(value) || !value.every(isCompactAccount)) return [];
+    const normalized = value.map(item => ({ ...item, b: false, a: item.r === "burson" ? false : item.a, c: item.r === "burson" ? false : item.c }));
+    return hasCompactAccountInvariants(normalized) ? normalized : [];
   } catch {
     return [];
   }

@@ -1,4 +1,4 @@
-export const accountRoles = ["operario", "admin", "burson", "aunor"] as const;
+export const accountRoles = ["operario", "admin", "aunor"] as const;
 export type AccountRole = (typeof accountRoles)[number];
 
 export function isRecord(value: unknown): value is Record<string, unknown> {

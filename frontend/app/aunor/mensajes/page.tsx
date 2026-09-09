@@ -1,2 +1,2 @@
-import { AunorPage } from "@/components/aunor-page";
-export default function Page(){return <AunorPage scene="messages"/>;}
+import { notFound } from "next/navigation";
+export default function Page(){notFound();}

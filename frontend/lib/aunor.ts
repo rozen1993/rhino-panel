@@ -50,14 +50,20 @@ export function canUseAunor(role: Role | null): role is Role {
   return Boolean(role && !role.mustChangePassword && (role.id === "admin" || role.id === "aunor"));
 }
 export function canMutateAunor(role: Role | null, command: AunorCommand) {
-  if (!canUseAunor(role)) return false;
-  if (command === "message" || command === "read") return true;
+  if (!canUseAunor(role) || !aunorCommands.includes(command)) return false;
+  if (command === "message" || command === "read") return false;
   return command.startsWith("confirm-") ? role.id === "aunor" : role.id === "admin";
 }
-export const aunorDisclaimer = "Confirmar identifica lo revisado; no aprueba pagos ni equivalencias económicas. Los comentarios no confirman entregas ni reemplazos.";
+export const aunorDisclaimer = "Confirmar identifica lo revisado; no aprueba pagos ni equivalencias económicas.";
 export function aunorCode(id: string, type?: ActivityType) {
   return (type === "Edición" ? "ED" : type === "Grabación" ? "GR" : "AC") + "-" + id.replaceAll("-","").slice(-6).toUpperCase();
 }
 export function emptyAunorWorkspace(): AunorWorkspace {
   return {activities:[],journeys:[],services:[],deliveries:[],agreements:[],replacements:[],messages:[]};
+}
+
+/** All documented replacements remain observable, including corrected originals. */
+export function replacementsForService(w: AunorWorkspace, serviceId: string) {
+  const ids = new Set(w.activities.filter(a => a.service_id === serviceId).map(a => a.id));
+  return w.replacements.filter(r => ids.has(r.original_activity_id) || ids.has(r.substitute_activity_id));
 }

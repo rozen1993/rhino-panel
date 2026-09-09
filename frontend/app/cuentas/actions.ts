@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import type { Account, AccountFields } from "@/lib/accounts";
 import { passwordPolicyError } from "@/lib/password-policy";
-import { roleIds } from "@/lib/roles";
+import { isActiveRole } from "@/lib/roles";
 import { functionErrorMessage } from "@/lib/supabase/function-error";
 import { listSupabaseAccounts } from "@/lib/supabase/profiles";
 import { currentSupabaseRole } from "@/lib/supabase/session";
@@ -27,8 +27,8 @@ function validFields(fields: unknown, creating = false): fields is AccountFields
     ) &&
     typeof value.password === "string" &&
     (!creating || !passwordPolicyError(value.password)) &&
-    roleIds.includes(value.roleId!) &&
-    typeof value.bursonLinked === "boolean" &&
+    isActiveRole(value.roleId ?? "") &&
+    value.bursonLinked === false &&
     typeof value.canCreateOwnActivities === "boolean" &&
     (value.roleId === "operario" ||
       (!value.bursonLinked && !value.canCreateOwnActivities))

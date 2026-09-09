@@ -11,7 +11,7 @@ export async function AunorPage({scene,id,year}:{scene:AunorScene;id?:string;yea
   const initial=demo?readDemoAunor(role):await readSupabaseAunor();
   if(id && scene==="detail" && !initial.activities.some(a=>a.id===id)) notFound();
   if(id && scene==="replacement" && !initial.replacements.some(r=>r.id===id)) notFound();
-  return <MobileShell role={role} active={scene==="acordado"||scene==="replacement"?"Lo acordado":scene==="messages"?"Mensajes":"Mi panel"} backHref={scene==="detail"?"/aunor":scene==="replacement"?"/aunor/acordado":undefined}>
+  return <MobileShell role={role} active={scene==="acordado"||scene==="replacement"?"Contrato":"Mi panel"} backHref={scene==="detail"?"/aunor":scene==="replacement"?"/aunor/contrato":undefined}>
     <AunorSpace role={role} initial={initial} scene={scene} id={id} demo={demo} year={year??currentLimaYear()} today={calendarDateInLima()}/>
   </MobileShell>;
 }

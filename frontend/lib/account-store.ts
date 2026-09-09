@@ -8,6 +8,7 @@ import {
   type Account,
   type AccountFields,
 } from "@/lib/accounts";
+import { isActiveRole } from "@/lib/roles";
 import { passwordPolicyError } from "@/lib/password-policy";
 
 export const accountStoreKey = "rhino:cuentas-simuladas:v3";
@@ -25,24 +26,17 @@ function save(storage: Pick<Storage, "setItem">, accounts: Account[]) {
   document.cookie = `${accountsCookieName}=${encodeURIComponent(serializeAccountsCookie(accounts))}; path=/; SameSite=Lax`;
   window.dispatchEvent(new Event(changedEvent));
 }
-function specialCount(accounts: Account[]) {
-  return accounts.filter(
-    (item) => item.active && item.roleId === "operario" && item.bursonLinked,
-  ).length;
-}
-function activeBursonCount(accounts: Account[]) {
-  return accounts.filter((item) => item.active && item.roleId === "burson")
-    .length;
-}
-
 export function upsertAccount(
   storage: Pick<Storage, "getItem" | "setItem">,
   fields: AccountFields,
   actor: string,
   id?: string,
 ) {
+  if (!isActiveRole(fields.roleId) || fields.bursonLinked)
+    return { ok: false as const, error: "El rol y el vínculo Burson están retirados." };
   const current = readAccounts(storage);
   const previous = id ? current.find((item) => item.id === id) : undefined;
+  if (previous?.roleId === "burson") return { ok: false as const, error: "La cuenta retirada se conserva solo como archivo." };
   const resetsPassword = Boolean(
     fields.password && fields.password !== previous?.password,
   );
@@ -154,20 +148,10 @@ export function upsertAccount(
       };
     },
   );
-  if (specialCount(result) !== 1)
-    return {
-      ok: false as const,
-      error: "Debe existir exactamente un operario activo vinculado a Burson.",
-    };
   if (!result.some((item) => item.active && item.roleId === "admin"))
     return {
       ok: false as const,
       error: "Debe permanecer al menos una cuenta Admin activa.",
-    };
-  if (activeBursonCount(result) !== 1)
-    return {
-      ok: false as const,
-      error: "Debe existir exactamente una cuenta Burson activa.",
     };
   const previousSpecial = current.find(
     (item) => item.active && item.roleId === "operario" && item.bursonLinked,
@@ -195,7 +179,7 @@ export function toggleAccount(
 ) {
   const current = readAccounts(storage);
   const found = current.find((item) => item.id === id);
-  if (!found) return { ok: false as const, error: "La cuenta no existe." };
+  if (!found || found.roleId === "burson") return { ok: false as const, error: "La cuenta no existe o está retirada." };
   if (!found.active && found.roleId === "aunor" && current.some((item) => item.id !== id && item.active && item.roleId === "aunor"))
     return { ok: false as const, error: "Ya existe un acceso Aunor activo." };
   if (found.active && found.roleId === "operario" && hasOpenActivities)
@@ -225,11 +209,6 @@ export function toggleAccount(
     ],
   };
   const result = current.map((item) => (item.id === id ? changed : item));
-  if (specialCount(result) !== 1)
-    return {
-      ok: false as const,
-      error: "Debe permanecer activo el único operario vinculado a Burson.",
-    };
   if (
     found.active &&
     found.roleId === "admin" &&
@@ -239,11 +218,6 @@ export function toggleAccount(
     return {
       ok: false as const,
       error: "No puedes desactivar la última cuenta Admin.",
-    };
-  if (activeBursonCount(result) !== 1)
-    return {
-      ok: false as const,
-      error: "Debe permanecer activa la única cuenta Burson.",
     };
   save(storage, result);
   return { ok: true as const, account: changed };
@@ -259,7 +233,7 @@ export function resetTemporaryPassword(
   if (validation) return { ok: false as const, error: validation };
   const current = readAccounts(storage);
   const found = current.find((item) => item.id === id);
-  if (!found) return { ok: false as const, error: "La cuenta no existe." };
+  if (!found || found.roleId === "burson") return { ok: false as const, error: "La cuenta no existe o está retirada." };
   const now = new Date().toISOString();
   const account: Account = {
     ...found,

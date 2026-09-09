@@ -22,7 +22,7 @@ import {
   softDeleteActivity,
   updateExecutionActivity,
 } from "@/lib/activity-simulation";
-import { activityTypes, roleIds, roles } from "@/lib/roles";
+import { activityTypes, roleIds, activeRoleIds, roles } from "@/lib/roles";
 import {
   accountStoreKey,
   readAccounts,
@@ -78,48 +78,20 @@ describe("modelo operativo vigente desde el 2026-08-28", () => {
     expect(roles.aunor.canCreateOwnActivities).toBe(false);
     expect(roles.operario.canCreateOwnActivities).toBe(false);
     expect(roles.admin.administers).toBe(true);
-    expect(roles.burson.createsBursonRequests).toBe(true);
+    expect(roles.burson.createsBursonRequests).toBe(false);
+    expect(activeRoleIds).toEqual(["operario", "admin", "aunor"]);
     expect(activityTypes).toHaveLength(4);
   });
 
-  it("mantiene exactamente un operario activo vinculado a Burson", () => {
-    expect(
-      defaultAccounts.filter(
-        (account) =>
-          account.active &&
-          account.roleId === "operario" &&
-          account.bursonLinked,
-      ),
-    ).toHaveLength(1);
+  it("ya no mantiene operarios especiales", () => {
+    expect(defaultAccounts.filter(a => a.bursonLinked)).toHaveLength(0);
   });
-
-  it("transfiere atómicamente el vínculo Burson sin confundirlo con el permiso de crear", () => {
+  it("rechaza vincular sin alterar el permiso de creación", () => {
     const storage = new MemoryStorage();
-    storage.setItem(accountStoreKey, JSON.stringify(defaultAccounts));
-    const ana = defaultAccounts.find((account) => account.id === "account-ana")!;
-    const result = upsertAccount(
-      storage,
-      {
-        name: ana.name,
-        username: ana.username,
-        password: ana.password,
-        roleId: "operario",
-        bursonLinked: true,
-        canCreateOwnActivities: ana.canCreateOwnActivities,
-      },
-      "Marco Admin",
-      ana.id,
-    );
-    expect(result.ok).toBe(true);
-    const accounts = readAccounts(storage);
-    expect(accounts.filter((account) => account.active && account.bursonLinked)).toHaveLength(1);
-    expect(accounts.find((account) => account.id === "account-ana")).toMatchObject({
-      bursonLinked: true,
-      canCreateOwnActivities: true,
-    });
-    expect(accounts.find((account) => account.id === "account-luis")?.bursonLinked).toBe(false);
+    const ana = defaultAccounts.find(a => a.id === "account-ana")!;
+    expect(upsertAccount(storage, { ...ana, bursonLinked: true }, "Admin", ana.id).ok).toBe(false);
+    expect(readAccounts(storage).find(a => a.id === ana.id)).toMatchObject({bursonLinked: false, canCreateOwnActivities: true});
   });
-
   it("rechaza al Operario general y permite al autorizado crear solo para sí mismo", () => {
     const storage = new MemoryStorage();
     expect(createOwnActivity(storage, draft, regularOperator).ok).toBe(false);
@@ -243,62 +215,16 @@ describe("modelo operativo vigente desde el 2026-08-28", () => {
     }
   });
 
-  it("asigna automáticamente un encargo Burson al operario especial", () => {
-    const result = createBursonActivity(
-      new MemoryStorage(),
-      new MemoryStorage(),
-      draft,
-      {
-        ...roles.burson,
-        accountId: "account-burson",
-        accountName: "Equipo Burson",
-      },
-    );
-    expect(result.ok).toBe(true);
-    if (result.ok) {
-      expect(result.activity.origin).toBe("burson");
-      expect(result.activity.responsibleAccountId).toBe("account-luis");
-    }
-  });
-
-  it("repite el mismo encargo Burson después de transferir al responsable", () => {
+  it("rechaza crear encargos Burson aun con una capacidad antigua", () => {
     const storage = new MemoryStorage();
-    const key = "00000000-0000-4000-8000-000000000003";
-    const bursonRole = {
-      ...roles.burson,
-      accountId: "account-burson",
-      accountName: "Equipo Burson",
-    };
-    const first = createBursonActivity(
-      storage,
-      new MemoryStorage(),
-      { ...draft, referenceLink: "https://burson.example/referencia" },
-      bursonRole,
-      key,
-    );
-    if (!first.ok) throw new Error(first.error);
-    reassignOpenBursonActivities(
-      storage,
-      "account-luis",
-      "account-ana",
-      "Ana Torres",
-      actorFromRole(adminRole),
-    );
-
-    const replay = createBursonActivity(
-      storage,
-      new MemoryStorage(),
-      { ...draft, referenceLink: "https://burson.example/referencia" },
-      bursonRole,
-      key,
-    );
-    expect(replay.ok && replay.replayed).toBe(true);
-    if (replay.ok) {
-      expect(replay.activity.id).toBe(first.activity.id);
-      expect(replay.activity.responsibleAccountId).toBe("account-ana");
-    }
+    const before = readActivities(storage);
+    expect(createBursonActivity(storage, storage, draft, {...roles.burson, createsBursonRequests: true}).ok).toBe(false);
+    expect(readActivities(storage)).toEqual(before);
   });
-
+  it("rechaza reintentos del canal Burson retirado", () => {
+    const storage = new MemoryStorage();
+    for (let i=0;i<2;i++) expect(createBursonActivity(storage, storage, draft, roles.burson, "00000000-0000-4000-8000-000000000003").ok).toBe(false);
+  });
   it("separa planificación, ejecución y transición de estado", () => {
     const storage = new MemoryStorage();
     const planned = planActivity(

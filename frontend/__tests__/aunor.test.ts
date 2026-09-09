@@ -28,7 +28,7 @@ describe("Aunor: autorización de acciones y proyección externa",()=>{
     }
     for(const cmd of aunorCommands)expect(canMutateAunor({...actor("aunor"),mustChangePassword:true},cmd)).toBe(false);
   });
-  it("Admin registra; solo Aunor confirma; ambos conversan",()=>{
+  it("Admin registra; solo Aunor confirma; nadie puede conversar",()=>{
     for(const cmd of ["publish","delivery","agreement","replacement"] as const) {
       expect(canMutateAunor(actor("admin"),cmd)).toBe(true);
       expect(canMutateAunor(actor("aunor"),cmd)).toBe(false);
@@ -52,6 +52,13 @@ describe("Aunor: autorización de acciones y proyección externa",()=>{
     }
     expect(mocks.rpc).not.toHaveBeenCalled();
   });
+  it("deniega message/read de Admin y Aunor antes del RPC",async()=>{
+    for(const name of ["admin","aunor"] as const) for(const command of ["message","read"] as const) {
+      mocks.role.mockResolvedValue(actor(name));
+      expect((await performAunorAction(commandInput(command))).ok).toBe(false);
+    }
+    expect(mocks.rpc).not.toHaveBeenCalled();
+  });
   it("no confía en fuente demo cuando utiliza Supabase",async()=>{
     mocks.role.mockResolvedValue(actor("admin"));
     const input={...commandInput("publish"),payload:{expectedVersion:0,summary:"Público"},demoSource:{id,type:"Grabación" as const,title:"Título adulterado",status:"Entregada" as const,place:"",spans:[],materialLink:"https://example.invalid/forged",version:999,origin:"operario" as const}};
@@ -61,11 +68,12 @@ describe("Aunor: autorización de acciones y proyección externa",()=>{
   });
   it("valida identificadores y no revela errores privados del RPC",async()=>{
     mocks.role.mockResolvedValue(actor("aunor"));
-    expect((await performAunorAction({...commandInput("message"),activityId:"../cuentas"})).ok).toBe(false);
-    expect((await performAunorAction({...commandInput("message"),requestId:"------------------------------------"})).ok).toBe(false);
+    expect((await performAunorAction({...commandInput("confirm-delivery"),activityId:"../cuentas"})).ok).toBe(false);
+    expect((await performAunorAction({...commandInput("confirm-delivery"),requestId:"------------------------------------"})).ok).toBe(false);
     expect(mocks.rpc).not.toHaveBeenCalled();
     mocks.rpc.mockResolvedValue({error:{code:"42501",message:"SECRETO INTERNO"}});
-    expect(JSON.stringify(await performAunorAction(commandInput("message")))).not.toContain("SECRETO");
+    expect(JSON.stringify(await performAunorAction(commandInput("confirm-delivery")))).not.toContain("SECRETO");
+    expect(mocks.rpc).toHaveBeenCalledOnce();
   });
   it("los ejemplos públicos no contienen datos operativos privados ni económicos",()=>{
     const w=createAunorExamples();
@@ -76,15 +84,15 @@ describe("Aunor: autorización de acciones y proyección externa",()=>{
 });
 
 describe("simulación externa: objetos y correcciones",()=>{
-  it("un comentario no confirma y los reintentos no duplican",()=>{
-    const request=crypto.randomUUID(),payload={body:"Mensaje de prueba "+request};
-    const first=mutateDemoAunor(actor("aunor"),"message","cobertura-norte",request,payload);
-    expect(mutateDemoAunor(actor("aunor"),"message","cobertura-norte",request,payload)).toEqual(first);
-    const w=readDemoAunor(actor("aunor"));
-    expect(w.messages.filter(m=>m.id===first.id)).toHaveLength(1);
-    expect(w.deliveries.find(d=>d.id==="delivery-demo-1")?.confirmed_at).toBeNull();
-    expect(()=>mutateDemoAunor(actor("aunor"),"message","cobertura-norte",request,{body:"Otro"})).toThrow();
+  it("el chat externo está retirado y sus mensajes no se serializan",()=>{
+    for(const role of [actor("aunor"),actor("admin")]) for(const command of ["message","read"] as const) {
+      expect(canMutateAunor(role,command)).toBe(false);
+      expect(()=>mutateDemoAunor(role,command,"cobertura-norte",crypto.randomUUID(),{body:"No publicar",sequence:0})).toThrow();
+      expect(readDemoAunor(role).messages).toEqual([]);
+      expect(readDemoAunor(role).activities.every(a=>a.unread_count===0)).toBe(true);
+    }
   });
+
   it("no confirma otro objeto ni mediante un Admin",()=>{
     const payload={objectId:"delivery-demo-1",version:1,acknowledged:true};
     expect(()=>mutateDemoAunor(actor("admin"),"confirm-delivery","cobertura-norte",crypto.randomUUID(),payload)).toThrow();

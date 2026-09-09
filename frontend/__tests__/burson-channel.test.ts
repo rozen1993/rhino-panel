@@ -99,17 +99,11 @@ describe("canal Burson real", () => {
     expect(migration).toContain("date '2026-01-01'");
   });
 
-  it("la acción reautoriza, valida y no envía campos internos", () => {
-    expect(action).toContain('role?.id !== "burson"');
-    expect(action).toContain("role.mustChangePassword");
-    expect(action).toContain('supabase.rpc("create_burson_request_v2"');
-    expect(action).toContain("p_reference_link: referenceLink");
-    expect(action).not.toContain("p_responsible_id");
-    expect(action).not.toContain("p_material_link");
-    expect(action).not.toContain("p_operator_opinion");
-    expect(action).toContain('revalidatePath("/burson")');
+  it("la acción antigua rechaza sin consultar ni mutar", () => {
+    expect(action).toContain('ok: false');
+    expect(action).toContain('El canal Burson está retirado.');
+    expect(action).not.toContain('supabase.rpc');
   });
-
   it("consulta una proyección explícita sin auditoría ni metadatos internos", () => {
     const bursonReaders = readers.slice(
       readers.indexOf("async function fetchBursonRequestRows"),
@@ -136,11 +130,8 @@ describe("canal Burson real", () => {
       expect(bursonReaders).not.toContain(hidden);
   });
 
-  it("retira el aviso Supabase y separa el detalle externo del operativo", () => {
-    expect(bursonPage).not.toContain("BackendPhaseNotice");
-    expect(bursonPage).toContain("listSupabaseBursonRequests");
-    expect(activityDetailPage).toContain(
-      'item.id === "admin" || item.id === "operario"',
-    );
-  });
-});
+  it("la ruta retirada no carga datos y conserva el detalle interno", () => {
+    expect(bursonPage).toContain("notFound()");
+    expect(bursonPage).not.toContain("listSupabaseBursonRequests");
+    expect(activityDetailPage).toContain('item.id === "admin" || item.id === "operario"');
+  });});

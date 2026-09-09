@@ -57,28 +57,7 @@ function accountCard(page: Page, name: string) {
 test("los roles vigentes respetan navegación y acceso directo", async ({
   page,
 }) => {
-  await login(page, "burson");
-  await expect(page).toHaveURL(/\/burson$/);
-  await page
-    .getByRole("link", {
-      name: "Consultar encargo Locución institucional Burson",
-    })
-    .click();
-  await page.waitForURL(/\/burson\/[^/?]+$/);
-  const bursonRequestPath = new URL(page.url()).pathname;
-  await expect(
-    page.getByRole("heading", { name: "Locución institucional Burson" }),
-  ).toBeVisible();
-  await expect(page.getByText("Trazabilidad completa")).toHaveCount(0);
-  await expect(page.getByText("Conversación con Admin")).toHaveCount(0);
-  await page.goto(bursonRequestPath.replace("/burson/", "/actividades/"));
-  await expect(page).toHaveURL(/\/sin-acceso$/);
-  await page.goto("/historico");
-  await expect(page).toHaveURL(/\/sin-acceso$/);
-  await page.goto("/papelera");
-  await expect(page).toHaveURL(/\/sin-acceso$/);
-
-  await switchUser(page, "carlos");
+  await login(page, "carlos");
   await expect(page).toHaveURL(/\/actividades$/);
   await expect(
     page.getByRole("link", { name: "Crear actividad propia" }),
@@ -109,29 +88,12 @@ test("los roles vigentes respetan navegación y acceso directo", async ({
   ).toBeVisible();
 });
 
-test("Burson crea y consulta un encargo sin superficies internas", async ({
-  page,
-}) => {
-  await login(page, "burson");
-  await fillPlanning(page, "Encargo Burson E2E");
-  await page
-    .getByLabel("Enlace de referencia opcional")
-    .fill("https://burson.example/referencia-e2e");
-  await expect(page.getByLabel("Operario responsable")).toHaveCount(0);
-  await expect(page.getByLabel("Enlace del material")).toHaveCount(0);
-  await page.getByRole("button", { name: "Crear encargo" }).click();
-  await expect(page.getByText("Encargo creado y asignado.")).toBeVisible();
-  await page.getByRole("link", { name: "Ver encargo" }).click();
-  await page.waitForURL(/\/burson\/[^/?]+$/);
-
-  await expect(
-    page.getByRole("heading", { name: "Encargo Burson E2E" }),
-  ).toBeVisible();
-  await expect(page.getByText("Luis Mendoza", { exact: true })).toBeVisible();
-  await expect(page.getByText("Trazabilidad completa")).toHaveCount(0);
-  await expect(page.getByText("Conversación con Admin")).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "Editar plan" })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Iniciar" })).toHaveCount(0);
+test("Burson retirado no figura en accesos ni navegación", async ({page}) => {
+  await page.goto("/acceso");
+  await expect(page.getByRole("listitem").filter({hasText:"Equipo Burson"})).toHaveCount(0);
+  await login(page,"admin");
+  await expect(page.getByRole("link",{name:"Burson",exact:true})).toHaveCount(0);
+  expect((await page.goto("/burson"))?.status()).toBe(404);
 });
 
 test("Admin concede y revoca el permiso individual de creación", async ({

@@ -153,8 +153,7 @@ describe("Corte 5: baja reversible y Papelera", () => {
       '"/burson"',
     ])
       expect(trashActions).toContain(`revalidatePath(${path})`);
-    expect(trashDashboard).toContain('item.origin !== "burson"');
-    expect(trashDashboard).toContain("currentResponsible?.bursonLinked");
+    expect(trashDashboard).not.toContain("currentResponsible?.bursonLinked");
     expect(trashDashboard).toContain(
       "pendingActivityIds.has(item.id)",
     );
@@ -365,7 +364,7 @@ describe("Corte 5: baja reversible y Papelera", () => {
     }
   });
 
-  it("exige al Operario especial vigente al restaurar un encargo Burson abierto", () => {
+  it("restaura un encargo histórico con un operario normal sin exigir vínculo Burson", () => {
     const storage = new MemoryStorage();
     const admin = actorFromRole(adminRole);
     const request = readActivities(storage).find(
@@ -399,15 +398,18 @@ describe("Corte 5: baja reversible y Papelera", () => {
       admin,
       deleted.activity.version,
     );
-    expect(obsoleteLink.ok).toBe(false);
-    if (!obsoleteLink.ok) expect(obsoleteLink.error).toContain("especial");
+    expect(obsoleteLink.ok).toBe(true);
+    if (!obsoleteLink.ok) throw new Error(obsoleteLink.error);
+    expect(obsoleteLink.activity.origin).toBe("burson");
+    const removedAgain = softDeleteActivity(storage, request.id, "Segunda revisión temporal", admin, obsoleteLink.activity.version);
+    if (!removedAgain.ok) throw new Error(removedAgain.error);
 
     const restored = restoreActivity(
       storage,
       storage,
       request.id,
       admin,
-      deleted.activity.version,
+      removedAgain.activity.version,
       "account-carlos",
     );
     expect(restored.ok).toBe(true);

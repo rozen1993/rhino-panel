@@ -132,7 +132,7 @@ export async function handleAdminAccountsRequest(request: Request, ctx: any) {
       !username ||
       !validDisplayName(body.displayName) ||
       !validRole(body.role) ||
-      typeof body.isBursonOperator !== "boolean" ||
+      body.isBursonOperator !== false ||
       typeof body.canCreateOwnActivities !== "boolean" ||
       (body.role !== "operario" && body.isBursonOperator) ||
       (body.role !== "operario" && body.canCreateOwnActivities)

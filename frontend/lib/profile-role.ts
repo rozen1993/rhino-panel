@@ -1,4 +1,4 @@
-import { roles, type Role, type RoleId } from "@/lib/roles";
+import { roles, isActiveRole, type Role, type RoleId } from "@/lib/roles";
 
 export type ProfileRoleRow = {
   id: string;
@@ -11,12 +11,12 @@ export type ProfileRoleRow = {
 };
 
 export function profileToRole(profile: ProfileRoleRow): Role | null {
-  if (!profile.is_active || !roles[profile.role]) return null;
+  if (!profile.is_active || !isActiveRole(profile.role) || !roles[profile.role]) return null;
   return {
     ...roles[profile.role],
     accountId: profile.id,
     accountName: profile.role === "aunor" ? "Aunor" : profile.display_name,
-    bursonLinked: profile.is_burson_operator,
+    bursonLinked: false,
     canCreateOwnActivities: profile.can_create_own_activities,
     mustChangePassword: profile.must_change_password,
   };

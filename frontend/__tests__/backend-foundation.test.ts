@@ -163,7 +163,7 @@ describe("cimiento del backend", () => {
     ).toMatchObject({
       id: "operario",
       accountName: "Ana Torres",
-      bursonLinked: true,
+      bursonLinked: false,
       canCreateOwnActivities: true,
     });
     expect(

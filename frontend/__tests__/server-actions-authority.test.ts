@@ -442,35 +442,12 @@ describe("autoridad ejecutada dentro de Server Actions", () => {
     });
   });
 
-  it("Burson crea un encargo sin poder elegir responsable ni ejecución", async () => {
-    mocks.currentRole.mockResolvedValue({
-      ...roles.burson,
-      accountId: "00000000-0000-4000-8000-000000000014",
-    });
-    const result = await createSupabaseBursonRequestAction(
-      {
-        ...fields,
-        referenceLink: " https://burson.example/referencia ",
-        materialLink: "https://no-debe-viajar.example/material",
-        notes: "Tampoco debe viajar",
-      },
-      requestId,
-    );
-    expect(result.ok).toBe(true);
-    expect(mocks.rpc).toHaveBeenCalledWith("create_burson_request_v2", {
-      p_idempotency_key: requestId,
-      p_type: fields.type,
-      p_title: fields.title,
-      p_description: fields.description,
-      p_place: fields.placeName,
-      p_spans: fields.spans,
-      p_reference_link: "https://burson.example/referencia",
-    });
-    expect(mocks.revalidate).toHaveBeenCalledWith("/burson");
-    expect(mocks.revalidate).toHaveBeenCalledWith(`/burson/${activityId}`);
-    expect(mocks.revalidate).not.toHaveBeenCalledWith("/actividades");
+  it("canal retirado: Burson crea un encargo sin poder elegir responsable ni ejecución", async () => {
+    mocks.currentRole.mockResolvedValue({...roles.burson, createsBursonRequests:true});
+    expect((await createSupabaseBursonRequestAction(fields, requestId)).ok).toBe(false);
+    expect(mocks.rpc).not.toHaveBeenCalled();
+    expect(mocks.revalidate).not.toHaveBeenCalled();
   });
-
   it("rechaza otras capacidades y referencias inseguras antes de la RPC Burson", async () => {
     mocks.currentRole.mockResolvedValue({
       ...roles.operario,
@@ -498,24 +475,12 @@ describe("autoridad ejecutada dentro de Server Actions", () => {
     expect(mocks.rpc).not.toHaveBeenCalled();
   });
 
-  it("normaliza la referencia antes de calcularla en la RPC Burson", async () => {
-    mocks.currentRole.mockResolvedValue({
-      ...roles.burson,
-      accountId: "00000000-0000-4000-8000-000000000014",
-    });
-    const result = await createSupabaseBursonRequestAction(
-      { ...fields, referenceLink: "https://burson.example/material de apoyo" },
-      requestId,
-    );
-    expect(result.ok).toBe(true);
-    expect(mocks.rpc).toHaveBeenCalledWith(
-      "create_burson_request_v2",
-      expect.objectContaining({
-        p_reference_link: "https://burson.example/material%20de%20apoyo",
-      }),
-    );
+  it("canal retirado: normaliza la referencia antes de calcularla en la RPC Burson", async () => {
+    mocks.currentRole.mockResolvedValue({...roles.burson, createsBursonRequests:true});
+    expect((await createSupabaseBursonRequestAction(fields, requestId)).ok).toBe(false);
+    expect(mocks.rpc).not.toHaveBeenCalled();
+    expect(mocks.revalidate).not.toHaveBeenCalled();
   });
-
   it("bloquea la acción Burson mientras la clave temporal siga pendiente", async () => {
     mocks.currentRole.mockResolvedValue({
       ...roles.burson,
@@ -528,19 +493,12 @@ describe("autoridad ejecutada dentro de Server Actions", () => {
     expect(mocks.rpc).not.toHaveBeenCalled();
   });
 
-  it("propaga el replay idempotente de un encargo Burson", async () => {
-    mocks.currentRole.mockResolvedValue({
-      ...roles.burson,
-      accountId: "00000000-0000-4000-8000-000000000014",
-    });
-    mocks.rpc.mockResolvedValueOnce({
-      data: [{ activity_id: activityId, activity_version: 2, replayed: true }],
-      error: null,
-    });
-    const result = await createSupabaseBursonRequestAction(fields, requestId);
-    expect(result.ok && result.replayed).toBe(true);
+  it("canal retirado: propaga el replay idempotente de un encargo Burson", async () => {
+    mocks.currentRole.mockResolvedValue({...roles.burson, createsBursonRequests:true});
+    expect((await createSupabaseBursonRequestAction(fields, requestId)).ok).toBe(false);
+    expect(mocks.rpc).not.toHaveBeenCalled();
+    expect(mocks.revalidate).not.toHaveBeenCalled();
   });
-
   it("el llamador real del permiso usa la RPC dedicada", async () => {
     mocks.currentRole.mockResolvedValue({
       ...roles.admin,

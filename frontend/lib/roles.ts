@@ -28,7 +28,7 @@ export const roles: Record<RoleId, Role> = {
     id: "aunor", label: "Aunor", seesAllActivities: false,
     administers: false, canCreateOwnActivities: false,
     createsBursonRequests: false, mustChangePassword: false,
-    summary: "Consulta sus actividades publicadas y conversa con Rhino.",
+    summary: "Consulta sus actividades publicadas, entregas y contrato.",
   },
   operario: {
     id: "operario",
@@ -56,16 +56,19 @@ export const roles: Record<RoleId, Role> = {
     seesAllActivities: false,
     administers: false,
     canCreateOwnActivities: false,
-    createsBursonRequests: true,
+    createsBursonRequests: false,
     mustChangePassword: false,
     summary: "Crea y consulta exclusivamente sus propios encargos.",
   },
 };
 
-export const roleList = roleIds.map((id) => roles[id]);
+// Keep legacy IDs for historical records; never offer retired roles for access.
+export const activeRoleIds = ["operario", "admin", "aunor"] as const;
+export function isActiveRole(id: string): boolean { return (activeRoleIds as readonly string[]).includes(id); }
+export const roleList = activeRoleIds.map((id) => roles[id]);
 
 export function roleHome(roleId: RoleId) {
-  return roleId === "aunor" ? "/aunor" : roleId === "burson" ? "/burson" : "/actividades";
+  return roleId === "aunor" ? "/aunor" : roleId === "burson" ? "/sin-acceso" : "/actividades";
 }
 
 export function allowedActivityTypes() {

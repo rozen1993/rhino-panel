@@ -99,7 +99,7 @@ export async function listAssignableOperators(): Promise<
     .map((profile) => ({
       id: profile.id,
       name: profile.display_name,
-      bursonLinked: profile.is_burson_operator,
+      bursonLinked: false,
     }));
 }
 
@@ -147,7 +147,7 @@ export async function listSupabaseAccounts(): Promise<Account[]> {
       // para que el mismo componente pueda operar en el modo demo.
       password: "",
       roleId: profile.role,
-      bursonLinked: profile.is_burson_operator,
+      bursonLinked: false,
       canCreateOwnActivities: profile.can_create_own_activities,
       mustChangePassword: profile.must_change_password,
       active: profile.is_active,

@@ -5,7 +5,7 @@ import {
   parseAccountsCookie,
 } from "@/lib/accounts";
 import { resolveDataSource } from "@/lib/data-source";
-import { type Role, type RoleId, roleIds, roles } from "@/lib/roles";
+import { type Role, type RoleId, roleIds, roles, isActiveRole } from "@/lib/roles";
 import { currentSupabaseRole } from "@/lib/supabase/session";
 
 export const SESSION_COOKIE = "rhino_rol_prueba_v2";
@@ -42,9 +42,9 @@ export function findTestUser(
         mustChangePassword: item.m,
         active: item.a,
       }))
-    : testUsers.map((item) => ({ ...item, active: true }));
+    : testUsers.map((item) => ({ ...item, active: isActiveRole(item.roleId) }));
   return source.find(
-    (item) => item.user === clean && item.password === password && item.active,
+    (item) => item.user === clean && item.password === password && item.active && isActiveRole(item.roleId),
   );
 }
 
@@ -57,7 +57,7 @@ export async function currentRole(): Promise<Role | null> {
   const store = await cookies();
   const roleId = store.get(SESSION_COOKIE)?.value;
   const accountId = store.get(SESSION_ACCOUNT_COOKIE)?.value;
-  if (!isRoleId(roleId) || !accountId) return null;
+  if (!isRoleId(roleId) || !isActiveRole(roleId) || !accountId) return null;
 
   const cookieAccounts = parseAccountsCookie(
     store.get(accountsCookieName)?.value,
@@ -84,7 +84,7 @@ export async function currentRole(): Promise<Role | null> {
     ...roles[roleId],
     accountId,
     accountName: roleId === "aunor" ? "Aunor" : account.n,
-    bursonLinked: account.b,
+    bursonLinked: false,
     canCreateOwnActivities: account.c,
     mustChangePassword: account.m,
   };

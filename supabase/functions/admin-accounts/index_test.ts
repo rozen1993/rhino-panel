@@ -57,6 +57,19 @@ const validCreate = {
   temporaryPassword: "Temporal-1234!",
 };
 
+for (const retired of [{ role: "burson" }, { isBursonOperator: true }]) {
+  Deno.test("rechaza el rol/vínculo retirado antes de crear usuario Auth " + JSON.stringify(retired), async () => {
+    const response = await handleAdminAccountsRequest(post({ ...validCreate, ...retired }), {
+      userClaims: { id: adminId },
+      supabase: profileReader(),
+      supabaseAdmin: { auth: { admin: { async createUser() {
+        assert.fail("No debe crear una cuenta ni privilegio Burson");
+      } } } },
+    });
+    assert.equal(response.status, 400);
+  });
+}
+
 function serviceProfileReader(
   result: { data: { id: string } | null; error: Error | null },
   calls: string[],

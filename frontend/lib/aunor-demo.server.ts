@@ -1,6 +1,6 @@
 import "server-only";
 import { createAunorExamples } from "@/lib/aunor-examples";
-import { canMutateAunor, type AunorCommand, type AunorWorkspace } from "@/lib/aunor";
+import { canMutateAunor, canUseAunor, type AunorCommand, type AunorWorkspace } from "@/lib/aunor";
 import type { ActivityType, Role } from "@/lib/roles";
 import { safeMaterialUrl } from "@/lib/external-link";
 
@@ -16,9 +16,10 @@ function state() {
   return memory.__sistemaRAunorDemo;
 }
 export function readDemoAunor(role:Role):AunorWorkspace {
+  if (!canUseAunor(role)) throw Error("Acceso no autorizado.");
   const s=state(); const w=structuredClone(s.workspace);
-  for(const a of w.activities) a.unread_count=w.messages.filter(m=>m.activity_id===a.id && m.author_role!==role.id && m.sequence>(s.reads.get(role.accountId+":"+a.id)??0)).length;
-  for(const m of w.messages) m.is_own=m.author_role===role.id; // One collective Aunor identity in demo.
+  for(const a of w.activities) a.unread_count=0;
+  w.messages=[]; // Archived in server memory; never serialized to clients.
   return w;
 }
 export function mutateDemoAunor(role:Role,command:AunorCommand,activityId:string,requestId:string,p:Record<string,unknown>,source?:DemoAunorSource) {

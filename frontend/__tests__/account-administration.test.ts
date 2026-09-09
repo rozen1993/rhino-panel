@@ -344,92 +344,22 @@ describe("administración de cuentas y clave temporal", () => {
     expect(inactiveGrant).toMatchObject({ ok: false });
   });
 
-  it("mantiene exactamente una cuenta Burson activa también en demo", () => {
+  it("archiva Burson y prohíbe nuevas cuentas o reactivaciones", () => {
     const storage = new MemoryStorage();
-    const created = upsertAccount(
-      storage,
-      {
-        name: "Segundo Burson",
-        username: "burson.dos",
-        password: "Temporal9!Clave",
-        roleId: "burson",
-        bursonLinked: false,
-        canCreateOwnActivities: false,
-      },
-      "Marco Admin",
-    );
-    expect(created).toMatchObject({
-      ok: false,
-      error: "Debe existir exactamente una cuenta Burson activa.",
-    });
-
-    const burson = readAccounts(storage).find(
-      (account) => account.roleId === "burson" && account.active,
-    );
-    expect(burson).toBeDefined();
-    expect(toggleAccount(storage, burson!.id, "Marco Admin", false)).toMatchObject({
-      ok: false,
-      error: "Debe permanecer activa la única cuenta Burson.",
-    });
+    expect(upsertAccount(storage, {name:"Otro Burson",username:"otro",password:"Temporal9!Clave",roleId:"burson",bursonLinked:false,canCreateOwnActivities:false}, "Admin").ok).toBe(false);
+    const archived=readAccounts(storage).find(a=>a.roleId==="burson")!;
+    expect(archived.active).toBe(false);
+    expect(toggleAccount(storage,archived.id,"Admin",false).ok).toBe(false);
   });
-
-  it("rechaza cookies demo que rompen invariantes de cuenta", () => {
-    type Compact = {
-      i: string;
-      u: string;
-      p: string;
-      r: "admin" | "operario" | "burson";
-      b: boolean;
-      c: boolean;
-      m: boolean;
-      a: boolean;
-      n: string;
-    };
-    const valid = JSON.parse(
-      serializeAccountsCookie(defaultAccounts),
-    ) as Compact[];
-    expect(parseAccountsCookie(JSON.stringify(valid))).toHaveLength(
-      defaultAccounts.length,
-    );
-
-    const invalidVariants = [
-      (items: Compact[]) => {
-        items.find((item) => item.r === "admin")!.a = false;
-      },
-      (items: Compact[]) => {
-        items.find((item) => item.r === "burson")!.a = false;
-      },
-      (items: Compact[]) => {
-        const duplicate = structuredClone(
-          items.find((item) => item.r === "burson")!,
-        );
-        duplicate.i = "account-burson-duplicate";
-        duplicate.u = "burson.duplicate";
-        items.push(duplicate);
-      },
-      (items: Compact[]) => {
-        items.find((item) => item.b)!.b = false;
-      },
-      (items: Compact[]) => {
-        items.find((item) => item.u === "carlos")!.b = true;
-      },
-      (items: Compact[]) => {
-        items.find((item) => item.r === "admin")!.c = true;
-      },
-      (items: Compact[]) => {
-        items.find((item) => item.r === "burson")!.b = true;
-      },
-      (items: Compact[]) => {
-        const operator = items.find((item) => item.u === "carlos")!;
-        operator.a = false;
-        operator.c = true;
-      },
-    ];
-
-    for (const mutate of invalidVariants) {
-      const candidate = structuredClone(valid);
-      mutate(candidate);
-      expect(parseAccountsCookie(JSON.stringify(candidate))).toEqual([]);
-    }
-  });
-});
+  it("migra cookies legadas sin perder cuentas y conserva invariantes vigentes", () => {
+    const valid = JSON.parse(serializeAccountsCookie(defaultAccounts));
+    expect(parseAccountsCookie(JSON.stringify(valid))).toHaveLength(defaultAccounts.length);
+    valid.find((a: {r:string})=>a.r==="burson").a=true;
+    valid.find((a: {u:string})=>a.u==="luis").b=true;
+    const migrated=parseAccountsCookie(JSON.stringify(valid));
+    expect(migrated.find(a=>a.r==="burson")?.a).toBe(false);
+    expect(migrated.every(a=>!a.b)).toBe(true);
+    expect(migrated.map(a=>a.i)).toEqual(valid.map((a: {i:string})=>a.i));
+    valid.find((a: {r:string})=>a.r==="admin").a=false;
+    expect(parseAccountsCookie(JSON.stringify(valid))).toEqual([]);
+  });});

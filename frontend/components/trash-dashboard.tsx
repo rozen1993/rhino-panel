@@ -79,8 +79,7 @@ export function TrashDashboard({
       (operator) => operator.id === item.responsibleAccountId,
     );
     const responsibleIsAssignable =
-      Boolean(currentResponsible) &&
-      (item.origin !== "burson" || Boolean(currentResponsible?.bursonLinked));
+      Boolean(currentResponsible);
     const needsReplacement =
       item.status !== "Entregada" && !responsibleIsAssignable;
     const replacement = needsReplacement
@@ -177,15 +176,10 @@ export function TrashDashboard({
               (operator) => operator.id === item.responsibleAccountId,
             );
             const responsibleIsAssignable =
-              Boolean(currentResponsible) &&
-              (item.origin !== "burson" ||
-                Boolean(currentResponsible?.bursonLinked));
+              Boolean(currentResponsible);
             const needsReplacement =
               item.status !== "Entregada" && !responsibleIsAssignable;
-            const availableOperators =
-              item.origin === "burson"
-                ? operators.filter((operator) => operator.bursonLinked)
-                : operators;
+            const availableOperators = operators;
             const selectId = `restore-responsible-${item.id}`;
             const restoring = pendingActivityIds.has(item.id);
 
@@ -268,9 +262,7 @@ export function TrashDashboard({
                           ))}
                         </select>
                         <p className="mt-2 text-xs leading-5 text-ink-muted">
-                          {item.origin === "burson" && currentResponsible
-                            ? "El vínculo Burson cambió. Elige al Operario especial vigente."
-                            : "El responsable anterior ya no puede recibir trabajo abierto. Elige un Operario activo."}{" "}
+                          El responsable anterior ya no puede recibir trabajo abierto. Elige un Operario activo.{" "}
                           La restauración conservará todo lo demás.
                         </p>
                       </div>

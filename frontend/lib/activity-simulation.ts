@@ -11,7 +11,7 @@ import {
 import type { ActivityDraftFields } from "@/lib/activity-draft";
 import { validSpans } from "@/lib/activity-validation";
 import { readAccounts } from "@/lib/account-store";
-import { safeMaterialUrl, safeReferenceUrl } from "@/lib/external-link";
+import { safeMaterialUrl } from "@/lib/external-link";
 import { calendarDateInLima } from "@/lib/historical";
 import { activityTypes, roleIds, type Role, type RoleId } from "@/lib/roles";
 
@@ -352,10 +352,7 @@ function audit(
 export function canViewActivity(item: SimulatedActivity, role: Role) {
   if (item.deletedAt) return role.id === "admin";
   if (role.id === "admin") return true;
-  if (role.id === "burson")
-    return (
-      item.origin === "burson" && item.createdByAccountId === role.accountId
-    );
+  if (role.id === "burson") return false;
   return (
     role.id === "operario" && item.responsibleAccountId === role.accountId
   );
@@ -389,20 +386,6 @@ function planningFingerprint(
     description: fields.description.trim(),
     place: fields.placeName.trim(),
     spans: normalizeSpans(fields.spans),
-  });
-}
-
-function bursonPlanningFingerprint(
-  fields: ActivityDraftFields,
-  referenceLink: string,
-) {
-  return JSON.stringify({
-    type: fields.type,
-    title: fields.title.trim(),
-    description: fields.description.trim(),
-    place: fields.placeName.trim(),
-    spans: normalizeSpans(fields.spans),
-    referenceLink,
   });
 }
 
@@ -567,98 +550,13 @@ export function createOwnActivity(
   save(storage, [next, ...current]);
   return { ok: true as const, activity: next };
 }
-export function createBursonActivity(
-  storage: Pick<Storage, "getItem" | "setItem">,
-  accountStorage: Pick<Storage, "getItem">,
-  fields: ActivityDraftFields,
-  role: Role,
-  idempotencyKey?: string,
-) {
-  if (role.id !== "burson")
-    return {
-      ok: false as const,
-      error: "Solo Burson puede crear encargos Burson.",
-    };
-  const validation = planningError(fields);
-  if (validation) return { ok: false as const, error: validation };
-  const rawReferenceLink = fields.referenceLink.trim();
-  const normalizedReferenceLink = rawReferenceLink
-    ? safeReferenceUrl(rawReferenceLink)
-    : "";
-  if (normalizedReferenceLink === null)
-    return {
-      ok: false as const,
-      error: "Usa un enlace de referencia HTTPS válido.",
-    };
-  const actor = actorFromRole(role);
-  const current = readActivities(storage);
-  const idempotencyFingerprint = bursonPlanningFingerprint(
-    fields,
-    normalizedReferenceLink,
-  );
-  if (idempotencyKey) {
-    const duplicate = current.find(
-      (item) =>
-        item.createdByAccountId === actor.accountId &&
-        item.idempotencyKey === idempotencyKey,
-    );
-    if (duplicate) {
-      if (
-        duplicate.deletedAt ||
-        duplicate.origin !== "burson" ||
-        duplicate.idempotencyFingerprint !== idempotencyFingerprint
-      )
-        return {
-          ok: false as const,
-          error:
-            "SR006: la clave de idempotencia se reutilizó con un encargo diferente.",
-        };
-      return { ok: true as const, activity: duplicate, replayed: true as const };
-    }
-  }
-  const special = readAccounts(accountStorage).find(
-    (item) => item.active && item.roleId === "operario" && item.bursonLinked,
-  );
-  if (!special)
-    return {
-      ok: false as const,
-      error: "No existe un operario activo vinculado a Burson.",
-    };
-  const now = new Date().toISOString();
-  const next: SimulatedActivity = {
-    id: slug(fields.title),
-    type: fields.type,
-    title: fields.title.trim(),
-    responsible: special.name,
-    responsibleAccountId: special.id,
-    status: "Programada",
-    origin: "burson",
-    spans: normalizeSpans(fields.spans),
-    description: fields.description.trim(),
-    place: fields.placeName.trim(),
-    materialLink: "",
-    operatorOpinion: "",
-    referenceLink: normalizedReferenceLink,
-    createdByAccountId: actor.accountId,
-    createdByRoleId: "burson",
-    createdAt: now,
-    updatedAt: now,
-    version: 1,
-    idempotencyKey,
-    idempotencyFingerprint,
-    detailHydration: "complete",
-    thread: [],
-    audit: [
-      {
-        action: "Encargo Burson creado y asignado",
-        actor,
-        moment: now,
-        detail: special.name,
-      },
-    ],
-  };
-  save(storage, [next, ...current]);
-  return { ok: true as const, activity: next };
+/** Cached callers are rejected; historical activities remain in the store. */
+export function createBursonActivity(...input: [
+  Pick<Storage, "getItem" | "setItem">, Pick<Storage, "getItem">,
+  ActivityDraftFields, Role, string?,
+]): Result & { replayed?: boolean } {
+  void input;
+  return { ok: false, error: "El canal Burson está retirado." };
 }
 export function replanActivity(
   storage: Pick<Storage, "getItem" | "setItem">,
@@ -684,8 +582,6 @@ export function replanActivity(
     );
     if (!responsible)
       return "Selecciona un operario activo como responsable.";
-    if (item.origin === "burson" && !responsible.bursonLinked)
-      return "Un encargo Burson requiere al operario especial.";
 
     return {
       ...item,
@@ -838,12 +734,6 @@ export function restoreActivity(
       return responsibleAccountId === null
         ? "El responsable ya no está activo. Elige un Operario activo para restaurar."
         : "Selecciona un Operario activo para restaurar.";
-    if (
-      item.origin === "burson" &&
-      item.status !== "Entregada" &&
-      !resolvedAccount?.bursonLinked
-    )
-      return "Un encargo Burson requiere al Operario especial activo.";
     const restored = { ...item };
     delete restored.deletedAt;
     delete restored.deletedBy;

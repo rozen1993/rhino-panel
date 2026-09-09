@@ -3,7 +3,7 @@ import { SystemIcon, type IconName } from "@/components/system-icon";
 import type { Role } from "@/lib/roles";
 
 export type NavLabel =
-  "Actividades" | "Burson" | "Cuentas" | "Histórico" | "Papelera" | "Mi panel" | "Lo acordado" | "Mensajes";
+  "Actividades" | "Burson" | "Cuentas" | "Histórico" | "Papelera" | "Mi panel" | "Contrato" | "Mensajes";
 const destinations: {
   label: NavLabel;
   short: string;
@@ -12,22 +12,13 @@ const destinations: {
   when: (role: Role) => boolean;
 }[] = [
   { label: "Mi panel", short: "Mi panel", icon: "activities", href: "/aunor", when: (role) => role.id === "aunor" },
-  { label: "Lo acordado", short: "Lo acordado", icon: "complete", href: "/aunor/acordado", when: (role) => role.id === "aunor" },
-  { label: "Mensajes", short: "Mensajes", icon: "messages", href: "/aunor/mensajes", when: (role) => role.id === "aunor" },
+  { label: "Contrato", short: "Contrato", icon: "complete", href: "/aunor/contrato", when: (role) => role.id === "aunor" },
   {
     label: "Actividades",
     short: "Panel",
     icon: "activities",
     href: "/actividades",
     when: (role) => role.id === "admin" || role.id === "operario",
-  },
-  {
-    label: "Burson",
-    short: "Burson",
-    icon: "burson",
-    href: "/burson",
-    when: (role) =>
-      role.id === "burson" || Boolean(role.bursonLinked) || role.id === "admin",
   },
   {
     label: "Cuentas",

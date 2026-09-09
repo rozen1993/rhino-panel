@@ -19,14 +19,12 @@ import {
   useAccounts,
 } from "@/lib/account-store";
 import {
-  actorFromRole,
   readActivities,
-  reassignOpenBursonActivities,
 } from "@/lib/activity-simulation";
 import type { Account, AccountFields } from "@/lib/accounts";
 import type { DataSource } from "@/lib/data-source";
 import { generateTemporaryPassword } from "@/lib/password-policy";
-import { roleIds, roles, type Role } from "@/lib/roles";
+import { activeRoleIds, roles, type Role } from "@/lib/roles";
 
 const control =
   "min-h-11 w-full rounded-md border border-line bg-panel px-3 py-2 text-sm outline-none transition placeholder:text-ink-muted focus:border-cyan focus:ring-2 focus:ring-cyan/15";
@@ -50,7 +48,7 @@ export function AccountsDashboard({
 }) {
   const demoAccounts = useAccounts();
   const [serverAccounts, setServerAccounts] = useState(initialAccounts);
-  const accounts = dataSource === "supabase" ? serverAccounts : demoAccounts;
+  const accounts = (dataSource === "supabase" ? serverAccounts : demoAccounts).filter(account => account.roleId !== "burson");
   const [query, setQuery] = useState("");
   const [stateFilter, setStateFilter] = useState("");
   const [formOpen, setFormOpen] = useState(false);
@@ -90,7 +88,7 @@ export function AccountsDashboard({
       username: account.username,
       password: "",
       roleId: account.roleId,
-      bursonLinked: account.bursonLinked,
+      bursonLinked: false,
       canCreateOwnActivities: account.canCreateOwnActivities,
     });
     setFormOpen(true);
@@ -125,14 +123,6 @@ export function AccountsDashboard({
       role.accountName ?? role.label,
       editingId ?? undefined,
     );
-    if (result.ok && result.specialTransfer?.fromAccountId)
-      reassignOpenBursonActivities(
-        window.localStorage,
-        result.specialTransfer.fromAccountId,
-        result.specialTransfer.toAccountId,
-        result.specialTransfer.toName,
-        actorFromRole(role),
-      );
     setNotice(
       result.ok
         ? editingId
@@ -163,7 +153,7 @@ export function AccountsDashboard({
             username: account.username,
             password: "",
             roleId: account.roleId,
-            bursonLinked: account.bursonLinked,
+            bursonLinked: false,
             canCreateOwnActivities: account.canCreateOwnActivities,
           },
           !account.active,
@@ -174,15 +164,6 @@ export function AccountsDashboard({
         );
         setConfirmId(null);
       });
-      return;
-    }
-    if (
-      account.active &&
-      account.roleId === "operario" &&
-      account.bursonLinked
-    ) {
-      setNotice("Transfiere primero el vínculo Burson a otro Operario activo.");
-      setConfirmId(null);
       return;
     }
     const hasOpenActivities = Boolean(
@@ -249,7 +230,7 @@ export function AccountsDashboard({
         username: account.username,
         password: "",
         roleId: account.roleId,
-        bursonLinked: account.bursonLinked,
+        bursonLinked: false,
         canCreateOwnActivities: !account.canCreateOwnActivities,
       },
       role.accountName ?? role.label,
@@ -395,10 +376,10 @@ export function AccountsDashboard({
           }
         />
         <AccountMetric
-          label="Vínculo Burson"
+          label="Aunor"
           tone="violet"
           value={
-            accounts.filter((account) => account.bursonLinked && account.active)
+            accounts.filter((account) => account.roleId === "aunor" && account.active)
               .length
           }
         />
@@ -539,10 +520,7 @@ export function AccountsDashboard({
                       setFields((current) => ({
                         ...current,
                         roleId: event.target.value as AccountFields["roleId"],
-                        bursonLinked:
-                          event.target.value === "operario"
-                            ? current.bursonLinked
-                            : false,
+                        bursonLinked: false,
                         canCreateOwnActivities:
                           event.target.value === "operario"
                             ? current.canCreateOwnActivities
@@ -551,7 +529,7 @@ export function AccountsDashboard({
                     }
                     value={fields.roleId}
                   >
-                    {roleIds.map((roleId) => (
+                    {activeRoleIds.map((roleId) => (
                       <option key={roleId} value={roleId}>
                         {roles[roleId].label}
                       </option>
@@ -578,21 +556,6 @@ export function AccountsDashboard({
                       />
                       Permitir que cree actividades propias
                     </label>
-                    <label className="flex min-h-11 items-center gap-3 rounded-md border border-violet/25 bg-violet/[.08] px-3 text-xs font-bold">
-                      <input
-                        checked={fields.bursonLinked}
-                        className="size-4 accent-violet"
-                        disabled={editingAccount?.active === false}
-                        onChange={(event) =>
-                          setFields((current) => ({
-                            ...current,
-                            bursonLinked: event.target.checked,
-                          }))
-                        }
-                        type="checkbox"
-                      />
-                      Operario especial vinculado a Burson
-                    </label>
                   </div>
                 )}
                 <div
@@ -607,8 +570,7 @@ export function AccountsDashboard({
                 </div>
               </div>
               <p className="mt-3 text-[0.6875rem] text-ink-muted">
-                Solo puede existir un operario especial activo. Al transferir el
-                vínculo, el cambio se realiza de forma atómica.
+                Admin administra los accesos y el permiso de creación propia.
               </p>
             </div>
           </section>
@@ -690,7 +652,7 @@ function AccountCard({
       className={`relative overflow-hidden p-4 transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-2)] ${account.active ? "" : "opacity-70"}`}
     >
       <span
-        className={`absolute inset-y-0 left-0 w-1 ${account.active ? (account.bursonLinked ? "bg-violet" : "bg-cyan") : "bg-status-gray"}`}
+        className={`absolute inset-y-0 left-0 w-1 ${account.active ? "bg-cyan" : "bg-status-gray"}`}
       />
       <div className="flex items-center gap-3">
         <Avatar initials={account.initials} />
@@ -714,11 +676,6 @@ function AccountCard({
             <span className="rounded-md bg-night px-2 py-1 text-[0.625rem] font-bold text-white">
               {roles[account.roleId].label}
             </span>
-            {account.bursonLinked && (
-              <span className="rounded-md bg-violet/12 px-2 py-1 text-[0.625rem] font-bold text-violet-ink">
-                Vínculo Burson
-              </span>
-            )}
             {account.canCreateOwnActivities && (
               <span className="rounded-md bg-lime/15 px-2 py-1 text-[0.625rem] font-bold text-[#376300]">
                 Creación propia autorizada

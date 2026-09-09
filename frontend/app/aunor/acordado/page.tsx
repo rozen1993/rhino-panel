@@ -1,2 +1,2 @@
-import { AunorPage } from "@/components/aunor-page";
-export default function Page(){return <AunorPage scene="acordado"/>;}
+import { redirect } from "next/navigation";
+export default function Page(){redirect("/aunor/contrato");}
