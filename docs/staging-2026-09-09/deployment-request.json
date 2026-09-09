@@ -1,0 +1,10 @@
+{
+  "name": "rhino-panel",
+  "project": "prj_WND2KOVawKoIwL21eZDXrXuEarKv",
+  "gitSource": {
+    "type": "github",
+    "repoId": "1337840171",
+    "ref": "equipo",
+    "sha": "0a1f76e522824d1409c1e422f76b4d896902cdf9"
+  }
+}
