@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { validSpans } from "@/lib/activity-validation";
 import {
   activityDraftStorageKey,
@@ -22,7 +22,11 @@ import {
 import { isUuid } from "@/lib/uuid";
 
 describe("cimiento del backend", () => {
+  afterEach(() => vi.unstubAllEnvs());
   it("usa demo por defecto y nunca acepta un modo desconocido", () => {
+    // undefined selects the runtime environment; isolate it from CI's demo mode.
+    vi.stubEnv("SISTEMA_R_DATA_SOURCE", undefined);
+    vi.stubEnv("VERCEL_ENV", undefined);
     expect(resolveDataSource(undefined, "")).toBe("demo");
     expect(resolveDataSource("supabase")).toBe("supabase");
     expect(resolveDataSource(" supabase ")).toBe("supabase");
