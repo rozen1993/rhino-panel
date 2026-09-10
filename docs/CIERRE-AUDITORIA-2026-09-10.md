@@ -51,8 +51,10 @@ La recuperación del único administrador no se automatiza con un autorrestablec
 
 ## Pendientes reales
 
+Actualización posterior: [20 escenarios integrados de autenticación y permisos](PRUEBAS-AUTH-INTEGRADAS-2026-09-10.md) aprobados con servicios reales locales y navegador. Incluyen Admin, Operarios y Aunor, creación, cambio obligatorio, reset, sesiones anteriores, recuperación de Auth sin perfil y RLS. No sustituyen la validación del proveedor alojado ni el simulacro del único administrador. No se modificaron cuentas del equipo ni el despliegue en esa ejecución.
+
 - Separar entorno definitivo de producción del piloto compartido: decidir propietario, proyecto y costes antes de aprovisionar.
-- Pruebas integradas Auth/Edge de cambio obligatorio, reset, revocación y recuperación con cuentas desechables; simulacro del único administrador.
+- Validación de infraestructura Auth/Edge alojada y simulacro del único administrador; los recorridos integrados locales con cuentas desechables ya están cubiertos por el informe enlazado.
 - Aceptación del equipo en dispositivos reales, incluyendo Aunor. Aunor tiene servicios configurados pero ninguna publicación; hace falta contenido aprobado para probar ese circuito.
 - Activar CI en el remoto y protección de rama. El workflow está preparado localmente; no afirmar ejecuciones de GitHub sin publicarlo y observarlas.
 - Incorporar verificación SQL al CI, monitoreo/alertas y política de respaldos periódicos con almacenamiento protegido independiente de esta PC.

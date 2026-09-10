@@ -18,6 +18,7 @@
     "verify:supabase:local": "node scripts/verify-aunor.mjs",
     "test": "vitest run --maxWorkers=1",
     "test:e2e": "playwright test",
+    "test:auth:integration": "npx --yes --package=deno@2.9.6 -c \"node scripts/verify-auth-integration.mjs --browser\"",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run build"
   },
   "dependencies": {
