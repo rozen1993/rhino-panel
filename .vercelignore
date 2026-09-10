@@ -1,0 +1,10 @@
+*
+!frontend
+!frontend/**
+frontend/.env*
+frontend/.next*
+frontend/.vercel
+frontend/.verificacion
+frontend/node_modules
+frontend/*.log
+frontend/*.tsbuildinfo

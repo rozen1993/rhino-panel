@@ -152,6 +152,10 @@ export type Database = {
     };
     Views: AunorViews;
     Functions: {
+      access_directory_v1: {
+        Args: Record<string, never>;
+        Returns: { username: string; display_name: string; role: string }[];
+      };
       aunor_mutate_v1: {
         Args: { p_command: string; p_activity_id: string; p_request_id: string; p_payload: Json };
         Returns: Json;
