@@ -14,8 +14,8 @@
     "lint": "eslint .",
     "preflight:deploy": "node scripts/check-deployment-readiness.mjs",
     "render:chat-plan": "node scripts/render-chat-plan.mjs",
-    "test:functions": "npx --yes deno@2.9.6 test --no-lock --node-modules-dir=none --allow-env ../supabase/functions/admin-accounts/index_test.ts ../supabase/functions/change-temporary-password/index_test.ts",
-    "verify:supabase:local": "node scripts/verify-local-supabase.mjs",
+    "test:functions": "npx --yes deno@2.9.6 test --no-lock --node-modules-dir=none --allow-env ../supabase/functions/admin-accounts/index_test.ts ../supabase/functions/change-temporary-password/index_test.ts ../supabase/functions/_shared/credential-operation_test.ts",
+    "verify:supabase:local": "node scripts/verify-aunor.mjs",
     "test": "vitest run --maxWorkers=1",
     "test:e2e": "playwright test",
     "verify": "npm run typecheck && npm run lint && npm run test && npm run build"
@@ -23,7 +23,7 @@
   "dependencies": {
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
-    "next": "16.3.1",
+    "next": "16.3.4",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
@@ -37,11 +37,15 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "6.0.5",
     "eslint": "^9",
-    "eslint-config-next": "16.3.1",
+    "eslint-config-next": "16.3.4",
     "jsdom": "29.1.1",
     "playwright": "1.62.1",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "4.1.10"
+    "vitest": "4.1.11"
+  },
+  "overrides": {
+    "sharp": "0.35.4",
+    "js-yaml": "4.3.2"
   }
 }

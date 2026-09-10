@@ -5,7 +5,9 @@ import {
   temporaryPasswordFingerprintKey,
   temporaryPasswordSaltKey,
 } from "../_shared/temporary-password.ts";
-import { handleAdminAccountsRequest } from "./index.ts";
+import { handleAdminAccountsRequest as actualHandler } from "./index.ts";
+import { withCredentialMutex } from "../_shared/test-credential-context.ts";
+const handleAdminAccountsRequest=(request:Request,ctx:any)=>actualHandler(request,withCredentialMutex(ctx));
 
 const adminId = "00000000-0000-4000-8000-000000000001";
 const targetId = "00000000-0000-4000-8000-000000000002";
@@ -56,6 +58,15 @@ const validCreate = {
   canCreateOwnActivities: false,
   temporaryPassword: "Temporal-1234!",
 };
+
+Deno.test("self reset is rejected before any Auth or database mutation",async()=>{
+  const result=await actualHandler(post({action:"reset-password",profileId:adminId,temporaryPassword:"Temporal-1234!"}),{
+    userClaims:{id:adminId},supabase:profileReader(),
+    supabaseAdmin:{rpc(){assert.fail("must not acquire a lock or write");}},
+  });
+  assert.equal(result.status,409);
+  assert.equal((await result.json()).code,"self_reset_not_allowed");
+});
 
 for (const retired of [{ role: "burson" }, { isBursonOperator: true }]) {
   Deno.test("rechaza el rol/vínculo retirado antes de crear usuario Auth " + JSON.stringify(retired), async () => {

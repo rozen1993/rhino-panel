@@ -5,6 +5,7 @@ import {
   response,
 } from "../_shared/account-validation.ts";
 import type { EdgeDatabase } from "../_shared/database.types.ts";
+import { credentialOperation } from "../_shared/credential-operation.ts";
 import {
   fingerprintsEqual,
   temporaryPasswordFingerprint,
@@ -17,6 +18,12 @@ export async function handleTemporaryPasswordChange(
   request: Request,
   ctx: any,
 ) {
+  const actor = ctx.userClaims?.id;
+  if (request.method !== "POST" || typeof actor !== "string") return handleTemporaryPasswordCore(request, ctx);
+  return credentialOperation(ctx, actor, actor, () => handleTemporaryPasswordCore(request, ctx));
+}
+
+async function handleTemporaryPasswordCore(request: Request, ctx: any) {
   if (request.method !== "POST") {
     return response({ ok: false, code: "method_not_allowed" }, 405);
   }

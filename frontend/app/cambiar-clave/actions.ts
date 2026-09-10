@@ -30,13 +30,15 @@ export async function changeSupabaseTemporaryPasswordAction(
       error: await functionErrorMessage(
         error,
         {
+          credential_operation_busy: "Hay un cambio de clave en curso. Espera o solicita al administrador revisar la operación pendiente.",
+          credential_reconciliation_required: "La operación necesita revisión del administrador antes de reintentarse.",
           same_password:
             "La nueva clave debe ser diferente de la clave temporal.",
           temporary_fingerprint_unavailable:
             "Admin debe regenerar tu clave temporal antes de continuar.",
-          auth_update_failed: "Auth no pudo actualizar la clave. Reintenta.",
+          auth_update_failed: "No se pudo confirmar el cambio. Solicita revisión antes de reintentarlo.",
           finalize_failed:
-            "La clave cambió, pero el acceso sigue bloqueado. Ingresa con la clave nueva y vuelve a guardarla.",
+            "La clave cambió, pero falta cerrar la operación. Solicita revisión técnica antes de reintentarlo.",
         },
         "No se pudo confirmar el cambio de clave.",
       ),

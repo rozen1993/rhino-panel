@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { handleTemporaryPasswordChange } from "./index.ts";
+import { handleTemporaryPasswordChange as actualHandler } from "./index.ts";
+import { withCredentialMutex } from "../_shared/test-credential-context.ts";
+const handleTemporaryPasswordChange=(request:Request,ctx:any)=>actualHandler(request,withCredentialMutex(ctx));
 import {
   temporaryPasswordFingerprint,
   temporaryPasswordFingerprintKey,

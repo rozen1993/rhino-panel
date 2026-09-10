@@ -18,6 +18,7 @@
 
 # next.js
 /.next/
+/.next-audit-test/
 /.next-historical-test/
 /.next-aunor-test/
 /.verificacion/aunor-*/

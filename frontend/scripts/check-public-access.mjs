@@ -6,7 +6,7 @@ try {
     const context = await browser.newContext({viewport});
     const page = await context.newPage();
     await page.goto('https://rhino-panel.vercel.app/acceso');
-    for (const name of ['Admin','Operario','Aunor']) {
+    for (const name of ['Admin','Cesar','Eduardo','Johann','Kiara','Martin','Aunor']) {
       await page.getByRole('button',{name:`Ingresar como ${name}`,exact:true}).click();
       await page.getByRole('dialog').waitFor();
       assert.equal(await page.locator('input[name="usuario"]').isVisible(),true);
@@ -14,8 +14,8 @@ try {
       await page.keyboard.press('Escape');
     }
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
-    await page.screenshot({path:`.verificacion/acceso-${viewport.width}.png`,fullPage:true});
-    console.log(`PASS ${viewport.width}: tres tarjetas, formulario, Escape, sin desbordamiento`);
+    await page.screenshot({path:`.verificacion/current-access-${viewport.width}.png`,fullPage:true});
+    console.log(`PASS ${viewport.width}: siete tarjetas, formulario, Escape, sin desbordamiento`);
     await context.close();
   }
 } finally { await browser.close(); }

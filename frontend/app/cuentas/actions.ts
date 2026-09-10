@@ -85,13 +85,16 @@ const createFunctionErrors: Record<string, string> = {
 };
 
 const resetFunctionErrors: Record<string, string> = {
+  self_reset_not_allowed: "No puedes regenerar tu propia clave desde Administración. Utiliza el procedimiento de recuperación del administrador.",
+  credential_operation_busy: "Esta cuenta tiene un cambio de clave en curso. Espera o solicita revisar la operación pendiente.",
+  credential_reconciliation_required: "No se pudo confirmar el cierre de la operación. Solicita revisión antes de generar otra clave.",
   auth_account_not_found: "La cuenta no existe en Auth.",
   reset_prepare_failed:
     "No se inició el restablecimiento. Verifica que la cuenta esté activa.",
   auth_reset_failed:
-    "La cuenta quedó bloqueada, pero Auth no cambió la clave. Genera otra.",
+    "No se pudo confirmar la escritura de Auth. La cuenta necesita revisión técnica antes de generar otra clave.",
   reset_confirm_failed:
-    "Auth sí cambió esta clave, pero la auditoría no se confirmó. No la entregues: genera otra.",
+    "Auth cambió la clave, pero falta confirmar la operación. No la entregues; solicita revisión técnica.",
 };
 
 export async function createSupabaseAccountAction(

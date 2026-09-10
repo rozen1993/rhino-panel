@@ -38,7 +38,9 @@
     ".next-historical-test/types/**/*.ts",
     ".next-historical-test/dev/types/**/*.ts",
     ".next-aunor-test/types/**/*.ts",
-    ".next-aunor-test/dev/types/**/*.ts"
+    ".next-aunor-test/dev/types/**/*.ts",
+    ".next-audit-test/types/**/*.ts",
+    ".next-audit-test/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

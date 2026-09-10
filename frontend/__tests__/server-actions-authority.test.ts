@@ -577,7 +577,7 @@ describe("autoridad ejecutada dentro de Server Actions", () => {
     expect(resetResult).toEqual({
       ok: false,
       error:
-        "Auth sí cambió esta clave, pero la auditoría no se confirmó. No la entregues: genera otra.",
+        "Auth cambió la clave, pero falta confirmar la operación. No la entregues; solicita revisión técnica.",
     });
   });
 });

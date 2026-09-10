@@ -1,0 +1,31 @@
+import { render,screen,fireEvent,cleanup,waitFor } from "@testing-library/react";
+import { afterEach,it,expect,vi } from "vitest";
+import { createAunorExamples } from "@/lib/aunor-examples";
+import { roles } from "@/lib/roles";
+import { parseActivityStore } from "@/lib/activity-simulation";
+const mocks=vi.hoisted(()=>({read:vi.fn(),mutate:vi.fn()}));
+vi.mock("@/app/aunor/actions",()=>({getAunorWorkspaceAction:mocks.read,performAunorAction:mocks.mutate}));
+import { AunorSpace } from "@/components/aunor-space";
+import { AdminAunorPanel } from "@/components/admin-aunor-panel";
+afterEach(()=>{cleanup();vi.clearAllMocks();});
+it("warns before confirming a replacement whose historical agreement was corrected",()=>{
+  const workspace=createAunorExamples();workspace.agreements[0].is_current=false;
+  render(<AunorSpace initial={workspace} role={roles.aunor} scene="replacement" id="replacement-demo-1" />);
+  expect(screen.getByRole("alert").textContent).toContain("fue corregido");
+  expect(screen.getByRole("link",{name:/Revisar acuerdos/}).getAttribute("href")).toBe("/aunor/actividades/aunor-original");
+});
+it("keeps the draft on remote changes and explicitly accepts the latest publication",async()=>{
+  const workspace=createAunorExamples();mocks.read.mockResolvedValue({ok:true,data:workspace});
+  const item={...parseActivityStore(null)[0],id:workspace.activities[0].id,origin:"operario" as const};
+  render(<AdminAunorPanel item={item} role={roles.admin} />);
+  const field=await screen.findByLabelText(/Resumen para Aunor/);
+  fireEvent.change(field,{target:{value:"Mi borrador"}});
+  const newer=structuredClone(workspace);newer.activities[0].publication_version=2;newer.activities[0].summary="Versión remota";
+  mocks.read.mockResolvedValue({ok:true,data:newer});
+  fireEvent(window,new Event("focus"));
+  await screen.findByRole("button",{name:"Cargar versión vigente"});
+  expect((field as HTMLTextAreaElement).value).toBe("Mi borrador");
+  fireEvent.click(screen.getByRole("button",{name:"Cargar versión vigente"}));
+  await waitFor(()=>expect((field as HTMLTextAreaElement).value).toBe("Versión remota"));
+  expect(screen.queryByRole("button",{name:"Cargar versión vigente"})).toBeNull();
+});

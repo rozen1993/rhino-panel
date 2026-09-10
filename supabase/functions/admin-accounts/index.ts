@@ -9,6 +9,7 @@ import {
   validUsernameDomain,
 } from "../_shared/account-validation.ts";
 import type { EdgeDatabase } from "../_shared/database.types.ts";
+import { credentialOperation } from "../_shared/credential-operation.ts";
 import {
   createTemporaryPasswordSalt,
   metadataRecord,
@@ -93,6 +94,19 @@ async function authMetadata(
 }
 
 export async function handleAdminAccountsRequest(request: Request, ctx: any) {
+  if (request.method === "POST") {
+    const body = await request.clone().json().catch(() => null);
+    if (body?.action === "reset-password" && typeof body.profileId === "string") {
+      const actor = await requireAdministrator(ctx);
+      if (!actor) return response({ ok: false, code: "administrator_required" }, 403);
+      if (body.profileId === actor) return response({ ok: false, code: "self_reset_not_allowed" }, 409);
+      return credentialOperation(ctx, body.profileId, actor, () => handleAdminAccountsCore(request, ctx));
+    }
+  }
+  return handleAdminAccountsCore(request, ctx);
+}
+
+async function handleAdminAccountsCore(request: Request, ctx: any) {
   if (request.method !== "POST") {
     return response({ ok: false, code: "method_not_allowed" }, 405);
   }

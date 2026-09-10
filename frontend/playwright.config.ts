@@ -22,6 +22,7 @@ export default defineConfig({
     command: "npm run build && npm run start -- -p 3100",
     env: {
       SISTEMA_R_DATA_SOURCE: "demo",
+      SISTEMA_R_ISOLATED_TEST: "audit",
     },
     url: "http://localhost:3100",
     reuseExistingServer: false,

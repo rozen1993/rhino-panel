@@ -44,7 +44,7 @@ try {
     "grant usage on schema public,auth,extensions to anon,authenticated,service_role; "+
     "revoke all on function auth.jwt(),auth.uid() from public; grant execute on function auth.jwt(),auth.uid() to anon,authenticated,service_role;");
   const files=readdirSync(migrations).filter(n=>n.endsWith(".sql")).sort();
-  if(files.at(-1)!=="202609080001_retire_burson_external_chat.sql") throw Error("Revise schema boundary before running this verifier.");
+  if(files.at(-1)!=="202609100001_account_safety.sql") throw Error("Revise schema boundary before running this verifier.");
   for(const name of files.filter(n=>n<"202609080001")) sql(readFileSync(migrations+"/"+name,"utf8"));
   console.log("PASS: cadena anterior de migraciones, exclusivamente en DB nueva.");
   sql("insert into auth.users values "+[1,2,3,4,5,6].map(n=>"('"+id(100+n)+"')").join(",")+";"+
@@ -182,6 +182,20 @@ try {
   sql("do $$ begin assert (select count(*)="+archivedCount+" from private.aunor_messages); assert (select count(*)=2 from public.activity_messages where activity_id='"+id(303)+"'); end $$;");
   console.log("PASS: retirada Burson, sesiones antiguas, operarios normales, chat archivado y bloqueado incluso ante replay, confirmaciones concurrentes e historial conservados.");
 
+  // Forward migration gates run after the historical-retirement checks.
+  sql("create table auth.sessions(id uuid primary key,user_id uuid,created_at timestamptz not null);");
+  for(const name of files.filter(n=>n>"202609080001_retire_burson_external_chat.sql")) sql(readFileSync(migrations+"/"+name,"utf8"));
+  sql("do $$ begin assert has_column_privilege('service_role','public.profiles','id','select'); assert has_column_privilege('service_role','public.profiles','username','select'); assert not has_column_privilege('service_role','public.profiles','display_name','select'); assert not has_table_privilege('anon','public.profiles','select'); end $$;");
+  sql("begin; set local role anon; do $$ begin assert (select count(*)>0 from public.access_directory_v1()); end $$; commit;");
+  sql("select public.begin_credential_operation_v1('"+id(102)+"','"+id(101)+"','"+id(901)+"');");
+  sql("do $$ begin begin perform public.begin_credential_operation_v1('"+id(102)+"','"+id(101)+"','"+id(902)+"'); raise exception 'mutex failed'; exception when sqlstate 'SR001' then null; end; end $$;");
+  sql("select public.end_credential_operation_v1('"+id(102)+"','"+id(901)+"');");
+  sql("do $$ begin begin perform public.begin_credential_operation_v1('"+id(101)+"','"+id(101)+"','"+id(903)+"'); raise exception 'self reset allowed'; exception when sqlstate 'SR002' then null; end; end $$;");
+  sql("insert into auth.sessions values('"+id(950)+"','"+id(102)+"',now()-interval '1 day'); update public.profiles set must_change_password=true where id='"+id(102)+"';");
+  sql("begin; set local role authenticated; select set_config('request.jwt.claims','"+JSON.stringify({sub:id(102),session_id:id(950),role:"authenticated"})+"',true); do $$ begin begin perform public.register_app_session(); raise exception 'old unregistered token accepted'; exception when sqlstate 'SR002' then null; end; end $$; commit;");
+  sql("insert into auth.sessions values('"+id(951)+"','"+id(102)+"',clock_timestamp());");
+  sql("begin; set local role authenticated; select set_config('request.jwt.claims','"+JSON.stringify({sub:id(102),session_id:id(951),role:"authenticated"})+"',true); select public.register_app_session(); commit;");
+  console.log("PASS: current schema, minimal grants, public directory, credential mutex, self-reset and old/new Auth sessions.");
 } finally {
   if(created && /^sr_aunor_test_[a-f0-9]{32}$/.test(database)) {
     run(["dropdb","-U","postgres",database]);

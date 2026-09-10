@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 import { securityHeaders } from "./lib/security-headers";
 
 const nextConfig: NextConfig = {
+  ...(process.env.SISTEMA_R_ISOLATED_TEST === "audit" && !process.env.VERCEL ? { distDir: ".next-audit-test" } : {}),
   // Explicit opt-in for isolated browser verification; never reuse the live dev build.
   ...(process.env.SISTEMA_R_ISOLATED_TEST === "historico" && !process.env.VERCEL ? { distDir: ".next-historical-test" } : {}),
   ...(process.env.SISTEMA_R_ISOLATED_TEST === "aunor" && !process.env.VERCEL ? { distDir: ".next-aunor-test" } : {}),

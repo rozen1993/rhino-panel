@@ -4479,6 +4479,7 @@ where id = ${sqlLiteral(identities.burson.id)}::uuid;`,
 
 try {
   console.log("Verificando Supabase local (ninguna llamada remota esta permitida)...");
+  throw new Error("Verificador histórico retirado: usa npm run verify:supabase:local, que crea una base desechable y no reinicia la base del usuario.");
   const dockerCommand = findDocker();
   const dockerEnvironment = environmentWithDocker(dockerCommand);
   const projectId = readProjectId();
