@@ -101,6 +101,41 @@ describe("calendario anual compartido", () => {
     document.body.style.overflow = "";
   });
 
+  it("presenta un resumen sin códigos y conserva el contenido completo en el detalle", () => {
+    setMobile(false);
+    const first = { ...activity("referencia-completa-a", "Grabación institucional", "Grabación"), status: "En proceso" as const };
+    render(<AnnualCalendar dataSource="supabase" year={2026} today="2026-08-01"
+      initialActivities={[first, activity("referencia-completa-b", "Entrevista", "Grabación")]} />);
+    fireEvent.click(screen.getByRole("button", { name: /1 de agosto: Grabación/ }));
+    const choices = screen.getByRole("region", { name: "Actividades de esta fecha" });
+    expect(choices.textContent).not.toContain("referencia-completa");
+    choices.closest("aside")!.scrollTop = 120;
+    expect(screen.getByText("1 de agosto de 2026").getAttribute("datetime")).toBe("2026-08-01");
+    expect(within(choices).getByText("En proceso").className).toContain("bg-process");
+    fireEvent.click(within(choices).getByRole("button", { name: /referencia-completa-a/ }));
+    const back = screen.getByRole("button", { name: /Volver a las actividades del día/ });
+    expect(document.activeElement).toBe(back);
+    expect(back.closest("aside")?.scrollTop).toBe(0);
+    expect(screen.getByText(first.description)).toBeTruthy();
+    expect(screen.getByText("ID: referencia-completa-a").closest("details")?.open).toBe(false);
+    expect(screen.getByText(first.operatorOpinion).closest("details")?.open).toBe(false);
+    fireEvent.click(back);
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: /referencia-completa-a/ }));
+    expect(document.activeElement?.closest("aside")?.scrollTop).toBe(120);
+    expect(screen.getByText("1 de agosto de 2026")).toBeTruthy();
+  });
+
+  it("incluye las secciones desplegables en el recorrido de teclado móvil", () => {
+    render(<AnnualCalendar dataSource="supabase" year={2026} today="2026-08-01" initialActivities={[activity("a", "Actividad A")]} />);
+    fireEvent.click(screen.getByRole("button", { name: /1 de agosto:/ }));
+    const dialog = screen.getByRole("dialog");
+    const close = within(dialog).getByRole("button", { name: "Cerrar detalle" });
+    fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+    expect(document.activeElement).toBe(within(dialog).getByText("Referencia de la actividad"));
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(document.activeElement).toBe(close);
+  });
+
   it("navega por URL y bloquea el año anterior en el piso 2026", () => {
     const { rerender } = render(
       <AnnualCalendar

@@ -21,6 +21,7 @@ function isOverdue(item: CalendarActivity, today: string) {
 }
 export type CalendarDetailProps = {
   selectionKey: number;
+  selectedDate?: string;
   item: CalendarActivity; choices: CalendarActivity[]; onChoose: (item: CalendarActivity)=>void;
   close?:()=>void; titleId:string; closeButtonRef?:RefObject<HTMLButtonElement|null>; today:string;
 };
@@ -122,6 +123,7 @@ function MiniMonth({
   onSelect: (
     items: CalendarActivity[],
     trigger: HTMLButtonElement,
+    date: string,
   ) => void;
   selectedId?: string;
   today: string;
@@ -187,6 +189,7 @@ function MiniMonth({
                 onSelect(
                   matches.map((entry) => entry.item),
                   event.currentTarget,
+                  iso,
                 )
               }
               type="button"
@@ -256,6 +259,7 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
   );
   const [overlay, setOverlay] = useState(false);
   const [selectionKey, setSelectionKey] = useState(0);
+  const [selectedDate, setSelectedDate] = useState<string>();
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const returnFocusRef = useRef<HTMLButtonElement | null>(null);
@@ -305,9 +309,10 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
       if (event.key !== "Tab") return;
       const focusable = Array.from(
         dialog.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+          'a[href], button:not([disabled]), summary, input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
         ),
-      ).filter((element) => !element.hasAttribute("hidden"));
+      ).filter((element) => !element.hasAttribute("hidden") && !element.closest("[hidden]") &&
+        (!element.closest("details:not([open])") || element.matches("details:not([open]) > summary")));
       if (!focusable.length) {
         event.preventDefault();
         dialog.focus();
@@ -340,7 +345,9 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
   function select(
     items: CalendarActivity[],
     trigger: HTMLButtonElement,
+    date: string,
   ) {
+    setSelectedDate(date);
     setChoiceIds(items.map((item) => item.id));
     setSelectionKey(value => value + 1);
     setSelectedId(items[0]?.id ?? "");
@@ -361,7 +368,7 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
     "grid min-h-11 min-w-11 place-items-center text-xl transition hover:bg-panel-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-cyan";
 
   return (
-    <div className="items-start overflow-hidden rounded-[10px] border border-line bg-panel shadow-[var(--shadow-2)] md:grid md:grid-cols-[minmax(0,1fr)_42%] xl:grid-cols-[minmax(0,1fr)_20rem]">
+    <div className={`items-start ${publicMode ? "overflow-hidden" : "overflow-clip"} rounded-[10px] border border-line bg-panel shadow-[var(--shadow-2)] md:grid md:grid-cols-[minmax(0,1fr)_42%] xl:grid-cols-[minmax(0,1fr)_20rem]`}>
       <section className="min-w-0 bg-paper p-3 md:p-5">
         <nav aria-label="Históricos" className="mb-3 flex flex-wrap gap-x-4 gap-y-2 text-xs font-bold text-cyan-ink">
           <Link href={publicMode ? "/aunor" : "/historico"} className="py-2">{publicMode ? "← Tus actividades" : "← Elegir histórico"}</Link>
@@ -471,9 +478,9 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
           ))}
         </div>
       </section>
-      <div className="hidden border-l border-line md:sticky md:top-0 md:block md:h-[calc(100vh-4.5rem)]">
+      <div className={`hidden min-w-0 border-l border-line md:sticky md:block ${publicMode ? "md:top-0 md:h-[calc(100vh-4.5rem)]" : "md:top-4 md:max-h-[calc(100dvh-2rem)]"}`}>
         {selected ? (
-          renderDetail({ selectionKey, choices, item:selected, onChoose:(item)=>setSelectedId(item.id), today, titleId:"activity-detail-title-desktop" })
+          renderDetail({ selectionKey, selectedDate, choices, item:selected, onChoose:(item)=>setSelectedId(item.id), today, titleId:"activity-detail-title-desktop" })
         ) : (
           <p className="p-6 text-sm text-ink-muted" role="status">
             No hay actividades registradas en {year}.
@@ -495,7 +502,7 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
             onClick={(event) => event.stopPropagation()}
           >
             <span className="absolute left-1/2 top-2 z-10 h-1 w-20 -translate-x-1/2 rounded-full bg-status-gray" />
-            {renderDetail({ selectionKey, choices, close:closeOverlay, closeButtonRef, item:selected, onChoose:(item)=>setSelectedId(item.id), today, titleId:"activity-detail-title-mobile" })}
+            {renderDetail({ selectionKey, selectedDate, choices, close:closeOverlay, closeButtonRef, item:selected, onChoose:(item)=>setSelectedId(item.id), today, titleId:"activity-detail-title-mobile" })}
           </div>
         </div>
       )}

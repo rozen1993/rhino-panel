@@ -6,7 +6,7 @@ import { safeMaterialUrl } from "@/lib/external-link";
 
 const rails: Record<InternalStatus, string> = {
   Programada: "border-l-cyan",
-  "En proceso": "border-l-violet",
+  "En proceso": "border-l-process",
   Entregada: "border-l-green",
 };
 function EyeIcon() {

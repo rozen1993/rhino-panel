@@ -14,7 +14,8 @@ La marca provisional permanece como **Rhino Audiovisuales** hasta que Marco indi
 | Azul técnico | `#031D36` | Cabeceras y superficies oscuras |
 | Cian operativo | `#11B7C9` | Identidad, enlaces y actividad |
 | Lima acción | `#84D600` | Acción primaria y selección |
-| Naranja proceso | `#FF9F1C` | Estado En proceso |
+| Azul proceso | `#2563EB` | Estado En proceso: insignia sólida con texto blanco |
+| Naranja categoría | `#FF9F1C` | Edición en el calendario; no representa el estado |
 | Violeta agenda | `#8B5CF6` | Programación y fechas |
 | Superficie | `#F4F7F8` | Área de trabajo |
 | Tinta | `#10233F` | Texto principal |
@@ -58,3 +59,20 @@ alcanzan el contraste WCAG AA.
 3. Las acciones primarias lima se reservan para crear, guardar o cambiar de estado.
 4. Estados distinguibles sin depender exclusivamente del color.
 5. Lectura y operación viables desde 390 px hasta 1920 px.
+
+## Ajuste solicitado por Marco — 11 de septiembre de 2026
+
+Respaldo previo de código: `afc6d39`. En proceso pasa del violeta al azul
+`#2563EB`, conservando el signo ◐ y el texto del estado; el mismo token se usa
+en insignias, bordes de actividades y contador. No se redefine el cian de marca
+ni el violeta de agenda. Blanco sobre este azul ofrece aproximadamente 5,17:1
+de contraste.
+
+El panel interno del Histórico mantiene la columna lateral, el calendario
+1/2/4 y el diálogo móvil. La fecha seleccionada encabeza una lista de tarjetas
+con categoría, estado, título, dos líneas de descripción, responsable y lugar
+resumido. «Ver detalles» muestra el contenido íntegro y todas las jornadas.
+La opinión y el código técnico se consultan en secciones desplegables; los
+títulos coincidentes mantienen una referencia visible para distinguirlos.
+Volver restaura la lista, el foco y su desplazamiento. No se elimina ni modifica
+ningún dato para simplificar su presentación.

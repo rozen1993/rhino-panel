@@ -16,6 +16,7 @@
   --orange: #ff9f1c;
   --violet: #8b5cf6;
   --violet-ink: #5b2bb5;
+  --process: #2563eb;
   --action-gradient: linear-gradient(135deg, #92e600, #72c900);
   --shadow-1: 0 2px 8px rgb(3 29 54 / 5%);
   --shadow-2: 0 10px 28px rgb(3 29 54 / 8%);
@@ -43,6 +44,7 @@
   --color-orange: var(--orange);
   --color-violet: var(--violet);
   --color-violet-ink: var(--violet-ink);
+  --color-process: var(--process);
   --font-sans: "Segoe UI", Arial, sans-serif;
 }
 * {

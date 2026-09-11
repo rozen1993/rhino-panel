@@ -461,6 +461,14 @@ test("el Histórico navega por año y devuelve el foco del detalle móvil", asyn
   await page.keyboard.press("Tab");
   await expect(material).toBeFocused();
   await page.keyboard.press("Tab");
+  await expect(dialog.locator("summary").filter({ hasText: "Opinión del operario" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(dialog.getByText("El material cumplió con los objetivos y la calidad técnica requerida.")).toBeVisible();
+  await page.keyboard.press("Tab");
+  await expect(dialog.locator("summary").filter({ hasText: "Referencia de la actividad" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(dialog.getByText("ID: cobertura-norte", { exact: true })).toBeVisible();
+  await page.keyboard.press("Tab");
   await expect(close).toBeFocused();
   await page.keyboard.press("Escape");
   await expect(dialog).toHaveCount(0);
