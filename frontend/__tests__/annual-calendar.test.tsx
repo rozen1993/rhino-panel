@@ -87,9 +87,12 @@ describe("calendario anual compartido", () => {
     fireEvent.click(day);
     const choices = screen.getByRole("region", { name: "Actividades de esta fecha" });
     expect(within(choices).getAllByRole("button")).toHaveLength(2);
-    expect(within(choices).getByRole("button", { name: /ID: id-uno/ }).textContent).toContain("Norte · Sur");
+    expect(within(choices).getByRole("button", { name: /ID: id-uno/ }).closest("article")?.textContent).toContain("Norte · Sur");
     fireEvent.click(within(choices).getByRole("button", { name: /ID: id-dos/ }));
-    expect(within(choices).getByRole("button", { name: /ID: id-dos/ }).getAttribute("aria-pressed")).toBe("true");
+    expect(screen.queryByRole("region", { name: "Actividades de esta fecha" })).toBeNull();
+    expect(screen.getByText("ID: id-dos")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: /Volver a las actividades del día/ }));
+    expect(screen.getByRole("region", { name: "Actividades de esta fecha" })).toBeTruthy();
     expect(screen.getByRole("link", { name: "Año siguiente" }).getAttribute("href")).toContain("tipo=grabacion");
     expect(screen.getByRole("heading", { name: "DICIEMBRE" })).toBeTruthy();
   });
@@ -174,7 +177,7 @@ describe("calendario anual compartido", () => {
     fireEvent.click(day);
 
     const dialog = screen.getByRole("dialog", {
-      name: "Actividad A",
+      name: "2 actividades en esta fecha",
     });
     const close = screen.getByRole("button", { name: "Cerrar detalle" });
     expect(document.activeElement).toBe(close);
@@ -214,7 +217,7 @@ describe("calendario anual compartido", () => {
 
     setMobile(true);
     fireEvent.click(day);
-    expect(screen.getByRole("dialog", { name: "Actividad A" })).toBeTruthy();
+    expect(screen.getByRole("dialog", { name: "2 actividades en esta fecha" })).toBeTruthy();
     expect(document.body.style.overflow).toBe("hidden");
     act(() => changeMobile(false));
     await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());

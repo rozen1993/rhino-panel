@@ -701,6 +701,16 @@ export function softDeleteActivity(
   }, true, true);
 }
 
+export function resetActivity(storage: Pick<Storage, "getItem" | "setItem">, id: string, reason: string, actor: ActivityActor, expectedVersion: number): Result {
+  return update(storage, id, item => {
+    if (actor.roleId !== "admin") return "Solo Admin puede restablecer una actividad.";
+    if (item.version !== expectedVersion) return "La actividad cambió; recarga antes de continuar.";
+    if (item.status === "Programada") return "La actividad ya está Programada.";
+    if (reason.trim().length < 2 || reason.trim().length > 1000) return "Indica un motivo de 2 a 1000 caracteres.";
+    return { ...item, status: "Programada", deliveredAt: undefined, audit: audit(item, "Actividad restablecida a Programada", actor, `${reason.trim()} · Estado anterior: ${item.status} · Entrega anterior: ${item.deliveredAt ?? "—"}`) };
+  });
+}
+
 export function restoreActivity(
   storage: Pick<Storage, "getItem" | "setItem">,
   accountStorage: Pick<Storage, "getItem">,

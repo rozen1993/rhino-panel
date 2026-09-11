@@ -644,6 +644,19 @@ try {
   pass(
     "Aunor retired-chat denial, delivery, customer-only confirmation and idempotency",
   );
+  const resetArgs={p_activity_id:activity,p_expected_version:1,p_reason:"Corrección integrada aislada"};
+  assert.equal((await users.operator.client.rpc("reset_activity_v1",resetArgs)).error?.code,"SR002");
+  ok(await admin.rpc("reset_activity_v1",resetArgs),"admin reset through HTTP");
+  assert.equal((await admin.rpc("reset_activity_v1",resetArgs)).error?.code,"SR001");
+  const restarted=ok(await admin.from("activities").select("status,material_link,delivered_at").eq("id",activity).single(),"reset record");
+  assert.equal(restarted.status,"Programada");assert.equal(restarted.delivered_at,null);assert.equal(restarted.material_link,"https://example.invalid/test.mp4");
+  const historicDelivery=ok(await users.customer.client.from("aunor_deliveries").select("is_current,confirmed_at").single(),"preserved confirmation");
+  assert.equal(historicDelivery.is_current,false);assert.ok(historicDelivery.confirmed_at);
+  // Complete the restarted fixture through the responsible operator before
+  // testing deactivation: production correctly rejects open assignments.
+  ok(await users.operator.client.rpc("advance_activity_v1",{p_activity_id:activity,p_expected_version:2}),"restart execution");
+  ok(await users.operator.client.rpc("advance_activity_v1",{p_activity_id:activity,p_expected_version:3}),"deliver restarted execution");
+  pass("Admin reset via HTTP preserves material and Aunor confirmation as historical evidence");
   assert.equal(
     (
       await users.operator.client

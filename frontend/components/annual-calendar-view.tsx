@@ -20,6 +20,7 @@ function isOverdue(item: CalendarActivity, today: string) {
   return item.status !== "Entregada" && Boolean(end) && end < today;
 }
 export type CalendarDetailProps = {
+  selectionKey: number;
   item: CalendarActivity; choices: CalendarActivity[]; onChoose: (item: CalendarActivity)=>void;
   close?:()=>void; titleId:string; closeButtonRef?:RefObject<HTMLButtonElement|null>; today:string;
 };
@@ -254,6 +255,7 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
     visible[0] ? [visible[0].id] : [],
   );
   const [overlay, setOverlay] = useState(false);
+  const [selectionKey, setSelectionKey] = useState(0);
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const returnFocusRef = useRef<HTMLButtonElement | null>(null);
@@ -340,6 +342,7 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
     trigger: HTMLButtonElement,
   ) {
     setChoiceIds(items.map((item) => item.id));
+    setSelectionKey(value => value + 1);
     setSelectedId(items[0]?.id ?? "");
     returnFocusRef.current = trigger;
     const mobile =
@@ -470,7 +473,7 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
       </section>
       <div className="hidden border-l border-line md:sticky md:top-0 md:block md:h-[calc(100vh-4.5rem)]">
         {selected ? (
-          renderDetail({ choices, item:selected, onChoose:(item)=>setSelectedId(item.id), today, titleId:"activity-detail-title-desktop" })
+          renderDetail({ selectionKey, choices, item:selected, onChoose:(item)=>setSelectedId(item.id), today, titleId:"activity-detail-title-desktop" })
         ) : (
           <p className="p-6 text-sm text-ink-muted" role="status">
             No hay actividades registradas en {year}.
@@ -492,7 +495,7 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
             onClick={(event) => event.stopPropagation()}
           >
             <span className="absolute left-1/2 top-2 z-10 h-1 w-20 -translate-x-1/2 rounded-full bg-status-gray" />
-            {renderDetail({ choices, close:closeOverlay, closeButtonRef, item:selected, onChoose:(item)=>setSelectedId(item.id), today, titleId:"activity-detail-title-mobile" })}
+            {renderDetail({ selectionKey, choices, close:closeOverlay, closeButtonRef, item:selected, onChoose:(item)=>setSelectedId(item.id), today, titleId:"activity-detail-title-mobile" })}
           </div>
         </div>
       )}

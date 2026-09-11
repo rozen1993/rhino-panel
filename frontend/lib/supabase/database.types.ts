@@ -258,10 +258,17 @@ export type Database = {
           p_expected_version: number;
           p_reason: string;
         };
+        Returns: { activity_id: string; activity_version: number; deleted_at: string }[];
+      };
+      reset_activity_v1: {
+        Args: {
+          p_activity_id: string;
+          p_expected_version: number;
+          p_reason: string;
+        };
         Returns: {
           activity_id: string;
           activity_version: number;
-          deleted_at: string;
         }[];
       };
       restore_activity_v1: {

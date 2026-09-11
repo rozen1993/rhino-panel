@@ -34,6 +34,7 @@ vi.mock("@/lib/supabase/profiles", () => ({
 
 import {
   advanceSupabaseActivityAction,
+  resetSupabaseActivityAction,
   createOwnSupabaseActivityAction,
   deleteSupabaseActivityMessageAction,
   editSupabaseActivityMessageAction,
@@ -89,6 +90,16 @@ const activity = {
 } satisfies SimulatedActivity;
 
 describe("autoridad ejecutada dentro de Server Actions", () => {
+  it("restablece solo como Admin, con motivo y versión, y refresca Histórico", async () => {
+    mocks.currentRole.mockResolvedValue(roles.operario);
+    expect((await resetSupabaseActivityAction(activityId,1,"Corrección")).ok).toBe(false);
+    expect(mocks.rpc).not.toHaveBeenCalled();
+    mocks.currentRole.mockResolvedValue(roles.admin);
+    expect((await resetSupabaseActivityAction(activityId,1,"")).ok).toBe(false);
+    expect((await resetSupabaseActivityAction(activityId,1,"Corrección")).ok).toBe(true);
+    expect(mocks.rpc).toHaveBeenCalledWith("reset_activity_v1",{p_activity_id:activityId,p_expected_version:1,p_reason:"Corrección"});
+    expect(mocks.revalidate).toHaveBeenCalledWith("/historico");
+  });
   it("transporta lugares por v2 y no reintenta en v1 cuando falta la migración", async () => {
     mocks.currentRole.mockResolvedValue({ ...roles.admin, accountId: "00000000-0000-4000-8000-000000000013" });
     const spans = [{ ...fields.spans[0], place: "Norte" }, { ...fields.spans[0], place: "Sur" }];

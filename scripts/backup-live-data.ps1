@@ -5,12 +5,13 @@ $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path $PSScriptRoot -Parent
 $backupRoot = Join-Path $env:LOCALAPPDATA 'SistemaR/backups/live'
 New-Item -ItemType Directory -Path $backupRoot -Force | Out-Null
-$acl = New-Object System.Security.AccessControl.DirectorySecurity
+$acl = Get-Acl -LiteralPath $backupRoot
 $acl.SetAccessRuleProtection($true, $false)
+foreach ($existingRule in @($acl.Access)) { $acl.RemoveAccessRuleSpecific($existingRule) }
 $sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User
 $rule = New-Object System.Security.AccessControl.FileSystemAccessRule($sid, 'FullControl', 'ContainerInherit,ObjectInherit', 'None', 'Allow')
 $acl.AddAccessRule($rule)
-Set-Acl -LiteralPath $backupRoot -AclObject $acl
+[System.IO.Directory]::SetAccessControl($backupRoot, $acl)
 $destination = Join-Path $backupRoot ((Get-Date -Format 'yyyyMMdd-HHmmss') + '-' + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $destination | Out-Null
 Push-Location $repoRoot

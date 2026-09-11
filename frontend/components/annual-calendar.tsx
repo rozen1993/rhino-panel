@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, type RefObject } from "react";
+import { useMemo, useState, type RefObject } from "react";
 import { formatActivitySpans } from "@/components/activity-card";
 import { ActivityJourneys } from "@/components/activity-journeys";
 import { spanPlace } from "@/lib/activities";
@@ -28,6 +28,8 @@ function DetailPanel({
   today: string;
 }) {
   const url = safeMaterialUrl(item.materialLink);
+  const [showDetail, setShowDetail] = useState(false);
+  const listing = choices.length > 1 && !showDetail;
   return (
     <aside
       aria-labelledby={titleId}
@@ -45,34 +47,38 @@ function DetailPanel({
           ×
         </button>
       )}
-      {choices.length > 1 && (
+      {listing && (
         <section
           aria-label="Actividades de esta fecha"
           className="mb-5 border-b border-line pb-4"
         >
-          <p className="data-label text-ink-muted">
+          <h2 id={titleId} className="data-label text-ink-muted">
             {choices.length} actividades en esta fecha
-          </p>
+          </h2>
           <div className="mt-2 grid gap-1.5">
             {choices.map((choice) => (
-              <button
-                aria-label={`${choice.type} · ${choice.title}. ID: ${choice.id}. ${choice.responsible}. ${formatActivitySpans(choice)}. ${[...new Set(choice.spans.map((span) => spanPlace(span, choice.place) || "Sin lugar indicado"))].join("; ")}`}
-                aria-pressed={choice.id === item.id}
-                className={`rounded-md border px-3 py-2 text-left text-xs font-bold ${choice.id === item.id ? "border-cyan bg-cyan/10 text-cyan-ink" : "border-line bg-white hover:border-cyan/50"}`}
+              <article
+                className="rounded-md border border-line bg-white px-3 py-2 text-left text-xs font-bold"
                 key={choice.id}
-                onClick={() => onChoose(choice)}
-                type="button"
               >
                 <span className="block">{choice.type} · {choice.title}</span>
+                <span className="mt-2 block text-xs font-normal text-ink-muted">{choice.description}</span>
                 <span className="mt-1 block break-all font-mono text-[0.625rem] font-normal">ID: {choice.id}</span>
                 <span className="block text-[0.6875rem] font-normal text-ink-muted">{choice.responsible}</span>
                 <span className="block break-words text-[0.6875rem] font-normal text-ink-muted">Lugares de la actividad: {[...new Set(choice.spans.map((span) => spanPlace(span, choice.place) || "Sin lugar indicado"))].join(" · ")}</span>
                 <span className="block text-[0.6875rem] font-normal text-ink-muted">{formatActivitySpans(choice)}</span>
-              </button>
+                <button type="button"
+                  aria-label={`Ver detalles: ${choice.type} · ${choice.title}. ID: ${choice.id}`}
+                  className="mt-3 min-h-11 w-full rounded-md border border-cyan/50 px-3 py-2 text-left text-cyan-ink hover:bg-cyan/10"
+                  onClick={() => { onChoose(choice); setShowDetail(true); }}
+                >Ver detalles →</button>
+              </article>
             ))}
           </div>
         </section>
       )}
+      {!listing && <>
+      {choices.length > 1 && <button type="button" className="mb-5 min-h-11 text-left text-xs font-bold text-cyan-ink" onClick={() => setShowDetail(false)}>← Volver a las actividades del día</button>}
       <div className="pr-12">
         <StatusPill status={item.status} />
         <p className="mt-5 text-[0.625rem] font-extrabold uppercase tracking-[0.16em] text-cyan-ink">
@@ -128,6 +134,7 @@ function DetailPanel({
           Enlace disponible al entregar
         </p>
       )}
+      </>}
     </aside>
   );
 }
@@ -141,6 +148,6 @@ export function AnnualCalendar({category,dataSource,initialActivities=[],today,y
   return <AnnualCalendarView category={category} activities={all} today={today} year={year} renderDetail={(props)=>{
     const item=all.find(candidate=>candidate.id===props.item.id);
     if(!item) return null;
-    return <DetailPanel {...props} item={item} choices={all.filter(candidate=>props.choices.some(choice=>choice.id===candidate.id))} onChoose={props.onChoose}/>;
+    return <DetailPanel key={`${year}-${props.selectionKey}`} {...props} item={item} choices={all.filter(candidate=>props.choices.some(choice=>choice.id===candidate.id))} onChoose={props.onChoose}/>;
   }}/>;
 }

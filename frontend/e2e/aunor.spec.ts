@@ -125,5 +125,8 @@ test("rutas retiradas no exponen contenido ni cuentas antiguas",async({page})=>{
     await expect(page.getByRole("region",{name:"Conversación externa"})).toHaveCount(0);
   }
   await page.goto("/aunor/acordado");
+  await expect(page).toHaveURL(/\/sin-acceso$/);
+  await login(page,"aunor");
+  await page.goto("/aunor/acordado");
   await expect(page).toHaveURL(/\/aunor\/contrato$/);
 });

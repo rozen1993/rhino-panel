@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import {
   advanceSupabaseActivityAction,
+  resetSupabaseActivityAction,
   deleteSupabaseActivityMessageAction,
   editSupabaseActivityMessageAction,
   postSupabaseActivityMessageAction,
@@ -21,6 +22,7 @@ import {
   actorFromRole,
   addThreadMessage,
   advanceActivity,
+  resetActivity,
   canEditActivity,
   canViewActivity,
   deleteThreadMessage,
@@ -63,6 +65,7 @@ export function ActivityDetail({
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editingMessage, setEditingMessage] = useState("");
   const [reason, setReason] = useState("");
+  const [resetReason, setResetReason] = useState("");
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -364,6 +367,27 @@ export function ActivityDetail({
             </div>
           </Card>
 
+          {canDelete && item.status !== "Programada" && (
+            <Card className="overflow-hidden">
+              <details>
+                <summary className="min-h-12 cursor-pointer px-4 py-3 text-xs font-extrabold text-cyan-ink">Restablecer a Programada</summary>
+                <div className="space-y-3 border-t border-line p-4">
+                  <p className="text-xs leading-5 text-ink-muted">Reinicia el estado. Conserva material, comentarios e historial. La entrega anterior deja de ser la entrega vigente.</p>
+                  <label className="block text-xs font-bold">Motivo del restablecimiento
+                    <textarea className="mt-2 min-h-20 w-full rounded-md border border-line p-3 text-sm" maxLength={1000} value={resetReason} onChange={event => setResetReason(event.target.value)} />
+                  </label>
+                  <Button disabled={pending || resetReason.trim().length < 2} onClick={() => {
+                    if (!window.confirm("¿Restablecer a Programada? Se conservarán material, comentarios e historial.")) return;
+                    startTransition(async () => {
+                      const result = dataSource === "supabase" ? await resetSupabaseActivityAction(item.id, item.version, resetReason) : resetActivity(window.localStorage, item.id, resetReason, actor, item.version);
+                      reportActivity(result, "Actividad restablecida a Programada.");
+                      if (result.ok) { setResetReason(""); router.refresh(); }
+                    });
+                  }}>Confirmar restablecimiento</Button>
+                </div>
+              </details>
+            </Card>
+          )}
           {canDelete && (
             <Card className="overflow-hidden">
               <details className="group">

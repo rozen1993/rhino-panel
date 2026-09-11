@@ -301,7 +301,7 @@ export function ActivityDashboard({
         <SummaryTile
           detail="Trabajo activo"
           icon={<SystemIcon className="size-5" name="progress" />}
-          iconClassName="bg-orange text-night"
+          iconClassName="bg-violet text-white"
           label="En proceso"
           value={count("En proceso")}
         />
