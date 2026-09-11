@@ -1,5 +1,18 @@
 # Instrucciones locales para Codex
 
+## Datos de trabajo reales
+
+Desde la confirmación de Marco, todos los datos del proyecto desplegado son reales.
+Nunca usar el proyecto remoto ni la base local del usuario para fixtures, resets,
+limpiezas, pruebas destructivas o migraciones de demostración. Usar bases UUID
+desechables y retirar solo los recursos creados por la propia prueba.
+Conservar actividades, cuentas, entregas, mensajes e historial. Las correcciones
+deben ser trazables y las bajas recuperables. Antes de migrar el esquema remoto,
+obtener un respaldo privado verificado; no subir dumps ni credenciales a Git.
+Un cambio de infraestructura con coste, destino de respaldo externo o eliminación
+irreversible requiere una decisión explícita del propietario, no se infiere de
+una petición de pruebas o mantenimiento.
+
 Este repositorio usa **Claudex**, definido normativamente en `claudex/adapters/codex/claudex/references/protocolo-doble-derivacion-v1.md`.
 
 Cuando Marco escriba `$claudex`, «usa Claudex» o pida doble derivación, ejecución verificada o revisión cruzada:
