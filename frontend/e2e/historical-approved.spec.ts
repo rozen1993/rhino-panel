@@ -42,6 +42,8 @@ for (const width of [390,768,1366,1920]) {
     await page.getByRole("link",{name:"Año siguiente"}).click();
     await expect(page).toHaveURL(/anio=2027.*tipo=grabacion/);
     await page.getByRole("link",{name:"Año anterior"}).click();
+    await expect(page).toHaveURL(/anio=2026.*tipo=grabacion/);
+    await expect(page.getByRole("heading",{name:/Histórico 2026.*Grabación/})).toBeVisible();
     await page.getByRole("link",{name:"Ver Edición",exact:true}).click();
     await expect(page).toHaveURL(/tipo=edicion/);
     await expect(page.getByRole("heading",{name:/Histórico 2026.*Edición/})).toBeVisible();

@@ -41,7 +41,7 @@ test("Aunor confirma objetos sin chat y Contrato conserva la observación",async
   const confirm=page.getByRole("button",{name:"Confirmar esta entrega"});
   await expect(confirm).toBeDisabled();
   await expect(page.getByRole("region",{name:"Conversación externa"})).toHaveCount(0);
-  await expect(page.getByLabel("Mensaje para Rhino")).toHaveCount(0);
+  await expect(page.getByLabel("Mensaje para DaVinci")).toHaveCount(0);
   await expect(page.getByRole("link",{name:"Mensajes",exact:true})).toHaveCount(0);
   await expect(page.getByText("Opinión del operario",{exact:true})).toHaveCount(0);
   await expect(page.getByText("Trazabilidad completa",{exact:true})).toHaveCount(0);

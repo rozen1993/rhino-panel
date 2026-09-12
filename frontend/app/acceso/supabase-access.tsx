@@ -22,7 +22,7 @@ export function SupabaseAccessPage({ entries, month }: { entries: Entry[]; month
       <Link className="relative z-10 inline-flex min-h-10 items-center gap-2 text-xs text-white/80 transition hover:text-cyan" href="/"><span className="grid size-7 place-items-center rounded-full border border-white/20">▣</span><span>Acceso mediante contraseña</span></Link>
       <header className="relative z-10 mx-auto mt-5 max-w-4xl text-center lg:mt-4">
         <h1 className="brand-condensed text-[2.45rem] leading-none drop-shadow-[0_4px_10px_rgba(0,0,0,.65)] sm:text-5xl lg:text-[4.1rem]">CONTROL DE ACTIVIDADES</h1>
-        <p className="mt-3 text-xs font-extrabold tracking-[0.25em] text-cyan sm:text-lg">RHINO AUDIOVISUALES</p>
+        <p className="mt-3 text-xs font-extrabold tracking-[0.25em] text-cyan sm:text-lg">DaVinci</p>
         <span className="mx-auto mt-3 block h-[3px] w-12 bg-lime shadow-[0_0_14px_rgba(132,214,0,.5)]" />
         <p className="mt-3 text-sm text-white/70">Gestión integral del equipo audiovisual</p>
         <span className="mt-4 inline-flex items-center gap-3 rounded-full border border-white/30 bg-white/[.025] px-6 py-2.5 text-sm"><SystemIcon className="size-4 text-cyan" name="calendar" /><span className="capitalize">{month}</span></span>

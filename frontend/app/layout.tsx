@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Rhino Audiovisuales",
-  description: "Plataforma de gestión de actividades de Rhino Audiovisuales",
+  title: "DaVinci",
+  description: "Plataforma de gestión de actividades de DaVinci",
   robots: {
     index: false,
     follow: false,

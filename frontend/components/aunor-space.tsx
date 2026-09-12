@@ -24,6 +24,7 @@ import {
 import type { Role } from "@/lib/roles";
 import type { Json } from "@/lib/supabase/database.types";
 import { safeMaterialUrl } from "@/lib/external-link";
+import { displayOrganizationAuthor } from "@/lib/brand";
 import s from "./aunor-space.module.css";
 
 export type AunorScene =
@@ -176,7 +177,7 @@ function ConfirmDelivery({
         </h2>
         {!delivery ? (
           <p className={s.muted}>
-            Rhino todavía no ha publicado una entrega vigente para revisar.
+            DaVinci todavía no ha publicado una entrega vigente para revisar.
           </p>
         ) : (
           <>
@@ -289,7 +290,7 @@ function ActivityDetail({
                 Entrega {current.id.slice(-8)} · versión {current.version}
               </p>
               <p className={s.footnote}>
-                Publicada por Rhino · {moment(current.published_at)}
+                Publicada por DaVinci · {moment(current.published_at)}
               </p>
               {safeMaterialUrl(current.material_link) && (
                 <a
@@ -363,7 +364,7 @@ export function AgreementList({ w, id }: { w: AunorWorkspace; id: string }) {
   return (
     <section className={s.card + " " + s.chat + " " + s.pad}>
       <p className="data-label text-cyan-ink">Registro de contactos</p>
-      <h2 className="section-title">Acuerdos registrados por Rhino</h2>
+      <h2 className="section-title">Acuerdos registrados por DaVinci</h2>
       {agreements.map((g) => (
         <div className={s.box + " " + s.sectionGap} key={g.id}>
           <strong>
@@ -383,7 +384,7 @@ export function AgreementList({ w, id }: { w: AunorWorkspace; id: string }) {
             <div>
               <dt>Registrado por</dt>
               <dd>
-                {g.recorded_by} · {moment(g.recorded_at)}
+                {displayOrganizationAuthor(g.recorded_by)} · {moment(g.recorded_at)}
               </dd>
             </div>
           </dl>
@@ -515,7 +516,7 @@ function ReplacementDetail({
           <div>
             <dt>Registrado por</dt>
             <dd>
-              {r.recorded_by} · {moment(r.recorded_at)}
+              {displayOrganizationAuthor(r.recorded_by)} · {moment(r.recorded_at)}
             </dd>
           </div>
         </dl>
@@ -880,7 +881,7 @@ export function AunorSpace({
   const names = {
     panel: [
       "Tus actividades",
-      "Días, lugares y entregas publicadas por Rhino.",
+      "Días, lugares y entregas publicadas por DaVinci.",
     ],
     detail: ["Detalle de actividad", "Información publicada para Aunor."],
     acordado: [

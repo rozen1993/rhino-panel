@@ -154,7 +154,7 @@ export default function AccessPage() {
           CONTROL DE ACTIVIDADES
         </h1>
         <p className="mt-3 text-xs font-extrabold tracking-[0.25em] text-cyan sm:text-lg">
-          RHINO AUDIOVISUALES
+          DaVinci
         </p>
         <span className="mx-auto mt-3 block h-[3px] w-12 bg-lime shadow-[0_0_14px_rgba(132,214,0,.5)]" />
         <p className="mt-3 text-sm text-white/70">

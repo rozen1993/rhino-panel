@@ -504,7 +504,7 @@ export function AdminAunorPanel({
                       </label>
                     </div>
                     <p className={s.footnote}>
-                      Registrado por Admin · Rhino. El registro administrativo
+                      Registrado por Admin · DaVinci. El registro administrativo
                       no es una confirmación de Aunor.
                     </p>
                     <Button className="mt-4" disabled={pending} type="submit">

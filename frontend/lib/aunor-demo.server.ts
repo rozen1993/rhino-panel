@@ -59,7 +59,7 @@ export function mutateDemoAunor(role:Role,command:AunorCommand,activityId:string
     result.version=version;
   } else if(command==="message") {
     if(correction&&!w.messages.some(m=>m.id===correction&&m.activity_id===activityId&&m.author_role===role.id)) throw Error("Solo puedes corregir mensajes propios de este hilo.");
-    w.messages.push({id,sequence:Math.max(0,...w.messages.map(m=>m.sequence))+1,activity_id:activityId,author:role.id==="aunor"?"Aunor":"Admin · Rhino",author_role:role.id==="aunor"?"aunor":"admin",body:text("body",1),created_at:now,corrects_id:correction,is_own:true});
+    w.messages.push({id,sequence:Math.max(0,...w.messages.map(m=>m.sequence))+1,activity_id:activityId,author:role.id==="aunor"?"Aunor":"Admin · DaVinci",author_role:role.id==="aunor"?"aunor":"admin",body:text("body",1),created_at:now,corrects_id:correction,is_own:true});
   } else if(command==="read") {
     const sequence=Number(p.sequence);
     if(sequence!==0&&!w.messages.some(m=>m.activity_id===activityId&&m.sequence===sequence)) throw Error("Posición de lectura inválida.");
@@ -68,7 +68,7 @@ export function mutateDemoAunor(role:Role,command:AunorCommand,activityId:string
     if(!["Llamada","Reunión","Acuerdo verbal"].includes(String(p.channel))||!Number.isFinite(Date.parse(String(p.contactedAt)))) throw Error("Indica canal y fecha de contacto.");
     if(correction&&!w.agreements.some(g=>g.id===correction&&g.activity_id===activityId&&g.is_current)) throw Error("Acuerdo no disponible.");
     if(correction) w.agreements.find(g=>g.id===correction)!.is_current=false;
-    w.agreements.push({id,activity_id:activityId,channel:String(p.channel),contacted_at:String(p.contactedAt),requester_declared:text("requesterDeclared",2,180),body:text("body",2),evidence_link:link("evidenceLink"),recorded_by:"Admin · Rhino",recorded_at:now,corrects_id:correction,is_current:true});
+    w.agreements.push({id,activity_id:activityId,channel:String(p.channel),contacted_at:String(p.contactedAt),requester_declared:text("requesterDeclared",2,180),body:text("body",2),evidence_link:link("evidenceLink"),recorded_by:"Admin · DaVinci",recorded_at:now,corrects_id:correction,is_current:true});
   } else if(command==="replacement") {
     const other=w.activities.find(a=>a.id===p.substituteId);
     const agreement=w.agreements.find(g=>g.id===p.agreementId&&(g.activity_id===activityId||g.activity_id===other?.id));
@@ -78,7 +78,7 @@ export function mutateDemoAunor(role:Role,command:AunorCommand,activityId:string
       if(!prior) throw Error("Reemplazo no disponible para corregir.");
       prior.is_current=false;
     }
-    w.replacements.push({id,original_activity_id:a.id,substitute_activity_id:other.id,original_title:a.title,substitute_title:other.title,agreement_id:agreement.id,reason:text("reason",2,3000),evidence_note:text("evidenceNote",2,3000),evidence_link:link("evidenceLink"),recorded_by:"Admin · Rhino",recorded_at:now,corrects_id:correction,confirmed_at:null,confirmed_by:null,is_current:true});
+    w.replacements.push({id,original_activity_id:a.id,substitute_activity_id:other.id,original_title:a.title,substitute_title:other.title,agreement_id:agreement.id,reason:text("reason",2,3000),evidence_note:text("evidenceNote",2,3000),evidence_link:link("evidenceLink"),recorded_by:"Admin · DaVinci",recorded_at:now,corrects_id:correction,confirmed_at:null,confirmed_by:null,is_current:true});
   } else if(command==="confirm-delivery") {
     const d=w.deliveries.find(d=>d.id===p.objectId&&d.activity_id===activityId);
     if(p.acknowledged!==true||!d||!d.is_current||d.version!==p.version) throw Error("Revisa y confirma explícitamente la entrega vigente.");

@@ -6,6 +6,8 @@ afterEach(cleanup);
 const entries = [{ username: "cesar", display_name: "Cesar", role: "operario" }, { username: "aunor", display_name: "Aunor", role: "aunor" }];
 it("muestra cuentas reales sin inventar métricas", () => {
   render(<SupabaseAccessPage entries={entries} month="septiembre de 2026" />);
+  expect(screen.getByText("DaVinci", { exact: true })).toBeTruthy();
+  expect(screen.queryByText(/Rhino Audiovisuales/i)).toBeNull();
   expect(screen.getByRole("button", { name: "Ingresar como Cesar" })).toBeTruthy();
   expect(screen.getAllByText("Activo")).toHaveLength(2);
   expect(screen.queryByText("Carlos Vega")).toBeNull();

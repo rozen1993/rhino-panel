@@ -27,12 +27,12 @@ export function createAunorExamples(): AunorWorkspace {
       {activity_id:"aunor-senalizacion",position:1,start_date:"2026-01-04",end_date:"2026-01-04",place:"Tramo Sur"},
     ],
     deliveries:[{id:"delivery-demo-1",activity_id:"cobertura-norte",version:1,material_link:"https://example.invalid/material-ejemplo.mp4",label:"Cobertura Norte · ejemplo",published_at:at,confirmed_at:null,confirmed_by:null,is_current:true}],
-    agreements:[{id:"agreement-demo-1",activity_id:"aunor-original",channel:"Llamada",contacted_at:"2026-01-02T16:30:00-05:00",requester_declared:"Ejecutivo de Aunor, según llamada",body:"Solicitó cubrir entrevistas en lugar del taller cancelado. Registro ficticio.",evidence_link:"",recorded_by:"Admin · Rhino",recorded_at:at,corrects_id:null,is_current:true}],
-    replacements:[{id:"replacement-demo-1",original_activity_id:"aunor-original",substitute_activity_id:"cobertura-norte",original_title:"Taller de seguridad vial",substitute_title:"Cobertura audiovisual Norte",agreement_id:"agreement-demo-1",reason:"Evento cancelado, según llamada registrada.",evidence_note:"Nota de llamada del 2 de enero. Ejemplo ficticio.",evidence_link:"",recorded_by:"Admin · Rhino",recorded_at:at,corrects_id:null,confirmed_at:null,confirmed_by:null,is_current:true}],
+    agreements:[{id:"agreement-demo-1",activity_id:"aunor-original",channel:"Llamada",contacted_at:"2026-01-02T16:30:00-05:00",requester_declared:"Ejecutivo de Aunor, según llamada",body:"Solicitó cubrir entrevistas en lugar del taller cancelado. Registro ficticio.",evidence_link:"",recorded_by:"Admin · DaVinci",recorded_at:at,corrects_id:null,is_current:true}],
+    replacements:[{id:"replacement-demo-1",original_activity_id:"aunor-original",substitute_activity_id:"cobertura-norte",original_title:"Taller de seguridad vial",substitute_title:"Cobertura audiovisual Norte",agreement_id:"agreement-demo-1",reason:"Evento cancelado, según llamada registrada.",evidence_note:"Nota de llamada del 2 de enero. Ejemplo ficticio.",evidence_link:"",recorded_by:"Admin · DaVinci",recorded_at:at,corrects_id:null,confirmed_at:null,confirmed_by:null,is_current:true}],
     messages:[
       {id:"message-demo-1",sequence:1,activity_id:"cobertura-norte",author:"Aunor",author_role:"aunor",body:"¿Dónde podemos revisar el material?",created_at:"2026-06-19T13:00:00Z",corrects_id:null,is_own:false},
-      {id:"message-demo-2",sequence:2,activity_id:"cobertura-norte",author:"Admin · Rhino",author_role:"admin",body:"El enlace está en la entrega. Después de revisarla, pueden confirmarla expresamente.",created_at:at,corrects_id:null,is_own:false},
-      {id:"message-demo-3",sequence:3,activity_id:"edicion-seguridad",author:"Admin · Rhino",author_role:"admin",body:"La edición continúa según la planificación publicada.",created_at:at,corrects_id:null,is_own:false},
+      {id:"message-demo-2",sequence:2,activity_id:"cobertura-norte",author:"Admin · DaVinci",author_role:"admin",body:"El enlace está en la entrega. Después de revisarla, pueden confirmarla expresamente.",created_at:at,corrects_id:null,is_own:false},
+      {id:"message-demo-3",sequence:3,activity_id:"edicion-seguridad",author:"Admin · DaVinci",author_role:"admin",body:"La edición continúa según la planificación publicada.",created_at:at,corrects_id:null,is_own:false},
     ],
   };
 }
