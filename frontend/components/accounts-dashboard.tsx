@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, type ReactNode } from "react";
+import { ErasureControl } from "@/components/erasure-control";
 import {
   createSupabaseAccountAction,
   resetSupabaseTemporaryPasswordAction,
@@ -432,7 +433,7 @@ export function AccountsDashboard({
                 setFormOpen(true);
               }}
             >
-              ＋ Dar de alta
+              + Usuarios
             </Button>
           </div>
         </header>
@@ -587,6 +588,10 @@ export function AccountsDashboard({
               onPermission={toggleCreationPermission}
               onPrompt={setConfirmId}
               onReset={beginReset}
+              erasure={!account.active && account.id!==role.accountId ? <ErasureControl kind="account" target={account.id} label={`${account.name} · @${account.username}`} dataSource={dataSource} onDeleted={()=>{
+                setServerAccounts(current=>current.filter(item=>item.id!==account.id));
+                closeForm();setResetAccount(null);setIssuedCredential(null);setNotice("Cuenta y datos asociados eliminados definitivamente.");
+              }} /> : null}
             />
           ))}
           {!visible.length && (
@@ -638,6 +643,7 @@ function AccountCard({
   onPermission,
   onPrompt,
   onReset,
+  erasure,
 }: {
   account: Account;
   confirmId: string | null;
@@ -646,6 +652,7 @@ function AccountCard({
   onPermission: (account: Account) => void;
   onPrompt: (id: string | null) => void;
   onReset: (account: Account) => void;
+  erasure?: ReactNode;
 }) {
   return (
     <Card
@@ -756,6 +763,7 @@ function AccountCard({
           >
             {account.active ? "Desactivar" : "Reactivar"}
           </button>
+          {erasure}
         </div>
       )}
     </Card>

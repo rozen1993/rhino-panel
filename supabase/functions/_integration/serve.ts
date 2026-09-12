@@ -1,6 +1,7 @@
 // Test transport only: run the production wrappers, including JWT verification.
 import admin from "../admin-accounts/index.ts";
 import change from "../change-temporary-password/index.ts";
+import erasure from "../admin-erasure/index.ts";
 
 Deno.serve(
   {
@@ -11,6 +12,7 @@ Deno.serve(
   (request) => {
     const path = new URL(request.url).pathname;
     if (path.endsWith("/admin-accounts")) return admin.fetch(request);
+    if (path.endsWith("/admin-erasure")) return erasure.fetch(request);
     if (path.endsWith("/change-temporary-password"))
       return change.fetch(request);
     return new Response("Not found", { status: 404 });

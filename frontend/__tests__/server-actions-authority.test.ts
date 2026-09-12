@@ -97,7 +97,7 @@ describe("autoridad ejecutada dentro de Server Actions", () => {
     mocks.currentRole.mockResolvedValue(roles.admin);
     expect((await resetSupabaseActivityAction(activityId,1,"")).ok).toBe(false);
     expect((await resetSupabaseActivityAction(activityId,1,"Corrección")).ok).toBe(true);
-    expect(mocks.rpc).toHaveBeenCalledWith("reset_activity_v1",{p_activity_id:activityId,p_expected_version:1,p_reason:"Corrección"});
+    expect(mocks.rpc).toHaveBeenCalledWith("restart_activity_v2",{p_activity_id:activityId,p_expected_version:1,p_reason:"Corrección"});
     expect(mocks.revalidate).toHaveBeenCalledWith("/historico");
   });
   it("transporta lugares por v2 y no reintenta en v1 cuando falta la migración", async () => {

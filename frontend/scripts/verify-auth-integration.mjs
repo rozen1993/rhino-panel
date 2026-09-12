@@ -821,6 +821,59 @@ try {
   pass(
     "admin demotion, account disable/reactivation and old-session rejection",
   );
+  // All destructive scenarios below use this run's UUID database and users.
+  const eraseCall=(c,body)=>invoke(c,"admin-erasure",body);
+  const disposableId=randomUUID();
+  sql(`insert into public.activities(id,created_by,created_by_role,responsible_id,responsible_name,type,title,description,status,material_link,operator_opinion) values('${disposableId}','${boot.id}','admin','${users.operator.id}','Test operator','Grabación','Disposable restart','Isolated erasure test','En proceso','https://example.com/old-material','Old opinion'); insert into public.activity_date_spans(activity_id,position,start_date,end_date) values('${disposableId}',1,'2026-09-11','2026-09-11');`);
+  const v2Restart=ok(await admin.rpc("restart_activity_v2",{p_activity_id:disposableId,p_expected_version:1,p_reason:"Isolated restart"}),"restart v2")[0];
+  assert.notEqual(v2Restart.activity_id,disposableId);
+  assert.equal(sql(`select status||'|'||material_link from public.activities where id='${v2Restart.activity_id}'`).trim(),"Programada|");
+  assert.equal(sql(`select count(*) from public.activities where id='${disposableId}' and deleted_at is not null and material_link<>''`).trim(),"1");
+  assert.ok((await reactivated.rpc("preview_erasure_v1",{p_kind:"trash",p_target:null})).error);
+  assert.ok((await admin.rpc("execute_erasure_v1",{p_actor:boot.id,p_session:randomUUID(),p_kind:"trash",p_target:null,p_fingerprint:"0".repeat(64)})).error);
+  let impact=ok(await admin.rpc("preview_erasure_v1",{p_kind:"trash",p_target:null}),"trash preview");
+  const payload=()=>({kind:"trash",target:null,fingerprint:impact.fingerprint,password:bootPassword,confirmation:"ELIMINAR DEFINITIVAMENTE"});
+  assert.ok([401,403].includes((await eraseCall(client(anon),payload())).status));
+  assert.equal((await eraseCall(reactivated,payload())).status,403);
+  assert.equal((await eraseCall(admin,{...payload(),password:"NotTheAdminPassword!"})).body.code,"invalid_admin_password");
+  sql(`update public.activities set description='Changed after preview' where id='${disposableId}'`);
+  assert.equal((await eraseCall(admin,payload())).body.code,"preview_changed");
+  assert.equal(sql(`select count(*) from public.activities where id='${disposableId}'`).trim(),"1");
+  impact=ok(await admin.rpc("preview_erasure_v1",{p_kind:"trash",p_target:null}),"fresh trash preview");
+  const purged=await eraseCall(admin,payload());
+  assert.equal(purged.status,200,`trash purge: ${purged.body.code}`);
+  assert.equal(sql(`select count(*) from public.activities where id='${disposableId}'`).trim(),"0");
+  assert.equal(sql(`select count(*) from public.activities where id='${v2Restart.activity_id}'`).trim(),"1");
+  assert.equal(sql(`select count(*) from private.record_history where coalesce(old_record::text,'')||coalesce(new_record::text,'') like '%${disposableId}%'`).trim(),"0");
+  ok(await admin.rpc("erasure_identity_v1"),"working Admin session preserved after reauthentication");
+  pass("restart v2 and password-gated purge: wrong password, roles, stale preview, retained live activity and no old snapshots");
+  const accountWork=randomUUID();
+  sql(`insert into public.activities(id,created_by,created_by_role,responsible_id,responsible_name,type,title,description,status,material_link,delivered_at) values('${accountWork}','${boot.id}','admin','${users.manager.id}','Test manager','Grabación','Disposable account work','Isolated account erasure','Entregada','https://example.com/disposable',now())`);
+  await updateAccount(users.manager,"operario",false);
+  assert.ok((await adminService.auth.admin.deleteUser(users.manager.id,false)).error,"Auth deletion without password-gated request must fail");
+  const accountImpact=ok(await admin.rpc("preview_erasure_v1",{p_kind:"account",p_target:users.manager.id}),"account preview");
+  assert.ok(accountImpact.activities.some(item=>item.id===accountWork));
+  // Failure after the app-data trigger must roll back BOTH Auth and business rows.
+  sql(`create function private.test_erasure_rollback() returns trigger language plpgsql as $$ begin if old.id='${users.manager.id}' then raise exception 'isolated rollback probe'; end if; return old; end $$; create trigger test_erasure_rollback after delete on auth.users for each row execute function private.test_erasure_rollback();`);
+  const interrupted=await eraseCall(admin,{kind:"account",target:users.manager.id,fingerprint:accountImpact.fingerprint,password:bootPassword,confirmation:"ELIMINAR DEFINITIVAMENTE"});
+  assert.equal(interrupted.body.code,"account_erasure_failed");
+  assert.equal(sql(`select count(*) from public.profiles where id='${users.manager.id}'`).trim(),"1");
+  assert.equal(sql(`select count(*) from public.activities where id='${accountWork}'`).trim(),"1");
+  ok(await adminService.auth.admin.getUserById(users.manager.id),"Auth account retained after rollback");
+  sql("drop trigger test_erasure_rollback on auth.users; drop function private.test_erasure_rollback();");
+  const erased=await eraseCall(admin,{kind:"account",target:users.manager.id,fingerprint:accountImpact.fingerprint,password:bootPassword,confirmation:"ELIMINAR DEFINITIVAMENTE"});
+  assert.equal(erased.status,200,`account purge: ${erased.body.code}`);
+  assert.ok((await adminService.auth.admin.getUserById(users.manager.id)).error);
+  assert.equal(sql(`select count(*) from public.profiles where id='${users.manager.id}'`).trim(),"0");
+  assert.equal(sql(`select count(*) from public.activities where id='${accountWork}'`).trim(),"0");
+  assert.equal(sql(`select count(*) from private.record_history where coalesce(old_record::text,'')||coalesce(new_record::text,'') like '%${users.manager.id}%'`).trim(),"0");
+  assert.equal(sql(`select count(*) from public.profiles where id='${boot.id}'`).trim(),"1");
+  assert.ok((await demoted.rpc("register_app_session")).error);
+  const remaining=ok(await admin.rpc("preview_erasure_v1",{p_kind:"trash",p_target:null}),"remaining trash");
+  const wrong={kind:"trash",target:null,fingerprint:remaining.fingerprint,password:"WrongPassword!",confirmation:"ELIMINAR DEFINITIVAMENTE"};
+  await eraseCall(admin,wrong);
+  assert.equal((await eraseCall(admin,wrong)).status,429);
+  pass("official Auth delete atomically erases disabled account and related work, invalidates old access, and throttles password attempts");
   console.log(
     `PASS: ${checks} integrated scenarios (real local Auth/REST; no remote writes)`,
   );

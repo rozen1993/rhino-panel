@@ -372,16 +372,16 @@ export function ActivityDetail({
               <details>
                 <summary className="min-h-12 cursor-pointer px-4 py-3 text-xs font-extrabold text-cyan-ink">Restablecer a Programada</summary>
                 <div className="space-y-3 border-t border-line p-4">
-                  <p className="text-xs leading-5 text-ink-muted">Reinicia el estado. Conserva material, comentarios e historial. La entrega anterior deja de ser la entrega vigente.</p>
+                  <p className="text-xs leading-5 text-ink-muted">La ejecución actual irá a la papelera con sus materiales e historial. Se creará una nueva actividad en Programada con la misma planificación, sin material, opinión ni conversación. Las publicaciones Aunor anteriores no se transfieren.</p>
                   <label className="block text-xs font-bold">Motivo del restablecimiento
                     <textarea className="mt-2 min-h-20 w-full rounded-md border border-line p-3 text-sm" maxLength={1000} value={resetReason} onChange={event => setResetReason(event.target.value)} />
                   </label>
                   <Button disabled={pending || resetReason.trim().length < 2} onClick={() => {
-                    if (!window.confirm("¿Restablecer a Programada? Se conservarán material, comentarios e historial.")) return;
+                    if (!window.confirm("¿Enviar esta ejecución a la papelera y crear una nueva en Programada? La nueva actividad empezará sin material ni comentarios.")) return;
                     startTransition(async () => {
                       const result = dataSource === "supabase" ? await resetSupabaseActivityAction(item.id, item.version, resetReason) : resetActivity(window.localStorage, item.id, resetReason, actor, item.version);
                       reportActivity(result, "Actividad restablecida a Programada.");
-                      if (result.ok) { setResetReason(""); router.refresh(); }
+                      if (result.ok) { setResetReason(""); router.replace(`/actividades/${result.activity.id}`); router.refresh(); }
                     });
                   }}>Confirmar restablecimiento</Button>
                 </div>

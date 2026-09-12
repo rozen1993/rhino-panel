@@ -242,11 +242,13 @@ export async function resetSupabaseActivityAction(id: string, expectedVersion: n
   if (!isUuid(id) || !isPositiveVersion(expectedVersion) || typeof reason !== "string" || reason.trim().length < 2 || reason.trim().length > 1000)
     return { ok: false, error: "Indica un motivo de 2 a 1000 caracteres." };
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc("reset_activity_v1", { p_activity_id: id, p_expected_version: expectedVersion, p_reason: reason.trim() });
+  const { data, error } = await supabase.rpc("restart_activity_v2", { p_activity_id: id, p_expected_version: expectedVersion, p_reason: reason.trim() });
   if (error || !data?.[0]) return { ok: false, error: error?.code === "PGRST202" ? "El restablecimiento aún no está habilitado en el servidor." : errorMessage(error ?? {}) };
   revalidatePath("/historico");
   revalidatePath("/aunor");
-  return refreshActivity(id);
+  revalidatePath("/papelera");
+  revalidatePath(`/actividades/${id}`);
+  return refreshActivity(data[0].activity_id);
 }
 
 export async function postSupabaseActivityMessageAction(

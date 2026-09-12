@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { restoreSupabaseActivityAction } from "@/app/papelera/actions";
 import { formatActivityDates } from "@/components/activity-card";
 import { Button } from "@/components/button";
+import { ErasureControl } from "@/components/erasure-control";
 import { Card } from "@/components/card";
 import { StatusPill } from "@/components/status-pill";
 import { SystemIcon } from "@/components/system-icon";
@@ -141,6 +142,7 @@ export function TrashDashboard({
 
   return (
     <div className="space-y-4">
+      {activities.length>0 && role.id==="admin" && <div className="flex justify-end"><ErasureControl kind="trash" dataSource={dataSource} onDeleted={()=>{setServerActivities([]);announce("Papelera vaciada definitivamente.");}} /></div>}
       <p
         aria-atomic="true"
         aria-live="polite"

@@ -13,6 +13,14 @@ Un cambio de infraestructura con coste, destino de respaldo externo o eliminaci�
 irreversible requiere una decisión explícita del propietario, no se infiere de
 una petición de pruebas o mantenimiento.
 
+Excepción explícita autorizada por Marco el 11/09/2026: implementar eliminación
+definitiva de cuentas desactivadas y sus datos relacionados, y vaciado definitivo
+de papelera, incluidos historiales y evidencias. Solo mediante el flujo de Admin
+con contraseña, vista previa de impacto y confirmación. Esta autorización permite
+construir y probar el flujo en bases UUID desechables; no autoriza al agente a
+ejecutar eliminaciones de registros reales como prueba. Los respaldos externos
+y los archivos enlazados quedan fuera del borrado de la plataforma.
+
 Este repositorio usa **Claudex**, definido normativamente en `claudex/adapters/codex/claudex/references/protocolo-doble-derivacion-v1.md`.
 
 Cuando Marco escriba `$claudex`, «usa Claudex» o pida doble derivación, ejecución verificada o revisión cruzada:

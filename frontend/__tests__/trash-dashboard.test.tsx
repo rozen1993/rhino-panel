@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TrashDashboard } from "@/components/trash-dashboard";
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 import type { SimulatedActivity } from "@/lib/activity-simulation";
 import { roles } from "@/lib/roles";
 

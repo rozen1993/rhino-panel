@@ -702,13 +702,22 @@ export function softDeleteActivity(
 }
 
 export function resetActivity(storage: Pick<Storage, "getItem" | "setItem">, id: string, reason: string, actor: ActivityActor, expectedVersion: number): Result {
-  return update(storage, id, item => {
-    if (actor.roleId !== "admin") return "Solo Admin puede restablecer una actividad.";
-    if (item.version !== expectedVersion) return "La actividad cambió; recarga antes de continuar.";
-    if (item.status === "Programada") return "La actividad ya está Programada.";
-    if (reason.trim().length < 2 || reason.trim().length > 1000) return "Indica un motivo de 2 a 1000 caracteres.";
-    return { ...item, status: "Programada", deliveredAt: undefined, audit: audit(item, "Actividad restablecida a Programada", actor, `${reason.trim()} · Estado anterior: ${item.status} · Entrega anterior: ${item.deliveredAt ?? "—"}`) };
-  });
+  const current = readActivities(storage), item = current.find(candidate => candidate.id === id && !candidate.deletedAt);
+  if (actor.roleId !== "admin" || !item) return { ok:false,error:"Solo Admin puede reiniciar una actividad disponible." };
+  if (item.version !== expectedVersion) return { ok:false,error:"La actividad cambió; recarga antes de continuar." };
+  if (item.status === "Programada" || item.origin !== "operario") return { ok:false,error:"La actividad no puede reiniciarse." };
+  if (reason.trim().length < 2 || reason.trim().length > 1000) return { ok:false,error:"Indica un motivo de 2 a 1000 caracteres." };
+  if (!readAccounts(storage).some(account => account.id===item.responsibleAccountId && account.active && account.roleId==="operario")) return {ok:false,error:"Reasigna primero a un operario activo."};
+  const now = new Date().toISOString();
+  const next: SimulatedActivity = { ...item, id:crypto.randomUUID(), status:"Programada", version:1,
+    materialLink:"",operatorOpinion:"",thread:[],threadOpenedAt:undefined,deliveredAt:undefined,
+    idempotencyKey:undefined,idempotencyFingerprint:undefined,createdAt:now,updatedAt:now,
+    createdByAccountId:actor.accountId,createdByRoleId:"admin",audit:[] };
+  next.audit = audit(next,"Actividad reiniciada en Programada",actor,`Actividad anterior: ${id} · ${reason.trim()}`);
+  const previous = { ...item, deletedAt:now,deletedBy:actor,deletionReason:`Reinicio: ${reason.trim()}`.slice(0,1000),version:item.version+1,updatedAt:now,
+    audit:audit(item,"Ejecución anterior enviada a papelera",actor,`Nueva actividad: ${next.id} · ${reason.trim()}`) };
+  save(storage,[next,...current.map(candidate=>candidate.id===id?previous:candidate)]);
+  return {ok:true,activity:next};
 }
 
 export function restoreActivity(

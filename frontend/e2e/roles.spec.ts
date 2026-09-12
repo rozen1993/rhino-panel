@@ -148,7 +148,7 @@ test("una cuenta nueva reemplaza obligatoriamente su clave temporal", async ({
 
   await login(page, "admin");
   await page.goto("/cuentas");
-  await page.getByRole("button", { name: "Dar de alta" }).click();
+  await page.getByRole("button", { name: "+ Usuarios", exact: true }).click();
   await page.getByLabel("Nombre").fill("Cuenta Temporal E2E");
   await page.getByLabel("Usuario").fill(username);
   const temporaryPassword = await page

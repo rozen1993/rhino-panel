@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SystemIcon } from "@/components/system-icon";
 import { lastDate } from "@/lib/activities";
 import { useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
 import {
@@ -253,27 +254,29 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
     });
     return { activitiesByDate, monthTotals };
   }, [visible, year]);
-  const [selectedId, setSelectedId] = useState(visible[0]?.id ?? "");
-  const [choiceIds, setChoiceIds] = useState<string[]>(
-    visible[0] ? [visible[0].id] : [],
-  );
+  const [selectedId, setSelectedId] = useState("");
   const [overlay, setOverlay] = useState(false);
   const [selectionKey, setSelectionKey] = useState(0);
-  const [selectedDate, setSelectedDate] = useState<string>();
+  const [chosenDate, setChosenDate] = useState<string>();
+  const selectedDate = chosenDate ?? (publicMode ? undefined : today);
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const returnFocusRef = useRef<HTMLButtonElement | null>(null);
   const restoreFocusPendingRef = useRef(false);
-  const selected =
-    visible.find((item) => item.id === selectedId) ?? visible[0] ?? null;
-  const selectedChoices = choiceIds
-    .map((id) => visible.find((item) => item.id === id))
-    .filter((item): item is CalendarActivity => Boolean(item));
-  const choices = selectedChoices.length
-    ? selectedChoices
-    : selected
-      ? [selected]
-      : [];
+  // Derive the initial day from the same Lima date used by the server, including
+  // when demo hydration or a refreshed query supplies the activities later.
+  const choices = selectedDate
+    ? selectedDate.startsWith(`${year}-`)
+      ? (calendarIndex.activitiesByDate.get(selectedDate) ?? []).map(entry => entry.item)
+      : []
+    : visible.slice(0, 1);
+  const selected = choices.find(item => item.id === selectedId) ?? choices[0] ?? null;
+  const currentYear = year === Number(today.slice(0, 4));
+  const emptyMessage = !publicMode && currentYear && !chosenDate
+    ? "No hay actividades el día de hoy."
+    : visible.length
+      ? "Selecciona una fecha para ver sus actividades."
+      : `No hay actividades registradas en ${year}.`;
   const dialogOpen = overlay && selected !== null;
 
   useEffect(() => {
@@ -347,8 +350,7 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
     trigger: HTMLButtonElement,
     date: string,
   ) {
-    setSelectedDate(date);
-    setChoiceIds(items.map((item) => item.id));
+    setChosenDate(date);
     setSelectionKey(value => value + 1);
     setSelectedId(items[0]?.id ?? "");
     returnFocusRef.current = trigger;
@@ -455,12 +457,18 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
           ))}
         </div>
         <p className="mt-2 text-[0.6875rem] text-ink-muted">Color = categoría. Número oscuro = actividades en ese día. Pulsa la fecha para verlas todas.</p>
-        {!visible.length && (
+        {!publicMode && selected && !chosenDate && (
+          <button type="button" className="mt-4 flex min-h-12 w-full items-center justify-between gap-3 rounded-md border border-cyan/40 bg-panel p-3 text-left text-sm font-bold text-cyan-ink md:hidden"
+            onClick={event => select(choices, event.currentTarget, today)}>
+            Ver actividades de hoy ({choices.length}) <span aria-hidden="true">→</span>
+          </button>
+        )}
+        {!selected && (
           <p
             className="mt-4 rounded-md border border-dashed border-line bg-panel p-4 text-sm text-ink-muted md:hidden"
             role="status"
           >
-            No hay actividades registradas en {year}.
+            {emptyMessage}
           </p>
         )}
         <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-4">
@@ -482,9 +490,12 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
         {selected ? (
           renderDetail({ selectionKey, selectedDate, choices, item:selected, onChoose:(item)=>setSelectedId(item.id), today, titleId:"activity-detail-title-desktop" })
         ) : (
-          <p className="p-6 text-sm text-ink-muted" role="status">
-            No hay actividades registradas en {year}.
-          </p>
+          <aside className="border-t-[3px] border-t-cyan bg-panel p-4" aria-label="Actividades del día">
+            <p className="data-label text-cyan-ink">{currentYear ? "Actividades del día" : "Actividades"}</p>
+            {currentYear && <p className="mt-2 flex items-center gap-2 text-sm font-semibold"><SystemIcon name="calendar" className="size-4 text-cyan-ink" /><time dateTime={today}>{new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(utcDate(today))}</time></p>}
+            <p className="mt-5 text-sm font-semibold" role="status">{emptyMessage}</p>
+            {visible.length > 0 && <p className="mt-2 text-sm leading-6 text-ink-muted">{category ? `En este histórico de ${category.toLowerCase()}. ` : ""}Pulsa una fecha del calendario para consultar otra jornada.</p>}
+          </aside>
         )}
       </div>
       {dialogOpen && selected && (

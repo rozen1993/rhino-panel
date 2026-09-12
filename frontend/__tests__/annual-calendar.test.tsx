@@ -76,6 +76,23 @@ function changeMobile(matches: boolean) {
 }
 
 describe("calendario anual compartido", () => {
+  it("selecciona todas las actividades de hoy al cargar, no el primer registro", () => {
+    setMobile(false);
+    const yesterday={...activity("old","Actividad anterior"),spans:[{start:"2026-07-31",end:"2026-07-31"}]};
+    render(<AnnualCalendar dataSource="supabase" today="2026-08-01" year={2026} initialActivities={[yesterday,activity("a","Hoy A"),activity("b","Hoy B")]} />);
+    const choices=screen.getByRole("region",{name:"Actividades de esta fecha"});
+    expect(within(choices).getAllByRole("article")).toHaveLength(2);
+    expect(choices.textContent).not.toContain("Actividad anterior");
+    expect(screen.getByText("1 de agosto de 2026")).toBeTruthy();
+  });
+  it("avisa cuando hoy no tiene actividades y permite consultar otro día", () => {
+    setMobile(false);
+    render(<AnnualCalendar dataSource="supabase" today="2026-08-02" year={2026} initialActivities={[activity("a","Actividad de ayer")]} />);
+    expect(screen.getAllByText("No hay actividades el día de hoy.").length).toBeGreaterThan(0);
+    expect(screen.queryByRole("heading",{name:"Actividad de ayer"})).toBeNull();
+    fireEvent.click(screen.getByRole("button",{name:/1 de agosto:/}));
+    expect(screen.getByRole("heading",{name:"Actividad de ayer"})).toBeTruthy();
+  });
   it("filtra antes de contar y distingue actividades homónimas sin duplicar jornadas", () => {
     setMobile(false);
     const first = { ...activity("id-uno", "Mismo título", "Grabación"), spans: [{ start: "2026-08-01", end: "2026-08-01", place: "Norte" }, { start: "2026-08-01", end: "2026-08-01", place: "Sur" }] };

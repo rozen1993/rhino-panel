@@ -44,7 +44,7 @@ try {
     "grant usage on schema public,auth,extensions to anon,authenticated,service_role; "+
     "revoke all on function auth.jwt(),auth.uid() from public; grant execute on function auth.jwt(),auth.uid() to anon,authenticated,service_role;");
   const files=readdirSync(migrations).filter(n=>n.endsWith(".sql")).sort();
-  if(files.at(-1)!=="202609110002_reset_activity.sql") throw Error("Revise schema boundary before running this verifier.");
+  if(files.at(-1)!=="202609110004_explicit_erasure.sql") throw Error("Revise schema boundary before running this verifier.");
   for(const name of files.filter(n=>n<"202609080001")) sql(readFileSync(migrations+"/"+name,"utf8"));
   console.log("PASS: cadena anterior de migraciones, exclusivamente en DB nueva.");
   sql("insert into auth.users values "+[1,2,3,4,5,6].map(n=>"('"+id(100+n)+"')").join(",")+";"+
@@ -205,6 +205,26 @@ try {
     sql("do $$ begin begin "+statement+"; raise exception 'physical loss allowed'; exception when sqlstate 'SR012' then null; end; end $$;");
   }
   console.log("PASS: admin-only reset, version conflict, preserved material, private history and physical-loss protection.");
+  const jsonResult=text=>JSON.parse(text.match(/\{[^\n]+\}/g).at(-1));
+  const serviceSql=body=>sql("begin; set local role service_role; "+body+" commit;");
+  const preview=(kind,target="null")=>jsonResult(sql(as(1,`select public.preview_erasure_v1('${kind}',${target});`)));
+  sql(`update public.activities set status='En proceso' where id='${id(301)}';`);
+  const version=jsonResult(sql(`select row_to_json(a) from public.activities a where id='${id(301)}';`)).version;
+  deny(3,`public.restart_activity_v2('${id(301)}',${version},'Reinicio')`);
+  const restarted=jsonResult(sql(as(1,`select row_to_json(r) from public.restart_activity_v2('${id(301)}',${version},'Nueva ejecución') r;`)));
+  sql(`do $$ begin assert (select deleted_at is not null and material_link<>'' from public.activities where id='${id(301)}'); assert (select status='Programada' and material_link='' and operator_opinion='' and version=1 from public.activities where id='${restarted.activity_id}'); assert exists(select 1 from public.activity_date_spans where activity_id='${restarted.activity_id}'); end $$;`);
+  deny(1,`public.restart_activity_v2('${id(301)}',${version},'Repetición')`);
+  deny(3,"public.preview_erasure_v1('trash',null)");
+  sql("do $$ begin assert not has_function_privilege('authenticated','public.execute_erasure_v1(uuid,uuid,text,uuid,text)','execute'); assert not has_function_privilege('anon','public.preview_erasure_v1(text,uuid)','execute'); end $$;");
+  const beforePurge=preview("trash");
+  serviceSql(`do $$ begin begin perform public.execute_erasure_v1('${id(101)}','${id(201)}','trash',null,'${"0".repeat(64)}'); raise exception 'stale preview accepted'; exception when sqlstate 'SR001' then null; end; end $$;`);
+  serviceSql(`select public.execute_erasure_v1('${id(101)}','${id(201)}','trash',null,'${beforePurge.fingerprint}');`);
+  sql(`do $$ begin assert not exists(select 1 from public.activities where deleted_at is not null); assert exists(select 1 from public.activities where id='${restarted.activity_id}'); assert not exists(select 1 from private.record_history where coalesce(old_record::text,'')||coalesce(new_record::text,'') like '%${id(301)}%'); assert not exists(select 1 from private.aunor_publications where activity_id='${id(301)}'); end $$;`);
+  sql(`insert into auth.users values('${id(108)}'); insert into public.profiles(id,username,display_name,role,is_active) values('${id(108)}','erase.test','Disposable account','operario',false); insert into public.activities(id,created_by,created_by_role,responsible_id,responsible_name,type,title,description) values('${id(390)}','${id(101)}','admin','${id(108)}','Disposable account','Grabación','Disposable work','Only isolated fixture');`);
+  const accountPreview=preview("account",`'${id(108)}'`);
+  serviceSql(`select public.execute_erasure_v1('${id(101)}','${id(201)}','account','${id(108)}','${accountPreview.fingerprint}');`);
+  sql(`delete from auth.users where id='${id(108)}'; do $$ begin assert not exists(select 1 from public.profiles where id='${id(108)}'); assert not exists(select 1 from public.activities where id='${id(390)}'); assert not exists(select 1 from private.record_history where coalesce(old_record::text,'')||coalesce(new_record::text,'') like '%${id(108)}%'); assert exists(select 1 from public.profiles where id='${id(101)}'); end $$;`);
+  console.log("PASS: clean restart, full trash graph purge, unchanged live activity, stale preview and atomic Auth/profile erasure.");
 } finally {
   if(created && /^sr_aunor_test_[a-f0-9]{32}$/.test(database)) {
     run(["dropdb","-U","postgres",database]);

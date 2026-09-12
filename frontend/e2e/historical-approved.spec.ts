@@ -8,21 +8,21 @@ async function login(page: Page) {
   await page.getByRole("button", { name: "Entrar" }).click();
   await page.waitForURL(url=>url.pathname !== "/acceso");
 }
-test("Admin restablece a Programada conservando material e historial",async({page},info)=>{
+test("Admin reinicia en Programada y conserva la ejecución anterior en papelera",async({page},info)=>{
   await login(page);
   await page.goto("/actividades/cobertura-norte");
-  const link=page.getByRole("link",{name:/Abrir material/});
-  const material=await link.getAttribute("href");
   await page.getByText("Restablecer a Programada",{exact:true}).click();
   await page.getByLabel("Motivo del restablecimiento").fill("Corrección de prueba aislada");
   await page.screenshot({path:info.outputPath("restablecer-admin.png"),fullPage:true});
   page.once("dialog",dialog=>dialog.accept());
   await page.getByRole("button",{name:"Confirmar restablecimiento"}).click();
-  await expect(page.getByText("Actividad restablecida a Programada.",{exact:true})).toBeVisible();
-  await expect(link).toHaveAttribute("href",material!);
+  await page.waitForURL(url=>url.pathname.startsWith("/actividades/")&&url.pathname!=="/actividades/cobertura-norte");
+  await expect(page.getByRole("link",{name:/Abrir material/})).toHaveCount(0);
   await page.reload();
   await expect(page.locator("span.inline-flex").filter({hasText:"Programada"}).first()).toBeVisible();
   await expect(page.getByText("Restablecer a Programada",{exact:true})).toHaveCount(0);
+  await page.goto("/papelera");
+  await expect(page.getByRole("heading",{name:"Cobertura audiovisual Norte",exact:true})).toBeVisible();
 });
 for (const width of [390,768,1366,1920]) {
   test(`entrada C y calendarios aprobados a ${width}px`, async ({page}, info) => {
