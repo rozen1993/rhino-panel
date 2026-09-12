@@ -177,7 +177,7 @@ function ConfirmDelivery({
         </h2>
         {!delivery ? (
           <p className={s.muted}>
-            DaVinci todavía no ha publicado una entrega vigente para revisar.
+            DA VINCI todavía no ha publicado una entrega vigente para revisar.
           </p>
         ) : (
           <>
@@ -290,7 +290,7 @@ function ActivityDetail({
                 Entrega {current.id.slice(-8)} · versión {current.version}
               </p>
               <p className={s.footnote}>
-                Publicada por DaVinci · {moment(current.published_at)}
+                Publicada por DA VINCI · {moment(current.published_at)}
               </p>
               {safeMaterialUrl(current.material_link) && (
                 <a
@@ -364,7 +364,7 @@ export function AgreementList({ w, id }: { w: AunorWorkspace; id: string }) {
   return (
     <section className={s.card + " " + s.chat + " " + s.pad}>
       <p className="data-label text-cyan-ink">Registro de contactos</p>
-      <h2 className="section-title">Acuerdos registrados por DaVinci</h2>
+      <h2 className="section-title">Acuerdos registrados por DA VINCI</h2>
       {agreements.map((g) => (
         <div className={s.box + " " + s.sectionGap} key={g.id}>
           <strong>
@@ -881,7 +881,7 @@ export function AunorSpace({
   const names = {
     panel: [
       "Tus actividades",
-      "Días, lugares y entregas publicadas por DaVinci.",
+      "Días, lugares y entregas publicadas por DA VINCI.",
     ],
     detail: ["Detalle de actividad", "Información publicada para Aunor."],
     acordado: [

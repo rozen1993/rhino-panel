@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DaVinci",
-  description: "Plataforma de gestión de actividades de DaVinci",
+  title: "DA VINCI",
+  description: "Plataforma de gestión de actividades de DA VINCI",
   robots: {
     index: false,
     follow: false,
