@@ -66,3 +66,26 @@ Cada cuenta/ruta obtiene una instancia nueva del componente.
 El conteo exacto añade trabajo SQL; si el volumen crece considerablemente,
 conviene volver a medir antes de sustituirlo por un endpoint agregado paginado.
 No se introdujo caché de publicaciones para mantener su visibilidad actualizada.
+
+## Comprobación en Vercel
+
+Corrección publicada: `7f6bed8`, despliegue
+`dpl_2RTydy7nutDnD6HqAKamqkrVJegZ`, estado Ready en el dominio de producción.
+
+| Pantalla | Muestras posteriores (ms) | Mediana (ms) |
+| --- | --- | --- |
+| Aunor /aunor | 2071, 1374, 1182 | 1374 |
+| Admin /actividades | 1256, 1256, 881 | 1256 |
+
+La mediana de Aunor bajó aproximadamente un 23 % frente a la muestra previa.
+Admin también varió pese a no cambiar su carga inicial: no se puede atribuir
+todo el cambio de tiempo al código ni prometer ese porcentaje en todas las redes.
+La reducción de peticiones sí queda cubierta por pruebas deterministas.
+Se verificó navegación autenticada de Aunor a Calendario y Contrato; ambas
+sesiones diagnósticas (Aunor y Admin) se cerraron mediante la plataforma.
+
+La primera ejecución de CI aprobó typecheck, lint, 258 pruebas unitarias,
+build y funciones; falló únicamente la nueva prueba de navegación porque
+contaba enlaces inmediatamente después del cambio de URL, antes de renderizar.
+Se añadió una espera explícita por el enlace visible, sin relajar la comprobación
+de datos ni modificar la aplicación.

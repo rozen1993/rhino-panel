@@ -38,6 +38,7 @@ test("Operario no accede al espacio externo",async({browser})=>{
 
 test("navegación cliente conserva datos por pantalla y actualiza el panel",async({page})=>{
   await login(page,"aunor");
+  await expect(page.locator('a[href="/aunor/actividades/cobertura-norte"]').first()).toBeVisible();
   const activities=await page.locator('a[href="/aunor/actividades/cobertura-norte"]').count();
   expect(activities).toBeGreaterThan(0);
   await page.getByRole("link",{name:"Calendario anual",exact:true}).click();
