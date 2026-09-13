@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { useCallback, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/button";
 import { StatusPill } from "@/components/status-pill";
 import { SystemIcon } from "@/components/system-icon";
@@ -9,7 +9,6 @@ import {
   type CalendarDetailProps,
 } from "@/components/annual-calendar-view";
 import {
-  getAunorWorkspaceAction,
   performAunorAction,
 } from "@/app/aunor/actions";
 import {
@@ -25,6 +24,7 @@ import type { Role } from "@/lib/roles";
 import type { Json } from "@/lib/supabase/database.types";
 import { safeMaterialUrl } from "@/lib/external-link";
 import { displayOrganizationAuthor } from "@/lib/brand";
+import { useAunorWorkspace } from "@/lib/use-aunor-workspace";
 import s from "./aunor-space.module.css";
 
 export type AunorScene =
@@ -796,9 +796,8 @@ export function AunorSpace({
   year?: number;
   today?: string;
 }) {
-  const [w, setW] = useState(initial),
-    [error, setError] = useState(""),
-    [notice, setNotice] = useState(""),
+  const {w,error,setError,refresh,beginMutation,endMutation} = useAunorWorkspace(initial,scene,id);
+  const [notice, setNotice] = useState(""),
     [query, setQuery] = useState(""),
     [category, setCategory] = useState("");
   const [pending, startTransition] = useTransition();
@@ -809,68 +808,36 @@ export function AunorSpace({
     requests.current.set(key, requestId);
     return await new Promise<boolean>((resolve) =>
       startTransition(async () => {
-        setError("");
-        const r = await performAunorAction({
-          command,
-          activityId,
-          requestId,
-          payload,
-        });
-        if (!r.ok) {
-          setError(r.error);
+        if (!await beginMutation()) { resolve(false); return; }
+        try {
+          setError("");
+          const r = await performAunorAction({
+            command,
+            activityId,
+            requestId,
+            payload,
+          });
+          if (!r.ok) {
+            setError(r.error);
+            resolve(false);
+            return;
+          }
+          requests.current.delete(key);
+          await refresh(true);
+          if (command !== "read")
+            setNotice(
+              command.startsWith("confirm-")
+                ? "Confirmación guardada para el objeto revisado."
+                : "Registro guardado.",
+            );
+          resolve(true);
+        } catch {
+          setError("No se pudo confirmar el resultado. Actualiza antes de reintentar.");
           resolve(false);
-          return;
-        }
-        requests.current.delete(key);
-        const fresh = await getAunorWorkspaceAction();
-        if (fresh.ok) setW(fresh.data);
-        else setError(fresh.error);
-        if (command !== "read")
-          setNotice(
-            command.startsWith("confirm-")
-              ? "Confirmación guardada para el objeto revisado."
-              : "Registro guardado.",
-          );
-        resolve(true);
+        } finally { endMutation(); }
       }),
     );
-  }, []);
-  async function refresh() {
-    const r = await getAunorWorkspaceAction();
-    if (r.ok) {
-      setW(r.data);
-      setError("");
-    } else setError(r.error);
-  }
-  useEffect(() => {
-    let active = true,
-      inFlight = false;
-    const poll = async () => {
-      if (document.visibilityState !== "visible" || inFlight) return;
-      inFlight = true;
-      try {
-        const result = await getAunorWorkspaceAction();
-        if (active) {
-          if (result.ok) setW(result.data);
-          else setError(result.error);
-        }
-      } catch {
-        if (active)
-          setError(
-            "No se pudo actualizar la información. Reintenta cuando vuelva la conexión.",
-          );
-      } finally {
-        inFlight = false;
-      }
-    };
-    const timer = setInterval(() => void poll(), 30_000);
-    window.addEventListener("focus", poll);
-    return () => {
-      active = false;
-      clearInterval(timer);
-      window.removeEventListener("focus", poll);
-    };
-  }, []);
+  }, [beginMutation,endMutation,refresh,setError]);
   const visible = w.activities.filter(
     (a) =>
       (!category || a.type === category) &&
@@ -918,7 +885,7 @@ export function AunorSpace({
       {error && (
         <div className={s.error} role="alert">
           {error}{" "}
-          <button type="button" onClick={() => void refresh()}>
+          <button type="button" disabled={pending} onClick={() => void refresh(true)}>
             Reintentar
           </button>
         </div>
@@ -967,7 +934,7 @@ export function AunorSpace({
               ))}
             </select>
           </label>
-          <Button variant="secondary" onClick={() => void refresh()}>
+          <Button variant="secondary" disabled={pending} onClick={() => void refresh(true)}>
             Actualizar
           </Button>
         </div>

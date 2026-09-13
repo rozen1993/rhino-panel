@@ -36,6 +36,25 @@ test("Operario no accede al espacio externo",async({browser})=>{
   }
 });
 
+test("navegación cliente conserva datos por pantalla y actualiza el panel",async({page})=>{
+  await login(page,"aunor");
+  const activities=await page.locator('a[href="/aunor/actividades/cobertura-norte"]').count();
+  expect(activities).toBeGreaterThan(0);
+  await page.getByRole("link",{name:"Calendario anual",exact:true}).click();
+  await expect(page.getByRole("heading",{name:"Calendario anual",exact:true})).toBeVisible();
+  await page.getByRole("link",{name:"Actividades",exact:true}).click();
+  await expect(page.locator('a[href="/aunor/actividades/cobertura-norte"]')).toHaveCount(activities);
+  const refreshed=page.waitForResponse(r=>r.request().method()==="POST"&&r.url().endsWith("/aunor"));
+  await page.getByRole("button",{name:"Actualizar",exact:true}).click();
+  expect((await refreshed).ok()).toBe(true);
+  await page.locator('a[href="/aunor/actividades/cobertura-norte"]').first().click();
+  await expect(page.getByRole("heading",{name:"Detalle de actividad",exact:true})).toBeVisible();
+  await expect(page.getByRole("button",{name:"Confirmar esta entrega"})).toBeVisible();
+  await page.getByRole("link",{name:"Contrato",exact:true}).click();
+  await expect(page.getByRole("heading",{name:"Qué está previsto",exact:true})).toBeVisible();
+  await expect(page.getByText("Observado: tiene reemplazo",{exact:true}).first()).toBeVisible();
+});
+
 test("Aunor confirma objetos sin chat y Contrato conserva la observación",async({page,browser},info)=>{
   await login(page,"aunor");await page.goto("/aunor/actividades/cobertura-norte");
   const confirm=page.getByRole("button",{name:"Confirmar esta entrega"});

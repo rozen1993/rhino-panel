@@ -7,11 +7,17 @@ import { readSupabaseAunor } from "@/lib/supabase/aunor";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { readDemoAunor, mutateDemoAunor, type DemoAunorSource } from "@/lib/aunor-demo.server";
 import type { Json } from "@/lib/supabase/database.types";
+import { scopeAunorWorkspace, validAunorReadScope, type AunorReadScope } from "@/lib/aunor-read-scope";
+import { isUuid } from "@/lib/uuid";
 
-export async function getAunorWorkspaceAction() {
+export async function getAunorWorkspaceAction(input?: AunorReadScope) {
   const role=await currentRole();
   if(!canUseAunor(role)) return {ok:false as const,error:"No tienes acceso al espacio Aunor."};
-  try { return {ok:true as const,data:resolveDataSource()==="supabase"?await readSupabaseAunor():readDemoAunor(role)}; }
+  const scope = input ?? {scene:role.id==="admin"?"admin":"panel"};
+  const remote = resolveDataSource()==="supabase";
+  if (!validAunorReadScope(scope) || (scope.scene==="admin" && role.id!=="admin") || (remote && scope.id!==undefined && !isUuid(scope.id)))
+    return {ok:false as const,error:"La pantalla solicitada no es válida para esta cuenta."};
+  try { return {ok:true as const,data:remote?await readSupabaseAunor(scope):scopeAunorWorkspace(readDemoAunor(role),scope)}; }
   catch { return {ok:false as const,error:"No se pudo cargar Aunor. Verifica la conexión y sus migraciones."}; }
 }
 export async function performAunorAction(input:{

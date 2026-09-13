@@ -52,6 +52,18 @@ describe("Aunor: autorización de acciones y proyección externa",()=>{
     }
     expect(mocks.rpc).not.toHaveBeenCalled();
   });
+  it("valida y autoriza el alcance antes de leer",async()=>{
+    mocks.role.mockResolvedValue(actor("aunor"));
+    for(const scope of [{scene:"admin"},{scene:"detail",id:"../privado"},{scene:"replacement",id:"fixture"},{scene:"panel",includeServices:"false"},{scene:"unknown"}]) {
+      expect((await getAunorWorkspaceAction(scope as never)).ok).toBe(false);
+    }
+    expect(mocks.read).not.toHaveBeenCalled();
+    expect((await getAunorWorkspaceAction({scene:"detail",id,includeServices:false})).ok).toBe(true);
+    expect(mocks.read).toHaveBeenCalledWith({scene:"detail",id,includeServices:false});
+    mocks.role.mockResolvedValue(actor("admin"));
+    await getAunorWorkspaceAction();
+    expect(mocks.read).toHaveBeenLastCalledWith({scene:"admin"});
+  });
   it("deniega message/read de Admin y Aunor antes del RPC",async()=>{
     for(const name of ["admin","aunor"] as const) for(const command of ["message","read"] as const) {
       mocks.role.mockResolvedValue(actor(name));
