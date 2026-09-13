@@ -86,7 +86,7 @@ describe("contrato mínimo de accesibilidad", () => {
 
   it("conserva foco visible, salto al contenido y reducción de movimiento", () => {
     const shell = readFileSync(
-      join(frontend, "components", "mobile-shell.tsx"),
+      join(frontend, "components", "shell-frame.tsx"),
       "utf8",
     );
     expect(css).toContain(":focus-visible");

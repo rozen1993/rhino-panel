@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { MobileShell, requireRole } from "@/components/mobile-shell";
+import { requireRole } from "@/components/mobile-shell";
 import { AunorSpace, type AunorScene } from "@/components/aunor-space";
 import { resolveDataSource } from "@/lib/data-source";
 import { readSupabaseAunor } from "@/lib/supabase/aunor";
@@ -13,7 +13,5 @@ export async function AunorPage({scene,id,year}:{scene:AunorScene;id?:string;yea
   const initial=demo?scopeAunorWorkspace(readDemoAunor(role),scope):await readSupabaseAunor(scope);
   if(id && scene==="detail" && !initial.activities.some(a=>a.id===id)) notFound();
   if(id && scene==="replacement" && !initial.replacements.some(r=>r.id===id)) notFound();
-  return <MobileShell role={role} active={scene==="acordado"||scene==="replacement"?"Contrato":"Mi panel"} backHref={scene==="detail"?"/aunor":scene==="replacement"?"/aunor/contrato":undefined}>
-    <AunorSpace key={`${role.accountId}:${scene}:${id??""}:${year??currentLimaYear()}`} role={role} initial={initial} scene={scene} id={id} demo={demo} year={year??currentLimaYear()} today={calendarDateInLima()}/>
-  </MobileShell>;
+  return <AunorSpace key={`${role.accountId}:${scene}:${id??""}:${year??currentLimaYear()}`} role={role} initial={initial} scene={scene} id={id} demo={demo} year={year??currentLimaYear()} today={calendarDateInLima()}/>;
 }

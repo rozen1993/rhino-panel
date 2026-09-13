@@ -56,6 +56,33 @@ test("navegación cliente conserva datos por pantalla y actualiza el panel",asyn
   await expect(page.getByText("Observado: tiene reemplazo",{exact:true}).first()).toBeVisible();
 });
 
+test("Aunor conserva la cabecera durante una navegación lenta",async({page},info)=>{
+  await login(page,"aunor");
+  await expect(page.getByRole("heading",{name:"Tus actividades",exact:true})).toBeVisible();
+  await page.locator("header.technical-surface").evaluate(el=>el.setAttribute("data-navigation-probe","original"));
+  const warmed=page.waitForResponse(r=>new URL(r.url()).pathname==="/aunor/contrato"&&r.request().method()==="GET");
+  await page.getByRole("link",{name:"Contrato",exact:true}).focus();
+  await (await warmed).finished();
+  let release!:()=>void;
+  const gate=new Promise<void>(resolve=>{release=resolve;});
+  await page.route("**/aunor/contrato?*",async route=>{
+    if(route.request().headers()["next-router-prefetch"]){await route.continue();return;}
+    const response=await route.fetch();
+    await gate;
+    await route.fulfill({response});
+  });
+  try {
+    await page.getByRole("link",{name:"Contrato",exact:true}).click();
+    await expect(page.getByRole("status").filter({hasText:"Cargando información"})).toBeVisible();
+    await expect(page.locator('header[data-navigation-probe="original"]')).toBeVisible();
+    await expect(page.getByRole("button",{name:"Cerrar sesión"})).toBeVisible();
+    await page.screenshot({path:info.outputPath("aunor-carga-progresiva.png"),fullPage:true});
+  } finally {release();}
+  await expect(page.getByRole("heading",{name:"Contrato",exact:true})).toBeVisible();
+  await expect(page.locator('header[data-navigation-probe="original"]')).toBeVisible();
+  await expect(page.getByRole("link",{name:"Contrato",exact:true})).toHaveAttribute("aria-current","page");
+});
+
 test("Aunor confirma objetos sin chat y Contrato conserva la observación",async({page,browser},info)=>{
   await login(page,"aunor");await page.goto("/aunor/actividades/cobertura-norte");
   const confirm=page.getByRole("button",{name:"Confirmar esta entrega"});

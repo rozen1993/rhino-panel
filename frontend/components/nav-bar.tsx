@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { IntentLink as Link } from "@/components/intent-link";
 import { SystemIcon, type IconName } from "@/components/system-icon";
 import type { Role } from "@/lib/roles";
 

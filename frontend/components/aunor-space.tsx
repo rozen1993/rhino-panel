@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import { IntentLink as Link } from "@/components/intent-link";
 import { useCallback, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/button";
 import { StatusPill } from "@/components/status-pill";
