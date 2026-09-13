@@ -62,7 +62,8 @@ test("Aunor conserva la cabecera durante una navegación lenta",async({page},inf
   await page.locator("header.technical-surface").evaluate(el=>el.setAttribute("data-navigation-probe","original"));
   const warmed=page.waitForResponse(r=>new URL(r.url()).pathname==="/aunor/contrato"&&r.request().method()==="GET");
   await page.getByRole("link",{name:"Contrato",exact:true}).focus();
-  await (await warmed).finished();
+  // A partial RSC prefetch can keep its stream open; do not wait for EOF.
+  await warmed;
   let release!:()=>void;
   const gate=new Promise<void>(resolve=>{release=resolve;});
   await page.route("**/aunor/contrato?*",async route=>{
