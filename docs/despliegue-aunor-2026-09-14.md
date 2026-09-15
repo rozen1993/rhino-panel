@@ -66,3 +66,20 @@ Lectura de control remota previa: 7 perfiles, 7 usuarios Auth, 6 actividades
 
 La sesión de la CLI local de Vercel estaba vencida. Se usa la integración de GitHub
 ya verificada, sin modificar la cuenta ni requerir otro método de autenticación.
+
+## Migración aplicada y comprobada
+
+Implementación registrada en el commit `bdb3df9`. Se aplicó exclusivamente
+`202609140001_aunor_read_only.sql` mediante `db push --linked --yes`, después del
+respaldo verificado. La comprobación posterior informa 18 migraciones y ninguna
+pendiente. No se ejecutaron semillas ni resets.
+
+Los conteos de control se mantienen: 7 perfiles, 7 usuarios Auth, 6 actividades
+(3 activas), 0 confirmaciones y ninguna entregada sin fecha. La vista pública
+incluye `delivered_at` y `material_link`, sin columnas de responsable, autor ni
+opinión del operario. El rol `authenticated` no puede ejecutar la implementación
+privada; `anon` no puede ejecutar la RPC pública, que exige Admin.
+
+La publicación de estos commits se dispara al enviar `master`. Su resultado se
+comprueba contra el SHA exacto en los estados de Vercel y despliegues de GitHub;
+el respaldo y este registro previo no sustituyen esa comprobación.
