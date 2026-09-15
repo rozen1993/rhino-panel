@@ -144,6 +144,7 @@ export function AdminAunorPanel({
                     place: item.place,
                     spans: item.spans,
                     materialLink: item.materialLink,
+                    deliveredAt: item.deliveredAt,
                     version: item.version,
                     origin: item.origin,
                     deletedAt: item.deletedAt,
@@ -219,7 +220,7 @@ export function AdminAunorPanel({
             <div className={s.card}>
               <div className={s.hero + " technical-surface"}>
                 <p className="data-label">
-                  Cliente Aunor · publicación explícita
+                  Cliente Aunor · visibilidad automática
                 </p>
                 <p className={s.activityName}>{item.title}</p>
               </div>
@@ -235,7 +236,7 @@ export function AdminAunorPanel({
                   });
                 }}
               >
-                <h3>1 · Revisar y publicar la actividad</h3>
+                <h3>1 · Resumen y referencia contractual</h3>
                 <div className={s.fields}>
                   <label className={s.label + " " + s.full}>
                     Resumen para Aunor
@@ -281,8 +282,9 @@ export function AdminAunorPanel({
                   </label>
                 </div>
                 <p className={s.footnote}>
-                  Se publicarán título, categoría, estado, días y lugares. Las
-                  revisiones anteriores se conservan.
+                  Aunor ya puede consultar título, categoría, estado, días y lugares.
+                  Este formulario personaliza su resumen y referencia contractual;
+                  las revisiones anteriores se conservan.
                 </p>
                 <Button
                   className="mt-4"
@@ -305,7 +307,7 @@ export function AdminAunorPanel({
                     });
                   }}
                 >
-                  <h3>2 · Publicar una entrega identificada</h3>
+                  <h3>2 · Registrar una versión de entrega</h3>
                   <label className={s.label}>
                     Nombre de la entrega
                     <input
@@ -318,8 +320,8 @@ export function AdminAunorPanel({
                   </label>
                   <p className={s.footnote}>
                     Se usará el enlace de material actual de la actividad. Cada
-                    publicación tendrá su propia versión; no hereda
-                    confirmaciones anteriores.
+                    publicación tendrá su propia versión. Aunor consulta el material
+                    sin necesidad de confirmarlo.
                   </p>
                   <Button
                     className="mt-4"
@@ -359,7 +361,7 @@ export function AdminAunorPanel({
               </p>
               <div className={s.stamp + " " + s.sectionGap}>
                 <strong>
-                  {published ? "Publicada para Aunor" : "Todavía no publicada"}
+                  Visible para Aunor · solo lectura
                 </strong>
                 <p>
                   Las opiniones del operario, conversación interna y auditoría

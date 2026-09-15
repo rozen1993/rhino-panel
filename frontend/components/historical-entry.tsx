@@ -7,7 +7,7 @@ const entries = [
   { category: "Edición", slug: "edicion", image: "/historico/edicion-ilustrativa.png", label: "POSTPRODUCCIÓN", description: "Piezas, jornadas y entregas de edición." },
 ];
 
-export function HistoricalEntry({ year }: { year: number }) {
+export function HistoricalEntry({ year, basePath = "/historico" }: { year: number; basePath?: string }) {
   return <>
     <section className={styles.portal}>
       <header className={styles.heading}>
@@ -20,7 +20,7 @@ export function HistoricalEntry({ year }: { year: number }) {
       <div className={styles.versus}>
         {entries.map((entry, index) => <Link
           key={entry.slug}
-          href={{ pathname: "/historico", query: { tipo: entry.slug, anio: year } }}
+          href={{ pathname: basePath, query: { tipo: entry.slug, anio: year } }}
           className={`${styles.card} ${index === 0 ? styles.recording : styles.editing}`}
           aria-label={`Ver histórico de ${entry.category.toLowerCase()}`}
         >
@@ -37,7 +37,7 @@ export function HistoricalEntry({ year }: { year: number }) {
       </div>
       <footer className={styles.footer}>
         <span>El mismo calendario anual, organizado por categoría.</span>
-        <Link href={{ pathname: "/historico", query: { tipo: "todos", anio: year } }}>Ver todo el Histórico →</Link>
+        <Link href={{ pathname: basePath, query: { tipo: "todos", anio: year } }}>Ver todo el Histórico →</Link>
       </footer>
     </section>
     <p className={styles.note}>Fotografías ilustrativas; no documentan trabajos reales.</p>

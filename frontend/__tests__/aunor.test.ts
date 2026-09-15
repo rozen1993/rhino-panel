@@ -28,14 +28,14 @@ describe("Aunor: autorización de acciones y proyección externa",()=>{
     }
     for(const cmd of aunorCommands)expect(canMutateAunor({...actor("aunor"),mustChangePassword:true},cmd)).toBe(false);
   });
-  it("Admin registra; solo Aunor confirma; nadie puede conversar",()=>{
+  it("Admin registra; Aunor solo consulta; nadie confirma ni conversa",()=>{
     for(const cmd of ["publish","delivery","agreement","replacement"] as const) {
       expect(canMutateAunor(actor("admin"),cmd)).toBe(true);
       expect(canMutateAunor(actor("aunor"),cmd)).toBe(false);
     }
     for(const cmd of ["confirm-delivery","confirm-replacement"] as const) {
       expect(canMutateAunor(actor("admin"),cmd)).toBe(false);
-      expect(canMutateAunor(actor("aunor"),cmd)).toBe(true);
+      expect(canMutateAunor(actor("aunor"),cmd)).toBe(false);
     }
   });
   it("rechaza lectura directa antes de consultar la base",async()=>{
@@ -45,8 +45,8 @@ describe("Aunor: autorización de acciones y proyección externa",()=>{
     }
     expect(mocks.read).not.toHaveBeenCalled();
   });
-  it("rechaza todos los mutadores externos de Operario y Burson antes del RPC",async()=>{
-    for(const name of ["operario","burson"] as const)for(const command of aunorCommands) {
+  it("rechaza todos los mutadores externos de Aunor, Operario y Burson antes del RPC",async()=>{
+    for(const name of ["aunor","operario","burson"] as const)for(const command of aunorCommands) {
       mocks.role.mockResolvedValue(actor(name));
       expect((await performAunorAction(commandInput(command))).ok).toBe(false);
     }
@@ -79,12 +79,12 @@ describe("Aunor: autorización de acciones y proyección externa",()=>{
     expect(JSON.stringify(mocks.rpc.mock.calls)).not.toContain("adulterado");
   });
   it("valida identificadores y no revela errores privados del RPC",async()=>{
-    mocks.role.mockResolvedValue(actor("aunor"));
+    mocks.role.mockResolvedValue(actor("admin"));
     expect((await performAunorAction({...commandInput("confirm-delivery"),activityId:"../cuentas"})).ok).toBe(false);
     expect((await performAunorAction({...commandInput("confirm-delivery"),requestId:"------------------------------------"})).ok).toBe(false);
     expect(mocks.rpc).not.toHaveBeenCalled();
     mocks.rpc.mockResolvedValue({error:{code:"42501",message:"SECRETO INTERNO"}});
-    expect(JSON.stringify(await performAunorAction(commandInput("confirm-delivery")))).not.toContain("SECRETO");
+    expect(JSON.stringify(await performAunorAction(commandInput("publish")))).not.toContain("SECRETO");
     expect(mocks.rpc).toHaveBeenCalledOnce();
   });
   it("los ejemplos públicos no contienen datos operativos privados ni económicos",()=>{

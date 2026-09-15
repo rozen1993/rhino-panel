@@ -5,6 +5,7 @@ export type AunorActivityRow = {
   status: "Programada" | "En proceso" | "Entregada"; place: string;
   summary: string; service_id: string | null; not_performed_reason: string;
   publication_version: number; published_at: string; unread_count: number;
+  delivered_at?: string | null; material_link?: string;
 };
 export type AunorJourney = { activity_id: string; position: number; start_date: string; end_date: string; place: string };
 export type AunorService = { id: string; position: number; label: string; reference: string };
@@ -51,10 +52,9 @@ export function canUseAunor(role: Role | null): role is Role {
 }
 export function canMutateAunor(role: Role | null, command: AunorCommand) {
   if (!canUseAunor(role) || !aunorCommands.includes(command)) return false;
-  if (command === "message" || command === "read") return false;
-  return command.startsWith("confirm-") ? role.id === "aunor" : role.id === "admin";
+  return role.id === "admin" && ["publish", "delivery", "agreement", "replacement"].includes(command);
 }
-export const aunorDisclaimer = "Confirmar identifica lo revisado; no aprueba pagos ni equivalencias económicas.";
+export const aunorDisclaimer = "Vista informativa: no requiere confirmaciones ni aprueba pagos o equivalencias económicas.";
 export function aunorCode(id: string, type?: ActivityType) {
   return (type === "Edición" ? "ED" : type === "Grabación" ? "GR" : "AC") + "-" + id.replaceAll("-","").slice(-6).toUpperCase();
 }

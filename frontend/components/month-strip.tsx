@@ -4,11 +4,11 @@ import { useState } from "react";
 
 export const months = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"] as const;
 
-type Props = { counts: readonly number[]; activeMonth: (typeof months)[number]; onSelect: (month: number) => void; year?: number };
+type Props = { counts: readonly number[]; activeMonth?: (typeof months)[number]; onSelect: (month: number) => void; year?: number; initialMonth?: number };
 
-export function MonthStrip({ counts, activeMonth, onSelect, year = 2026 }: Props) {
+export function MonthStrip({ counts, activeMonth, onSelect, year = 2026, initialMonth = 0 }: Props) {
   if (counts.length !== months.length) throw new Error("MonthStrip necesita exactamente doce conteos.");
-  const activeIndex = months.indexOf(activeMonth);
+  const activeIndex = activeMonth ? months.indexOf(activeMonth) : initialMonth;
   const [focusMonth, setFocusMonth] = useState(activeIndex);
 
   return <nav aria-label="Navegación mensual" className="panel-glow overflow-hidden rounded-[10px] border border-line bg-panel">

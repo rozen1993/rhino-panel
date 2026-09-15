@@ -373,7 +373,7 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
     <div className={`items-start ${publicMode ? "overflow-hidden" : "overflow-clip"} rounded-[10px] border border-line bg-panel shadow-[var(--shadow-2)] md:grid md:grid-cols-[minmax(0,1fr)_42%] xl:grid-cols-[minmax(0,1fr)_20rem]`}>
       <section className="min-w-0 bg-paper p-3 md:p-5">
         <nav aria-label="Históricos" className="mb-3 flex flex-wrap gap-x-4 gap-y-2 text-xs font-bold text-cyan-ink">
-          <Link href={publicMode ? "/aunor" : "/historico"} className="py-2">{publicMode ? "← Tus actividades" : "← Elegir histórico"}</Link>
+          <Link href={publicMode ? "/aunor" : basePath} className="py-2">{publicMode ? "← Tus actividades" : "← Elegir histórico"}</Link>
           {category && !publicMode && <Link href={{ pathname: basePath, query: { anio: year, tipo: historicalCategorySlug(category === "Grabación" ? "Edición" : "Grabación") } }} className="py-2">Ver {category === "Grabación" ? "Edición" : "Grabación"}</Link>}
         </nav>
         <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">

@@ -1,5 +1,7 @@
 // Fictitious public examples only. No existing demo storage is read or changed.
 import type { AunorWorkspace } from "@/lib/aunor";
+// Fixed for this isolated demo process, never refreshed by a read or a publication.
+const exampleDeliveryAt = new Date().toISOString();
 export const aunorServiceLabels = [
   ["cobertura","Cobertura fotográfica y audiovisual"],["redes","Videos para redes sociales"],
   ["micronews","Micronews internos"],["resumen-anual","Videos de resumen anual"],
@@ -13,7 +15,7 @@ export function createAunorExamples(): AunorWorkspace {
   return {
     services:aunorServiceLabels.map(([id,label],i)=>({id,label,position:i+1,reference:"Cláusula 2.2"})),
     activities:[
-      {id:"cobertura-norte",type:"Grabación",title:"Cobertura audiovisual Norte",status:"Entregada",place:"Norte",summary:"Cobertura publicada para Aunor. Ejemplo ficticio.",service_id:"cobertura",not_performed_reason:"",publication_version:1,published_at:at,unread_count:1},
+      {id:"cobertura-norte",type:"Grabación",title:"Cobertura audiovisual Norte",status:"Entregada",place:"Norte",summary:"Cobertura publicada para Aunor. Ejemplo ficticio.",service_id:"cobertura",not_performed_reason:"",publication_version:1,published_at:at,unread_count:1,delivered_at:exampleDeliveryAt,material_link:"https://example.invalid/material-ejemplo.mp4"},
       {id:"edicion-seguridad",type:"Edición",title:"Edición campaña de seguridad vial",status:"En proceso",place:"Edición remota",summary:"Edición de piezas para la campaña vial.",service_id:"seguridad-vial",not_performed_reason:"",publication_version:1,published_at:at,unread_count:1},
       {id:"aunor-original",type:"Grabación",title:"Taller de seguridad vial",status:"Programada",place:"Base Norte",summary:"Actividad original conservada.",service_id:"cobertura",not_performed_reason:"Evento cancelado por Aunor, según llamada registrada.",publication_version:1,published_at:at,unread_count:0},
       {id:"aunor-senalizacion",type:"Grabación",title:"Registro de señalización",status:"Entregada",place:"Tramo Sur",summary:"Trabajo de Aunor pendiente de asociar a un servicio.",service_id:null,not_performed_reason:"",publication_version:1,published_at:at,unread_count:0},

@@ -1,27 +1,23 @@
 "use client";
 import { IntentLink as Link } from "@/components/intent-link";
-import { useCallback, useRef, useState, useTransition } from "react";
+import { useState } from "react";
 import { Button } from "@/components/button";
 import { StatusPill } from "@/components/status-pill";
 import { SystemIcon } from "@/components/system-icon";
 import {
   AnnualCalendarView,
-  type CalendarDetailProps,
 } from "@/components/annual-calendar-view";
-import {
-  performAunorAction,
-} from "@/app/aunor/actions";
+import { AunorDashboard } from "@/components/aunor-dashboard";
+import { DetailPanel, type DetailActivity } from "@/components/calendar-detail-panel";
+import type { HistoricalCategory } from "@/lib/historical";
 import {
   aunorCode,
-  aunorDisclaimer,
   replacementsForService,
   type AunorActivityRow,
   type AunorWorkspace,
-  type AunorCommand,
   type AunorReplacement,
 } from "@/lib/aunor";
 import type { Role } from "@/lib/roles";
-import type { Json } from "@/lib/supabase/database.types";
 import { safeMaterialUrl } from "@/lib/external-link";
 import { displayOrganizationAuthor } from "@/lib/brand";
 import { useAunorWorkspace } from "@/lib/use-aunor-workspace";
@@ -33,11 +29,6 @@ export type AunorScene =
   | "acordado"
   | "calendar"
   | "replacement";
-type Mutation = (
-  command: AunorCommand,
-  activityId: string,
-  payload: Record<string, Json>,
-) => Promise<boolean>;
 const date = (value: string) =>
   new Intl.DateTimeFormat("es-PE", {
     timeZone: "America/Lima",
@@ -76,7 +67,7 @@ export function AunorJourneys({ w, id }: { w: AunorWorkspace; id: string }) {
           </div>
         ))
       ) : (
-        <p className={s.muted}>Sin jornadas publicadas.</p>
+        <p className={s.muted}>Sin jornadas registradas.</p>
       )}
     </div>
   );
@@ -121,7 +112,7 @@ export function AunorActivityCard({
               <b>Entrega:</b>{" "}
               {delivery.confirmed_at
                 ? "Confirmada por Aunor."
-                : "Pendiente de tu revisión."}
+                : "Material disponible."}
             </>
           ) : a.service_id ? (
             <>
@@ -148,98 +139,17 @@ export function AunorActivityCard({
         <Link className={s.btn} href={activityHref(a.id)}>
           Ver actividad →
         </Link>
-        <span>Publicada para Aunor</span>
+        <span>Visible para Aunor</span>
       </div>
     </article>
-  );
-}
-function ConfirmDelivery({
-  w,
-  id,
-  mutate,
-  pending,
-}: {
-  w: AunorWorkspace;
-  id: string;
-  mutate: Mutation;
-  pending: boolean;
-}) {
-  const delivery = w.deliveries.find(
-    (d) => d.activity_id === id && d.is_current,
-  );
-  const [checked, setChecked] = useState("");
-  return (
-    <aside className={s.card + " " + s.confirm}>
-      <div className={s.pad}>
-        <p className="data-label text-cyan-ink">Revisión de entrega</p>
-        <h2 className="section-title">
-          {delivery?.confirmed_at ? "Entrega confirmada" : "Tu confirmación"}
-        </h2>
-        {!delivery ? (
-          <p className={s.muted}>
-            DA VINCI todavía no ha publicado una entrega vigente para revisar.
-          </p>
-        ) : (
-          <>
-            <div className={s.box}>
-              <strong>{delivery.label}</strong>Entrega {delivery.id.slice(-8)} ·
-              versión {delivery.version}
-            </div>
-            {delivery.confirmed_at ? (
-              <div className={s.stamp + " " + s.sectionGap}>
-                <strong>Confirmada por Aunor</strong>
-                <p>{moment(delivery.confirmed_at)} · cuenta compartida</p>
-                <p className={s.footnote}>
-                  La confirmación corresponde únicamente a esta entrega.
-                </p>
-              </div>
-            ) : (
-              <>
-                <label className={s.check}>
-                  <input
-                    type="checkbox"
-                    checked={checked === delivery.id}
-                    onChange={(e) =>
-                      setChecked(e.target.checked ? delivery.id : "")
-                    }
-                  />
-                  <span>
-                    He revisado la entrega {delivery.id.slice(-8)} · versión{" "}
-                    {delivery.version} y la confirmo en nombre de Aunor.
-                  </span>
-                </label>
-                <Button
-                  className="w-full"
-                  disabled={pending || checked !== delivery.id}
-                  onClick={() =>
-                    void mutate("confirm-delivery", id, {
-                      objectId: delivery.id,
-                      version: delivery.version,
-                      acknowledged: true,
-                    })
-                  }
-                >
-                  Confirmar esta entrega
-                </Button>
-              </>
-            )}
-          </>
-        )}
-        <p className={s.footnote}>{aunorDisclaimer}</p>
-      </div>
-    </aside>
   );
 }
 function ActivityDetail({
   w,
   id,
-  mutate,
-  pending,
 }: {
   w: AunorWorkspace;
   id: string;
-  mutate: Mutation;
-  pending: boolean;
 }) {
   const a = w.activities.find((a) => a.id === id);
   if (!a)
@@ -255,7 +165,7 @@ function ActivityDetail({
     (r) => r.original_activity_id === id || r.substitute_activity_id === id,
   );
   return (
-    <div className={s.detail}>
+    <div className={s.stack}>
       <section className={s.card}>
         <div className={s.hero + " technical-surface"}>
           <p className="data-label">
@@ -269,7 +179,7 @@ function ActivityDetail({
         </div>
         <dl className={s.meta}>
           <div>
-            <dt>Jornadas publicadas</dt>
+            <dt>Jornadas y lugares</dt>
             <dd>
               <AunorJourneys w={w} id={id} />
             </dd>
@@ -303,11 +213,13 @@ function ActivityDetail({
                 </a>
               )}
             </div>
-          ) : (
-            <p className={s.muted}>
-              El material todavía no se ha publicado para revisión.
-            </p>
-          )}
+          ) : a.status === "Entregada" && safeMaterialUrl(a.material_link ?? "") ? (
+            <div className={s.box}>
+              <strong>Material entregado</strong>
+              {a.delivered_at && <p className={s.footnote}>{moment(a.delivered_at)}</p>}
+              <a className={s.btn + " " + s.primary + " " + s.sectionGap} href={safeMaterialUrl(a.material_link!)!} target="_blank" rel="noopener noreferrer">Abrir material ↗</a>
+            </div>
+          ) : <p className={s.muted}>No hay un enlace de material disponible.</p>}
           {w.deliveries.some((d) => d.activity_id === id && !d.is_current) && (
             <details className={s.sectionGap}>
               <summary>Entregas anteriores conservadas</summary>
@@ -353,7 +265,6 @@ function ActivityDetail({
           </div>
         )}
       </section>
-      <ConfirmDelivery w={w} id={id} mutate={mutate} pending={pending} />
       <AgreementList w={w} id={id} />
     </div>
   );
@@ -463,7 +374,7 @@ export function ReplacementSummary({
             ? "Registro anterior conservado"
             : r.confirmed_at
               ? "Reemplazo confirmado por Aunor"
-              : "Pendiente de confirmación de Aunor"}
+              : "Reemplazo documentado"}
         </strong>
         {r.confirmed_at && <p>{moment(r.confirmed_at)} · cuenta compartida</p>}
         <p className={s.footnote}>
@@ -476,16 +387,11 @@ export function ReplacementSummary({
 function ReplacementDetail({
   w,
   id,
-  mutate,
-  pending,
 }: {
   w: AunorWorkspace;
   id: string;
-  mutate: Mutation;
-  pending: boolean;
 }) {
   const r = w.replacements.find((r) => r.id === id);
-  const [checked, setChecked] = useState(false);
   if (!r)
     return (
       <div className={s.empty}>
@@ -493,9 +399,8 @@ function ReplacementDetail({
       </div>
     );
   const g = w.agreements.find((g) => g.id === r.agreement_id);
-  const correctedAgreement = g && !g.is_current;
   return (
-    <div className={s.detail}>
+    <div className={g && !g.is_current ? s.detail : s.stack}>
       <section className={s.card + " " + s.pad}>
         <p className="data-label text-cyan-ink">Relación {r.id.slice(-8)}</p>
         <h2 className="section-title">Original y sustituto, juntos</h2>
@@ -539,52 +444,11 @@ function ReplacementDetail({
           </div>
         )}
       </section>
-      <aside className={s.card + " " + s.confirm + " " + s.pad}>
-        <h2 className="section-title">Tu confirmación</h2>
-        {correctedAgreement && <div className={s.notice} role="alert"><strong>El acuerdo de este reemplazo fue corregido.</strong><p>Este reemplazo conserva su evidencia original. Revisa las correcciones antes de confirmarlo; confirmar no convierte el acuerdo anterior en vigente.</p><Link className={s.link} href={activityHref(g.activity_id)}>Revisar acuerdos y correcciones →</Link></div>}
-        <p className={s.muted}>
-          Confirma únicamente la relación {r.id.slice(-8)} entre el original y
-          el sustituto identificados.
-        </p>
-        {!r.is_current ? (
-          <p className={s.notice}>
-            Registro anterior conservado. Revisa su corrección antes de
-            confirmar.
-          </p>
-        ) : r.confirmed_at ? (
-          <div className={s.stamp}>
-            <strong>Confirmado por Aunor</strong>
-            {moment(r.confirmed_at)}
-          </div>
-        ) : (
-          <>
-            <label className={s.check}>
-              <input
-                type="checkbox"
-                checked={checked}
-                onChange={(e) => setChecked(e.target.checked)}
-              />
-              <span>
-                He revisado original, sustituto y evidencia; confirmo este
-                reemplazo en nombre de Aunor.
-              </span>
-            </label>
-            <Button
-              disabled={!checked || pending}
-              className="w-full"
-              onClick={() =>
-                void mutate("confirm-replacement", r.original_activity_id, {
-                  objectId: r.id,
-                  acknowledged: true,
-                })
-              }
-            >
-              Confirmar este reemplazo
-            </Button>
-          </>
-        )}
-        <p className={s.footnote}>{aunorDisclaimer}</p>
-      </aside>
+      {g && !g.is_current && <aside className={s.card + " " + s.pad}>
+        <h2 className="section-title">Acuerdo corregido</h2>
+        <p className={s.muted}>El reemplazo conserva su evidencia original.</p>
+        <Link className={s.link} href={activityHref(g.activity_id)}>Ver acuerdos y correcciones →</Link>
+      </aside>}
     </div>
   );
 }
@@ -599,8 +463,7 @@ function Agreed({ w }: { w: AunorWorkspace }) {
         <p className={s.muted}>
           Referencia: cláusula 2.2 del contrato aportado. Las cantidades y
           equivalencias no se resuelven en esta vista. “Observado” indica un
-          reemplazo documentado, no un incumplimiento. La marca permanece tras
-          su confirmación.
+          reemplazo documentado, no un incumplimiento. La marca se conserva como referencia.
         </p>
       </div>
       <div className={s.grid}>
@@ -663,7 +526,7 @@ function Agreed({ w }: { w: AunorWorkspace }) {
                   {a.not_performed_reason
                     ? "No se realizó: " + a.not_performed_reason
                     : a.status === "Entregada"
-                      ? "Trabajo realizado. La confirmación de su entrega es independiente."
+                      ? "Entregada. Material disponible en la actividad."
                       : a.status}
                 </p>
                 <Link className={s.link} href={activityHref(a.id)}>
@@ -715,292 +578,38 @@ function Agreed({ w }: { w: AunorWorkspace }) {
     </>
   );
 }
-function PublicCalendarDetail({
-  w,
-  item,
-  titleId,
-  close,
-  closeButtonRef,
-  choices,
-  onChoose,
-}: { w: AunorWorkspace } & CalendarDetailProps) {
-  const a = w.activities.find((a) => a.id === item.id);
-  if (!a) return null;
-  return (
-    <aside className={s.calendarDetail} aria-labelledby={titleId}>
-      {close && (
-        <button
-          className={s.close}
-          type="button"
-          aria-label="Cerrar detalle"
-          ref={closeButtonRef}
-          onClick={close}
-        >
-          ×
-        </button>
-      )}
-      {choices.length > 1 && (
-        <section>
-          <p className="data-label">
-            {choices.length} actividades en esta fecha
-          </p>
-          {choices.map((c) => (
-            <button
-              className={s.choice}
-              key={c.id}
-              type="button"
-              aria-pressed={c.id === a.id}
-              onClick={() => onChoose(c)}
-            >
-              <strong>{c.title}</strong>
-              <small>
-                {aunorCode(c.id, c.type)} ·{" "}
-                {c.spans.map((j) => j.place || c.place).join(" · ")}
-              </small>
-            </button>
-          ))}
-        </section>
-      )}
-      <StatusPill status={a.status} />
-      <p className="data-label mt-5 text-cyan-ink">{a.type}</p>
-      <h2 className="section-title" id={titleId}>
-        {a.title}
-      </h2>
-      <AunorJourneys w={w} id={a.id} />
-      <p className={s.state}>{a.summary}</p>
-      <div className={s.sectionGap}>
-        <ServiceTag w={w} a={a} />
-      </div>
-      <Link
-        className={s.btn + " " + s.primary + " " + s.sectionGap}
-        href={activityHref(a.id)}
-      >
-        Ver actividad y entrega →
-      </Link>
-    </aside>
-  );
-}
 export function AunorSpace({
-  initial,
-  scene,
-  id = "",
-  demo = false,
-  year = 2026,
-  today = "2026-09-06",
+  initial, scene, id = "", demo = false, year = 2026, today = "2026-09-06", initialNow, category,
 }: {
-  initial: AunorWorkspace;
-  role: Role;
-  scene: AunorScene;
-  id?: string;
-  demo?: boolean;
-  year?: number;
-  today?: string;
+  initial: AunorWorkspace; role: Role; scene: AunorScene; id?: string;
+  demo?: boolean; year?: number; today?: string; initialNow?: number; category?: HistoricalCategory;
 }) {
-  const {w,error,setError,refresh,beginMutation,endMutation} = useAunorWorkspace(initial,scene,id);
-  const [notice, setNotice] = useState(""),
-    [query, setQuery] = useState(""),
-    [category, setCategory] = useState("");
-  const [pending, startTransition] = useTransition();
-  const requests = useRef(new Map<string, string>());
-  const mutate: Mutation = useCallback(async (command, activityId, payload) => {
-    const key = JSON.stringify([command, activityId, payload]);
-    const requestId = requests.current.get(key) ?? crypto.randomUUID();
-    requests.current.set(key, requestId);
-    return await new Promise<boolean>((resolve) =>
-      startTransition(async () => {
-        if (!await beginMutation()) { resolve(false); return; }
-        try {
-          setError("");
-          const r = await performAunorAction({
-            command,
-            activityId,
-            requestId,
-            payload,
-          });
-          if (!r.ok) {
-            setError(r.error);
-            resolve(false);
-            return;
-          }
-          requests.current.delete(key);
-          await refresh(true);
-          if (command !== "read")
-            setNotice(
-              command.startsWith("confirm-")
-                ? "Confirmación guardada para el objeto revisado."
-                : "Registro guardado.",
-            );
-          resolve(true);
-        } catch {
-          setError("No se pudo confirmar el resultado. Actualiza antes de reintentar.");
-          resolve(false);
-        } finally { endMutation(); }
-      }),
-    );
-  }, [beginMutation,endMutation,refresh,setError]);
-  const visible = w.activities.filter(
-    (a) =>
-      (!category || a.type === category) &&
-      (a.title + " " + aunorCode(a.id, a.type))
-        .toLowerCase()
-        .includes(query.toLowerCase()),
-  );
+  const {w,error,refresh} = useAunorWorkspace(initial,scene,id);
   const names = {
-    panel: [
-      "Tus actividades",
-      "Días, lugares y entregas publicadas por DA VINCI.",
-    ],
-    detail: ["Detalle de actividad", "Información publicada para Aunor."],
-    acordado: [
-      "Contrato",
-      "Los servicios previstos y el trabajo que se relaciona con ellos.",
-    ],
-    calendar: [
-      "Calendario anual",
-      "Las jornadas publicadas, sin perder ninguna actividad coincidente.",
-    ],
-    replacement: [
-      "Reemplazo documentado",
-      "Original, sustituto, motivo y evidencia conservados.",
-    ],
+    panel: ["Actividades", "Seguimiento del trabajo audiovisual de DA VINCI."],
+    detail: ["Detalle de actividad", "Consulta de jornadas, estado y material."],
+    acordado: ["Contrato", "Los servicios previstos y el trabajo que se relaciona con ellos."],
+    calendar: ["Histórico", "Todas las actividades, organizadas por fecha."],
+    replacement: ["Reemplazo documentado", "Original, sustituto, motivo y evidencia conservados."],
   };
-  return (
-    <main className={s.page}>
-      {demo && (
-        <div className={s.demo}>
-          <strong>DEMOSTRACIÓN AISLADA · EJEMPLOS FICTICIOS</strong>
-          <p>
-            No son datos contractuales reales. Los cambios de esta demostración
-            viven en el servidor local y se reinician al detenerlo.
-          </p>
-        </div>
-      )}
-      <header className={s.head}>
-        <p className="data-label text-cyan-ink">
-          Espacio Aunor · acceso compartido
-        </p>
-        <h1 className="section-title">{names[scene][0]}</h1>
-        <p>{names[scene][1]}</p>
-      </header>
-      {error && (
-        <div className={s.error} role="alert">
-          {error}{" "}
-          <button type="button" disabled={pending} onClick={() => void refresh(true)}>
-            Reintentar
-          </button>
-        </div>
-      )}
-      {notice && (
-        <p role="status" className={s.notice}>
-          {notice}
-        </p>
-      )}
-      {(scene === "panel" || scene === "calendar") && (
-        <div className={s.tools}>
-          <nav className={s.tabs} aria-label="Vista de actividades">
-            <Link className={scene === "panel" ? s.selected : ""} href="/aunor">
-              Actividades
-            </Link>
-            <Link
-              className={scene === "calendar" ? s.selected : ""}
-              href="/aunor/calendario"
-            >
-              Calendario anual
-            </Link>
-          </nav>
-          {scene === "panel" && (
-            <>
-              <label className={s.search}>
-                <span className="sr-only">Buscar por nombre o código</span>
-                <input
-                  className={s.input}
-                  placeholder="Buscar por nombre o código"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
-              </label>
-            </>
-          )}
-          <label>
-            <span className="sr-only">Categoría</span>
-            <select
-              className={s.input}
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value="">Todas las categorías</option>
-              {[...new Set(w.activities.map((a) => a.type))].map((t) => (
-                <option key={t}>{t}</option>
-              ))}
-            </select>
-          </label>
-          <Button variant="secondary" disabled={pending} onClick={() => void refresh(true)}>
-            Actualizar
-          </Button>
-        </div>
-      )}
-      {scene === "panel" && (
-        <>
-          <div className={s.grid}>
-            {visible.map((a) => (
-              <AunorActivityCard key={a.id} a={a} w={w} />
-            ))}
-          </div>
-          {!visible.length && (
-            <p className={s.empty}>
-              No hay actividades publicadas que coincidan con esta búsqueda.
-            </p>
-          )}
-          <p className={s.footnote}>
-            “Por relacionar” no oculta el trabajo: solo indica que falta su
-            referencia en Contrato.
-          </p>
-        </>
-      )}
-      {scene === "detail" && (
-        <ActivityDetail
-          key={id}
-          w={w}
-          id={id}
-          mutate={mutate}
-          pending={pending}
-        />
-      )}
-      {scene === "acordado" && <Agreed w={w} />}
-      {scene === "replacement" && (
-        <ReplacementDetail
-          key={id}
-          w={w}
-          id={id}
-          mutate={mutate}
-          pending={pending}
-        />
-      )}
-      {scene === "calendar" && (
-        <AnnualCalendarView
-          publicMode
-          basePath="/aunor/calendario"
-          activities={w.activities
-            .filter((a) => !category || a.type === category)
-            .map((a) => ({
-              id: a.id,
-              type: a.type,
-              title: a.title,
-              status: a.status,
-              place: a.place,
-              spans: w.journeys
-                .filter((j) => j.activity_id === a.id)
-                .map((j) => ({
-                  start: j.start_date,
-                  end: j.end_date,
-                  place: j.place,
-                })),
-            }))}
-          year={year}
-          today={today}
-          renderDetail={(props) => <PublicCalendarDetail {...props} w={w} />}
-        />
-      )}
-    </main>
-  );
+  const calendarItems: DetailActivity[] = scene === "calendar" ? w.activities.map(a => ({
+    id:a.id,type:a.type,title:a.title,status:a.status,place:a.place,description:a.summary,
+    materialLink:a.status === "Entregada" ? a.material_link ?? "" : "",
+    spans:w.journeys.filter(j=>j.activity_id===a.id).map(j=>({start:j.start_date,end:j.end_date,place:j.place})),
+  })) : [];
+  return <main className={s.page}>
+    {demo && <div className={s.demo}><strong>DEMOSTRACIÓN AISLADA · EJEMPLOS FICTICIOS</strong><p>No son datos contractuales reales.</p></div>}
+    {scene !== "calendar" && <header className={`${s.head} flex flex-wrap items-center justify-between gap-4`}><div><p className="data-label text-cyan-ink">Espacio Aunor · solo lectura</p><h1 className="section-title">{names[scene][0]}</h1><p className="text-ink-muted">{names[scene][1]}</p></div><Button variant="secondary" onClick={()=>void refresh(true)}>Actualizar</Button></header>}
+    {error && <div className={s.error} role="alert">{error} <button type="button" onClick={()=>void refresh(true)}>Reintentar</button></div>}
+    {scene === "calendar" && <div className="mb-4 flex justify-end"><Button variant="secondary" onClick={()=>void refresh(true)}>Actualizar</Button></div>}
+    {scene === "panel" && <AunorDashboard w={w} today={today} initialNow={initialNow ?? Date.parse(today+"T12:00:00Z")}/>}
+    {scene === "detail" && <ActivityDetail key={id} w={w} id={id}/>}
+    {scene === "acordado" && <Agreed w={w}/>}
+    {scene === "replacement" && <ReplacementDetail key={id} w={w} id={id}/>}
+    {scene === "calendar" && <AnnualCalendarView basePath="/aunor/historico" category={category} activities={calendarItems} year={year} today={today}
+      renderDetail={props => {
+        const item = calendarItems.find(a=>a.id===props.item.id);
+        return item ? <DetailPanel key={year+"-"+props.selectionKey} {...props} clientView item={item} choices={calendarItems.filter(a=>props.choices.some(c=>c.id===a.id))}/> : null;
+      }}/>}
+  </main>;
 }

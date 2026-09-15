@@ -1,4 +1,5 @@
 import { emptyAunorWorkspace, type AunorWorkspace } from "@/lib/aunor";
+import { isCurrentAunorActivity } from "@/lib/aunor-visibility";
 
 export type AunorReadScene = "panel" | "calendar" | "acordado" | "detail" | "replacement" | "admin";
 export type AunorReadScope = { scene: AunorReadScene; id?: string; includeServices?: boolean };
@@ -14,7 +15,7 @@ export function validAunorReadScope(value: unknown): value is AunorReadScope {
 }
 
 // Same scene boundaries for isolated examples and server-side Supabase reads.
-export function scopeAunorWorkspace(w: AunorWorkspace, scope: AunorReadScope): AunorWorkspace {
+export function scopeAunorWorkspace(w: AunorWorkspace, scope: AunorReadScope, now = Date.now()): AunorWorkspace {
   const result = { ...w, messages: [] };
   if (scope.scene === "replacement") {
     const r = w.replacements.find(r => r.id === scope.id);
@@ -37,5 +38,11 @@ export function scopeAunorWorkspace(w: AunorWorkspace, scope: AunorReadScope): A
     result.deliveries = scope.scene === "panel" ? w.deliveries.filter(d => d.is_current) : [];
   }
   if (scope.includeServices === false) result.services = [];
+  if (scope.scene === "panel") {
+    result.activities = w.activities.filter(a => isCurrentAunorActivity(a,now));
+    const ids = new Set(result.activities.map(a => a.id));
+    result.journeys = result.journeys.filter(j => ids.has(j.activity_id));
+    result.deliveries = result.deliveries.filter(d => ids.has(d.activity_id));
+  }
   return result;
 }

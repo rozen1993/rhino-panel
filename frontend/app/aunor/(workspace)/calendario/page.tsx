@@ -1,3 +1,6 @@
-import { AunorPage } from "@/components/aunor-page";
+import { redirect } from "next/navigation";
 import { parseHistoricalYear } from "@/lib/historical";
-export default async function Page({searchParams}:{searchParams:Promise<{anio?:string}>}){const p=await searchParams;return <AunorPage scene="calendar" year={parseHistoricalYear(p.anio)}/>;}
+export default async function Page({searchParams}:{searchParams:Promise<{anio?:string}>}) {
+  const params = await searchParams;
+  redirect(`/aunor/historico?tipo=todos&anio=${parseHistoricalYear(params.anio)}`);
+}

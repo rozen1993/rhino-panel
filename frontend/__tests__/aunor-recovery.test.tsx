@@ -8,11 +8,13 @@ vi.mock("@/app/aunor/actions",()=>({getAunorWorkspaceAction:mocks.read,performAu
 import { AunorSpace } from "@/components/aunor-space";
 import { AdminAunorPanel } from "@/components/admin-aunor-panel";
 afterEach(()=>{cleanup();vi.clearAllMocks();});
-it("warns before confirming a replacement whose historical agreement was corrected",()=>{
+it("shows corrected evidence as read-only without a confirmation flow",()=>{
   const workspace=createAunorExamples();workspace.agreements[0].is_current=false;
   render(<AunorSpace initial={workspace} role={roles.aunor} scene="replacement" id="replacement-demo-1" />);
-  expect(screen.getByRole("alert").textContent).toContain("fue corregido");
-  expect(screen.getByRole("link",{name:/Revisar acuerdos/}).getAttribute("href")).toBe("/aunor/actividades/aunor-original");
+  expect(screen.getByRole("heading",{name:"Acuerdo corregido"})).toBeTruthy();
+  expect(screen.getByRole("link",{name:/Ver acuerdos/}).getAttribute("href")).toBe("/aunor/actividades/aunor-original");
+  expect(screen.queryByRole("checkbox")).toBeNull();
+  expect(screen.queryByRole("button",{name:/Confirmar/})).toBeNull();
 });
 it("keeps the draft on remote changes and explicitly accepts the latest publication",async()=>{
   const workspace=createAunorExamples();mocks.read.mockResolvedValue({ok:true,data:workspace});

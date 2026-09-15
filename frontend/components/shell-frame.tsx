@@ -18,7 +18,7 @@ export function ShellFrame({
 }) {
   const pathname = usePathname();
   if (role.id === "aunor") {
-    active = pathname.startsWith("/aunor/contrato") || pathname.startsWith("/aunor/reemplazos") ? "Contrato" : "Mi panel";
+    active = pathname.startsWith("/aunor/contrato") || pathname.startsWith("/aunor/reemplazos") ? "Contrato" : pathname.startsWith("/aunor/historico") || pathname.startsWith("/aunor/calendario") ? "Histórico" : "Actividades";
     backHref = pathname.startsWith("/aunor/actividades/") ? "/aunor" : pathname.startsWith("/aunor/reemplazos/") ? "/aunor/contrato" : undefined;
   }
   const initials = (role.accountName ?? role.label)

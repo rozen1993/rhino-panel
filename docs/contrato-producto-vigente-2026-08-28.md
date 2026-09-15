@@ -1,5 +1,9 @@
 # Contrato de producto vigente — Sistema R
 
+**Addendum Aunor (14/09/2026):** para el cliente Aunor aplica
+[consulta integral, solo lectura y ventana de entregas de 72 horas](rol-aunor-consulta-2026-09-14.md).
+Sustituye las reglas anteriores de publicación obligatoria y confirmación del cliente.
+
 **Vigente desde:** 2026-08-28
 
 **Decide:** Marco Vargas

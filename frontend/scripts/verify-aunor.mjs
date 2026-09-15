@@ -44,7 +44,7 @@ try {
     "grant usage on schema public,auth,extensions to anon,authenticated,service_role; "+
     "revoke all on function auth.jwt(),auth.uid() from public; grant execute on function auth.jwt(),auth.uid() to anon,authenticated,service_role;");
   const files=readdirSync(migrations).filter(n=>n.endsWith(".sql")).sort();
-  if(files.at(-1)!=="202609110004_explicit_erasure.sql") throw Error("Revise schema boundary before running this verifier.");
+  if(files.at(-1)!=="202609140001_aunor_read_only.sql") throw Error("Revise schema boundary before running this verifier.");
   for(const name of files.filter(n=>n<"202609080001")) sql(readFileSync(migrations+"/"+name,"utf8"));
   console.log("PASS: cadena anterior de migraciones, exclusivamente en DB nueva.");
   sql("insert into auth.users values "+[1,2,3,4,5,6].map(n=>"('"+id(100+n)+"')").join(",")+";"+
@@ -185,6 +185,33 @@ try {
   // Forward migration gates run after the historical-retirement checks.
   sql("create table auth.sessions(id uuid primary key,user_id uuid,created_at timestamptz not null);");
   for(const name of files.filter(n=>n>"202609080001_retire_burson_external_chat.sql")) sql(readFileSync(migrations+"/"+name,"utf8"));
+  // The latest role contract supersedes the earlier confirmation/publication gates.
+  const confirmationsBefore=sql("select count(*) from private.aunor_confirmations;");
+  sql(as(5,`do $$ begin
+    assert (select count(*) from public.aunor_activities)=(select count(*) from public.aunor_journeys);
+    assert exists(select 1 from public.aunor_activities where id='${id(303)}' and publication_version=0);
+    assert exists(select 1 from public.aunor_activities where id='${id(304)}');
+    assert (select count(*)=0 from public.activities);
+    assert (select count(*)=0 from public.activity_date_spans);
+    assert (select count(*)=0 from public.activity_messages);
+    assert (select count(*)=0 from public.audit_events);
+    assert not exists(select 1 from public.aunor_activities a where row_to_json(a)::text ~ 'SECRETO|responsible|operator_opinion|created_by');
+    assert exists(select 1 from public.aunor_activities where status='Entregada' and delivered_at is not null and material_link<>'');
+  end $$;`));
+  for(const command of ["publish","delivery","agreement","replacement","confirm-delivery","confirm-replacement","message","read"]) deny(5,mutate(command,301,{}));
+  deny(5,mutate("confirm-delivery",301,{objectId:currentDelivery.id,version:currentDelivery.version,acknowledged:true}));
+  deny(1,mutate("confirm-delivery",301,{objectId:currentDelivery.id,version:currentDelivery.version,acknowledged:true}));
+  sql("do $$ begin assert not has_function_privilege('authenticated','private.aunor_mutate_v1(text,uuid,uuid,jsonb)','execute'); assert not has_function_privilege('anon','public.aunor_mutate_v1(text,uuid,uuid,jsonb)','execute'); end $$;");
+  if(confirmationsBefore!==sql("select count(*) from private.aunor_confirmations;")) throw Error("Confirmation history changed");
+  sql(as(1,"select "+mutate("publish",303,{expectedVersion:0,summary:"Referencia de contrato",serviceId:"cobertura"})+";"));
+  sql(`update public.activities set delivered_at=now()-interval '4 days' where id='${id(303)}';`);
+  sql(as(5,`do $$ begin assert exists(select 1 from public.aunor_activities where id='${id(303)}' and delivered_at<now()-interval '72 hours'); end $$;`));
+  for(const column of ["must_change_password","is_active"]) {
+    sql(`update public.profiles set ${column}=${column==="is_active"?"false":"true"} where id='${id(105)}';`);
+    sql(as(5,"do $$ begin assert (select count(*)=0 from public.aunor_activities); end $$;"));
+    sql(`update public.profiles set ${column}=${column==="is_active"?"true":"false"} where id='${id(105)}';`);
+  }
+  console.log("PASS: all activities without publication gate, complete state/material, no operator payload, read-only RPC and preserved expired deliveries/confirmations.");
   sql("do $$ begin assert has_column_privilege('service_role','public.profiles','id','select'); assert has_column_privilege('service_role','public.profiles','username','select'); assert not has_column_privilege('service_role','public.profiles','display_name','select'); assert not has_table_privilege('anon','public.profiles','select'); end $$;");
   sql("begin; set local role anon; do $$ begin assert (select count(*)>0 from public.access_directory_v1()); end $$; commit;");
   sql("select public.begin_credential_operation_v1('"+id(102)+"','"+id(101)+"','"+id(901)+"');");

@@ -11,7 +11,8 @@ const destinations: {
   href: string;
   when: (role: Role) => boolean;
 }[] = [
-  { label: "Mi panel", short: "Mi panel", icon: "activities", href: "/aunor", when: (role) => role.id === "aunor" },
+  { label: "Actividades", short: "Actividades", icon: "activities", href: "/aunor", when: (role) => role.id === "aunor" },
+  { label: "Histórico", short: "Histórico", icon: "calendar", href: "/aunor/historico", when: (role) => role.id === "aunor" },
   { label: "Contrato", short: "Contrato", icon: "complete", href: "/aunor/contrato", when: (role) => role.id === "aunor" },
   {
     label: "Actividades",
@@ -58,7 +59,7 @@ function NavigationLink({
   return (
     <Link
       aria-current={selected ? "page" : undefined}
-      aria-label={item.label === "Actividades" ? "Mi panel" : item.label}
+      aria-label={item.href === "/actividades" ? "Mi panel" : item.label}
       className={`relative flex min-h-14 items-center font-semibold transition duration-200 ${mobile ? "flex-col justify-center gap-1 text-[0.625rem]" : "justify-center gap-3 rounded-md border-l-[3px] px-2 text-sm lg:justify-start lg:px-4"} ${selected ? (mobile ? "text-lime after:absolute after:inset-x-4 after:bottom-0 after:h-[3px] after:bg-lime" : "border-l-cyan bg-cyan/15 text-white shadow-[inset_0_0_24px_rgba(17,183,201,.06)]") : mobile ? "text-white/70" : "border-l-transparent text-white/70 hover:bg-white/[.05] hover:text-white"}`}
       href={item.href}
     >
@@ -69,7 +70,7 @@ function NavigationLink({
       <span className={mobile ? "" : "hidden lg:inline"}>
         {mobile
           ? item.short
-          : item.label === "Actividades"
+          : item.href === "/actividades"
             ? "Mi panel"
             : item.label}
       </span>

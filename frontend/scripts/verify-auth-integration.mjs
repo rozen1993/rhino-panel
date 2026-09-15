@@ -539,9 +539,9 @@ try {
   assert.equal(
     ok(
       await users.customer.client.from("aunor_activities").select("id"),
-      "Aunor unpublished",
+      "Aunor automatic visibility",
     ).length,
-    0,
+    2,
   );
   const publish = {
     p_command: "publish",
@@ -564,11 +564,13 @@ try {
     await users.customer.client.from("aunor_activities").select("*"),
     "Aunor publication",
   );
-  assert.equal(published.length, 1);
-  assert.equal(published[0].id, activity);
-  assert.equal("operator_opinion" in published[0], false);
+  assert.equal(published.length, 2);
+  assert.ok(published.some(row=>row.id===activity));
+  assert.ok(published.some(row=>row.id===otherActivity));
+  for(const row of published) for(const key of ["operator_opinion","responsible_id","responsible_name","created_by"])
+    assert.equal(key in row, false);
   pass(
-    "HTTP RLS: admin visibility, operator ownership, Aunor only explicitly published projection",
+    "HTTP RLS: admin visibility, operator ownership, Aunor automatic safe projection",
   );
   const message = {
     p_command: "message",
@@ -627,22 +629,19 @@ try {
     (await admin.rpc("aunor_mutate_v1", confirm)).error?.code,
     "SR002",
   );
-  ok(
-    await users.customer.client.rpc("aunor_mutate_v1", confirm),
-    "customer confirmation",
-  );
-  ok(await users.customer.client.rpc("aunor_mutate_v1", confirm), "idempotent confirmation retry");
-  assert.ok(
+  assert.equal((await users.customer.client.rpc("aunor_mutate_v1", confirm)).error?.code,"SR002");
+  assert.equal((await users.customer.client.rpc("aunor_mutate_v1", confirm)).error?.code,"SR002");
+  assert.equal(
     ok(
       await users.customer.client
         .from("aunor_deliveries")
         .select("confirmed_at")
         .single(),
-      "confirmed delivery",
-    ).confirmed_at,
+      "read-only delivery",
+    ).confirmed_at, null,
   );
   pass(
-    "Aunor retired-chat denial, delivery, customer-only confirmation and idempotency",
+    "Aunor retired-chat denial, read-only delivery and denied confirmation retries",
   );
   const resetArgs={p_activity_id:activity,p_expected_version:1,p_reason:"Corrección integrada aislada"};
   assert.equal((await users.operator.client.rpc("reset_activity_v1",resetArgs)).error?.code,"SR002");
@@ -650,13 +649,13 @@ try {
   assert.equal((await admin.rpc("reset_activity_v1",resetArgs)).error?.code,"SR001");
   const restarted=ok(await admin.from("activities").select("status,material_link,delivered_at").eq("id",activity).single(),"reset record");
   assert.equal(restarted.status,"Programada");assert.equal(restarted.delivered_at,null);assert.equal(restarted.material_link,"https://example.invalid/test.mp4");
-  const historicDelivery=ok(await users.customer.client.from("aunor_deliveries").select("is_current,confirmed_at").single(),"preserved confirmation");
-  assert.equal(historicDelivery.is_current,false);assert.ok(historicDelivery.confirmed_at);
+  const historicDelivery=ok(await users.customer.client.from("aunor_deliveries").select("is_current,confirmed_at").single(),"preserved delivery");
+  assert.equal(historicDelivery.is_current,false);assert.equal(historicDelivery.confirmed_at,null);
   // Complete the restarted fixture through the responsible operator before
   // testing deactivation: production correctly rejects open assignments.
   ok(await users.operator.client.rpc("advance_activity_v1",{p_activity_id:activity,p_expected_version:2}),"restart execution");
   ok(await users.operator.client.rpc("advance_activity_v1",{p_activity_id:activity,p_expected_version:3}),"deliver restarted execution");
-  pass("Admin reset via HTTP preserves material and Aunor confirmation as historical evidence");
+  pass("Admin reset via HTTP preserves material and Aunor delivery as historical evidence");
   assert.equal(
     (
       await users.operator.client
