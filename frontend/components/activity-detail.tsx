@@ -321,7 +321,11 @@ export function ActivityDetail({
                     className="flex min-h-11 items-center justify-center rounded-md border border-line bg-panel text-sm font-extrabold text-ink transition hover:border-cyan"
                     href={`/actividades/nueva?editar=${item.id}`}
                   >
-                    {role.id === "admin" ? "Editar plan" : "Actualizar entrega"}
+                    {role.id === "admin"
+                      ? "Editar plan"
+                      : item.materialLink.trim()
+                        ? "Actualizar entrega"
+                        : "Entregar material"}
                   </Link>
                   {responsible && item.status !== "Entregada" ? (
                     <Button

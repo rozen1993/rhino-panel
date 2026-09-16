@@ -241,7 +241,9 @@ test("Admin planifica y el responsable controla solamente la ejecución", async 
 
   await switchUser(page, "ana");
   await page.goto(activityPath);
-  await page.getByRole("link", { name: "Actualizar entrega" }).click();
+  await expect(page.getByRole("button", { name: "Iniciar", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Actualizar entrega", exact: true })).toHaveCount(0);
+  await page.getByRole("link", { name: "Entregar material", exact: true }).click();
   await expect(
     page.getByRole("heading", {
       name: "Actualizar ejecución",
@@ -260,10 +262,13 @@ test("Admin planifica y el responsable controla solamente la ejecución", async 
   await expect(page.getByText("Ejecución actualizada.")).toBeVisible();
 
   await page.goto(activityPath);
+  await expect(page.getByRole("link", { name: "Actualizar entrega", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Entregar material", exact: true })).toHaveCount(0);
   await page.getByRole("button", { name: "Iniciar" }).click();
   await expect(page.getByText("Actividad iniciada.")).toBeVisible();
   await page.getByRole("button", { name: "Entregar" }).click();
   await expect(page.getByText("Actividad entregada.")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Actualizar entrega", exact: true })).toBeVisible();
 
   await switchUser(page, "admin");
   await page.goto(activityPath);
