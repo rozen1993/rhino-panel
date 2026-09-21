@@ -1,5 +1,9 @@
 # Contrato de producto vigente — Sistema R
 
+**Addendum Operarios (21/09/2026):** aplica
+[edición propia, modalidades de Grabación e Histórico del equipo](operarios-grabacion-historico-2026-09-21.md).
+Sustituye las restricciones anteriores de edición e Histórico para Operario.
+
 **Addendum Aunor (14/09/2026):** para el cliente Aunor aplica
 [consulta integral, solo lectura y ventana de entregas de 72 horas](rol-aunor-consulta-2026-09-14.md).
 Sustituye las reglas anteriores de publicación obligatoria y confirmación del cliente.
@@ -28,7 +32,7 @@ manda sobre el comportamiento que debe implementarse.
 | Acción | Admin | Operario responsable | Operario autorizado | Burson |
 |---|---:|---:|---:|---:|
 | Crear actividad ordinaria | Sí, para cualquier Operario | No | Sí, solo para sí mismo | No |
-| Editar planificación | Sí | No | No después de crear | No |
+| Editar planificación | Sí | No | Solo propia, Programada, asignada a él y con permiso vigente | No |
 | Reasignar responsable | Sí | No | No | No |
 | Editar enlace y opinión | No | Sí | Sí, si es responsable | No |
 | Iniciar o entregar | No | Sí | Sí, si es responsable | No |
@@ -36,15 +40,17 @@ manda sobre el comportamiento que debe implementarse.
 | Crear encargo Burson | No | No | No | Sí, propio |
 | Consultar encargo Burson | Sí | Solo si es responsable especial | Solo si es responsable especial | Sí, propio |
 | Conversación interna | Sí | Sí, si es responsable | Sí, si es responsable | Nunca |
-| Histórico | Sí | No | No | No |
+| Histórico | Sí | Sí, todo el equipo, consulta | Sí, todo el equipo, consulta | No |
 | Administrar cuentas/permisos | Sí | No | No | No |
 
 ## 3. Planificación y ejecución
 
 La planificación comprende tipo, título, descripción, lugar, jornadas y
-responsable. Admin conserva esos campos. El Operario autorizado puede definirlos
-al crear una actividad propia, pero las correcciones posteriores pertenecen a
-Admin.
+responsable y modalidades de Grabación. Admin puede corregir la planificación.
+El Operario autorizado también puede corregir su actividad propia mientras esté
+Programada, siga asignada a él y conserve el permiso de creación. No puede
+reasignar, editar actividades creadas por Admin ni modificar trabajos En proceso
+o Entregados. Una corrección conserva el ID, el material y el historial.
 
 La ejecución comprende estado, enlace HTTPS de entrega y opinión. Solo el
 Operario responsable puede escribir esos campos y efectuar las dos transiciones
@@ -128,7 +134,8 @@ el evento original permanece inmutable en auditoría con su motivo completo.
 ## 9. Histórico
 
 El intervalo permitido comienza en `2026-01-01` y continúa hacia adelante. Admin
-puede navegar por año. El calendario representa jornadas individuales, rangos y
+y Operario pueden navegar por año y consultar las actividades del equipo.
+El calendario representa jornadas individuales, rangos y
 jornadas discontinuas, admite varias actividades por fecha y abre un detalle
 accesible. Las actividades dadas de baja viven en una papelera separada.
 

@@ -33,7 +33,7 @@ const destinations: {
     short: "Histórico",
     icon: "calendar",
     href: "/historico",
-    when: (role) => role.id === "admin",
+    when: (role) => role.id === "admin" || role.id === "operario",
   },
   {
     label: "Papelera",

@@ -40,6 +40,7 @@ class MemoryStorage {
 }
 
 const draft = {
+  recordingModes: ["Video" as const],
   type: "Grabación" as const,
   title: "Cobertura de prueba",
   description: "Registro completo del encargo comunicado por teléfono.",

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { ActivityJourneys } from "@/components/activity-journeys";
+import { RecordingModeTags } from "@/components/recording-mode-tags";
 import { spanPlace } from "@/lib/activities";
 import { StatusPill } from "@/components/status-pill";
 import { SystemIcon } from "@/components/system-icon";
@@ -88,6 +89,7 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
                     <StatusPill status={choice.status} />
                   </div>
                   <h3 className="display-title mt-3 break-words text-lg leading-snug text-ink">{choice.title}</h3>
+                  <RecordingModeTags modes={choice.recordingModes} />
                   {sameTitle && <p title={`ID: ${choice.id}`} className="mt-1 break-all font-mono text-[0.625rem] text-ink-muted">Ref. {choice.id}</p>}
                   <p className="mt-2 line-clamp-2 break-words text-sm leading-5 text-ink-muted">{choice.description}</p>
                   <div className="mt-3 grid gap-1.5 text-xs text-ink-muted">
@@ -118,6 +120,7 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
               <StatusPill status={item.status} />
             </div>
             <h2 className="display-title mt-3 break-words text-2xl leading-tight text-ink" id={titleId}>{item.title}</h2>
+            <RecordingModeTags modes={item.recordingModes} />
             {isOverdue(item, today) && <p className="mt-3 text-xs font-bold text-red">Actividad atrasada</p>}
           </div>
 

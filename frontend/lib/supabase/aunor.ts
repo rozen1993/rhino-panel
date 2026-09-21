@@ -23,7 +23,7 @@ export async function readSupabaseAunor(scope: AunorReadScope = {scene:"admin"})
   const activityIds = replacement ? [chosen[0].original_activity_id,chosen[0].substitute_activity_id] : detail ? [scope.id!] : null;
   const [activities,services,deliveries,agreements,replacements,journeys] = await Promise.all([
     collectCursorPages<AunorWorkspace["activities"][number]>(last => {
-      let query = db.from("aunor_activities").select("id,type,title,status,place,summary,service_id,not_performed_reason,publication_version,published_at,unread_count,delivered_at,material_link",{count:"exact"}).order("id").limit(200);
+      let query = db.from("aunor_activities").select("id,type,title,status,place,summary,service_id,not_performed_reason,publication_version,published_at,unread_count,delivered_at,material_link,recording_modes",{count:"exact"}).order("id").limit(200);
       if (activityIds) query = query.in("id",activityIds);
       if(last) query = query.gt("id", last.id);
       return query;

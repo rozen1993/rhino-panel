@@ -10,6 +10,9 @@ import {
 } from "@/lib/activities";
 import type { ActivityDraftFields } from "@/lib/activity-draft";
 import { validSpans } from "@/lib/activity-validation";
+import { canReplanActivity } from "@/lib/activity-permissions";
+export { canReplanActivity } from "@/lib/activity-permissions";
+import { normalizeRecordingModes, recordingModesError } from "@/lib/recording-modes";
 import { readAccounts } from "@/lib/account-store";
 import { safeMaterialUrl } from "@/lib/external-link";
 import { calendarDateInLima } from "@/lib/historical";
@@ -364,6 +367,8 @@ export function canEditActivity(item: SimulatedActivity, role: Role) {
 }
 
 function planningError(fields: ActivityDraftFields) {
+  const modalitiesError = recordingModesError(fields.type, fields.recordingModes);
+  if (modalitiesError) return modalitiesError;
   if (
     !fields.title.trim() ||
     !fields.description.trim() ||
@@ -382,6 +387,7 @@ function planningFingerprint(
   return JSON.stringify({
     responsibleAccountId,
     type: fields.type,
+    recordingModes: normalizeRecordingModes(fields.recordingModes),
     title: fields.title.trim(),
     description: fields.description.trim(),
     place: fields.placeName.trim(),
@@ -463,6 +469,7 @@ export function planActivity(
   const next: SimulatedActivity = {
     id: slug(fields.title),
     type: fields.type,
+    recordingModes: normalizeRecordingModes(fields.recordingModes),
     title: fields.title.trim(),
     responsible: responsible.name,
     responsibleAccountId: responsible.id,
@@ -525,6 +532,7 @@ export function createOwnActivity(
   const next: SimulatedActivity = {
     id: slug(fields.title),
     type: fields.type,
+    recordingModes: normalizeRecordingModes(fields.recordingModes),
     title: fields.title.trim(),
     responsible: actor.name,
     responsibleAccountId: actor.accountId,
@@ -586,6 +594,7 @@ export function replanActivity(
     return {
       ...item,
       type: fields.type,
+      recordingModes: normalizeRecordingModes(fields.recordingModes),
       title: fields.title.trim(),
       description: fields.description.trim(),
       spans: normalizeSpans(fields.spans),
@@ -599,6 +608,23 @@ export function replanActivity(
         responsible.name,
       ),
     };
+  });
+}
+
+export function replanOwnActivity(
+  storage: Pick<Storage, "getItem" | "setItem">,
+  id: string, fields: ActivityDraftFields, role: Role, expectedVersion: number,
+): Result {
+  const account = readAccounts(storage).find(candidate => candidate.id === role.accountId);
+  const currentRole = { ...role, canCreateOwnActivities: Boolean(account?.active && account.roleId === "operario" && account.canCreateOwnActivities) };
+  return update(storage, id, item => {
+    if (!canReplanActivity(item, currentRole) || role.id !== "operario") return "No puedes editar la planificación de esta actividad.";
+    if (item.version !== expectedVersion) return "La actividad cambió; recarga antes de guardar.";
+    const error = planningError(fields);
+    if (error) return error;
+    return { ...item, type: fields.type, recordingModes: normalizeRecordingModes(fields.recordingModes),
+      title: fields.title.trim(), description: fields.description.trim(), place: fields.placeName.trim(),
+      spans: normalizeSpans(fields.spans), audit: audit(item, "Planificación propia actualizada", actorFromRole(role)) };
   });
 }
 

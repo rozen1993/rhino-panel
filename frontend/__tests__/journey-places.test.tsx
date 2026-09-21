@@ -8,7 +8,7 @@ import { actorFromRole, createOwnActivity, readActivities, replanActivity, updat
 import { roles } from "@/lib/roles";
 
 const spans = [{ start: "2026-09-10", end: "2026-09-10", place: " Norte " }, { start: "2026-09-10", end: "2026-09-10", place: "Sur" }];
-const fields = { type: "Grabación" as const, title: "Test multi-sede", description: "Ejemplo ficticio", placeName: "Lima", responsibleAccountId: "account-ana", spans, materialLink: "", notes: "", referenceLink: "" };
+const fields = { recordingModes: ["Video" as const], type: "Grabación" as const, title: "Test multi-sede", description: "Ejemplo ficticio", placeName: "Lima", responsibleAccountId: "account-ana", spans, materialLink: "", notes: "", referenceLink: "" };
 const admin = { ...roles.admin, accountId: "account-admin", accountName: "Admin" };
 const operator = { ...roles.operario, accountId: "account-ana", accountName: "Ana Torres", canCreateOwnActivities: true };
 class MemoryStorage { values = new Map<string, string>(); getItem(k: string) { return this.values.get(k) ?? null; } setItem(k: string,v: string) { this.values.set(k,v); } }

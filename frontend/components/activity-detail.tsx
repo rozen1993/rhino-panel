@@ -1,6 +1,7 @@
 "use client";
 import { AdminAunorPanel } from "@/components/admin-aunor-panel";
 import { ActivityJourneys } from "@/components/activity-journeys";
+import { RecordingModeTags } from "@/components/recording-mode-tags";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -24,6 +25,7 @@ import {
   advanceActivity,
   resetActivity,
   canEditActivity,
+  canReplanActivity,
   canViewActivity,
   deleteThreadMessage,
   editThreadMessage,
@@ -315,6 +317,10 @@ export function ActivityDetail({
                 )}
               </div>
 
+              <RecordingModeTags modes={item.recordingModes} />
+              {role.id === "operario" && canReplanActivity(item, role) && <Link
+                className="mt-4 flex min-h-11 items-center justify-center rounded-md border border-line px-3 text-sm font-bold text-cyan-ink hover:border-cyan"
+                href={`/actividades/nueva?editar=${item.id}&modo=plan`}>Editar actividad</Link>}
               {canEdit && (
                 <div className="mt-4 grid grid-cols-2 gap-2 border-t border-line pt-4">
                   <Link

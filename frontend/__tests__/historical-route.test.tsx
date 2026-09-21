@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   requireRole: vi.fn(),
   resolveDataSource: vi.fn(),
   listHistorical: vi.fn(),
+  listTeamHistorical: vi.fn(),
 }));
 
 vi.mock("@/components/mobile-shell", () => ({
@@ -39,6 +40,7 @@ vi.mock("@/lib/data-source", () => ({
 }));
 vi.mock("@/lib/supabase/historical", () => ({
   listSupabaseHistoricalActivities: mocks.listHistorical,
+  listSupabaseTeamHistoricalActivities: mocks.listTeamHistorical,
 }));
 
 import HistoricalPage from "@/app/historico/page";
@@ -86,7 +88,8 @@ describe("ruta del Histórico", () => {
     mocks.requireRole.mockImplementation(
       async (allow: (candidate: typeof role) => boolean) => {
         expect(allow(role)).toBe(true);
-        expect(allow({ ...role, id: "operario" })).toBe(false);
+        expect(allow({ ...role, id: "operario" })).toBe(true);
+        expect(allow({ ...role, id: "aunor" })).toBe(false);
         return role;
       },
     );
@@ -119,5 +122,14 @@ describe("ruta del Histórico", () => {
     expect(calendar.dataset.year).toBe("2026");
     expect(calendar.dataset.count).toBe("0");
     expect(mocks.listHistorical).not.toHaveBeenCalled();
+  });
+  it("el operario consulta la proyección del equipo y no el lector privado", async () => {
+    mocks.requireRole.mockResolvedValue({ ...role, id: "operario" });
+    mocks.resolveDataSource.mockReturnValue("supabase");
+    mocks.listTeamHistorical.mockResolvedValue([activity]);
+    await renderPage("2026");
+    expect(mocks.listTeamHistorical).toHaveBeenCalledWith(2026);
+    expect(mocks.listHistorical).not.toHaveBeenCalled();
+    expect(screen.getByTestId("annual-calendar").dataset.count).toBe("1");
   });
 });

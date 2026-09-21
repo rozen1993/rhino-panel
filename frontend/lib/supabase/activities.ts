@@ -512,6 +512,7 @@ async function hydrateActivities(
     return {
       id: row.id,
       type: row.type as ActivityType,
+      recordingModes: row.recording_modes ?? [],
       title: row.title,
       responsible: row.responsible_name,
       responsibleAccountId: row.responsible_id,

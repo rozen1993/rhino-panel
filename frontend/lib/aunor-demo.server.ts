@@ -5,6 +5,7 @@ import type { ActivityType, Role } from "@/lib/roles";
 import { safeMaterialUrl } from "@/lib/external-link";
 
 export type DemoAunorSource = {
+  recordingModes?: import("@/lib/recording-modes").RecordingMode[];
   id: string; type: ActivityType; title: string; status: "Programada"|"En proceso"|"Entregada";
   place: string; spans: {start:string;end:string;place?:string}[];
   materialLink: string; version: number; origin: "operario"|"burson"; deletedAt?: string; deliveredAt?: string;
@@ -45,7 +46,7 @@ export function mutateDemoAunor(role:Role,command:AunorCommand,activityId:string
     if(service&&!w.services.some(s=>s.id===service)) throw Error("Servicio no disponible.");
     if(reason&&source.status==="Entregada") throw Error("Una actividad entregada no puede registrarse como no realizada.");
     const row={id:source.id,type:source.type,title:source.title,status:source.status,place:source.place,summary,service_id:service,not_performed_reason:reason,publication_version:(a?.publication_version??0)+1,published_at:now,unread_count:0,delivered_at:source.deliveredAt ?? a?.delivered_at ?? null,material_link:source.status==="Entregada" ? source.materialLink : ""};
-    w.activities=w.activities.filter(a=>a.id!==activityId).concat(row);
+    w.activities=w.activities.filter(a=>a.id!==activityId).concat({...row,recording_modes:source.recordingModes ?? []});
     w.journeys=w.journeys.filter(j=>j.activity_id!==activityId).concat(source.spans.map((j,i)=>({activity_id:activityId,position:i+1,start_date:j.start,end_date:j.end,place:j.place||source.place})));
     for(const d of w.deliveries.filter(d=>d.activity_id===activityId)) if(d.material_link!==source.materialLink) d.is_current=false;
     s.sources.set(activityId,structuredClone(source));

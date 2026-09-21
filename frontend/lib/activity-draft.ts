@@ -6,8 +6,10 @@ import {
 import type { DataSource } from "@/lib/data-source";
 import type { RoleId } from "@/lib/roles";
 import { isUuid } from "@/lib/uuid";
+import { validRecordingModes, type RecordingMode } from "@/lib/recording-modes";
 
 export type ActivityDraftFields = {
+  recordingModes?: RecordingMode[];
   type: ActivityType;
   title: string;
   description: string;
@@ -56,6 +58,7 @@ function isActivityDraftFields(value: unknown): value is ActivityDraftFields {
     typeof fields.materialLink === "string" &&
     typeof fields.notes === "string" &&
     typeof fields.referenceLink === "string" &&
+    (fields.recordingModes === undefined || validRecordingModes(fields.recordingModes)) &&
     Array.isArray(fields.spans) &&
     fields.spans.every(
       (span) =>

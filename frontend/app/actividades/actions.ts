@@ -9,6 +9,8 @@ import { getSupabaseActivity } from "@/lib/supabase/activities";
 import { currentSupabaseRole } from "@/lib/supabase/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isUuid } from "@/lib/uuid";
+import { normalizeRecordingModes } from "@/lib/recording-modes";
+import { canReplanActivity } from "@/lib/activity-permissions";
 
 export type ActivityServerResult =
   | { ok: true; activity: SimulatedActivity; replayed?: boolean }
@@ -35,7 +37,7 @@ function validateExecution(
 
 function errorMessage(error: { code?: string; message?: string }) {
   const messages: Record<string, string> = {
-    PGRST202: "Falta actualizar el servidor para guardar lugares por jornada. No se guardaron cambios.",
+    PGRST202: "Falta actualizar el servidor para guardar la planificación y sus modalidades. No se guardaron cambios.",
     SR011: "Actualiza la aplicación antes de replanificar: esta actividad tiene lugares por jornada.",
     SR001: "La actividad cambió; recarga antes de guardar.",
     SR002: "No tienes permiso para realizar esta acción.",
@@ -85,6 +87,8 @@ async function refreshActivity(id: string): Promise<ActivityServerResult> {
   const activity = await getSupabaseActivity(id);
   if (!activity) return { ok: false, error: "La actividad no existe." };
   revalidatePath("/actividades");
+  revalidatePath("/historico");
+  revalidatePath("/aunor", "layout");
   revalidatePath(`/actividades/${id}`);
   return { ok: true, activity };
 }
@@ -102,7 +106,8 @@ export async function planSupabaseActivityAction(
     return { ok: false, error: "La solicitud o el responsable no son válidos." };
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc("plan_activity_v2", {
+  const { data, error } = await supabase.rpc("plan_activity_v3", {
+    p_recording_modes: normalizeRecordingModes(fields.recordingModes),
     p_idempotency_key: idempotencyKey,
     p_responsible_id: fields.responsibleAccountId,
     p_type: fields.type,
@@ -132,7 +137,8 @@ export async function createOwnSupabaseActivityAction(
     return { ok: false, error: "La solicitud no contiene una clave válida." };
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc("create_own_activity_v2", {
+  const { data, error } = await supabase.rpc("create_own_activity_v3", {
+    p_recording_modes: normalizeRecordingModes(fields.recordingModes),
     p_idempotency_key: idempotencyKey,
     p_type: fields.type,
     p_title: fields.title,
@@ -164,7 +170,8 @@ export async function replanSupabaseActivityAction(
     return { ok: false, error: "La actividad o su responsable no son válidos." };
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc("replan_activity_v2", {
+  const { data, error } = await supabase.rpc("replan_activity_v3", {
+    p_recording_modes: normalizeRecordingModes(fields.recordingModes),
     p_activity_id: id,
     p_expected_version: expectedVersion,
     p_responsible_id: fields.responsibleAccountId,
@@ -173,6 +180,27 @@ export async function replanSupabaseActivityAction(
     p_description: fields.description,
     p_place: fields.placeName,
     p_spans: fields.spans,
+  });
+  if (error || !data?.[0]) return { ok: false, error: errorMessage(error ?? {}) };
+  return refreshActivity(data[0].activity_id);
+}
+
+export async function replanOwnSupabaseActivityAction(
+  id: string, expectedVersion: number, fields: ActivityDraftFields,
+): Promise<ActivityServerResult> {
+  const role = await currentActiveSupabaseRole();
+  if (role?.id !== "operario" || !role.canCreateOwnActivities)
+    return { ok: false, error: "No tienes permiso para editar actividades propias." };
+  if (!isUuid(id) || !isPositiveVersion(expectedVersion)) return { ok: false, error: "La actividad no es válida." };
+  const activity = await getSupabaseActivity(id);
+  if (!activity || !canReplanActivity(activity, role)) return { ok: false, error: "Solo puedes editar actividades propias, Programadas y asignadas a ti." };
+  const validation = activityPlanningError(fields);
+  if (validation) return { ok: false, error: validation };
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.rpc("replan_own_activity_v3", {
+    p_activity_id: id, p_expected_version: expectedVersion, p_type: fields.type,
+    p_title: fields.title, p_description: fields.description, p_place: fields.placeName,
+    p_spans: fields.spans, p_recording_modes: normalizeRecordingModes(fields.recordingModes),
   });
   if (error || !data?.[0]) return { ok: false, error: errorMessage(error ?? {}) };
   return refreshActivity(data[0].activity_id);

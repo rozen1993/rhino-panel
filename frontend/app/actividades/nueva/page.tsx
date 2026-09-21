@@ -4,11 +4,14 @@ import { MobileShell, requireRole } from "@/components/mobile-shell";
 import { resolveDataSource } from "@/lib/data-source";
 import { getSupabaseActivity } from "@/lib/supabase/activities";
 import { listAssignableOperators } from "@/lib/supabase/profiles";
+import { canReplanActivity } from "@/lib/activity-permissions";
 
 export default async function ActivityEditorPage({
   searchParams,
 }: PageProps<"/actividades/nueva">) {
-  const value = (await searchParams).editar;
+  const params = await searchParams;
+  const value = params.editar;
+  const editPlan = params.modo === "plan";
   const activityId = Array.isArray(value) ? value[0] : value;
   const dataSource = resolveDataSource();
   const role = await requireRole(
@@ -32,7 +35,8 @@ export default async function ActivityEditorPage({
     !initialActivity
   )
     redirect("/actividades");
-  const executionMode = Boolean(activityId && role.id === "operario");
+  if (dataSource === "supabase" && editPlan && activityId && (!initialActivity || !canReplanActivity(initialActivity, role))) redirect("/actividades");
+  const executionMode = Boolean(activityId && role.id === "operario" && !editPlan);
   const heading = activityId
     ? executionMode
       ? "Actualizar ejecución"
@@ -67,6 +71,7 @@ export default async function ActivityEditorPage({
           </span>
         </header>
         <ActivityForm
+          editPlan={editPlan}
           activityId={activityId}
           dataSource={dataSource}
           editing={Boolean(activityId)}

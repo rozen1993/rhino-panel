@@ -24,6 +24,7 @@ type HistoricalActivityRow = Pick<
   | "id"
   | "version"
   | "type"
+  | "recording_modes"
   | "title"
   | "responsible_name"
   | "status"
@@ -90,7 +91,7 @@ async function fetchHistoricalActivityRows(
         let query = supabase
           .from("activities")
           .select(
-            "id, version, type, title, responsible_name, status, origin, description, place, material_link, operator_opinion",
+            "id, version, type, title, responsible_name, status, origin, description, place, material_link, operator_opinion, recording_modes",
           )
           .in("id", ids)
           .is("deleted_at", null);
@@ -230,6 +231,7 @@ function buildHistoricalActivities(
       return {
         id: row.id,
         type: row.type,
+        recordingModes: row.recording_modes ?? [],
         title: row.title,
         responsible: row.responsible_name,
         status: row.status,
@@ -281,4 +283,29 @@ export async function listSupabaseHistoricalActivities(
   throw new Error(
     `El Histórico cambió durante la lectura y no pudo consolidarse tras ${historicalReadAttempts} intentos.`,
   );
+}
+
+export async function listSupabaseTeamHistoricalActivities(year: number): Promise<HistoricalActivity[]> {
+  const bounds = historicalYearBounds(year);
+  const db = await createSupabaseServerClient();
+  const activities: HistoricalActivity[] = [];
+  let cursor: string | null = null;
+  for (;;) {
+    let query = db.from("team_historical_activities").select("*")
+      .lte("first_date", bounds.end).gte("last_date", bounds.start).order("id").limit(supabasePageSize);
+    if (cursor) query = query.gt("id", cursor);
+    const { data, error } = await query;
+    if (error) throw new Error("No se pudo cargar el Histórico del equipo.");
+    if (!data?.length) break;
+    for (const row of data) {
+      const activity: HistoricalActivity = { id: row.id, type: row.type, title: row.title,
+        responsible: row.responsible_name, status: row.status, origin: row.origin,
+        description: row.description, place: row.place, materialLink: row.material_link,
+        operatorOpinion: row.operator_opinion, recordingModes: row.recording_modes,
+        spans: row.spans as DateSpan[] };
+      if (activityOverlapsYear(activity, year)) activities.push(activity);
+    }
+    cursor = advanceStringCursor(data, cursor, "Histórico del equipo");
+  }
+  return activities.sort(compareHistoricalActivities);
 }

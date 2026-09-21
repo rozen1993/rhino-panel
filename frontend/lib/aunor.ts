@@ -1,6 +1,7 @@
 import type { ActivityType, Role } from "@/lib/roles";
 
 export type AunorActivityRow = {
+  recording_modes?: import("@/lib/recording-modes").RecordingMode[];
   id: string; type: ActivityType; title: string;
   status: "Programada" | "En proceso" | "Entregada"; place: string;
   summary: string; service_id: string | null; not_performed_reason: string;

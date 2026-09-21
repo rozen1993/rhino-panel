@@ -1,5 +1,6 @@
 import type { InternalStatus } from "@/components/status-pill";
 import { activityTypes, type ActivityType } from "@/lib/roles";
+import type { RecordingMode } from "@/lib/recording-modes";
 export { activityTypes }; export type { ActivityType };
 export type DateSpan = { start: string; end: string; place?: string };
 /** Canonical planning payload. Empty place inherits the activity's general place. */
@@ -9,7 +10,7 @@ export function normalizeSpans(spans: DateSpan[]): DateSpan[] {
 export function spanPlace(span: DateSpan, generalPlace = "") {
   return span.place?.trim() || generalPlace;
 }
-export type Activity = { id: string; type: ActivityType; title: string; responsible: string; responsibleAccountId: string; status: InternalStatus; origin: "operario" | "burson"; spans: DateSpan[]; description: string; place: string; materialLink: string; operatorOpinion: string; deletedAt?: string };
+export type Activity = { recordingModes?: RecordingMode[]; id: string; type: ActivityType; title: string; responsible: string; responsibleAccountId: string; status: InternalStatus; origin: "operario" | "burson"; spans: DateSpan[]; description: string; place: string; materialLink: string; operatorOpinion: string; deletedAt?: string };
 export function requiresLocation(type: ActivityType) { return type === "Grabación"; }
 export function requiresMaterialLink() { return true; }
 export function showsProgress() { return false; }

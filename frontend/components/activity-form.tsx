@@ -16,6 +16,7 @@ import {
   createOwnSupabaseActivityAction,
   planSupabaseActivityAction,
   replanSupabaseActivityAction,
+  replanOwnSupabaseActivityAction,
   updateSupabaseExecutionAction,
   type ActivityServerResult,
 } from "@/app/actividades/actions";
@@ -38,10 +39,12 @@ import {
 import {
   actorFromRole,
   canEditActivity,
+  canReplanActivity,
   createBursonActivity,
   createOwnActivity,
   planActivity,
   replanActivity,
+  replanOwnActivity,
   updateExecutionActivity,
   useSimulatedActivities,
   type SimulatedActivity,
@@ -50,12 +53,14 @@ import type { DataSource } from "@/lib/data-source";
 import { activityHistoryFloor } from "@/lib/activity-validation";
 import { safeMaterialUrl } from "@/lib/external-link";
 import type { Role } from "@/lib/roles";
+import { recordingModes, recordingModesError } from "@/lib/recording-modes";
 
 const control =
   "min-h-10 w-full rounded-md border border-line bg-panel px-3 py-2 text-xs text-ink outline-none transition placeholder:text-ink-muted focus:border-cyan focus:ring-2 focus:ring-cyan/15 disabled:cursor-not-allowed disabled:bg-panel-secondary disabled:text-ink-muted";
 const noOperators: AssignableOperator[] = [];
 
 const empty: ActivityDraftFields = {
+  recordingModes: [],
   type: "Grabación",
   title: "",
   description: "",
@@ -69,7 +74,7 @@ const empty: ActivityDraftFields = {
 
 function hasDraftContent(fields: ActivityDraftFields) {
   return Boolean(
-    fields.title ||
+    fields.recordingModes?.length || fields.title ||
       fields.description ||
       fields.placeName ||
       fields.materialLink ||
@@ -80,6 +85,7 @@ function hasDraftContent(fields: ActivityDraftFields) {
 }
 
 type Props = {
+  editPlan?: boolean;
   editing?: boolean;
   role: Role;
   activityId?: string;
@@ -89,6 +95,7 @@ type Props = {
 };
 
 export function ActivityForm({
+  editPlan = false,
   editing = false,
   role,
   activityId,
@@ -117,8 +124,8 @@ export function ActivityForm({
       : activities.find((item) => item.id === activityId && !item.deletedAt)
     : undefined;
   const existing =
-    candidate && canEditActivity(candidate, role) ? candidate : undefined;
-  const executionMode = editing && role.id === "operario";
+    candidate && (editPlan ? canReplanActivity(candidate, role) : canEditActivity(candidate, role)) ? candidate : undefined;
+  const executionMode = editing && role.id === "operario" && !editPlan;
   const planningMode = !executionMode;
   const defaultResponsible =
     role.id === "admin"
@@ -131,6 +138,7 @@ export function ActivityForm({
       existing
         ? {
             type: existing.type,
+            recordingModes: existing.recordingModes ?? [],
             title: existing.title,
             description: existing.description,
             placeName: existing.place,
@@ -210,6 +218,7 @@ export function ActivityForm({
     setFields((current) => ({
       ...current,
       [event.target.name]: event.target.value,
+      ...(event.target.name === "type" && event.target.value !== "Grabación" ? { recordingModes: [] } : {}),
     }));
   }
 
@@ -224,6 +233,10 @@ export function ActivityForm({
 
   function submit(event: FormEvent) {
     event.preventDefault();
+    if (planningMode) {
+      const error = recordingModesError(fields.type, fields.recordingModes);
+      if (error) { setNotice(error); return; }
+    }
     const submittedFields =
       planningMode &&
       role.id === "admin" &&
@@ -250,7 +263,9 @@ export function ActivityForm({
                   expectedVersion.current ?? existing.version,
                   submittedFields,
                 )
-              : await updateSupabaseExecutionAction(
+              : editPlan
+                ? await replanOwnSupabaseActivityAction(existing.id, expectedVersion.current ?? existing.version, submittedFields)
+                : await updateSupabaseExecutionAction(
                   existing.id,
                   expectedVersion.current ?? existing.version,
                   submittedFields,
@@ -285,7 +300,9 @@ export function ActivityForm({
               actor,
               expectedVersion.current ?? existing.version,
             )
-          : updateExecutionActivity(
+          : editPlan
+            ? replanOwnActivity(window.localStorage, existing.id, submittedFields, role, expectedVersion.current ?? existing.version)
+            : updateExecutionActivity(
               window.localStorage,
               existing.id,
               submittedFields,
@@ -412,7 +429,7 @@ export function ActivityForm({
           <h2 className="section-title mt-1 text-xl">{heading}</h2>
           <p className="mt-3 text-xs leading-5 text-ink-muted">
             {executionMode
-              ? "La planificación permanece bajo control de Admin. Aquí solo cambias el enlace y tu opinión."
+              ? "Aquí actualizas el enlace y tu opinión sobre el material."
               : role.id === "burson"
                 ? "El sistema lo asignará al Operario especial."
                 : role.id === "admin"
@@ -467,6 +484,17 @@ export function ActivityForm({
                   ))}
                 </select>
               </label>
+              {fields.type === "Grabación" && <fieldset className="rounded-md border border-line bg-panel-secondary/65 p-3 md:col-span-2">
+                <legend className="px-1 text-xs font-bold">Modalidades de grabación</legend>
+                <p className="mb-3 text-xs text-ink-muted">Selecciona una o varias opciones.</p>
+                <div className="flex flex-wrap gap-3">
+                  {recordingModes.map(mode => <label key={mode} className="flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-line bg-panel px-3 text-sm font-semibold">
+                    <input type="checkbox" className="size-4 accent-cyan" checked={fields.recordingModes?.includes(mode) ?? false}
+                      onChange={event => { const checked = event.target.checked; setFields(current => ({ ...current, recordingModes: checked ? [...(current.recordingModes ?? []), mode] : (current.recordingModes ?? []).filter(value => value !== mode) })); }} />
+                    {mode}
+                  </label>)}
+                </div>
+              </fieldset>}
               <label className="text-xs font-bold md:col-span-2">
                 Lugar o referencia
                 <input

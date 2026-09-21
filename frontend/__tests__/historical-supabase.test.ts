@@ -278,6 +278,7 @@ describe("lector Supabase del Histórico", () => {
         id: activeId,
         type: "Locución",
         title: "Campaña anual",
+        recordingModes: [],
         responsible: "Luis Mendoza",
         status: "En proceso",
         origin: "burson",

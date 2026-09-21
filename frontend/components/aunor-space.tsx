@@ -9,6 +9,7 @@ import {
 } from "@/components/annual-calendar-view";
 import { AunorDashboard } from "@/components/aunor-dashboard";
 import { DetailPanel, type DetailActivity } from "@/components/calendar-detail-panel";
+import { RecordingModeTags } from "@/components/recording-mode-tags";
 import type { HistoricalCategory } from "@/lib/historical";
 import {
   aunorCode,
@@ -173,6 +174,7 @@ function ActivityDetail({
           </p>
           <h2>{a.title}</h2>
           <p>{a.summary}</p>
+          <RecordingModeTags modes={a.recording_modes} />
           <div className="status-in-hero mt-4">
             <StatusPill status={a.status} />
           </div>
@@ -593,7 +595,7 @@ export function AunorSpace({
     replacement: ["Reemplazo documentado", "Original, sustituto, motivo y evidencia conservados."],
   };
   const calendarItems: DetailActivity[] = scene === "calendar" ? w.activities.map(a => ({
-    id:a.id,type:a.type,title:a.title,status:a.status,place:a.place,description:a.summary,
+    id:a.id,type:a.type,title:a.title,status:a.status,place:a.place,description:a.summary,recordingModes:a.recording_modes,
     materialLink:a.status === "Entregada" ? a.material_link ?? "" : "",
     spans:w.journeys.filter(j=>j.activity_id===a.id).map(j=>({start:j.start_date,end:j.end_date,place:j.place})),
   })) : [];

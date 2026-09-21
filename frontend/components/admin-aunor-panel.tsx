@@ -144,6 +144,7 @@ export function AdminAunorPanel({
                     place: item.place,
                     spans: item.spans,
                     materialLink: item.materialLink,
+                    recordingModes: item.recordingModes,
                     deliveredAt: item.deliveredAt,
                     version: item.version,
                     origin: item.origin,

@@ -1,5 +1,6 @@
 import { activityTypes, type DateSpan } from "@/lib/activities";
 import type { ActivityDraftFields } from "@/lib/activity-draft";
+import { recordingModesError } from "@/lib/recording-modes";
 
 export const activityHistoryFloor = "2026-01-01";
 
@@ -61,5 +62,5 @@ export function activityPlanningError(
     return "Completa título, descripción y fechas válidas.";
   if (candidate.placeName.length > 300)
     return "El lugar supera el tamaño permitido.";
-  return null;
+  return recordingModesError(candidate.type!, candidate.recordingModes);
 }

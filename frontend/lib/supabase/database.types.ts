@@ -1,4 +1,5 @@
 import type { AunorViews } from "@/lib/aunor";
+import type { RecordingMode } from "@/lib/recording-modes";
 
 export type Json =
   | string
@@ -63,6 +64,7 @@ export type Database = {
           origin: Database["public"]["Enums"]["activity_origin"];
           created_by: string;
           created_by_role: Database["public"]["Enums"]["app_role"];
+          recording_modes: RecordingMode[];
           responsible_id: string;
           responsible_name: string;
           type: Database["public"]["Enums"]["activity_type"];
@@ -150,7 +152,10 @@ export type Database = {
         Relationships: [];
       };
     };
-    Views: AunorViews;
+    Views: AunorViews & { team_historical_activities: {
+      Row: Pick<Database["public"]["Tables"]["activities"]["Row"], "id" | "version" | "type" | "title" | "responsible_name" | "status" | "origin" | "description" | "place" | "material_link" | "operator_opinion" | "recording_modes"> & { spans: Json; first_date: string; last_date: string };
+      Relationships: [];
+    } };
     Functions: {
       access_directory_v1: {
         Args: Record<string, never>;
@@ -166,6 +171,22 @@ export type Database = {
         Returns: undefined;
       };
       plan_activity_v2: Database["public"]["Functions"]["plan_activity_v1"];
+      plan_activity_v3: {
+        Args: Database["public"]["Functions"]["plan_activity_v1"]["Args"] & { p_recording_modes: RecordingMode[] };
+        Returns: Database["public"]["Functions"]["plan_activity_v1"]["Returns"];
+      };
+      create_own_activity_v3: {
+        Args: Database["public"]["Functions"]["create_own_activity_v1"]["Args"] & { p_recording_modes: RecordingMode[] };
+        Returns: Database["public"]["Functions"]["create_own_activity_v1"]["Returns"];
+      };
+      replan_activity_v3: {
+        Args: Database["public"]["Functions"]["replan_activity_v1"]["Args"] & { p_recording_modes: RecordingMode[] };
+        Returns: Database["public"]["Functions"]["replan_activity_v1"]["Returns"];
+      };
+      replan_own_activity_v3: {
+        Args: Omit<Database["public"]["Functions"]["replan_activity_v3"]["Args"], "p_responsible_id">;
+        Returns: Database["public"]["Functions"]["replan_activity_v1"]["Returns"];
+      };
       create_own_activity_v2: Database["public"]["Functions"]["create_own_activity_v1"];
       replan_activity_v2: Database["public"]["Functions"]["replan_activity_v1"];
       create_burson_request_v2: Database["public"]["Functions"]["create_burson_request_v1"];

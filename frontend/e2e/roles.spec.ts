@@ -37,6 +37,7 @@ async function switchUser(page: Page, user: keyof typeof credentials) {
 }
 
 async function fillPlanning(page: Page, title: string) {
+  await page.getByRole("checkbox", { name: "Video", exact: true }).check();
   await page.getByLabel("Actividad o proyecto").fill(title);
   await page.getByLabel("Lugar o referencia").fill("Lima");
   await page

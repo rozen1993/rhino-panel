@@ -5,6 +5,7 @@ import { IntentLink as Link } from "@/components/intent-link";
 import { Card } from "@/components/card";
 import { StatusPill } from "@/components/status-pill";
 import { SummaryTile } from "@/components/summary-tile";
+import { RecordingModeTags } from "@/components/recording-mode-tags";
 import { SystemIcon, type IconName } from "@/components/system-icon";
 import { MonthStrip, months } from "@/components/month-strip";
 import { aunorCode, type AunorWorkspace } from "@/lib/aunor";
@@ -94,6 +95,7 @@ export function AunorDashboard({w, today, initialNow}: {w:AunorWorkspace; today:
         <div className="flex flex-wrap items-center justify-between gap-2"><p className="data-label text-cyan-ink">{chosen.type}</p><StatusPill status={chosen.status}/></div>
         <h2 ref={preview} tabIndex={-1} className="section-title mt-4 scroll-mt-4 break-words">{chosen.title}</h2>
         <p className="mt-4 line-clamp-4 whitespace-pre-line text-sm leading-6 text-ink-muted">{chosen.summary}</p>
+        <RecordingModeTags modes={chosen.recording_modes} />
         <div className="my-4 space-y-3 border-y border-line/40 py-4">{journeys(chosen.id).map(j=><p key={j.position} className="text-sm"><strong className="block">{day(j.start_date)}{j.start_date!==j.end_date ? ` – ${day(j.end_date)}` : ""}</strong><span className="text-ink-muted">{j.place || chosen.place || "Lugar por indicar"}</span></p>)}</div>
         <Link href={href(chosen.id)} className="flex min-h-11 items-center justify-center rounded-md bg-lime px-4 text-sm font-bold text-night">Ver actividad completa →</Link>
         {chosen.status==="Entregada" && safeMaterialUrl(chosen.material_link ?? "") && <a className="mt-3 flex min-h-11 items-center justify-center text-sm font-semibold text-cyan-ink" href={safeMaterialUrl(chosen.material_link!)!} target="_blank" rel="noopener noreferrer">Abrir material ↗</a>}
