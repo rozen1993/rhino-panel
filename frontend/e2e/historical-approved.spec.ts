@@ -73,6 +73,7 @@ test("varias jornadas y lugares, coincidencias y detalle móvil sin duplicar act
   await login(page);
   await page.goto("/actividades/nueva");
   await page.getByLabel("Actividad o proyecto").fill("Prueba aislada multisede");
+  await page.getByRole("checkbox", { name: "Video", exact: true }).check();
   await page.getByLabel("Descripción",{exact:true}).fill("Fixture local, no es un trabajo real.");
   await page.getByLabel("Lugar o referencia").fill("General Lima");
   await page.getByLabel("Inicio",{exact:true}).fill("2026-01-04");
