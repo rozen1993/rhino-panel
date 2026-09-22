@@ -1,0 +1,77 @@
+{
+  "kind": "local-design-preview",
+  "noNetwork": true,
+  "applicationChanged": false,
+  "results": [
+    {
+      "filename": "01-modalidades-escritorio.png",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "height": 1172,
+      "images": true
+    },
+    {
+      "filename": "02-acciones-escritorio.png",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "height": 1080,
+      "images": true
+    },
+    {
+      "filename": "03-confirmacion-papelera-escritorio.png",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "height": 1080,
+      "images": true
+    },
+    {
+      "filename": "04-historico-a-escritorio.png",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "height": 1080,
+      "images": true
+    },
+    {
+      "filename": "05-historico-b-escritorio.png",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "height": 1080,
+      "images": true
+    },
+    {
+      "filename": "01-modalidades-movil.png",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 1517,
+      "images": true
+    },
+    {
+      "filename": "02-acciones-movil.png",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 1695,
+      "images": true
+    },
+    {
+      "filename": "03-confirmacion-papelera-movil.png",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 844,
+      "images": true
+    },
+    {
+      "filename": "04-historico-a-movil.png",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 1250,
+      "images": true
+    },
+    {
+      "filename": "05-historico-b-movil.png",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 1120,
+      "images": true
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "kind": "local-design-preview",
+  "noNetwork": true,
+  "applicationChanged": false,
+  "results": [
+    {
+      "filename": "02-acciones-v2-escritorio.png",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "height": 1080,
+      "images": true
+    },
+    {
+      "filename": "06-historico-c-escritorio.png",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "height": 1080,
+      "images": true
+    },
+    {
+      "filename": "07-historico-d-escritorio.png",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "height": 1080,
+      "images": true
+    },
+    {
+      "filename": "02-acciones-v2-movil.png",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 1693,
+      "images": true
+    },
+    {
+      "filename": "06-historico-c-movil.png",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 1321,
+      "images": true
+    },
+    {
+      "filename": "07-historico-d-movil.png",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 1200,
+      "images": true
+    }
+  ]
+}
