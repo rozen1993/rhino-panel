@@ -76,3 +76,31 @@ La opinión y el código técnico se consultan en secciones desplegables; los
 títulos coincidentes mantienen una referencia visible para distinguirlos.
 Volver restaura la lista, el foco y su desplazamiento. No se elimina ni modifica
 ningún dato para simplificar su presentación.
+
+## Ronda local aprobada — 22 de septiembre de 2026
+
+Referencia aprobada: `docs/propuestas-operario-historico-2026-09-22/`.
+Histórico adopta la propuesta D, corte panorámico: dos franjas fotográficas
+Grabación / Edición con texto sobre azul noche y acento cian / naranja. Se
+retiran «VS» y «Ver todo el Histórico»; no se cambian los calendarios ni sus
+permisos. Las fotografías siguen siendo ilustrativas. No se incorporan entradas
+para Creatividad o Locución ni se borran sus registros existentes.
+
+Las modalidades son casillas nativas dentro de opciones con iconos del sistema,
+selección cian suave y foco visible. No se preseleccionan modalidades ni cambia
+la obligación de elegir al menos una para planificar Grabación.
+
+En la ficha, las modalidades describen la actividad desde su cabecera. Entrega
+e inicio conservan su jerarquía. La gestión propia aparece debajo: «Editar
+actividad» y «Eliminar actividad», ambos centrados, misma altura y peso,
+icono y etiqueta sin flecha adicional; edición cian y baja rojo oscuro.
+En móvil, cabecera de actividad, acciones y contenido mantienen ese orden.
+
+Eliminar significa enviar a Papelera con motivo y confirmación recuperable.
+El permiso se exige en la interfaz, Server Action y RPC: Operario activo con
+creación propia vigente, autor original, responsable actual y estado Programada.
+No concede gestión de Papelera, restauración, reinicio ni eliminación definitiva.
+El diálogo inicia el foco en Cancelar y lo devuelve al cerrar.
+
+Marca vigente: **DA VINCI**. Esta ronda no autoriza publicación, cambios de
+contraseña reales ni uso de registros reales como pruebas.

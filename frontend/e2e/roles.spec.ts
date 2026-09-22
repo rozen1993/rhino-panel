@@ -382,7 +382,8 @@ test("el Histórico responde en cuatro viewports", async ({ page }, testInfo) =>
   ]) {
     await page.setViewportSize(viewport);
     await page.goto("/historico");
-    await page.getByRole("link", { name: /Ver todo el Histórico/ }).click();
+    await expect(page.getByRole("link", { name: /Ver todo el Histórico/ })).toHaveCount(0);
+    await page.getByRole("link", { name: "Ver histórico de grabación", exact: true }).click();
     await expect(
       page.getByRole("heading", { name: "Histórico 2026" }),
     ).toBeVisible();

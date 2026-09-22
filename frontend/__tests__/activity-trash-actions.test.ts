@@ -19,6 +19,7 @@ vi.mock("@/lib/supabase/server", () => ({
 import {
   restoreSupabaseActivityAction,
   softDeleteSupabaseActivityAction,
+  softDeleteOwnSupabaseActivityAction,
 } from "@/app/papelera/actions";
 
 const activityId = "00000000-0000-4000-8000-000000000510";
@@ -171,5 +172,36 @@ describe("autoridad de las Server Actions de Papelera", () => {
       error: "La operación coincidió con otro cambio. Inténtalo nuevamente.",
     });
     expect(mocks.revalidate).not.toHaveBeenCalled();
+  });
+
+  it("el flujo propio exige Operario, cuenta, permiso vigente y clave lista", async () => {
+    for (const role of [null, roles.admin, roles.aunor, roles.burson, roles.operario,
+      { ...roles.operario, canCreateOwnActivities: true },
+      { ...roles.operario, accountId: operatorId, canCreateOwnActivities: true, mustChangePassword: true }]) {
+      mocks.currentRole.mockResolvedValue(role);
+      expect((await softDeleteOwnSupabaseActivityAction(activityId, 1, "Error de planificación")).ok).toBe(false);
+    }
+    expect(mocks.rpc).not.toHaveBeenCalled();
+  });
+  it("usa exclusivamente la RPC propia autenticada y refresca Aunor", async () => {
+    mocks.currentRole.mockResolvedValue({ ...roles.operario, accountId: operatorId, canCreateOwnActivities: true });
+    expect((await softDeleteOwnSupabaseActivityAction(activityId, 3, "  Error de planificación  ")).ok).toBe(true);
+    expect(mocks.rpc).toHaveBeenCalledExactlyOnceWith("soft_delete_own_activity_v1", {
+      p_activity_id: activityId, p_expected_version: 3, p_reason: "Error de planificación",
+    });
+    expect(mocks.revalidate).toHaveBeenCalledWith("/aunor", "layout");
+  });
+  it.each(["SR001", "SR002", "PGRST202", "42883"])("no reintenta por otro canal si el servidor rechaza: %s", async code => {
+    mocks.currentRole.mockResolvedValue({ ...roles.operario, accountId: operatorId, canCreateOwnActivities: true });
+    mocks.rpc.mockResolvedValue({ data: null, error: { code } });
+    expect((await softDeleteOwnSupabaseActivityAction(activityId, 3, "Error de planificación")).ok).toBe(false);
+    expect(mocks.rpc).toHaveBeenCalledTimes(1);
+    expect(mocks.revalidate).not.toHaveBeenCalled();
+  });
+  it("rechaza UUID, motivo y versión inválidos también en la baja propia", async () => {
+    mocks.currentRole.mockResolvedValue({ ...roles.operario, accountId: operatorId, canCreateOwnActivities: true });
+    for (const [id, version, reason] of [["invalido", 1, "Error"], [activityId, 0, "Error"], [activityId, 1, " "], [activityId, 1, "x".repeat(1001)]] as const)
+      expect((await softDeleteOwnSupabaseActivityAction(id, version, reason)).ok).toBe(false);
+    expect(mocks.rpc).not.toHaveBeenCalled();
   });
 });

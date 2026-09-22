@@ -281,6 +281,7 @@ export type Database = {
         };
         Returns: { activity_id: string; activity_version: number; deleted_at: string }[];
       };
+      soft_delete_own_activity_v1: Database["public"]["Functions"]["soft_delete_activity_v1"];
       reset_activity_v1: {
         Args: {
           p_activity_id: string;

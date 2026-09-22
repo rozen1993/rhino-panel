@@ -1,0 +1,31 @@
+.layout { display: grid; align-items: start; gap: 16px; grid-template-columns: minmax(0, 1fr) 20rem; }
+.main { min-width: 0; }
+.body { background: var(--panel); }
+.actions { position: sticky; top: 20px; min-width: 0; }
+.management { border-top: 1px solid #d8e2e8; margin-top: 18px; padding-top: 16px; }
+.managementTitle { display: flex; align-items: center; gap: 8px; font-size: .8125rem; font-weight: 700; }
+.managementHint { margin: 5px 0 12px; color: var(--ink-muted); font-size: .6875rem; }
+.manageButton { display: flex; width: 100%; min-height: 44px; justify-content: center; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #86c9d2; border-radius: 6px; background: var(--panel); font-size: .8125rem; font-weight: 650; color: var(--cyan-ink); cursor: pointer; }
+.manageButton:hover { background: #edf9fb; border-color: var(--cyan-ink); }
+.manageButton:focus-visible { outline: 3px solid var(--cyan-ink); outline-offset: 3px; }
+.deleteButton { color: #b32e40; border-color: #ddb8c0; margin-top: 8px; }
+.deleteButton:hover { background: #fff5f6; border-color: #b32e40; }
+.manageButton:disabled { cursor: wait; opacity: .55; }
+.recoveryNote { margin-top: 10px; font-size: .6875rem; line-height: 1.7; color: var(--ink-muted); }
+.dialog { position: fixed; inset: 0; margin: auto; max-height: 90dvh; width: calc(100% - 32px); max-width: 500px; overflow-y: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); padding: 24px; color: var(--ink); box-shadow: var(--shadow-3); }
+.dialog::backdrop { background: rgb(2 19 38 / 72%); }
+.dialogHeading { display: flex; align-items: center; gap: 14px; }
+.trashSymbol { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border-radius: 8px; background: #fff0f2; color: #b32e40; }
+.dialogActivity { border: 1px solid #d8e2e8; border-radius: 7px; background: var(--panel-secondary); padding: 14px; margin: 18px 0; }
+.dialogButtons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 22px; }
+.cancelButton, .confirmButton { min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; font-size: .8125rem; font-weight: 650; cursor: pointer; }
+.confirmButton { background: #b32e40; border-color: #b32e40; color: white; }
+.confirmButton:disabled, .cancelButton:disabled { opacity: .5; cursor: default; }
+@media (max-width: 1279px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .main { display: contents; }
+  .hero { order: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; }
+  .actions { position: static; order: 1; }
+  .body { order: 2; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow-1); }
+}
+@media (max-width: 480px) { .dialog { padding: 20px; } }

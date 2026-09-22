@@ -10,7 +10,7 @@ import {
 } from "@/lib/activities";
 import type { ActivityDraftFields } from "@/lib/activity-draft";
 import { validSpans } from "@/lib/activity-validation";
-import { canReplanActivity } from "@/lib/activity-permissions";
+import { canDeleteOwnActivity, canReplanActivity } from "@/lib/activity-permissions";
 export { canReplanActivity } from "@/lib/activity-permissions";
 import { normalizeRecordingModes, recordingModesError } from "@/lib/recording-modes";
 import { readAccounts } from "@/lib/account-store";
@@ -724,6 +724,25 @@ export function softDeleteActivity(
         normalizedReason,
       ),
     };
+  }, true, true);
+}
+
+export function softDeleteOwnActivity(
+  storage: Pick<Storage, "getItem" | "setItem">,
+  id: string, reason: string, role: Role, expectedVersion: number,
+): Result {
+  const account = readAccounts(storage).find(candidate => candidate.id === role.accountId);
+  const currentRole = { ...role, mustChangePassword: role.mustChangePassword || Boolean(account?.mustChangePassword), canCreateOwnActivities: Boolean(account?.active &&
+    account.roleId === "operario" && account.canCreateOwnActivities) };
+  return update(storage, id, item => {
+    if (!canDeleteOwnActivity(item, currentRole)) return "Solo puedes eliminar actividades propias, aún asignadas a ti y en Programada, con permiso de creación vigente.";
+    if (item.version !== expectedVersion) return "La actividad cambió; recarga antes de enviarla a Papelera.";
+    const normalizedReason = typeof reason === "string" ? reason.trim() : "";
+    if (normalizedReason.length < 2 || normalizedReason.length > 1000) return "Escribe un motivo de baja de 2 a 1000 caracteres.";
+    const actor = actorFromRole(role);
+    return { ...item, deletedAt: new Date().toISOString(), deletedBy: actor,
+      deletionReason: normalizedReason,
+      audit: audit(item, "Actividad propia enviada a Papelera", actor, normalizedReason) };
   }, true, true);
 }
 

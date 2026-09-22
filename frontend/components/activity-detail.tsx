@@ -2,6 +2,9 @@
 import { AdminAunorPanel } from "@/components/admin-aunor-panel";
 import { ActivityJourneys } from "@/components/activity-journeys";
 import { RecordingModeTags } from "@/components/recording-mode-tags";
+import { OwnActivityTrashControl } from "@/components/own-activity-trash-control";
+import { canDeleteOwnActivity } from "@/lib/activity-permissions";
+import styles from "./activity-detail.module.css";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -13,7 +16,7 @@ import {
   editSupabaseActivityMessageAction,
   postSupabaseActivityMessageAction,
 } from "@/app/actividades/actions";
-import { softDeleteSupabaseActivityAction } from "@/app/papelera/actions";
+import { softDeleteOwnSupabaseActivityAction, softDeleteSupabaseActivityAction } from "@/app/papelera/actions";
 import { formatActivityDates } from "@/components/activity-card";
 import { Button } from "@/components/button";
 import { Card } from "@/components/card";
@@ -25,11 +28,11 @@ import {
   advanceActivity,
   resetActivity,
   canEditActivity,
-  canReplanActivity,
   canViewActivity,
   deleteThreadMessage,
   editThreadMessage,
   softDeleteActivity,
+  softDeleteOwnActivity,
   useSimulatedActivities,
   type SimulatedActivity,
   type ThreadMessage,
@@ -84,6 +87,7 @@ export function ActivityDetail({
     role.id === "operario" && item.responsibleAccountId === role.accountId;
   const canEdit = canEditActivity(item, role);
   const canDelete = role.id === "admin";
+  const canManageOwn = canDeleteOwnActivity(item, role);
   const canThread = role.id === "admin" || responsible;
   const url = safeMaterialUrl(item.materialLink);
   const referenceUrl = safeReferenceUrl(item.referenceLink);
@@ -217,9 +221,9 @@ export function ActivityDetail({
         </p>
       )}
 
-      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_20rem]">
-        <Card className="overflow-hidden shadow-[var(--shadow-2)]">
-          <div className="technical-surface px-5 py-5 text-white md:px-6 md:py-6">
+      <div className={styles.layout}>
+        <Card className={`${styles.main} overflow-hidden shadow-[var(--shadow-2)]`}>
+          <div className={`${styles.hero} technical-surface px-5 py-5 text-white md:px-6 md:py-6`}>
             <div className="relative z-10 flex flex-wrap items-start justify-between gap-4">
               <div className="max-w-2xl">
                 <p className="data-label text-cyan">
@@ -235,11 +239,13 @@ export function ActivityDetail({
                   Ficha única de ejecución, entrega y trazabilidad de la
                   actividad.
                 </p>
+                <RecordingModeTags modes={item.recordingModes} dark />
               </div>
               <StatusPill status={item.status} />
             </div>
           </div>
 
+          <div className={styles.body}>
           <div className="grid border-b border-line sm:grid-cols-3">
             <Datum
               icon="profile"
@@ -281,9 +287,10 @@ export function ActivityDetail({
               </p>
             </section>
           </div>
+          </div>
         </Card>
 
-        <aside className="space-y-3 xl:sticky xl:top-5">
+        <aside className={`${styles.actions} space-y-3`}>
           <Card className="overflow-hidden shadow-[var(--shadow-2)]">
             <div className="h-1 bg-gradient-to-r from-cyan to-lime" />
             <div className="p-4">
@@ -301,9 +308,10 @@ export function ActivityDetail({
                     ↗
                   </a>
                 ) : (
-                  <p className="rounded-md border border-dashed border-cyan/60 bg-cyan/5 p-3 text-center text-xs font-bold text-ink-muted">
-                    El enlace aparecerá al entregar.
-                  </p>
+                  <div className="flex items-center gap-3 rounded-md border border-line/30 bg-panel-secondary p-3 text-xs text-ink-muted">
+                    <SystemIcon name="link" className="size-5 shrink-0 text-cyan-ink" />
+                    <p><strong className="block font-semibold text-ink">Sin material entregado</strong><span className="mt-1 block text-[.6875rem]">El enlace aparecerá al entregar.</span></p>
+                  </div>
                 )}
                 {referenceUrl && (
                   <a
@@ -317,12 +325,8 @@ export function ActivityDetail({
                 )}
               </div>
 
-              <RecordingModeTags modes={item.recordingModes} />
-              {role.id === "operario" && canReplanActivity(item, role) && <Link
-                className="mt-4 flex min-h-11 items-center justify-center rounded-md border border-line px-3 text-sm font-bold text-cyan-ink hover:border-cyan"
-                href={`/actividades/nueva?editar=${item.id}&modo=plan`}>Editar actividad</Link>}
               {canEdit && (
-                <div className="mt-4 grid grid-cols-2 gap-2 border-t border-line pt-4">
+                <div className="mt-4 grid grid-cols-2 gap-2">
                   <Link
                     className="flex min-h-11 items-center justify-center rounded-md border border-line bg-panel text-sm font-extrabold text-ink transition hover:border-cyan"
                     href={`/actividades/nueva?editar=${item.id}`}
@@ -374,6 +378,21 @@ export function ActivityDetail({
                   )}
                 </div>
               )}
+              {canManageOwn && <section className={styles.management} aria-label="Gestionar actividad propia">
+                <h4 className={styles.managementTitle}><SystemIcon name="edit" className="size-4 text-cyan-ink" />Gestionar actividad</h4>
+                <p className={styles.managementHint}>Creada por ti · Programada</p>
+                <Link className={styles.manageButton} href={`/actividades/nueva?editar=${item.id}&modo=plan`}>
+                  <SystemIcon name="edit" className="size-4" />Editar actividad
+                </Link>
+                <OwnActivityTrashControl item={item} disabled={pending} onConfirm={async deletionReason => {
+                  const result = dataSource === "supabase"
+                    ? await softDeleteOwnSupabaseActivityAction(item.id, item.version, deletionReason)
+                    : softDeleteOwnActivity(window.localStorage, item.id, deletionReason, role, item.version);
+                  if (result.ok) { router.push("/actividades"); router.refresh(); }
+                  return result;
+                }} />
+                <p className={styles.recoveryNote}>Se enviará a Papelera. Admin podrá recuperarla.</p>
+              </section>}
             </div>
           </Card>
 

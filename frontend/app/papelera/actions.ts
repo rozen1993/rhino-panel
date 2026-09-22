@@ -48,6 +48,7 @@ function revalidateActivitySurfaces(id: string) {
   revalidatePath("/actividades");
   revalidatePath(`/actividades/${id}`);
   revalidatePath("/historico");
+  revalidatePath("/aunor", "layout");
   revalidatePath("/burson");
   revalidatePath(`/burson/${id}`);
 }
@@ -105,6 +106,33 @@ export async function restoreSupabaseActivityAction(
   });
   if (error || !data?.[0])
     return { ok: false, error: trashError(error ?? {}) };
+  revalidateActivitySurfaces(id);
+  return { ok: true };
+}
+
+export async function softDeleteOwnSupabaseActivityAction(
+  id: string,
+  expectedVersion: number,
+  reason: string,
+): Promise<TrashServerResult> {
+  const role = await currentSupabaseRole();
+  if (role?.id !== "operario" || !role.accountId || role.mustChangePassword || !role.canCreateOwnActivities)
+    return { ok: false, error: "Necesitas un permiso de creación vigente para eliminar tus actividades." };
+  const normalizedReason = typeof reason === "string" ? reason.trim() : "";
+  if (!isUuid(id) || !isPositiveVersion(expectedVersion) || normalizedReason.length < 2 || normalizedReason.length > 1000)
+    return { ok: false, error: "Escribe un motivo de baja de 2 a 1000 caracteres." };
+
+  // The authenticated RPC rechecks author, assignee, state and live privilege
+  // under locks. Never fall back to the Admin function or a direct table write.
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.rpc("soft_delete_own_activity_v1", {
+    p_activity_id: id, p_expected_version: expectedVersion, p_reason: normalizedReason,
+  });
+  if (error || !data?.[0]) {
+    if (error?.code === "SR002") return { ok: false, error: "Ya no puedes eliminar esta actividad. Debe ser propia, seguir asignada a ti y estar Programada, con permiso de creación vigente." };
+    if (error?.code === "PGRST202" || error?.code === "42883") return { ok: false, error: "Falta actualizar el servidor para habilitar esta operación. No se ha eliminado la actividad." };
+    return { ok: false, error: trashError(error ?? {}) };
+  }
   revalidateActivitySurfaces(id);
   return { ok: true };
 }

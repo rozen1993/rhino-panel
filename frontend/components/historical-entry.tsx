@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { SystemIcon } from "@/components/system-icon";
 import styles from "./historical-entry.module.css";
 
 const entries = [
@@ -17,27 +18,26 @@ export function HistoricalEntry({ year, basePath = "/historico" }: { year: numbe
           <p className={styles.subtitle}>Elige el histórico que quieres consultar.</p>
         </div>
       </header>
-      <div className={styles.versus}>
+      <div className={styles.bands}>
         {entries.map((entry, index) => <Link
           key={entry.slug}
           href={{ pathname: basePath, query: { tipo: entry.slug, anio: year } }}
-          className={`${styles.card} ${index === 0 ? styles.recording : styles.editing}`}
+          className={`${styles.card} ${index === 1 ? styles.editing : ""}`}
           aria-label={`Ver histórico de ${entry.category.toLowerCase()}`}
         >
-          <Image src={entry.image} alt="" fill sizes="(max-width: 767px) 100vw, 55vw" className={styles.photo} />
-          <span className={styles.shade} />
+          <div className={styles.imageFrame}><Image src={entry.image} alt="" fill sizes="(max-width: 700px) 100vw, 65vw" className={styles.photo} /></div>
+          <span className={styles.shade} aria-hidden="true" />
+          <p className={styles.tag}><i aria-hidden="true" />{entry.label}</p>
           <div className={styles.copy}>
-            <p className={styles.tag}><i aria-hidden="true" />{entry.label}</p>
             <h2>{entry.category}</h2>
             <p className={styles.description}>{entry.description}</p>
-            <span className={styles.action}>Ver histórico de {entry.category.toLowerCase()} <span aria-hidden="true">→</span></span>
+            <span className={styles.action}><span className={styles.arrow}><SystemIcon name="arrow-right" className="size-4" /></span>Ver histórico de {entry.category.toLowerCase()}</span>
           </div>
         </Link>)}
-        <span className={styles.vs} aria-hidden="true">VS</span>
       </div>
       <footer className={styles.footer}>
-        <span>El mismo calendario anual, organizado por categoría.</span>
-        <Link href={{ pathname: basePath, query: { tipo: "todos", anio: year } }}>Ver todo el Histórico →</Link>
+        <SystemIcon name="calendar" className="size-4 shrink-0 text-cyan-ink" />
+        <span>Cada categoría abre su calendario anual de actividades.</span>
       </footer>
     </section>
     <p className={styles.note}>Fotografías ilustrativas; no documentan trabajos reales.</p>

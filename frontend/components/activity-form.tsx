@@ -53,7 +53,8 @@ import type { DataSource } from "@/lib/data-source";
 import { activityHistoryFloor } from "@/lib/activity-validation";
 import { safeMaterialUrl } from "@/lib/external-link";
 import type { Role } from "@/lib/roles";
-import { recordingModes, recordingModesError } from "@/lib/recording-modes";
+import { recordingModesError } from "@/lib/recording-modes";
+import { RecordingModePicker } from "@/components/recording-mode-picker";
 
 const control =
   "min-h-10 w-full rounded-md border border-line bg-panel px-3 py-2 text-xs text-ink outline-none transition placeholder:text-ink-muted focus:border-cyan focus:ring-2 focus:ring-cyan/15 disabled:cursor-not-allowed disabled:bg-panel-secondary disabled:text-ink-muted";
@@ -484,17 +485,8 @@ export function ActivityForm({
                   ))}
                 </select>
               </label>
-              {fields.type === "Grabación" && <fieldset className="rounded-md border border-line bg-panel-secondary/65 p-3 md:col-span-2">
-                <legend className="px-1 text-xs font-bold">Modalidades de grabación</legend>
-                <p className="mb-3 text-xs text-ink-muted">Selecciona una o varias opciones.</p>
-                <div className="flex flex-wrap gap-3">
-                  {recordingModes.map(mode => <label key={mode} className="flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-line bg-panel px-3 text-sm font-semibold">
-                    <input type="checkbox" className="size-4 accent-cyan" checked={fields.recordingModes?.includes(mode) ?? false}
-                      onChange={event => { const checked = event.target.checked; setFields(current => ({ ...current, recordingModes: checked ? [...(current.recordingModes ?? []), mode] : (current.recordingModes ?? []).filter(value => value !== mode) })); }} />
-                    {mode}
-                  </label>)}
-                </div>
-              </fieldset>}
+              {fields.type === "Grabación" && <RecordingModePicker value={fields.recordingModes ?? []}
+                onChange={modes => setFields(current => ({ ...current, recordingModes: modes }))} />}
               <label className="text-xs font-bold md:col-span-2">
                 Lugar o referencia
                 <input

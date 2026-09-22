@@ -75,13 +75,15 @@ describe("ruta del Histórico", () => {
     expect(mocks.listHistorical).not.toHaveBeenCalled();
     expect(screen.getByRole("link", { name: "Ver histórico de grabación" })).toBeTruthy();
   });
-  it("abre la entrada C sin consultar actividades y mantiene las dos rutas", async () => {
+  it("abre la entrada panorámica sin consultar actividades y mantiene solo las dos rutas", async () => {
     mocks.resolveDataSource.mockReturnValue("supabase");
     await renderPage();
     expect(mocks.listHistorical).not.toHaveBeenCalled();
     expect(screen.getByRole("link", { name: "Ver histórico de grabación" }).getAttribute("href")).toContain("tipo=grabacion");
     expect(screen.getByRole("link", { name: "Ver histórico de edición" }).getAttribute("href")).toContain("tipo=edicion");
-    expect(screen.getByRole("link", { name: /Ver todo el Histórico/ })).toBeTruthy();
+    expect(screen.queryByRole("link", { name: /Ver todo el Histórico/ })).toBeNull();
+    expect(screen.getAllByRole("link")).toHaveLength(2);
+    expect(screen.queryByText("VS")).toBeNull();
   });
   beforeEach(() => {
     vi.clearAllMocks();

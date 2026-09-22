@@ -1,6 +1,6 @@
 # Propuestas visuales — Operario e Histórico
 
-Estado: **propuestas aprobadas para implementación local**. Modalidades y
+Estado: **propuestas implementadas y verificadas solo en local**. Modalidades y
 confirmación aprobadas por Marco; acciones con el centrado de la revisión 2.
 Se adopta Histórico D (corte panorámico), la alternativa recomendada al recibir
 «ya ahora sí está bien, procede a implementarlo». A/B se conservan como referencia
@@ -109,6 +109,9 @@ confirmación móvil está limitada al viewport para no mostrar el fondo fuera
 del diálogo. Git confirma que los únicos archivos nuevos están en esta carpeta;
 no se modificaron archivos de la aplicación ni se efectuaron cambios remotos.
 
-Se implementará D, las modalidades, la confirmación y las acciones centradas en
+Se implementaron D, las modalidades, la confirmación y las acciones centradas en
 la aplicación local. No se harán
 push, despliegues ni migraciones remotas sin la indicación final del propietario.
+
+Implementación completada: ver `../implementacion-operario-historico-2026-09-22.md`
+para alcance, pruebas, capturas reales y pasos pendientes de publicación.

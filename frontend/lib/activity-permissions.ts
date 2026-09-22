@@ -8,3 +8,8 @@ export function canReplanActivity(item: SimulatedActivity, role: Role) {
     item.createdByAccountId === role.accountId && item.responsibleAccountId === role.accountId &&
     item.status === "Programada");
 }
+
+/** Recoverable deletion only; this does not grant access to Admin's trash. */
+export function canDeleteOwnActivity(item: SimulatedActivity, role: Role) {
+  return role.id === "operario" && canReplanActivity(item, role);
+}

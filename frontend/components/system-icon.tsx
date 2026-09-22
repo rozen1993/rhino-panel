@@ -1,9 +1,15 @@
-export type IconName = "activities" | "calendar" | "progress" | "complete" | "add" | "history" | "profile" | "burson" | "accounts" | "import" | "search" | "link" | "location" | "trash" | "messages" | "eye";
+export type IconName = "activities" | "calendar" | "progress" | "complete" | "add" | "history" | "profile" | "burson" | "accounts" | "import" | "search" | "link" | "location" | "trash" | "messages" | "eye" | "edit" | "camera" | "video" | "drone" | "check" | "arrow-right";
 
 export function SystemIcon({ name, className = "size-6" }: { name: IconName; className?: string }) {
   const common = { fill: "none", stroke: "currentColor", strokeLinecap: "round" as const, strokeLinejoin: "round" as const, strokeWidth: 1.8 };
   return (
     <svg aria-hidden="true" className={className} viewBox="0 0 24 24" {...common}>
+      {name === "edit" && <><path d="m14 5 5 5M4 20l5-1L21 7a2 2 0 0 0-5-5L4 14v6Z" /></>}
+      {name === "camera" && <><path d="M8 6l2-3h4l2 3h4v14H4V6h4Z" /><circle cx="12" cy="13" r="4" /></>}
+      {name === "video" && <><rect x="3" y="6" width="12" height="12" rx="2" /><path d="m15 10 6-4v12l-6-4" /></>}
+      {name === "drone" && <><rect x="9" y="9" width="6" height="6" rx="1" /><path d="m9 9-4-4m10 4 4-4M9 15l-4 4m10-4 4 4" /><ellipse cx="5" cy="5" rx="4" ry="2" /><ellipse cx="19" cy="5" rx="4" ry="2" /><ellipse cx="5" cy="19" rx="4" ry="2" /><ellipse cx="19" cy="19" rx="4" ry="2" /></>}
+      {name === "check" && <path d="m5 12 4 4L19 6" />}
+      {name === "arrow-right" && <path d="M4 12h16m-6-6 6 6-6 6" />}
       {name === "eye" && <><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></>}
       {name === "messages" && <><path d="M3 4h18v13H9l-6 4V4Z" /><path d="M7 8h10M7 12h7" /></>}
       {name === "activities" && <><path d="M4 8h16v11H4z" /><path d="m4 8 2-4h14l-2 4M7 4l2 4m3-4 2 4m3-4 2 4" /></>}

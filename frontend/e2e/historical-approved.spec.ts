@@ -25,7 +25,7 @@ test("Admin reinicia en Programada y conserva la ejecución anterior en papelera
   await expect(page.getByRole("heading",{name:"Cobertura audiovisual Norte",exact:true})).toBeVisible();
 });
 for (const width of [390,768,1366,1920]) {
-  test(`entrada C y calendarios aprobados a ${width}px`, async ({page}, info) => {
+  test(`entrada panorámica D y calendarios aprobados a ${width}px`, async ({page}, info) => {
     await page.setViewportSize({width,height:900});
     await login(page);
     await page.goto("/historico");
@@ -33,7 +33,7 @@ for (const width of [390,768,1366,1920]) {
       await expect.poll(()=>img.evaluate((el)=> (el as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
     }
     expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await page.screenshot({path:info.outputPath(`entrada-C-${width}.png`), fullPage:true});
+    await page.screenshot({path:info.outputPath(`entrada-D-${width}.png`), fullPage:true});
     await page.getByRole("link",{name:"Ver histórico de grabación"}).click();
     await expect(page).toHaveURL(/tipo=grabacion/);
     await expect(page.getByRole("heading",{name:/Histórico 2026.*Grabación/})).toBeVisible();
@@ -51,7 +51,7 @@ for (const width of [390,768,1366,1920]) {
     expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   });
 }
-test("entrada C usable con texto ampliado y teclado en pantalla estrecha", async ({page},info)=>{
+test("entrada panorámica D usable con texto ampliado y teclado en pantalla estrecha", async ({page},info)=>{
   await page.setViewportSize({width:320,height:900});
   await login(page);
   await page.goto("/historico");
@@ -67,7 +67,7 @@ test("entrada C usable con texto ampliado y teclado en pantalla estrecha", async
     expect(actionBox!.x).toBeGreaterThanOrEqual(cardBox!.x);
     expect(actionBox!.x+actionBox!.width).toBeLessThanOrEqual(cardBox!.x+cardBox!.width);
   }
-  await page.screenshot({path:info.outputPath("entrada-C-texto-ampliado.png"),fullPage:true});
+  await page.screenshot({path:info.outputPath("entrada-D-texto-ampliado.png"),fullPage:true});
 });
 test("varias jornadas y lugares, coincidencias y detalle móvil sin duplicar actividades", async ({page},info)=>{
   await login(page);
