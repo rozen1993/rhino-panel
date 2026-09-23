@@ -2,7 +2,8 @@
 
 Rama: `feat/cambios-locales-2026-09-22`.
 Respaldos previos: `61f7297` (código) y `a09fb6e` (propuestas aprobadas).
-No hay push, despliegue, migración remota ni cambio de contraseña de Admin.
+Implementación local cerrada el 22/09. Publicación autorizada y verificada el
+23/09/2026: [registro de despliegue](despliegue-operario-historico-2026-09-23.md).
 
 ## Qué cambia
 
@@ -74,17 +75,16 @@ Capturas de la aplicación local (datos ficticios, no maquetas):
 Las capturas extensas de móvil y el resto de evidencias de ejecución permanecen
 en `frontend/.verificacion/playwright-existing-results/` (ignoradas por Git).
 
-## Pendiente para la publicación final (no ejecutar aún)
+## Publicación final — completada el 23/09/2026
 
-1. Autorización de Marco para sincronizar/publicar esta ronda.
-2. Respaldo privado verificado de la base remota antes de cualquier migración.
-3. Aplicar `202609220001_operator_own_activity_trash.sql` al destino autorizado
-   y verificar la RPC antes de publicar el frontend. Sin ella, la acción devuelve
-   un aviso y no usa un canal alternativo para escribir.
-4. Cambiar exclusivamente la contraseña real de Admin según lo acordado, fuera
-   de Git y de estos documentos. Mantener la separación de las credenciales.
-5. Verificar despliegue y permisos reales mediante comprobaciones no destructivas;
-   no eliminar trabajos reales como prueba.
+1. Marco autorizó sincronizar/publicar esta ronda.
+2. Respaldo privado renovado y restaurado en una base UUID desechable antes de migrar.
+3. Aplicada exclusivamente `202609220001_operator_own_activity_trash.sql`;
+   RPC y permisos comprobados antes de publicar. Sin migraciones pendientes.
+4. Cambiada exclusivamente la contraseña de Admin según lo acordado, fuera de
+   Git y de estos documentos. Inicio de sesión con la nueva clave confirmado.
+5. Commit `115c7a1` publicado en GitHub y Vercel; CI aprobado. Acceso e Histórico
+   comprobados con Admin, Operario y Aunor, sin mutar trabajos reales.
 
 Un commit respalda el código y las propuestas; no es un respaldo de la base de
 datos. Para deshacer esta ronda en local, revertir únicamente sus commits y
