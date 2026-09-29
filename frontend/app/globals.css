@@ -69,6 +69,17 @@ select,
 textarea {
   font: inherit;
 }
+/* Cursor de acción solo en controles interactivos habilitados. */
+:is(button, select, summary, a[href], [role="button"], [role="tab"], input[type="button"], input[type="submit"], input[type="reset"], input[type="checkbox"], input[type="radio"]):not(:disabled):not([aria-disabled="true"]),
+label:has(input:is([type="checkbox"], [type="radio"]):enabled:not([aria-disabled="true"])) {
+  cursor: pointer;
+}
+:is(button, input, select, textarea):disabled,
+:is(button, select, summary, a[href], [role="button"], [role="tab"], input)[aria-disabled="true"],
+label:has(input:is([type="checkbox"], [type="radio"]):disabled),
+label:has(input:is([type="checkbox"], [type="radio"])[aria-disabled="true"]) {
+  cursor: not-allowed;
+}
 a {
   color: inherit;
   text-decoration: none;
