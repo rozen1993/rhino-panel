@@ -55,7 +55,7 @@ import { safeMaterialUrl } from "@/lib/external-link";
 import type { Role } from "@/lib/roles";
 import { recordingModesError } from "@/lib/recording-modes";
 import { RecordingModePicker } from "@/components/recording-mode-picker";
-import { ClassificationBadge } from "@/components/classification-badge";
+import { ClassificationPicker } from "@/components/classification-picker";
 
 const control =
   "min-h-10 w-full rounded-md border border-line bg-panel px-3 py-2 text-xs text-ink outline-none transition placeholder:text-ink-muted focus:border-cyan focus:ring-2 focus:ring-cyan/15 disabled:cursor-not-allowed disabled:bg-panel-secondary disabled:text-ink-muted";
@@ -490,16 +490,8 @@ export function ActivityForm({
               </label>
               {fields.type === "Grabación" && <RecordingModePicker value={fields.recordingModes ?? []}
                 onChange={modes => setFields(current => ({ ...current, recordingModes: modes }))} />}
-              {role.id === "admin" && <fieldset className="rounded-md border border-line p-3 md:col-span-2">
-                <legend className="px-1 text-xs font-bold">Clasificación del trabajo</legend>
-                <div className="flex flex-wrap gap-4">{([null, "standard", "special"] as const).map(value =>
-                  <label key={value ?? "unknown"} className="flex min-h-10 cursor-pointer items-center gap-2">
-                    <input type="radio" name="classification" checked={(fields.classification ?? null) === value}
-                      onChange={() => setFields(current => ({...current, classification:value}))} />
-                    <ClassificationBadge value={value}/>
-                  </label>)}</div>
-                <p className="mt-2 text-xs text-ink-muted">El marcaje no cambia el estado ni duplica el conteo contractual.</p>
-              </fieldset>}
+              {role.id === "admin" && <ClassificationPicker value={fields.classification ?? null}
+                onChange={classification => setFields(current => ({...current, classification}))} />}
               {fields.type !== "Edición" && <>
               <label className="text-xs font-bold md:col-span-2">
                 Lugar o referencia

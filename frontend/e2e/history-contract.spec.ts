@@ -1,5 +1,6 @@
 import {expect,test,type Page} from '@playwright/test';
 import {resolve} from 'node:path';
+const captureDirectory=process.env.SISTEMA_R_CAPTURE_DIR ?? '../docs/verificacion-historico-contrato-2026-09-28';
 async function login(page:Page,user:'admin'|'ana'|'aunor'){
  await page.goto('/acceso');
  const name={admin:'Marco Admin',ana:'Ana Torres',aunor:'Aunor'}[user];
@@ -16,12 +17,19 @@ for(const width of [1440,390]) test(`edición, marcaje y entrega histórica sin 
  await page.getByLabel('Tipo de servicio').selectOption('Edición');
  await page.getByLabel('Actividad o proyecto').fill(`Edición sintética ${width}`);
  await page.getByLabel('Fecha de entrega del proyecto').fill('2026-04-12');
- await page.getByRole('radio',{name:/Especial/}).check();
+ const standard=page.getByRole('radio',{name:'Estándar',exact:true});
+ const special=page.getByRole('radio',{name:'Especial',exact:true});
+ await standard.check();
+ await standard.focus();
+ await page.keyboard.press('ArrowRight');
+ await expect(special).toBeChecked();
+ await expect(standard).not.toBeChecked();
+ await expect(special).toBeFocused();
  await expect(page.getByLabel('Descripción',{exact:true})).toHaveCount(0);
  await expect(page.getByLabel('Lugar o referencia')).toHaveCount(0);
  await expect(page.getByText('Jornadas de la actividad',{exact:true})).toHaveCount(0);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
- await page.screenshot({path:resolve(`../docs/verificacion-historico-contrato-2026-09-28/edicion-${width}.png`),fullPage:true});
+ await page.screenshot({path:resolve(captureDirectory,`edicion-${width}.png`),fullPage:true});
  await page.getByRole('button',{name:'Planificar y asignar',exact:true}).click();
  await page.getByRole('link',{name:'Ver actividad',exact:true}).click();
  await expect(page.getByRole('heading',{name:`Edición sintética ${width}`,exact:true})).toBeVisible();
@@ -37,14 +45,14 @@ for(const width of [1440,390]) test(`edición, marcaje y entrega histórica sin 
  await page.getByRole('button',{name:'Confirmar entrega histórica',exact:true}).click();
  await expect(page.getByText('Entrega histórica regularizada, sin inventar la fecha real de entrega.',{exact:true})).toBeVisible();
  await expect(page.getByText(/^●\s*Entregada$/).first()).toBeVisible();
- await page.screenshot({path:resolve(`../docs/verificacion-historico-contrato-2026-09-28/regularizacion-${width}.png`),fullPage:true});
+ await page.screenshot({path:resolve(captureDirectory,`regularizacion-${width}.png`),fullPage:true});
  await page.goto('/historico?anio=2026&tipo=edicion');
  await page.getByRole('combobox',{name:'Clasificación',exact:true}).selectOption('special');
  await page.getByRole('button',{name:new RegExp(`12 de abril:.*Edición sintética ${width}`)}).click();
  const detail=width===390?page.getByRole('dialog'):page.locator('aside[aria-labelledby]');
- await expect(detail.getByText(/^◆\s*Especial$/)).toBeVisible();
+ await expect(detail.getByText('Especial',{exact:true})).toBeVisible();
  await expect(detail.getByText(/fecha real de entrega desconocida/i)).toBeVisible();
- await page.screenshot({path:resolve(`../docs/verificacion-historico-contrato-2026-09-28/historico-${width}.png`),fullPage:true});
+ await page.screenshot({path:resolve(captureDirectory,`historico-${width}.png`),fullPage:true});
 });
 test('contrato: configuración explícita, asignación y consulta cliente sin acciones',async({page})=>{
  await login(page,'admin');await page.goto('/actividades/cobertura-norte');
@@ -67,6 +75,6 @@ test('contrato: configuración explícita, asignación y consulta cliente sin ac
  for(const width of [1440,390]){
    await page.setViewportSize({width,height:1000});
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
-   await page.screenshot({path:resolve(`../docs/verificacion-historico-contrato-2026-09-28/contrato-${width}.png`),fullPage:true});
+   await page.screenshot({path:resolve(captureDirectory,`contrato-${width}.png`),fullPage:true});
  }
 });

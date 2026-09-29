@@ -1,4 +1,39 @@
-.badge{display:inline-flex;align-items:center;gap:.35rem;border:1px solid #c6d2de;border-radius:5px;padding:.22rem .5rem;font-size:.6875rem;font-weight:700;white-space:nowrap;line-height:1.4}
-.special{color:#5b2bb5;background:#f3edfc;border-color:#d7c7ef}
-.standard{color:#334a61;background:#f1f5f8}
-.unknown{color:#536779;background:#fff;border-style:dashed}
+.badge {
+  --seal-tone: #3c5269;
+  --seal-tint: #eff3f7;
+  --seal-edge: #bbc9d7;
+  display: inline-flex;
+  align-items: stretch;
+  flex-shrink: 0;
+  min-height: 29px;
+  vertical-align: middle;
+  border: 1px solid var(--seal-edge);
+  border-radius: 6px;
+  background: var(--seal-tint);
+  color: var(--seal-tone);
+  font-size: .6875rem;
+  font-weight: 750;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.special { --seal-tone: #5b2bb5; --seal-tint: #f3edfc; --seal-edge: #cdb9e9; }
+.standard { --seal-tone: #3c5269; }
+.mark {
+  display: grid;
+  place-items: center;
+  width: 29px;
+  flex: none;
+  border-radius: 5px 0 0 5px;
+  background: var(--seal-tone);
+  color: white;
+}
+.mark svg { width: 15px; height: 15px; }
+.label { display: flex; align-items: center; padding: 5px 10px; }
+.unknown { border-style: dashed; background: white; color: #536779; min-height: 25px; border-radius: 4px; }
+.unknown .mark { background: transparent; color: inherit; width: auto; padding-left: 7px; }
+.unknown .label { padding: 3px 7px 3px 5px; }
+@media (forced-colors: active) {
+  .badge { border-color: CanvasText; }
+  .mark { background: CanvasText; color: Canvas; forced-color-adjust: none; }
+  .unknown .mark { background: Canvas; color: CanvasText; }
+}
