@@ -1,0 +1,86 @@
+{
+  "kind": "design-proposal-only",
+  "applicationChanged": false,
+  "remoteWrites": false,
+  "networkBlocked": true,
+  "additionalWidths": [
+    320,
+    768,
+    1024,
+    1920
+  ],
+  "results": [
+    {
+      "filename": "01-historico-escritorio.png",
+      "width": 1600,
+      "scrollWidth": 1600,
+      "height": 1293
+    },
+    {
+      "filename": "02-edicion-escritorio.png",
+      "width": 1600,
+      "scrollWidth": 1600,
+      "height": 1120
+    },
+    {
+      "filename": "03-contrato-mensual-escritorio.png",
+      "width": 1600,
+      "scrollWidth": 1600,
+      "height": 1386
+    },
+    {
+      "filename": "04-contrato-anual-escritorio.png",
+      "width": 1600,
+      "scrollWidth": 1600,
+      "height": 1386
+    },
+    {
+      "filename": "05-regularizacion-escritorio.png",
+      "width": 1600,
+      "scrollWidth": 1600,
+      "height": 1120
+    },
+    {
+      "filename": "08-ficha-escritorio.png",
+      "width": 1600,
+      "scrollWidth": 1600,
+      "height": 1120
+    },
+    {
+      "filename": "01-historico-movil.png",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 1891
+    },
+    {
+      "filename": "02-edicion-movil.png",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 1858
+    },
+    {
+      "filename": "03-contrato-mensual-movil.png",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 1607
+    },
+    {
+      "filename": "04-contrato-anual-movil.png",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 1211
+    },
+    {
+      "filename": "05-regularizacion-movil.png",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 1281
+    },
+    {
+      "filename": "08-ficha-movil.png",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 844
+    }
+  ]
+}
