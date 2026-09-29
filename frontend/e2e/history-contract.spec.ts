@@ -1,0 +1,72 @@
+import {expect,test,type Page} from '@playwright/test';
+import {resolve} from 'node:path';
+async function login(page:Page,user:'admin'|'ana'|'aunor'){
+ await page.goto('/acceso');
+ const name={admin:'Marco Admin',ana:'Ana Torres',aunor:'Aunor'}[user];
+ await page.getByRole('listitem').filter({hasText:name}).getByRole('button',{name:'Ingresar'}).click();
+ await page.locator('#usuario').fill(user);await page.locator('#clave').fill(user+'2026');
+ await page.getByRole('button',{name:'Entrar',exact:true}).click();await page.waitForURL(url=>url.pathname!=='/acceso');
+}
+async function logout(page:Page){await page.getByRole('button',{name:'Cerrar sesión',exact:true}).click();await page.waitForURL('**/acceso');}
+for(const width of [1440,390]) test(`edición, marcaje y entrega histórica sin pérdidas ${width}`,async({page})=>{
+ await page.setViewportSize({width,height:1000});
+ await page.route('**/*',route=>new URL(route.request().url()).hostname==='localhost'?route.continue():route.abort());
+ await login(page,'admin');await page.goto('/actividades/nueva');
+ await page.getByLabel('Operario responsable').selectOption({label:'Ana Torres'});
+ await page.getByLabel('Tipo de servicio').selectOption('Edición');
+ await page.getByLabel('Actividad o proyecto').fill(`Edición sintética ${width}`);
+ await page.getByLabel('Fecha de entrega del proyecto').fill('2026-04-12');
+ await page.getByRole('radio',{name:/Especial/}).check();
+ await expect(page.getByLabel('Descripción',{exact:true})).toHaveCount(0);
+ await expect(page.getByLabel('Lugar o referencia')).toHaveCount(0);
+ await expect(page.getByText('Jornadas de la actividad',{exact:true})).toHaveCount(0);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ await page.screenshot({path:resolve(`../docs/verificacion-historico-contrato-2026-09-28/edicion-${width}.png`),fullPage:true});
+ await page.getByRole('button',{name:'Planificar y asignar',exact:true}).click();
+ await page.getByRole('link',{name:'Ver actividad',exact:true}).click();
+ await expect(page.getByRole('heading',{name:`Edición sintética ${width}`,exact:true})).toBeVisible();
+ const activityUrl=page.url();
+ await logout(page);await login(page,'ana');await page.goto(activityUrl);
+ await page.getByRole('link',{name:'Entregar material',exact:true}).click();
+ await page.getByLabel('Enlace del material').fill('https://example.invalid/material-final');
+ await page.getByRole('button',{name:'Guardar ejecución',exact:true}).click();
+ await expect(page.getByText('Ejecución actualizada.',{exact:true})).toBeVisible();
+ await logout(page);await login(page,'admin');await page.goto(activityUrl);
+ await page.getByText('Regularizar entrega histórica',{exact:true}).click();
+ await page.getByRole('checkbox',{name:/Confirmo que este trabajo/}).check();
+ await page.getByRole('button',{name:'Confirmar entrega histórica',exact:true}).click();
+ await expect(page.getByText('Entrega histórica regularizada, sin inventar la fecha real de entrega.',{exact:true})).toBeVisible();
+ await expect(page.getByText(/^●\s*Entregada$/).first()).toBeVisible();
+ await page.screenshot({path:resolve(`../docs/verificacion-historico-contrato-2026-09-28/regularizacion-${width}.png`),fullPage:true});
+ await page.goto('/historico?anio=2026&tipo=edicion');
+ await page.getByRole('combobox',{name:'Clasificación',exact:true}).selectOption('special');
+ await page.getByRole('button',{name:new RegExp(`12 de abril:.*Edición sintética ${width}`)}).click();
+ const detail=width===390?page.getByRole('dialog'):page.locator('aside[aria-labelledby]');
+ await expect(detail.getByText(/^◆\s*Especial$/)).toBeVisible();
+ await expect(detail.getByText(/fecha real de entrega desconocida/i)).toBeVisible();
+ await page.screenshot({path:resolve(`../docs/verificacion-historico-contrato-2026-09-28/historico-${width}.png`),fullPage:true});
+});
+test('contrato: configuración explícita, asignación y consulta cliente sin acciones',async({page})=>{
+ await login(page,'admin');await page.goto('/actividades/cobertura-norte');
+ await expect(page.getByRole('heading',{name:'Contrato y entregas de Aunor'})).toBeVisible();
+ await page.getByText('Configurar periodos y metas del servicio',{exact:true}).click();
+ const panel=page.getByRole('region',{name:'Periodo contractual'});
+ await panel.getByLabel('Inicio',{exact:true}).fill('2026-01-01');
+ await panel.getByLabel('Fin',{exact:true}).fill('2026-01-31');
+ await panel.getByLabel('Meta (opcional)',{exact:true}).fill('10');
+ await panel.getByRole('button',{name:'Guardar periodo contractual',exact:true}).click();
+ await expect(panel.getByText(/Periodo guardado/)).toBeVisible();
+ await panel.getByLabel('Periodo de esta actividad').selectOption({label:'enero de 2026 · 10 trabajos'});
+ await panel.getByRole('checkbox',{name:/Confirmo que este es/}).check();
+ await panel.getByRole('button',{name:'Confirmar periodo',exact:true}).click();
+ await expect(panel.getByLabel('Periodo de esta actividad')).not.toHaveValue('');
+ await logout(page);await login(page,'aunor');await page.goto('/aunor/contrato');
+ await page.getByLabel('Consultar mes').fill('2026-01');
+ await expect(page.getByText('1/10',{exact:true}).first()).toBeVisible();
+ await expect(page.getByRole('button',{name:'Confirmar periodo',exact:true})).toHaveCount(0);
+ for(const width of [1440,390]){
+   await page.setViewportSize({width,height:1000});
+   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+   await page.screenshot({path:resolve(`../docs/verificacion-historico-contrato-2026-09-28/contrato-${width}.png`),fullPage:true});
+ }
+});

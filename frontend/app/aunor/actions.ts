@@ -9,6 +9,7 @@ import { readDemoAunor, mutateDemoAunor, type DemoAunorSource } from "@/lib/auno
 import type { Json } from "@/lib/supabase/database.types";
 import { scopeAunorWorkspace, validAunorReadScope, type AunorReadScope } from "@/lib/aunor-read-scope";
 import { isUuid } from "@/lib/uuid";
+import { getSupabaseActivity } from "@/lib/supabase/activities";
 
 export async function getAunorWorkspaceAction(input?: AunorReadScope) {
   const role=await currentRole();
@@ -41,7 +42,10 @@ export async function performAunorAction(input:{
     }
     revalidatePath("/aunor","layout");
     revalidatePath("/actividades/"+encodeURIComponent(input.activityId));
-    return {ok:true as const};
+    // A successful publication must not be reported as failed if its follow-up
+    // read loses connectivity. Version checks still protect subsequent writes.
+    const activity=input.command==="publish" && resolveDataSource()==="supabase" ? await getSupabaseActivity(input.activityId).catch(()=>null) : null;
+    return {ok:true as const, activity};
   } catch {
     return {ok:false as const,error:"No se pudo guardar. Revisa la actividad y vuelve a intentarlo."};
   }

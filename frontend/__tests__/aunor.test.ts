@@ -10,6 +10,7 @@ vi.mock("@/lib/session",()=>({currentRole:mocks.role}));
 vi.mock("@/lib/data-source",()=>({resolveDataSource:()=>"supabase"}));
 vi.mock("@/lib/supabase/aunor",()=>({readSupabaseAunor:mocks.read}));
 vi.mock("@/lib/supabase/server",()=>({createSupabaseServerClient:async()=>({rpc:mocks.rpc})}));
+vi.mock("@/lib/supabase/activities",()=>({getSupabaseActivity:vi.fn().mockResolvedValue(null)}));
 import { getAunorWorkspaceAction, performAunorAction } from "@/app/aunor/actions";
 
 const actor=(id:Role["id"]):Role=>({...roles[id],accountId:"account-"+id});

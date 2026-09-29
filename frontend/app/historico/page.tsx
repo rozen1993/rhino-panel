@@ -3,7 +3,7 @@ import { HistoricalEntry } from "@/components/historical-entry";
 import { MobileShell, requireRole } from "@/components/mobile-shell";
 import { resolveDataSource } from "@/lib/data-source";
 import { calendarDateInLima, parseHistoricalCategory, parseHistoricalYear } from "@/lib/historical";
-import { listSupabaseHistoricalActivities, listSupabaseTeamHistoricalActivities } from "@/lib/supabase/historical";
+import { listSupabaseTeamHistoricalActivities } from "@/lib/supabase/historical";
 
 export default async function HistoricalPage({
   searchParams,
@@ -18,7 +18,7 @@ export default async function HistoricalPage({
   const dataSource = resolveDataSource();
   const activities =
     showCalendar && dataSource === "supabase"
-      ? await (role.id === "operario" ? listSupabaseTeamHistoricalActivities(year) : listSupabaseHistoricalActivities(year))
+      ? await listSupabaseTeamHistoricalActivities(year)
       : [];
   return (
     <MobileShell active="Histórico" role={role}>

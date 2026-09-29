@@ -1,6 +1,10 @@
 import type { ActivityType, Role } from "@/lib/roles";
 
 export type AunorActivityRow = {
+  classification?: import("./activity-classification").ActivityClassification | null;
+  delivery_due_on?: string | null;
+  historical_regularized_at?: string | null;
+  contract_period_id?: string | null;
   recording_modes?: import("@/lib/recording-modes").RecordingMode[];
   id: string; type: ActivityType; title: string;
   status: "Programada" | "En proceso" | "Entregada"; place: string;
@@ -33,6 +37,7 @@ export type AunorMessage = {
   corrects_id: string | null; is_own: boolean;
 };
 export type AunorViews = {
+  aunor_contract_periods: {Row:import("./contract-progress").ContractPeriod;Relationships:[]};
   aunor_activities: { Row: AunorActivityRow; Relationships: [] };
   aunor_journeys: { Row: AunorJourney; Relationships: [] };
   aunor_services: { Row: AunorService; Relationships: [] };
@@ -42,6 +47,7 @@ export type AunorViews = {
   aunor_messages: { Row: AunorMessage; Relationships: [] };
 };
 export type AunorWorkspace = {
+  contractPeriods?: import("./contract-progress").ContractPeriod[];
   activities: AunorActivityRow[]; journeys: AunorJourney[];
   services: AunorService[]; deliveries: AunorDelivery[];
   agreements: AunorAgreement[]; replacements: AunorReplacement[]; messages: AunorMessage[];
@@ -60,7 +66,7 @@ export function aunorCode(id: string, type?: ActivityType) {
   return (type === "Edición" ? "ED" : type === "Grabación" ? "GR" : "AC") + "-" + id.replaceAll("-","").slice(-6).toUpperCase();
 }
 export function emptyAunorWorkspace(): AunorWorkspace {
-  return {activities:[],journeys:[],services:[],deliveries:[],agreements:[],replacements:[],messages:[]};
+  return {activities:[],journeys:[],services:[],deliveries:[],agreements:[],replacements:[],messages:[],contractPeriods:[]};
 }
 
 /** All documented replacements remain observable, including corrected originals. */

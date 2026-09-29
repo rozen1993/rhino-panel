@@ -1,5 +1,7 @@
 "use client";
 import { AdminAunorPanel } from "@/components/admin-aunor-panel";
+import { ActivityHistoryControls } from "@/components/activity-history-controls";
+import { ClassificationBadge } from "@/components/classification-badge";
 import { ActivityJourneys } from "@/components/activity-journeys";
 import { RecordingModeTags } from "@/components/recording-mode-tags";
 import { OwnActivityTrashControl } from "@/components/own-activity-trash-control";
@@ -241,12 +243,12 @@ export function ActivityDetail({
                 </p>
                 <RecordingModeTags modes={item.recordingModes} dark />
               </div>
-              <StatusPill status={item.status} />
+              <div className="flex flex-col items-end gap-2"><StatusPill status={item.status} /><ClassificationBadge value={item.classification}/></div>
             </div>
           </div>
 
           <div className={styles.body}>
-          <div className="grid border-b border-line sm:grid-cols-3">
+          <div className={`grid border-b border-line ${item.type==="Edición" && !item.place ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>
             <Datum
               icon="profile"
               label="Responsable"
@@ -254,28 +256,28 @@ export function ActivityDetail({
             />
             <Datum
               icon="calendar"
-              label="Jornadas"
+              label={item.deliveryDueOn ? "Fecha prevista" : "Jornadas"}
               value={formatActivityDates(item)}
             />
-            <Datum
+            {(item.type!=="Edición" || item.place) && <Datum
               icon="location"
               label="Lugar"
               value={item.place || "Sin lugar indicado"}
-            />
+            />}
           </div>
 
           <section className="border-b border-line p-5 md:p-6">
-            <h3 className="data-label mb-3 text-cyan-ink">Fechas y lugares planificados</h3>
+            <h3 className="data-label mb-3 text-cyan-ink">{item.deliveryDueOn ? "Entrega del proyecto" : "Fechas y lugares planificados"}</h3>
             <ActivityJourneys activity={item} />
           </section>
-          <div className="grid gap-0 md:grid-cols-2">
-            <section className="p-5 md:border-r md:border-line md:p-6">
+          <div className={`grid gap-0 ${item.description ? "md:grid-cols-2" : ""}`}>
+            {item.description && <section className="p-5 md:border-r md:border-line md:p-6">
               <p className="data-label text-cyan-ink">Alcance</p>
               <h3 className="section-title mt-1 text-lg">Descripción</h3>
               <p className="mt-4 text-sm leading-6 text-ink-muted">
                 {item.description}
               </p>
-            </section>
+            </section>}
             <section className="border-t border-line p-5 md:border-t-0 md:p-6">
               <p className="data-label text-cyan-ink">Cierre del operario</p>
               <h3 className="section-title mt-1 text-lg">Opinión de entrega</h3>
@@ -396,6 +398,9 @@ export function ActivityDetail({
             </div>
           </Card>
 
+          {item.deliveryDueOn && <Card className="p-4"><p className="data-label text-cyan-ink">Entrega prevista del proyecto</p><p className="mt-2 font-bold">{item.deliveryDueOn}</p></Card>}
+          {item.historicalRegularizedAt && <Card className="p-4 text-xs text-ink-muted">Entrega histórica regularizada. Fecha real de entrega desconocida. Regularización: {moment(item.historicalRegularizedAt)}.</Card>}
+          <ActivityHistoryControls key={`${item.id}-${item.version}`} item={item} role={role} dataSource={dataSource} onResult={reportActivity}/>
           {canDelete && item.status !== "Programada" && (
             <Card className="overflow-hidden">
               <details>
@@ -457,7 +462,7 @@ export function ActivityDetail({
         </aside>
       </div>
 
-      {role.id === "admin" && item.origin !== "burson" && !item.deletedAt && <AdminAunorPanel item={item} role={role} />}
+      {role.id === "admin" && item.origin !== "burson" && !item.deletedAt && <AdminAunorPanel item={item} role={role} onAssigned={activity=>{if(activity)setServerItem(activity);}}/>}
 
       {canThread && item.status === "Entregada" && (
         <Card className="overflow-hidden shadow-[var(--shadow-2)]">

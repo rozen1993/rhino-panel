@@ -1,0 +1,4 @@
+.badge{display:inline-flex;align-items:center;gap:.35rem;border:1px solid #c6d2de;border-radius:5px;padding:.22rem .5rem;font-size:.6875rem;font-weight:700;white-space:nowrap;line-height:1.4}
+.special{color:#5b2bb5;background:#f3edfc;border-color:#d7c7ef}
+.standard{color:#334a61;background:#f1f5f8}
+.unknown{color:#536779;background:#fff;border-style:dashed}

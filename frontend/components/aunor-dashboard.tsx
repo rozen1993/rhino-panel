@@ -6,6 +6,7 @@ import { Card } from "@/components/card";
 import { StatusPill } from "@/components/status-pill";
 import { SummaryTile } from "@/components/summary-tile";
 import { RecordingModeTags } from "@/components/recording-mode-tags";
+import { ClassificationBadge } from "@/components/classification-badge";
 import { SystemIcon, type IconName } from "@/components/system-icon";
 import { MonthStrip, months } from "@/components/month-strip";
 import { aunorCode, type AunorWorkspace } from "@/lib/aunor";
@@ -39,7 +40,10 @@ export function AunorDashboard({w, today, initialNow}: {w:AunorWorkspace; today:
     return () => { clearTimeout(timer); window.removeEventListener("focus",tick); document.removeEventListener("visibilitychange",tick); };
   },[w.activities,now,initialNow]);
   const current = w.activities.filter(a => isCurrentAunorActivity(a,now));
-  const journeys = (id:string) => w.journeys.filter(j => j.activity_id === id);
+  const journeys = (id:string) => {
+    const due=w.activities.find(a=>a.id===id)?.delivery_due_on;
+    return due ? [{activity_id:id,position:1,start_date:due,end_date:due,place:"Entrega prevista"}] : w.journeys.filter(j => j.activity_id === id);
+  };
   const overlaps = (id:string,m:number) => {
     const start = `${year}-${String(m+1).padStart(2,"0")}-01`;
     const end = `${year}-${String(m+1).padStart(2,"0")}-${new Date(Date.UTC(year,m+1,0)).getUTCDate()}`;
@@ -56,7 +60,7 @@ export function AunorDashboard({w, today, initialNow}: {w:AunorWorkspace; today:
     {label:"en proceso",count:period.filter(a=>a.status==="En proceso").length,icon:"progress",color:"bg-[#2563eb] text-white"},
     {label:"entregadas",count:period.filter(a=>a.status==="Entregada").length,icon:"complete",color:"bg-lime text-night"},
   ];
-  const years = [...new Set([Number(today.slice(0,4)),...w.journeys.flatMap(j=>[Number(j.start_date.slice(0,4)),Number(j.end_date.slice(0,4))])])].sort((a,b)=>b-a);
+  const years = [...new Set([Number(today.slice(0,4)),...w.activities.flatMap(a=>journeys(a.id).flatMap(j=>[Number(j.start_date.slice(0,4)),Number(j.end_date.slice(0,4))]))])].sort((a,b)=>b-a);
   return <div className="space-y-4">
     <Card className="flex flex-wrap items-center justify-between gap-3 p-4">
       <div><p className="data-label text-cyan-ink">Seguimiento de actividades · solo lectura</p><p className="mt-1 text-sm text-ink-muted">Las entregadas permanecen aquí durante 3 días; después puedes consultarlas en Histórico.</p></div>
@@ -84,7 +88,7 @@ export function AunorDashboard({w, today, initialNow}: {w:AunorWorkspace; today:
             if(window.matchMedia("(max-width: 1279px)").matches) preview.current?.focus();
           }} className={`grid w-full grid-cols-[1fr_auto] items-center gap-3 px-4 py-4 text-left transition hover:bg-cyan/10 md:grid-cols-[1fr_2fr_1fr_1fr_3rem] ${chosen?.id===a.id ? "bg-cyan/5" : ""}`}>
             <span className="text-xs font-semibold text-cyan-ink">{journeys(a.id).length ? day(journeys(a.id)[0].start_date) : "Fecha por indicar"}</span>
-            <span className="order-first col-span-2 min-w-0 md:order-none md:col-span-1"><strong className="block text-sm">{a.title}</strong><span className="mt-1 block text-xs text-ink-muted">{a.type}</span></span>
+            <span className="order-first col-span-2 min-w-0 md:order-none md:col-span-1"><strong className="block text-sm">{a.title}</strong><span className="mt-1 block text-xs text-ink-muted">{a.type}</span><ClassificationBadge value={a.classification}/></span>
             <span className="hidden truncate text-xs text-ink-muted md:block">{a.place || journeys(a.id)[0]?.place || "Por indicar"}</span>
             <StatusPill status={a.status}/><SystemIcon name="eye" className="hidden size-5 justify-self-center md:block"/>
           </button>
@@ -96,6 +100,7 @@ export function AunorDashboard({w, today, initialNow}: {w:AunorWorkspace; today:
         <h2 ref={preview} tabIndex={-1} className="section-title mt-4 scroll-mt-4 break-words">{chosen.title}</h2>
         <p className="mt-4 line-clamp-4 whitespace-pre-line text-sm leading-6 text-ink-muted">{chosen.summary}</p>
         <RecordingModeTags modes={chosen.recording_modes} />
+        <div className="mt-2"><ClassificationBadge value={chosen.classification}/></div>
         <div className="my-4 space-y-3 border-y border-line/40 py-4">{journeys(chosen.id).map(j=><p key={j.position} className="text-sm"><strong className="block">{day(j.start_date)}{j.start_date!==j.end_date ? ` – ${day(j.end_date)}` : ""}</strong><span className="text-ink-muted">{j.place || chosen.place || "Lugar por indicar"}</span></p>)}</div>
         <Link href={href(chosen.id)} className="flex min-h-11 items-center justify-center rounded-md bg-lime px-4 text-sm font-bold text-night">Ver actividad completa →</Link>
         {chosen.status==="Entregada" && safeMaterialUrl(chosen.material_link ?? "") && <a className="mt-3 flex min-h-11 items-center justify-center text-sm font-semibold text-cyan-ink" href={safeMaterialUrl(chosen.material_link!)!} target="_blank" rel="noopener noreferrer">Abrir material ↗</a>}

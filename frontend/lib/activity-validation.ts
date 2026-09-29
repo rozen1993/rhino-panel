@@ -1,6 +1,7 @@
 import { activityTypes, type DateSpan } from "@/lib/activities";
 import type { ActivityDraftFields } from "@/lib/activity-draft";
 import { recordingModesError } from "@/lib/recording-modes";
+import { validClassification } from "@/lib/activity-classification";
 
 export const activityHistoryFloor = "2026-01-01";
 
@@ -55,9 +56,10 @@ export function activityPlanningError(
     !activityTypes.includes(candidate.type as (typeof activityTypes)[number]) ||
     title.length < 2 ||
     title.length > 180 ||
-    description.length < 2 ||
+    (candidate.type !== "Edición" && description.length < 2) ||
     description.length > 5000 ||
-    !validSpans(candidate.spans)
+    (candidate.type === "Edición" ? (!validCalendarDate(candidate.deliveryDueOn) || candidate.deliveryDueOn < activityHistoryFloor) : !validSpans(candidate.spans)) ||
+    !validClassification(candidate.classification ?? null)
   )
     return "Completa título, descripción y fechas válidas.";
   if (candidate.placeName.length > 300)

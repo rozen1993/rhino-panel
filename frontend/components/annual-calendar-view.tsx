@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { SystemIcon } from "@/components/system-icon";
-import { lastDate } from "@/lib/activities";
+import { lastDate, effectiveSpans } from "@/lib/activities";
 import { useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from "react";
 import {
   activityOverlapsYear,
@@ -15,7 +15,7 @@ import {
 import type { ActivityType } from "@/lib/roles";
 
 
-export type CalendarActivity = Pick<HistoricalActivity, "id"|"type"|"title"|"status"|"spans"|"place">;
+export type CalendarActivity = Pick<HistoricalActivity, "id"|"type"|"title"|"status"|"spans"|"place"|"classification"|"deliveryDueOn">;
 function isOverdue(item: CalendarActivity, today: string) {
   const end = lastDate(item);
   return item.status !== "Entregada" && Boolean(end) && end < today;
@@ -89,7 +89,7 @@ function datesForYear(item: CalendarActivity, year: number) {
   lower.setUTCDate(lower.getUTCDate() - 1);
   const upper = new Date(Date.UTC(year, 11, 31, 12));
   upper.setUTCDate(upper.getUTCDate() + 1);
-  for (const span of item.spans) {
+  for (const span of effectiveSpans(item)) {
     const spanStart = utcDate(span.start);
     const spanEnd = utcDate(span.end);
     if (spanEnd < lower || spanStart > upper) continue;
@@ -204,6 +204,7 @@ function MiniMonth({
                   {matches.length}
                 </span>
               )}
+              {matches.some(entry=>entry.item.classification==="special") && <span aria-hidden="true" className="absolute -bottom-1 right-0 rounded-full bg-white px-0.5 text-[.55rem] text-[#5b2bb5]">◆</span>}
               {overdue && (
                 <span
                   aria-hidden="true"
@@ -222,9 +223,10 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
   category?: HistoricalCategory; activities: CalendarActivity[]; today:string; year:number;
   basePath?:string; publicMode?:boolean; renderDetail:(props:CalendarDetailProps)=>ReactNode;
 }) {
+  const [classificationFilter,setClassificationFilter]=useState("all");
   const visible = useMemo(
-    () => activities.filter((item) => (!category || item.type === category) && activityOverlapsYear(item, year)),
-    [activities, year, category],
+    () => activities.filter((item) => (!category || item.type === category) && activityOverlapsYear(item, year) && (classificationFilter==="all" || (item.classification ?? "unknown")===classificationFilter)),
+    [activities, year, category, classificationFilter],
   );
   const calendarIndex = useMemo(() => {
     const activitiesByDate = new Map<string, IndexedActivity[]>();
@@ -244,7 +246,7 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
         const start = `${year}-${String(month + 1).padStart(2, "0")}-01`;
         const end = `${year}-${String(month + 1).padStart(2, "0")}-${String(days).padStart(2, "0")}`;
         if (
-          item.spans.some(
+          effectiveSpans(item).some(
             (span) => span.start <= end && span.end >= start,
           )
         ) {
@@ -456,7 +458,14 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
             </span>
           ))}
         </div>
-        <p className="mt-2 text-[0.6875rem] text-ink-muted">Color = categoría. Número oscuro = actividades en ese día. Pulsa la fecha para verlas todas.</p>
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-[0.6875rem] text-ink-muted">Color = categoría · ◆ = especial · Número oscuro = actividades del día.</p>
+          <label className="flex items-center gap-2 text-xs font-bold">Clasificación
+            <select className="min-h-11 rounded-md border border-line bg-panel px-3" value={classificationFilter} onChange={e=>{setClassificationFilter(e.target.value);setSelectionKey(value=>value+1);}}>
+              <option value="all">Todas</option><option value="standard">Estándar</option><option value="special">Especial</option><option value="unknown">Sin clasificar</option>
+            </select>
+          </label>
+        </div>
         {!publicMode && selected && !chosenDate && (
           <button type="button" className="mt-4 flex min-h-12 w-full items-center justify-between gap-3 rounded-md border border-cyan/40 bg-panel p-3 text-left text-sm font-bold text-cyan-ink md:hidden"
             onClick={event => select(choices, event.currentTarget, today)}>

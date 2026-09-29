@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { ActivityJourneys } from "@/components/activity-journeys";
 import { RecordingModeTags } from "@/components/recording-mode-tags";
+import { ClassificationBadge } from "@/components/classification-badge";
 import { spanPlace } from "@/lib/activities";
 import { StatusPill } from "@/components/status-pill";
 import { SystemIcon } from "@/components/system-icon";
@@ -90,6 +91,7 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
                   </div>
                   <h3 className="display-title mt-3 break-words text-lg leading-snug text-ink">{choice.title}</h3>
                   <RecordingModeTags modes={choice.recordingModes} />
+                  <div className="mt-2"><ClassificationBadge value={choice.classification}/></div>
                   {sameTitle && <p title={`ID: ${choice.id}`} className="mt-1 break-all font-mono text-[0.625rem] text-ink-muted">Ref. {choice.id}</p>}
                   <p className="mt-2 line-clamp-2 break-words text-sm leading-5 text-ink-muted">{choice.description}</p>
                   <div className="mt-3 grid gap-1.5 text-xs text-ink-muted">
@@ -121,6 +123,9 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
             </div>
             <h2 className="display-title mt-3 break-words text-2xl leading-tight text-ink" id={titleId}>{item.title}</h2>
             <RecordingModeTags modes={item.recordingModes} />
+            <div className="mt-2"><ClassificationBadge value={item.classification}/></div>
+            {item.deliveryDueOn && <p className="mt-3 text-sm">Entrega prevista: <strong>{item.deliveryDueOn}</strong></p>}
+            {item.historicalRegularizedAt && <p className="mt-3 text-xs text-ink-muted">Entrega histórica regularizada · fecha real de entrega desconocida.</p>}
             {isOverdue(item, today) && <p className="mt-3 text-xs font-bold text-red">Actividad atrasada</p>}
           </div>
 
@@ -128,12 +133,12 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
             <SystemIcon name="profile" className="size-5 shrink-0 text-cyan-ink" />
             <div className="min-w-0"><p className="text-xs text-ink-muted">Responsable</p><p className="break-words text-sm font-bold">{item.responsible}</p></div>
           </div>}
-          <section>
+          {item.description && <section>
             <h3 className="text-sm font-bold">Descripción</h3>
             <p className="mt-2 whitespace-pre-line break-words text-sm leading-6 text-ink-muted">{item.description || "Sin descripción registrada."}</p>
-          </section>
+          </section>}
           <section className="border-t border-line/30 pt-4">
-            <h3 className="mb-3 flex items-center gap-2 text-sm font-bold"><SystemIcon name="calendar" className="size-4 text-cyan-ink" />Jornadas y lugares</h3>
+            <h3 className="mb-3 flex items-center gap-2 text-sm font-bold"><SystemIcon name="calendar" className="size-4 text-cyan-ink" />{item.deliveryDueOn ? "Entrega del proyecto" : "Jornadas y lugares"}</h3>
             <ActivityJourneys activity={item} />
           </section>
           {url ? (

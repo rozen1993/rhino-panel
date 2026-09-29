@@ -7,7 +7,7 @@ const mocks=vi.hoisted(()=>({create:vi.fn()}));
 vi.mock("@/lib/supabase/server",()=>({createSupabaseServerClient:mocks.create}));
 import { readSupabaseAunor } from "@/lib/supabase/aunor";
 
-const names={activities:"aunor_activities",services:"aunor_services",journeys:"aunor_journeys",deliveries:"aunor_deliveries",agreements:"aunor_agreements",replacements:"aunor_replacements",messages:"aunor_messages"};
+const names={activities:"aunor_activities",services:"aunor_services",journeys:"aunor_journeys",deliveries:"aunor_deliveries",agreements:"aunor_agreements",replacements:"aunor_replacements",messages:"aunor_messages",contractPeriods:"aunor_contract_periods"};
 let w:AunorWorkspace;
 let calls:string[];
 let cap:number;
@@ -17,10 +17,11 @@ beforeEach(()=>{
   for(const rows of Object.values(example)) for(const row of rows) if("id" in row) ids.set(row.id,`00000000-0000-4000-8000-${String(n++).padStart(12,"0")}`);
   w=JSON.parse(JSON.stringify(example),(_key,value)=>typeof value==="string"?ids.get(value)??value:value);
   w.messages=[];
+  w.contractPeriods=[];
   const data=Object.fromEntries(Object.entries(names).map(([key,table])=>[table,w[key as keyof AunorWorkspace]]));
   calls=[];cap=200;
   mocks.create.mockResolvedValue({from:(table:string)=>{
-    let rows=[...data[table]] as unknown as Record<string,unknown>[];
+    let rows=[...(data[table] ?? [])] as unknown as Record<string,unknown>[];
     let limit=200;
     const orderColumns:string[]=[];
     const q={

@@ -25,6 +25,7 @@ type HistoricalActivityRow = Pick<
   | "version"
   | "type"
   | "recording_modes"
+  | "classification" | "delivery_due_on" | "historical_regularized_at"
   | "title"
   | "responsible_name"
   | "status"
@@ -91,7 +92,7 @@ async function fetchHistoricalActivityRows(
         let query = supabase
           .from("activities")
           .select(
-            "id, version, type, title, responsible_name, status, origin, description, place, material_link, operator_opinion, recording_modes",
+            "id, version, type, title, responsible_name, status, origin, description, place, material_link, operator_opinion, recording_modes, classification, delivery_due_on, historical_regularized_at",
           )
           .in("id", ids)
           .is("deleted_at", null);
@@ -231,7 +232,10 @@ function buildHistoricalActivities(
       return {
         id: row.id,
         type: row.type,
-        recordingModes: row.recording_modes ?? [],
+      recordingModes: row.recording_modes ?? [],
+      classification: row.classification ?? null,
+      deliveryDueOn: row.delivery_due_on ?? null,
+      historicalRegularizedAt: row.historical_regularized_at ?? null,
         title: row.title,
         responsible: row.responsible_name,
         status: row.status,
@@ -302,6 +306,7 @@ export async function listSupabaseTeamHistoricalActivities(year: number): Promis
         responsible: row.responsible_name, status: row.status, origin: row.origin,
         description: row.description, place: row.place, materialLink: row.material_link,
         operatorOpinion: row.operator_opinion, recordingModes: row.recording_modes,
+        classification: row.classification, deliveryDueOn: row.delivery_due_on, historicalRegularizedAt: row.historical_regularized_at,
         spans: row.spans as DateSpan[] };
       if (activityOverlapsYear(activity, year)) activities.push(activity);
     }

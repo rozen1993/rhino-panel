@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { StatusPill, type InternalStatus } from "@/components/status-pill";
+import { ClassificationBadge } from "@/components/classification-badge";
 import type { Activity } from "@/lib/activities";
 import { formatActivityDates } from "@/components/activity-card";
 import { safeMaterialUrl } from "@/lib/external-link";
@@ -83,6 +84,7 @@ export function ActivityTable({
                   <strong className="block text-[0.78rem] text-ink">
                     {activity.title}
                   </strong>
+                  <div className="mt-1"><ClassificationBadge value={activity.classification}/></div>
                   <span className="mt-0.5 block text-[0.6875rem] text-ink-muted">
                     {activity.type}
                     {activity.origin === "burson" ? " · Burson" : ""}

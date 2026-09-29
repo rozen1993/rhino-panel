@@ -1,4 +1,5 @@
 import type { Activity } from "@/lib/activities";
+import { effectiveSpans } from "@/lib/activities";
 
 export const historicalYearFloor = 2026;
 export const historicalYearCeiling = 9999;
@@ -15,6 +16,9 @@ export type HistoricalActivity = Pick<
   | "id"
   | "type"
   | "recordingModes"
+  | "classification"
+  | "deliveryDueOn"
+  | "historicalRegularizedAt"
   | "title"
   | "responsible"
   | "status"
@@ -79,11 +83,11 @@ export function historicalYearBounds(year: number) {
 }
 
 export function activityOverlapsYear(
-  activity: Pick<HistoricalActivity, "spans">,
+  activity: Pick<HistoricalActivity, "spans"|"deliveryDueOn">,
   year: number,
 ) {
   const bounds = historicalYearBounds(year);
-  return activity.spans.some(
+  return effectiveSpans(activity).some(
     (span) => span.start <= bounds.end && span.end >= bounds.start,
   );
 }

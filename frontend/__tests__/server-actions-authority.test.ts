@@ -102,20 +102,20 @@ describe("autoridad ejecutada dentro de Server Actions", () => {
     expect(mocks.rpc).toHaveBeenCalledWith("restart_activity_v2",{p_activity_id:activityId,p_expected_version:1,p_reason:"Corrección"});
     expect(mocks.revalidate).toHaveBeenCalledWith("/historico");
   });
-  it("transporta lugares por v2 y no reintenta en v1 cuando falta la migración", async () => {
+  it("transporta lugares por v4 y no reintenta versiones antiguas cuando falta la migración", async () => {
     mocks.currentRole.mockResolvedValue({ ...roles.admin, accountId: "00000000-0000-4000-8000-000000000013" });
     const spans = [{ ...fields.spans[0], place: "Norte" }, { ...fields.spans[0], place: "Sur" }];
     mocks.rpc.mockResolvedValue({ data: null, error: { code: "PGRST202" } });
     const result = await planSupabaseActivityAction({ ...fields, spans }, requestId);
     expect(result).toEqual({ ok: false, error: expect.stringContaining("Falta actualizar el servidor") });
     expect(mocks.rpc).toHaveBeenCalledTimes(1);
-    expect(mocks.rpc).toHaveBeenCalledWith("plan_activity_v3", expect.objectContaining({ p_spans: spans, p_recording_modes: ["Video"] }));
+    expect(mocks.rpc).toHaveBeenCalledWith("save_activity_plan_v4", expect.objectContaining({ p_spans: spans, p_recording_modes: ["Video"] }));
     expect(mocks.getActivity).not.toHaveBeenCalled();
     mocks.rpc.mockClear();
     const replan = await replanSupabaseActivityAction(activityId, 1, { ...fields, spans });
     expect(replan).toEqual({ ok: false, error: expect.stringContaining("Falta actualizar el servidor") });
     expect(mocks.rpc).toHaveBeenCalledTimes(1);
-    expect(mocks.rpc).toHaveBeenCalledWith("replan_activity_v3", expect.objectContaining({ p_spans: spans }));
+    expect(mocks.rpc).toHaveBeenCalledWith("save_activity_plan_v4", expect.objectContaining({ p_spans: spans }));
   });
   beforeEach(() => {
     vi.clearAllMocks();
@@ -198,10 +198,11 @@ describe("autoridad ejecutada dentro de Server Actions", () => {
     expect(result.ok).toBe(true);
     const [, args] = mocks.rpc.mock.calls[0];
     expect(mocks.rpc).toHaveBeenCalledWith(
-      "create_own_activity_v3",
+      "save_activity_plan_v4",
       expect.objectContaining({ p_idempotency_key: requestId }),
     );
-    expect(args).not.toHaveProperty("p_responsible_id");
+    expect(args.p_responsible_id).toBeNull();
+    expect(args.p_classification).toBeNull();
   });
 
   it("solo Admin llega a la RPC de replanificación", async () => {
@@ -222,7 +223,7 @@ describe("autoridad ejecutada dentro de Server Actions", () => {
       (await replanSupabaseActivityAction(activityId, 1, fields)).ok,
     ).toBe(true);
     expect(mocks.rpc).toHaveBeenCalledWith(
-      "replan_activity_v3",
+      "save_activity_plan_v4",
       expect.objectContaining({
         p_activity_id: activityId,
         p_responsible_id: operatorId,
@@ -233,8 +234,9 @@ describe("autoridad ejecutada dentro de Server Actions", () => {
   it("edita el plan propio sin permitir enviar otro responsable", async () => {
     mocks.currentRole.mockResolvedValue({ ...roles.operario, accountId: operatorId, canCreateOwnActivities: true });
     expect((await replanOwnSupabaseActivityAction(activityId, 1, { ...fields, responsibleAccountId: activityId })).ok).toBe(true);
-    expect(mocks.rpc).toHaveBeenCalledWith("replan_own_activity_v3", expect.objectContaining({ p_recording_modes: ["Video"] }));
-    expect(mocks.rpc.mock.calls[0][1]).not.toHaveProperty("p_responsible_id");
+    expect(mocks.rpc).toHaveBeenCalledWith("save_activity_plan_v4", expect.objectContaining({ p_recording_modes: ["Video"] }));
+    expect(mocks.rpc.mock.calls[0][1].p_responsible_id).toBeNull();
+    expect(mocks.rpc.mock.calls[0][1].p_classification).toBeNull();
   });
   it.each([
     { createdByRoleId: "admin" }, { createdByAccountId: "other" }, { responsibleAccountId: "other" }, { status: "En proceso" }, { status: "Entregada" },

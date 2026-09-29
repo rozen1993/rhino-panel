@@ -11,6 +11,13 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isUuid } from "@/lib/uuid";
 import { normalizeRecordingModes } from "@/lib/recording-modes";
 import { canReplanActivity } from "@/lib/activity-permissions";
+import { validClassification, type ActivityClassification } from "@/lib/activity-classification";
+
+function planOptions(fields: ActivityDraftFields, admin: boolean) {
+  return { p_activity_id: null, p_expected_version: null, p_idempotency_key: null, p_responsible_id: null,
+    p_delivery_due_on: fields.type === "Edición" ? fields.deliveryDueOn || null : null,
+    p_classification: admin ? fields.classification ?? null : null };
+}
 
 export type ActivityServerResult =
   | { ok: true; activity: SimulatedActivity; replayed?: boolean }
@@ -106,7 +113,8 @@ export async function planSupabaseActivityAction(
     return { ok: false, error: "La solicitud o el responsable no son válidos." };
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc("plan_activity_v3", {
+  const { data, error } = await supabase.rpc("save_activity_plan_v4", {
+    ...planOptions(fields, true),
     p_recording_modes: normalizeRecordingModes(fields.recordingModes),
     p_idempotency_key: idempotencyKey,
     p_responsible_id: fields.responsibleAccountId,
@@ -137,7 +145,8 @@ export async function createOwnSupabaseActivityAction(
     return { ok: false, error: "La solicitud no contiene una clave válida." };
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc("create_own_activity_v3", {
+  const { data, error } = await supabase.rpc("save_activity_plan_v4", {
+    ...planOptions(fields, false),
     p_recording_modes: normalizeRecordingModes(fields.recordingModes),
     p_idempotency_key: idempotencyKey,
     p_type: fields.type,
@@ -170,7 +179,8 @@ export async function replanSupabaseActivityAction(
     return { ok: false, error: "La actividad o su responsable no son válidos." };
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc("replan_activity_v3", {
+  const { data, error } = await supabase.rpc("save_activity_plan_v4", {
+    ...planOptions(fields, true),
     p_recording_modes: normalizeRecordingModes(fields.recordingModes),
     p_activity_id: id,
     p_expected_version: expectedVersion,
@@ -197,13 +207,30 @@ export async function replanOwnSupabaseActivityAction(
   const validation = activityPlanningError(fields);
   if (validation) return { ok: false, error: validation };
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.rpc("replan_own_activity_v3", {
+  const { data, error } = await supabase.rpc("save_activity_plan_v4", {
+    ...planOptions(fields, false),
     p_activity_id: id, p_expected_version: expectedVersion, p_type: fields.type,
     p_title: fields.title, p_description: fields.description, p_place: fields.placeName,
     p_spans: fields.spans, p_recording_modes: normalizeRecordingModes(fields.recordingModes),
   });
   if (error || !data?.[0]) return { ok: false, error: errorMessage(error ?? {}) };
   return refreshActivity(data[0].activity_id);
+}
+
+export async function classifySupabaseActivityAction(id:string, expectedVersion:number, classification:ActivityClassification|null):Promise<ActivityServerResult> {
+  if ((await currentActiveSupabaseRole())?.id !== "admin") return {ok:false,error:"Solo Admin puede clasificar actividades."};
+  if (!isUuid(id) || !isPositiveVersion(expectedVersion) || !validClassification(classification)) return {ok:false,error:"Clasificación no válida."};
+  const db=await createSupabaseServerClient();
+  const {error}=await db.rpc("classify_activity_v1",{p_activity_id:id,p_expected_version:expectedVersion,p_classification:classification});
+  return error ? {ok:false,error:errorMessage(error)} : refreshActivity(id);
+}
+
+export async function regularizeSupabaseActivityAction(id:string, expectedVersion:number, confirmed:boolean):Promise<ActivityServerResult> {
+  if ((await currentActiveSupabaseRole())?.id !== "admin") return {ok:false,error:"Solo Admin puede regularizar entregas históricas."};
+  if (!isUuid(id) || !isPositiveVersion(expectedVersion) || confirmed !== true) return {ok:false,error:"Confirma que el trabajo ya fue entregado."};
+  const db=await createSupabaseServerClient();
+  const {error}=await db.rpc("regularize_historical_activity_v1",{p_activity_id:id,p_expected_version:expectedVersion,p_confirmed:true});
+  return error ? {ok:false,error:errorMessage(error)} : refreshActivity(id);
 }
 
 export async function updateSupabaseExecutionAction(

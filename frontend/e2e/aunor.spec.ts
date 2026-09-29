@@ -148,6 +148,7 @@ test("capturas del Admin con gestión externa dentro de la ficha",async({page},i
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     await page.screenshot({path:info.outputPath(`07-admin-${width}.png`),fullPage:true});
     if(width===390) {
+      await page.getByText('Configurar periodos y metas del servicio',{exact:true}).click();
       const forms=page.getByRole("region",{name:"Gestión Aunor"}).locator("form");
       for(let i=0;i<await forms.count();i++) await forms.nth(i).screenshot({path:info.outputPath(`08-admin-form-${i+1}-390.png`)});
     }

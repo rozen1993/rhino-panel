@@ -10,9 +10,10 @@ export function normalizeSpans(spans: DateSpan[]): DateSpan[] {
 export function spanPlace(span: DateSpan, generalPlace = "") {
   return span.place?.trim() || generalPlace;
 }
-export type Activity = { recordingModes?: RecordingMode[]; id: string; type: ActivityType; title: string; responsible: string; responsibleAccountId: string; status: InternalStatus; origin: "operario" | "burson"; spans: DateSpan[]; description: string; place: string; materialLink: string; operatorOpinion: string; deletedAt?: string };
+export type Activity = { classification?: import("./activity-classification").ActivityClassification | null; deliveryDueOn?: string | null; historicalRegularizedAt?: string | null; recordingModes?: RecordingMode[]; id: string; type: ActivityType; title: string; responsible: string; responsibleAccountId: string; status: InternalStatus; origin: "operario" | "burson"; spans: DateSpan[]; description: string; place: string; materialLink: string; operatorOpinion: string; deletedAt?: string };
 export function requiresLocation(type: ActivityType) { return type === "Grabación"; }
 export function requiresMaterialLink() { return true; }
 export function showsProgress() { return false; }
-export function firstDate(activity: Pick<Activity, "spans">) { return activity.spans.map((span) => span.start).sort()[0] ?? ""; }
-export function lastDate(activity: Pick<Activity, "spans">) { return activity.spans.map((span) => span.end).sort().at(-1) ?? ""; }
+export function effectiveSpans(activity: Pick<Activity,"spans"|"deliveryDueOn">):DateSpan[] { return activity.deliveryDueOn ? [{start:activity.deliveryDueOn,end:activity.deliveryDueOn}] : activity.spans; }
+export function firstDate(activity: Pick<Activity, "spans"|"deliveryDueOn">) { return effectiveSpans(activity).map((span) => span.start).sort()[0] ?? ""; }
+export function lastDate(activity: Pick<Activity, "spans"|"deliveryDueOn">) { return effectiveSpans(activity).map((span) => span.end).sort().at(-1) ?? ""; }

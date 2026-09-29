@@ -6,6 +6,7 @@ import { ActivityTable } from "@/components/activity-table";
 import { Card } from "@/components/card";
 import { MonthStrip, months } from "@/components/month-strip";
 import { StatusPill } from "@/components/status-pill";
+import { ClassificationBadge } from "@/components/classification-badge";
 import { SummaryTile } from "@/components/summary-tile";
 import { SystemIcon } from "@/components/system-icon";
 import {
@@ -15,6 +16,7 @@ import {
 } from "@/lib/activity-simulation";
 import { safeMaterialUrl } from "@/lib/external-link";
 import type { Activity } from "@/lib/activities";
+import { effectiveSpans } from "@/lib/activities";
 import type { DataSource } from "@/lib/data-source";
 import type { Role } from "@/lib/roles";
 
@@ -27,7 +29,7 @@ export function touchesMonth(
   const monthEnd = new Date(Date.UTC(year, month + 1, 0))
     .toISOString()
     .slice(0, 10);
-  return item.spans.some(
+  return effectiveSpans(item).some(
     (span) => span.start <= monthEnd && span.end >= monthStart,
   );
 }
@@ -52,7 +54,7 @@ export function activityYears(
 ) {
   const years = new Set<number>([Math.max(2026, currentYear)]);
   for (const activity of activities)
-    for (const span of activity.spans) {
+    for (const span of effectiveSpans(activity)) {
       const start = Number(span.start.slice(0, 4));
       const end = Number(span.end.slice(0, 4));
       if (!Number.isInteger(start) || !Number.isInteger(end)) continue;
@@ -167,6 +169,7 @@ function ActivityPreview({ item }: { item: SimulatedActivity | undefined }) {
             {item.origin === "burson" ? " · Burson" : ""}
           </p>
           <StatusPill status={item.status} />
+          <ClassificationBadge value={item.classification}/>
         </div>
         <h2 className="display-title mt-3 text-[1.35rem] leading-tight">
           {item.title}

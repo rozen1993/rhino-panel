@@ -16,7 +16,7 @@ export function validAunorReadScope(value: unknown): value is AunorReadScope {
 
 // Same scene boundaries for isolated examples and server-side Supabase reads.
 export function scopeAunorWorkspace(w: AunorWorkspace, scope: AunorReadScope, now = Date.now()): AunorWorkspace {
-  const result = { ...w, messages: [] };
+  const result = { ...w, messages: [], contractPeriods: ["acordado","admin"].includes(scope.scene) ? w.contractPeriods ?? [] : [] };
   if (scope.scene === "replacement") {
     const r = w.replacements.find(r => r.id === scope.id);
     if (!r) return emptyAunorWorkspace();

@@ -3,8 +3,26 @@ import { createAunorExamples } from "@/lib/aunor-examples";
 import { canMutateAunor, canUseAunor, type AunorCommand, type AunorWorkspace } from "@/lib/aunor";
 import type { ActivityType, Role } from "@/lib/roles";
 import { safeMaterialUrl } from "@/lib/external-link";
+import type { ContractPeriod } from "@/lib/contract-progress";
+
+export function configureDemoContractPeriod(role:Role,p:Omit<ContractPeriod,"id"|"version"> & {id?:string;version?:number}) {
+  if(!canUseAunor(role) || role.id!=="admin") throw Error("Solo Admin");
+  const w=state().workspace, periods=w.contractPeriods ?? [];
+  if(!w.services.some(s=>s.id===p.service_id) || periods.some(other=>other.id!==p.id && other.service_id===p.service_id && other.starts_on<=p.ends_on && other.ends_on>=p.starts_on)) throw Error("Periodo superpuesto");
+  const old=periods.find(other=>other.id===p.id);
+  if(p.id && (!old || old.version!==p.version || old.starts_on!==p.starts_on || old.ends_on!==p.ends_on || old.cadence!==p.cadence || old.service_id!==p.service_id)) throw Error("Periodo cambiado");
+  w.contractPeriods=[...periods.filter(other=>other.id!==p.id),{...p,id:p.id ?? crypto.randomUUID(),version:(old?.version ?? 0)+1}];
+}
+export function assignDemoContractPeriod(role:Role,id:string,version:number,periodId:string|null) {
+  if(!canUseAunor(role) || role.id!=="admin") throw Error("Solo Admin");
+  const w=state().workspace,a=w.activities.find(a=>a.id===id);
+  if(!a || a.publication_version!==version || (periodId && !(w.contractPeriods ?? []).some(p=>p.id===periodId && p.service_id===a.service_id))) throw Error("Periodo no válido");
+  a.contract_period_id=periodId;
+}
 
 export type DemoAunorSource = {
+  classification?: import("./activity-classification").ActivityClassification | null;
+  deliveryDueOn?: string|null; historicalRegularizedAt?: string|null;
   recordingModes?: import("@/lib/recording-modes").RecordingMode[];
   id: string; type: ActivityType; title: string; status: "Programada"|"En proceso"|"Entregada";
   place: string; spans: {start:string;end:string;place?:string}[];
@@ -46,7 +64,9 @@ export function mutateDemoAunor(role:Role,command:AunorCommand,activityId:string
     if(service&&!w.services.some(s=>s.id===service)) throw Error("Servicio no disponible.");
     if(reason&&source.status==="Entregada") throw Error("Una actividad entregada no puede registrarse como no realizada.");
     const row={id:source.id,type:source.type,title:source.title,status:source.status,place:source.place,summary,service_id:service,not_performed_reason:reason,publication_version:(a?.publication_version??0)+1,published_at:now,unread_count:0,delivered_at:source.deliveredAt ?? a?.delivered_at ?? null,material_link:source.status==="Entregada" ? source.materialLink : ""};
-    w.activities=w.activities.filter(a=>a.id!==activityId).concat({...row,recording_modes:source.recordingModes ?? []});
+    w.activities=w.activities.filter(a=>a.id!==activityId).concat({...row,recording_modes:source.recordingModes ?? [],
+      contract_period_id:a?.service_id===service ? a?.contract_period_id ?? null : null,
+      classification:source.classification ?? null,delivery_due_on:source.deliveryDueOn ?? null,historical_regularized_at:source.historicalRegularizedAt ?? null});
     w.journeys=w.journeys.filter(j=>j.activity_id!==activityId).concat(source.spans.map((j,i)=>({activity_id:activityId,position:i+1,start_date:j.start,end_date:j.end,place:j.place||source.place})));
     for(const d of w.deliveries.filter(d=>d.activity_id===activityId)) if(d.material_link!==source.materialLink) d.is_current=false;
     s.sources.set(activityId,structuredClone(source));

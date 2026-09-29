@@ -9,10 +9,11 @@ import {
   type DateSpan,
 } from "@/lib/activities";
 import type { ActivityDraftFields } from "@/lib/activity-draft";
-import { validSpans } from "@/lib/activity-validation";
+import { validSpans, activityPlanningError } from "@/lib/activity-validation";
+import { validClassification, type ActivityClassification } from "@/lib/activity-classification";
 import { canDeleteOwnActivity, canReplanActivity } from "@/lib/activity-permissions";
 export { canReplanActivity } from "@/lib/activity-permissions";
-import { normalizeRecordingModes, recordingModesError } from "@/lib/recording-modes";
+import { normalizeRecordingModes } from "@/lib/recording-modes";
 import { readAccounts } from "@/lib/account-store";
 import { safeMaterialUrl } from "@/lib/external-link";
 import { calendarDateInLima } from "@/lib/historical";
@@ -367,17 +368,14 @@ export function canEditActivity(item: SimulatedActivity, role: Role) {
 }
 
 function planningError(fields: ActivityDraftFields) {
-  const modalitiesError = recordingModesError(fields.type, fields.recordingModes);
-  if (modalitiesError) return modalitiesError;
-  if (
-    !fields.title.trim() ||
-    !fields.description.trim() ||
-    !validSpans(fields.spans)
-  )
-    return "Completa título, descripción y fechas válidas.";
-  if (fields.placeName.length > 300)
-    return "El lugar supera el tamaño permitido.";
-  return null;
+  return activityPlanningError(fields);
+}
+
+function editionFields(fields: ActivityDraftFields, previous?: SimulatedActivity) {
+  return { deliveryDueOn: fields.type === "Edición" ? fields.deliveryDueOn : null,
+    spans: fields.type === "Edición" ? previous?.spans ?? [{start:fields.deliveryDueOn!, end:fields.deliveryDueOn!}] : normalizeSpans(fields.spans),
+    description: fields.type === "Edición" ? previous?.description ?? "" : fields.description.trim(),
+    place: fields.type === "Edición" ? previous?.place ?? "" : fields.placeName.trim() };
 }
 
 function planningFingerprint(
@@ -385,6 +383,8 @@ function planningFingerprint(
   responsibleAccountId: string,
 ) {
   return JSON.stringify({
+    classification: fields.classification ?? null,
+    deliveryDueOn: fields.type === "Edición" ? fields.deliveryDueOn : null,
     responsibleAccountId,
     type: fields.type,
     recordingModes: normalizeRecordingModes(fields.recordingModes),
@@ -475,14 +475,13 @@ export function planActivity(
     responsibleAccountId: responsible.id,
     status: "Programada",
     origin: "operario",
-    spans: normalizeSpans(fields.spans),
-    description: fields.description.trim(),
-    place: fields.placeName.trim(),
     materialLink: "",
     operatorOpinion: "",
     referenceLink: "",
     createdByAccountId: actor.accountId,
     createdByRoleId: "admin",
+    classification: fields.classification ?? null,
+    ...editionFields(fields),
     createdAt: now,
     updatedAt: now,
     version: 1,
@@ -538,14 +537,13 @@ export function createOwnActivity(
     responsibleAccountId: actor.accountId,
     status: "Programada",
     origin: "operario",
-    spans: normalizeSpans(fields.spans),
-    description: fields.description.trim(),
-    place: fields.placeName.trim(),
     materialLink: "",
     operatorOpinion: "",
     referenceLink: "",
     createdByAccountId: actor.accountId,
     createdByRoleId: actor.roleId,
+    classification: null,
+    ...editionFields(fields),
     createdAt: now,
     updatedAt: now,
     version: 1,
@@ -596,11 +594,10 @@ export function replanActivity(
       type: fields.type,
       recordingModes: normalizeRecordingModes(fields.recordingModes),
       title: fields.title.trim(),
-      description: fields.description.trim(),
-      spans: normalizeSpans(fields.spans),
-      place: fields.placeName.trim(),
       responsible: responsible.name,
       responsibleAccountId: responsible.id,
+      classification: fields.classification ?? null,
+      ...editionFields(fields, item),
       audit: audit(
         item,
         "Planificación actualizada",
@@ -623,8 +620,8 @@ export function replanOwnActivity(
     const error = planningError(fields);
     if (error) return error;
     return { ...item, type: fields.type, recordingModes: normalizeRecordingModes(fields.recordingModes),
-      title: fields.title.trim(), description: fields.description.trim(), place: fields.placeName.trim(),
-      spans: normalizeSpans(fields.spans), audit: audit(item, "Planificación propia actualizada", actorFromRole(role)) };
+      title: fields.title.trim(),
+      ...editionFields(fields, item), audit: audit(item, "Planificación propia actualizada", actorFromRole(role)) };
   });
 }
 
@@ -664,6 +661,28 @@ export function updateExecutionActivity(
     };
   });
 }
+export function classifyActivity(storage:Pick<Storage,"getItem"|"setItem">, id:string, actor:ActivityActor, version:number, classification:ActivityClassification|null):Result {
+  return update(storage,id,item=> {
+    if (actor.roleId!=="admin") return "Solo Admin puede clasificar actividades.";
+    if (version!==item.version) return "La actividad cambió; recarga antes de guardar.";
+    if (!validClassification(classification)) return "Clasificación no válida.";
+    return {...item,classification,audit:audit(item,"Clasificación actualizada",actor,`${item.classification ?? "Sin clasificar"} → ${classification ?? "Sin clasificar"}`)};
+  });
+}
+
+export function regularizeHistoricalActivity(storage:Pick<Storage,"getItem"|"setItem">, id:string, actor:ActivityActor, version:number, confirmed:boolean):Result {
+  return update(storage,id,item=> {
+    if (actor.roleId!=="admin" || item.origin!=="operario") return "Solo Admin puede regularizar esta actividad.";
+    if (version!==item.version) return "La actividad cambió; recarga antes de guardar.";
+    if (item.status==="Entregada") return "La actividad ya fue entregada.";
+    const end=item.deliveryDueOn || lastDate(item);
+    if (!confirmed || !end || end>=calendarDateInLima(new Date())) return "Confirma una actividad pasada ya entregada.";
+    if (!safeMaterialUrl(item.materialLink)) return "Añade el enlace del material final antes de regularizar.";
+    return {...item,status:"Entregada",deliveredAt:undefined,historicalRegularizedAt:new Date().toISOString(),
+      audit:audit(item,"Entrega histórica regularizada",actor,"Fecha real de entrega desconocida; se conservan planificación y material.")};
+  });
+}
+
 export function advanceActivity(
   storage: Pick<Storage, "getItem" | "setItem">,
   id: string,
@@ -755,7 +774,7 @@ export function resetActivity(storage: Pick<Storage, "getItem" | "setItem">, id:
   if (!readAccounts(storage).some(account => account.id===item.responsibleAccountId && account.active && account.roleId==="operario")) return {ok:false,error:"Reasigna primero a un operario activo."};
   const now = new Date().toISOString();
   const next: SimulatedActivity = { ...item, id:crypto.randomUUID(), status:"Programada", version:1,
-    materialLink:"",operatorOpinion:"",thread:[],threadOpenedAt:undefined,deliveredAt:undefined,
+    materialLink:"",operatorOpinion:"",thread:[],threadOpenedAt:undefined,deliveredAt:undefined,historicalRegularizedAt:undefined,
     idempotencyKey:undefined,idempotencyFingerprint:undefined,createdAt:now,updatedAt:now,
     createdByAccountId:actor.accountId,createdByRoleId:"admin",audit:[] };
   next.audit = audit(next,"Actividad reiniciada en Programada",actor,`Actividad anterior: ${id} · ${reason.trim()}`);

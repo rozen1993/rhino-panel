@@ -99,7 +99,7 @@ describe("ruta del Histórico", () => {
 
   it("autentica al Admin antes de leer el año real en Supabase", async () => {
     mocks.resolveDataSource.mockReturnValue("supabase");
-    mocks.listHistorical.mockResolvedValue([activity]);
+    mocks.listTeamHistorical.mockResolvedValue([activity]);
 
     await renderPage("2027");
 
@@ -108,9 +108,9 @@ describe("ruta del Histórico", () => {
     expect(calendar.dataset.year).toBe("2027");
     expect(calendar.dataset.count).toBe("1");
     expect(calendar.dataset.today).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    expect(mocks.listHistorical).toHaveBeenCalledWith(2027);
+    expect(mocks.listTeamHistorical).toHaveBeenCalledWith(2027);
     expect(mocks.requireRole.mock.invocationCallOrder[0]).toBeLessThan(
-      mocks.listHistorical.mock.invocationCallOrder[0],
+      mocks.listTeamHistorical.mock.invocationCallOrder[0],
     );
   });
 

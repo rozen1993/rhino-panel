@@ -10,6 +10,7 @@ import {
   ReplacementSummary,
 } from "@/components/aunor-space";
 import { Button } from "@/components/button";
+import { AdminContractPeriod } from "@/components/admin-contract-period";
 import {
   emptyAunorWorkspace,
   type AunorWorkspace,
@@ -23,9 +24,11 @@ import s from "./aunor-space.module.css";
 export function AdminAunorPanel({
   item,
   role,
+  onAssigned,
 }: {
   item: SimulatedActivity;
   role: Role;
+  onAssigned?: (activity:SimulatedActivity|null) => void;
 }) {
   const [w, setW] = useState<AunorWorkspace>(emptyAunorWorkspace);
   const [loaded, setLoaded] = useState(false),
@@ -145,6 +148,7 @@ export function AdminAunorPanel({
                     spans: item.spans,
                     materialLink: item.materialLink,
                     recordingModes: item.recordingModes,
+                    classification:item.classification,deliveryDueOn:item.deliveryDueOn,historicalRegularizedAt:item.historicalRegularizedAt,
                     deliveredAt: item.deliveredAt,
                     version: item.version,
                     origin: item.origin,
@@ -158,6 +162,7 @@ export function AdminAunorPanel({
             return;
           }
           requests.current.delete(key);
+          if(result.activity) onAssigned?.(result.activity);
           const fresh = await load();
           if (command === "publish" && fresh)
             setPublicationVersion(
@@ -172,7 +177,7 @@ export function AdminAunorPanel({
         }),
       );
     },
-    [item, load],
+    [item, load, onAssigned],
   );
   if (role.id !== "admin" || item.origin === "burson" || item.deletedAt)
     return null;
@@ -297,6 +302,7 @@ export function AdminAunorPanel({
                     : "Publicar actividad para Aunor"}
                 </Button>
               </form>
+              <AdminContractPeriod key={`${item.id}-${published?.service_id ?? ""}-${published?.contract_period_id ?? ""}`} w={w} activityId={item.id} activityVersion={item.version} onRefresh={load} onAssigned={activity=>onAssigned?.(activity)}/>
               {published && (
                 <form
                   className={s.step}

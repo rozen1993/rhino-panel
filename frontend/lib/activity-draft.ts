@@ -9,6 +9,8 @@ import { isUuid } from "@/lib/uuid";
 import { validRecordingModes, type RecordingMode } from "@/lib/recording-modes";
 
 export type ActivityDraftFields = {
+  classification?: import("./activity-classification").ActivityClassification | null;
+  deliveryDueOn?: string;
   recordingModes?: RecordingMode[];
   type: ActivityType;
   title: string;
@@ -58,6 +60,8 @@ function isActivityDraftFields(value: unknown): value is ActivityDraftFields {
     typeof fields.materialLink === "string" &&
     typeof fields.notes === "string" &&
     typeof fields.referenceLink === "string" &&
+    (fields.deliveryDueOn === undefined || typeof fields.deliveryDueOn === "string") &&
+    (fields.classification == null || fields.classification === "standard" || fields.classification === "special") &&
     (fields.recordingModes === undefined || validRecordingModes(fields.recordingModes)) &&
     Array.isArray(fields.spans) &&
     fields.spans.every(

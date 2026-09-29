@@ -10,6 +10,9 @@ import {
 import { AunorDashboard } from "@/components/aunor-dashboard";
 import { DetailPanel, type DetailActivity } from "@/components/calendar-detail-panel";
 import { RecordingModeTags } from "@/components/recording-mode-tags";
+import { ClassificationBadge } from "@/components/classification-badge";
+import { contractProgress, periodLabel } from "@/lib/contract-progress";
+import { calendarDateInLima } from "@/lib/historical";
 import type { HistoricalCategory } from "@/lib/historical";
 import {
   aunorCode,
@@ -175,6 +178,9 @@ function ActivityDetail({
           <h2>{a.title}</h2>
           <p>{a.summary}</p>
           <RecordingModeTags modes={a.recording_modes} />
+          <ClassificationBadge value={a.classification}/>
+          {a.delivery_due_on && <p className={s.muted}>Entrega prevista: {a.delivery_due_on}</p>}
+          {a.historical_regularized_at && <p className={s.muted}>Entrega histórica regularizada. Fecha real de entrega desconocida.</p>}
           <div className="status-in-hero mt-4">
             <StatusPill status={a.status} />
           </div>
@@ -456,20 +462,27 @@ function ReplacementDetail({
 }
 function Agreed({ w }: { w: AunorWorkspace }) {
   const [selected, setSelected] = useState(w.services[0]?.id ?? "");
-  const related = w.activities.filter((a) => a.service_id === selected);
+  const [month,setMonth]=useState(()=>calendarDateInLima().slice(0,7));
+  const periods=w.contractPeriods ?? [];
+  const periodFor=(serviceId:string)=>periods.find(p=>p.service_id===serviceId && p.starts_on.slice(0,7)<=month && p.ends_on.slice(0,7)>=month);
+  const period=periodFor(selected);
+  const progress=contractProgress(w,selected,period);
+  const related = [...progress.delivered,...progress.pending];
   const replacements = replacementsForService(w, selected);
   return (
     <>
       <div className={s.notice}>
-        <strong>Una lista sencilla, sin porcentajes de cumplimiento</strong>
+        <strong>Control contractual por periodo</strong>
         <p className={s.muted}>
-          Referencia: cláusula 2.2 del contrato aportado. Las cantidades y
-          equivalencias no se resuelven en esta vista. “Observado” indica un
-          reemplazo documentado, no un incumplimiento. La marca se conserva como referencia.
+          Solo se cuentan actividades entregadas, vinculadas al servicio y con periodo confirmado por Admin.
+          Los excedentes permanecen en su periodo. El marcaje Especial no duplica unidades ni aprueba pagos.
         </p>
+        <label className="mt-3 flex flex-wrap items-center gap-3 text-sm font-bold">Consultar mes
+          <input className="min-h-11 rounded-md border border-line bg-panel px-3" type="month" min="2026-01" value={month} onChange={e=>{if(e.target.value)setMonth(e.target.value);}}/>
+        </label>
       </div>
       <div className={s.grid}>
-        <section className={s.card + " " + s.pad}>
+        <section className={s.card + " " + s.pad + " hidden md:block"}>
           <p className="data-label text-cyan-ink">
             Lista simplificada de servicios
           </p>
@@ -483,6 +496,7 @@ function Agreed({ w }: { w: AunorWorkspace }) {
               onClick={() => setSelected(service.id)}
             >
               <strong>{service.label}</strong>
+              <span className="mt-2 flex items-baseline justify-between gap-3"><span className="display-title text-2xl tabular-nums">{contractProgress(w,service.id,periodFor(service.id)).ratio}</span><span className="text-xs text-ink-muted">{periodFor(service.id)?.target ? (periodFor(service.id)?.cadence==="annual" ? "Periodo anual" : "Periodo mensual") : "Meta por confirmar"}</span></span>
               {replacementsForService(w, service.id).length > 0 && (
                 <span className={s.observed}>
                   <span aria-hidden="true" className={s.observedIcon}>
@@ -503,11 +517,32 @@ function Agreed({ w }: { w: AunorWorkspace }) {
           </p>
         </section>
         <div className={s.stack}>
+          <label className="block text-sm font-bold md:hidden">Servicio del contrato
+            <select className="mt-2 min-h-12 w-full min-w-0 rounded-md border border-line bg-panel px-3 text-xs" value={selected} onChange={e=>setSelected(e.target.value)}>
+              {w.services.map(service=><option key={service.id} value={service.id}>{service.label} · {contractProgress(w,service.id,periodFor(service.id)).ratio}</option>)}
+            </select>
+          </label>
           <section className={s.card + " " + s.pad}>
             <p className="data-label text-cyan-ink">
               Servicio seleccionado · 2.2
             </p>
             <h2 className="section-title">{serviceName(w, selected)}</h2>
+            {periods.some(p=>p.service_id===selected) && <div aria-label="Periodos registrados" className="mt-4 grid grid-cols-2 gap-2 lg:grid-cols-3">
+              {periods.filter(p=>p.service_id===selected).sort((a,b)=>a.starts_on.localeCompare(b.starts_on)).map(p=><button key={p.id} type="button"
+                className={`min-h-16 rounded-md border p-3 text-left text-xs ${p.id===period?.id ? "border-cyan bg-cyan/10" : "border-line bg-panel"}`}
+                aria-pressed={p.id===period?.id} onClick={()=>setMonth(p.starts_on.slice(0,7))}>
+                <span className="block text-ink-muted">{periodLabel(p)}</span><strong className="display-title mt-1 block text-xl tabular-nums">{contractProgress(w,selected,p).ratio}</strong>
+              </button>)}
+            </div>}
+            <div className="my-4 rounded-[10px] border border-cyan/30 bg-panel-secondary p-4">
+              <p className="data-label text-cyan-ink">{period ? `${period.cadence==="annual" ? "Vigencia anual" : "Control mensual"} · ${periodLabel(period)}` : "Periodo por confirmar"}</p>
+              <div className="mt-2 flex items-baseline gap-3"><strong className="display-title text-4xl tabular-nums">{progress.ratio}</strong><span className="text-sm text-ink-muted">trabajos entregados</span></div>
+              {progress.target===null ? <p className="mt-2 text-sm text-ink-muted">Meta por confirmar. No se calcula un porcentaje sin una cuota acordada.</p> : <>
+                <progress className="mt-3 h-2 w-full accent-[#11b4c6]" value={Math.min(progress.count,progress.target)} max={progress.target} aria-label="Cumplimiento del periodo"/>
+                <p className="mt-2 text-sm font-bold">{progress.excess ? `${progress.excess} adicionales · sin traslado a otro periodo` : `${Math.max(0,progress.target-progress.count)} pendientes para alcanzar la meta`}</p>
+              </>}
+              <p className="mt-2 text-xs text-ink-muted">{progress.pending.length} trabajos programados o en proceso · {progress.unassigned.length} por asignar a un periodo</p>
+            </div>
             {replacements.length > 0 && (
               <p className={s.observed}>
                 <span aria-hidden="true" className={s.observedIcon}>
@@ -518,7 +553,7 @@ function Agreed({ w }: { w: AunorWorkspace }) {
             )}
             {!related.length && (
               <p className={s.muted}>
-                Todavía no hay trabajos relacionados con este servicio.
+                No hay trabajos asignados al periodo consultado.
               </p>
             )}
             {related.map((a) => (
@@ -536,6 +571,14 @@ function Agreed({ w }: { w: AunorWorkspace }) {
                 </Link>
               </div>
             ))}
+            {progress.unassigned.length>0 && <details className="my-4 rounded-md border border-line p-3"><summary className="cursor-pointer text-sm font-bold">Por confirmar periodo ({progress.unassigned.length})</summary>
+              <p className="mt-2 text-xs text-ink-muted">Se conservan visibles, pero no incrementan el cumplimiento mensual o anual.</p>
+              {progress.unassigned.map(a=><div className="mt-3" key={a.id}><Link className={s.link} href={activityHref(a.id)}>{a.title} →</Link></div>)}
+            </details>}
+            {progress.excluded.length>0 && <details className="my-4 rounded-md border border-line p-3"><summary className="cursor-pointer text-sm font-bold">No computables ({progress.excluded.length})</summary>
+              <p className="mt-2 text-xs text-ink-muted">Trabajos no realizados u originales sustituidos. Se conservan sin sumar dos veces.</p>
+              {progress.excluded.map(a=><div className="mt-3" key={a.id}><Link className={s.link} href={activityHref(a.id)}>{a.title} →</Link><p className="text-xs text-ink-muted">{a.not_performed_reason || "Original sustituido"}</p></div>)}
+            </details>}
             {replacements.map((r) => (
               <div className={s.sectionGap} key={r.id}>
                 <ReplacementSummary r={r} w={w} />
@@ -596,6 +639,7 @@ export function AunorSpace({
   };
   const calendarItems: DetailActivity[] = scene === "calendar" ? w.activities.map(a => ({
     id:a.id,type:a.type,title:a.title,status:a.status,place:a.place,description:a.summary,recordingModes:a.recording_modes,
+    classification:a.classification,deliveryDueOn:a.delivery_due_on,historicalRegularizedAt:a.historical_regularized_at,
     materialLink:a.status === "Entregada" ? a.material_link ?? "" : "",
     spans:w.journeys.filter(j=>j.activity_id===a.id).map(j=>({start:j.start_date,end:j.end_date,place:j.place})),
   })) : [];

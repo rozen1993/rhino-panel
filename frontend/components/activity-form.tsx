@@ -55,6 +55,7 @@ import { safeMaterialUrl } from "@/lib/external-link";
 import type { Role } from "@/lib/roles";
 import { recordingModesError } from "@/lib/recording-modes";
 import { RecordingModePicker } from "@/components/recording-mode-picker";
+import { ClassificationBadge } from "@/components/classification-badge";
 
 const control =
   "min-h-10 w-full rounded-md border border-line bg-panel px-3 py-2 text-xs text-ink outline-none transition placeholder:text-ink-muted focus:border-cyan focus:ring-2 focus:ring-cyan/15 disabled:cursor-not-allowed disabled:bg-panel-secondary disabled:text-ink-muted";
@@ -75,7 +76,7 @@ const empty: ActivityDraftFields = {
 
 function hasDraftContent(fields: ActivityDraftFields) {
   return Boolean(
-    fields.recordingModes?.length || fields.title ||
+    fields.recordingModes?.length || fields.title || fields.deliveryDueOn ||
       fields.description ||
       fields.placeName ||
       fields.materialLink ||
@@ -139,6 +140,8 @@ export function ActivityForm({
       existing
         ? {
             type: existing.type,
+            classification: existing.classification ?? null,
+            deliveryDueOn: existing.deliveryDueOn ?? "",
             recordingModes: existing.recordingModes ?? [],
             title: existing.title,
             description: existing.description,
@@ -487,6 +490,17 @@ export function ActivityForm({
               </label>
               {fields.type === "Grabación" && <RecordingModePicker value={fields.recordingModes ?? []}
                 onChange={modes => setFields(current => ({ ...current, recordingModes: modes }))} />}
+              {role.id === "admin" && <fieldset className="rounded-md border border-line p-3 md:col-span-2">
+                <legend className="px-1 text-xs font-bold">Clasificación del trabajo</legend>
+                <div className="flex flex-wrap gap-4">{([null, "standard", "special"] as const).map(value =>
+                  <label key={value ?? "unknown"} className="flex min-h-10 cursor-pointer items-center gap-2">
+                    <input type="radio" name="classification" checked={(fields.classification ?? null) === value}
+                      onChange={() => setFields(current => ({...current, classification:value}))} />
+                    <ClassificationBadge value={value}/>
+                  </label>)}</div>
+                <p className="mt-2 text-xs text-ink-muted">El marcaje no cambia el estado ni duplica el conteo contractual.</p>
+              </fieldset>}
+              {fields.type !== "Edición" && <>
               <label className="text-xs font-bold md:col-span-2">
                 Lugar o referencia
                 <input
@@ -508,6 +522,7 @@ export function ActivityForm({
                   value={fields.description}
                 />
               </label>
+              </>}
               {role.id === "burson" && (
                 <label className="text-xs font-bold md:col-span-2">
                   Enlace de referencia opcional
@@ -523,7 +538,14 @@ export function ActivityForm({
               )}
             </div>
 
-            <section className="border-t border-line bg-panel-secondary/65 p-4 md:p-5">
+            {fields.type === "Edición" ? <section className="border-t border-line bg-panel-secondary/65 p-4 md:p-5">
+              <label className="block text-xs font-bold">Fecha de entrega del proyecto
+                <input className={`${control} mt-2 block max-w-sm`} type="date" name="deliveryDueOn" min={activityHistoryFloor}
+                  required value={fields.deliveryDueOn ?? ""} onChange={change}/>
+              </label>
+              <p className="mt-2 text-xs text-ink-muted">Fecha prevista. No marca el proyecto como entregado ni sustituye la fecha real de entrega.</p>
+              {existing && <p className="mt-2 text-xs text-ink-muted">La descripción, los lugares y las jornadas anteriores se conservarán sin cambios.</p>}
+            </section> : <section className="border-t border-line bg-panel-secondary/65 p-4 md:p-5">
               <div className="flex items-end justify-between gap-3">
                 <div>
                   <h3 className="text-xs font-extrabold">
@@ -608,7 +630,7 @@ export function ActivityForm({
                   </div>
                 ))}
               </div>
-            </section>
+            </section>}
           </>
         ) : (
           <>

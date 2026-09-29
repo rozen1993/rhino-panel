@@ -65,6 +65,9 @@ export type Database = {
           created_by: string;
           created_by_role: Database["public"]["Enums"]["app_role"];
           recording_modes: RecordingMode[];
+          classification?: "standard" | "special" | null;
+          delivery_due_on?: string | null;
+          historical_regularized_at?: string | null;
           responsible_id: string;
           responsible_name: string;
           type: Database["public"]["Enums"]["activity_type"];
@@ -153,10 +156,22 @@ export type Database = {
       };
     };
     Views: AunorViews & { team_historical_activities: {
-      Row: Pick<Database["public"]["Tables"]["activities"]["Row"], "id" | "version" | "type" | "title" | "responsible_name" | "status" | "origin" | "description" | "place" | "material_link" | "operator_opinion" | "recording_modes"> & { spans: Json; first_date: string; last_date: string };
+      Row: Pick<Database["public"]["Tables"]["activities"]["Row"], "id" | "version" | "type" | "title" | "responsible_name" | "status" | "origin" | "description" | "place" | "material_link" | "operator_opinion" | "recording_modes" | "classification" | "delivery_due_on" | "historical_regularized_at"> & { spans: Json; first_date: string; last_date: string };
       Relationships: [];
     } };
     Functions: {
+      configure_contract_period_v1:{Args:{p_period_id:string|null;p_expected_version:number|null;p_service_id:string;p_cadence:string;p_starts_on:string;p_ends_on:string;p_target:number|null};Returns:string};
+      assign_contract_period_v1:{Args:{p_activity_id:string;p_expected_version:number;p_publication_version:number;p_period_id:string|null;p_confirmed:boolean};Returns:undefined};
+      save_activity_plan_v4: {
+        Args: Omit<Database["public"]["Functions"]["plan_activity_v3"]["Args"], "p_idempotency_key" | "p_responsible_id"> & {
+          p_activity_id: string | null; p_expected_version: number | null;
+          p_idempotency_key: string | null; p_responsible_id: string | null;
+          p_delivery_due_on: string | null; p_classification: string | null;
+        };
+        Returns: { activity_id: string; activity_version: number; replayed: boolean }[];
+      };
+      classify_activity_v1: { Args: {p_activity_id:string;p_expected_version:number;p_classification:string|null};Returns:undefined };
+      regularize_historical_activity_v1: {Args:{p_activity_id:string;p_expected_version:number;p_confirmed:boolean};Returns:undefined};
       access_directory_v1: {
         Args: Record<string, never>;
         Returns: { username: string; display_name: string; role: string }[];
