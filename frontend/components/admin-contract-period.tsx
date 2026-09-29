@@ -3,6 +3,7 @@ import { useState, useTransition } from "react";
 import { configureContractPeriodAction, assignContractPeriodAction } from "@/app/aunor/contract-actions";
 import type { AunorWorkspace } from "@/lib/aunor";
 import { periodLabel } from "@/lib/contract-progress";
+import { annualReportingCycle, contractReferences, contractStartMonth, referenceLabel, referenceMonthlyPeriod } from "@/lib/contract-reference";
 import { Button } from "./button";
 import type { SimulatedActivity } from "@/lib/activity-simulation";
 import s from "./aunor-space.module.css";
@@ -13,8 +14,10 @@ export function AdminContractPeriod({w,activityId,activityVersion,onRefresh,onAs
   const [selected,setSelected]=useState(activity?.contract_period_id ?? ""),[confirmed,setConfirmed]=useState(false);
   const [cadence,setCadence]=useState<"monthly"|"annual">("monthly"),[start,setStart]=useState(""),[end,setEnd]=useState(""),[target,setTarget]=useState("");
   const [editId,setEditId]=useState(""),[notice,setNotice]=useState(""),[pending,transition]=useTransition();
+  const [referenceMonth,setReferenceMonth]=useState(contractStartMonth);
   if(!service || !activity?.publication_version) return <p className={s.footnote}>Publica primero la referencia contractual. Después podrás confirmar a qué periodo corresponde el trabajo.</p>;
   const edit=periods.find(p=>p.id===editId);
+  const reference=contractReferences[service];
   return <section className={s.step} aria-label="Periodo contractual">
     <h3>Periodo de cumplimiento</h3><p className={s.footnote}>La fecha de la actividad no asigna el mes automáticamente. Confirma el periodo acordado; solo contará al estar Entregada.</p>
     {notice && <p role="status" className={s.notice}>{notice}</p>}
@@ -26,8 +29,23 @@ export function AdminContractPeriod({w,activityId,activityVersion,onRefresh,onAs
       if(result.ok){setConfirmed(false);await onRefresh();onAssigned(result.activity);}
     })}>Confirmar periodo</Button>
     <details className="mt-4 border-t border-line pt-3"><summary className="min-h-11 cursor-pointer text-sm font-bold text-cyan-ink">Configurar periodos y metas del servicio</summary>
-      <p className={s.footnote}>Usa fechas y cuotas del contrato. Para un periodo anual, escribe su vigencia real, no el año calendario por defecto. Para un mes parcial, confirma expresamente sus fechas y cuota. No se traslada el excedente.</p>
-      {service==="cobertura" && <p className={s.footnote}>Referencia indicada por Marco: 10 coberturas al mes. Confirma la vigencia aplicable antes de registrarla.</p>}
+      <p className={s.footnote}>Usa las fechas del periodo de seguimiento y las cuotas confirmadas. El ciclo anual no equivale a la fecha de vencimiento del contrato. Para un mes parcial, revisa expresamente sus fechas y cuota. No se traslada el excedente.</p>
+      {reference && <div className={s.notice}>
+        <strong>Referencia confirmada · {referenceLabel(service)}</strong>
+        <p className={s.footnote}>{reference.source} Inicio operativo: abril de 2026.</p>
+        {!edit && <>
+          {reference.cadence==="monthly" ? <label className={s.label}>Mes a preparar<input className={s.input} type="month" min={contractStartMonth} value={referenceMonth} onChange={e=>setReferenceMonth(e.target.value)}/></label>
+            : <p className={s.footnote}>Ciclo operativo anual: abril de 2026 a marzo de 2027. Es una ventana de seguimiento, no la fecha de vencimiento del contrato.</p>}
+          <Button className="mt-3" variant="secondary" onClick={()=>{
+            const prepared=reference.cadence==='annual' ? {...annualReportingCycle,service_id:service,cadence:reference.cadence,target:reference.target} : referenceMonthlyPeriod(service,referenceMonth);
+            if(reference.cadence==="monthly" && !prepared){setNotice("Elige un mes válido desde abril de 2026.");return;}
+            const existing=prepared && periods.find(p=>p.starts_on===prepared.starts_on && p.ends_on===prepared.ends_on);
+            if(existing){setEditId(existing.id);setStart(existing.starts_on);setEnd(existing.ends_on);setCadence(existing.cadence);setTarget(existing.target?.toString() ?? "");setNotice("Ese periodo ya existe. Se conserva su meta actual; puedes revisarla sin duplicarlo.");return;}
+            setCadence(reference.cadence);setTarget(reference.target?.toString() ?? "");setStart(prepared?.starts_on ?? "");setEnd(prepared?.ends_on ?? "");
+            setNotice("Referencia preparada. Revisa los datos y guarda para registrar el periodo; no se asignaron actividades.");
+          }}>Usar referencia confirmada</Button>
+        </>}
+      </div>}
       <form className={s.fields} onSubmit={e=>{e.preventDefault();transition(async()=>{
         const result=await configureContractPeriodAction({id:edit?.id,version:edit?.version,service_id:service,cadence,starts_on:start,ends_on:end,target:target===""?null:Number(target)});
         setNotice(result.ok?"Periodo guardado; ahora puedes asignarle actividades.":result.error);

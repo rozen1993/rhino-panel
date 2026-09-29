@@ -1,5 +1,7 @@
 // Fictitious public examples only. No existing demo storage is read or changed.
 import type { AunorWorkspace } from "@/lib/aunor";
+import { demoReferencePeriods } from "@/lib/contract-reference";
+import { calendarDateInLima } from "@/lib/historical";
 // Fixed for this isolated demo process, never refreshed by a read or a publication.
 const exampleDeliveryAt = new Date().toISOString();
 export const aunorServiceLabels = [
@@ -13,6 +15,7 @@ export const aunorServiceLabels = [
 export function createAunorExamples(): AunorWorkspace {
   const at="2026-06-19T14:15:00Z";
   return {
+    contractPeriods:demoReferencePeriods(calendarDateInLima().slice(0,7)),
     services:aunorServiceLabels.map(([id,label],i)=>({id,label,position:i+1,reference:"Cláusula 2.2"})),
     activities:[
       {id:"cobertura-norte",type:"Grabación",title:"Cobertura audiovisual Norte",status:"Entregada",place:"Norte",summary:"Cobertura publicada para Aunor. Ejemplo ficticio.",service_id:"cobertura",not_performed_reason:"",publication_version:1,published_at:at,unread_count:1,delivered_at:exampleDeliveryAt,material_link:"https://example.invalid/material-ejemplo.mp4"},

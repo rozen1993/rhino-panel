@@ -11,6 +11,7 @@ import { AunorDashboard } from "@/components/aunor-dashboard";
 import { DetailPanel, type DetailActivity } from "@/components/calendar-detail-panel";
 import { RecordingModeTags } from "@/components/recording-mode-tags";
 import { ClassificationBadge } from "@/components/classification-badge";
+import { contractReferences, referenceLabel } from "@/lib/contract-reference";
 import { contractProgress, periodLabel } from "@/lib/contract-progress";
 import { calendarDateInLima } from "@/lib/historical";
 import type { HistoricalCategory } from "@/lib/historical";
@@ -496,6 +497,7 @@ function Agreed({ w }: { w: AunorWorkspace }) {
               onClick={() => setSelected(service.id)}
             >
               <strong>{service.label}</strong>
+              <small>Referencia: {referenceLabel(service.id)}</small>
               <span className="mt-2 flex items-baseline justify-between gap-3"><span className="display-title text-2xl tabular-nums">{contractProgress(w,service.id,periodFor(service.id)).ratio}</span><span className="text-xs text-ink-muted">{periodFor(service.id)?.target ? (periodFor(service.id)?.cadence==="annual" ? "Periodo anual" : "Periodo mensual") : "Meta por confirmar"}</span></span>
               {replacementsForService(w, service.id).length > 0 && (
                 <span className={s.observed}>
@@ -527,6 +529,10 @@ function Agreed({ w }: { w: AunorWorkspace }) {
               Servicio seleccionado · 2.2
             </p>
             <h2 className="section-title">{serviceName(w, selected)}</h2>
+            {contractReferences[selected] && <p className={s.footnote}>
+              Referencia confirmada: {referenceLabel(selected)}. Inicio operativo: abril de 2026.
+              {contractReferences[selected].cadence==="annual" && " Ciclo operativo: abril de 2026 a marzo de 2027; no indica el vencimiento del contrato."}
+            </p>}
             {periods.some(p=>p.service_id===selected) && <div aria-label="Periodos registrados" className="mt-4 grid grid-cols-2 gap-2 lg:grid-cols-3">
               {periods.filter(p=>p.service_id===selected).sort((a,b)=>a.starts_on.localeCompare(b.starts_on)).map(p=><button key={p.id} type="button"
                 className={`min-h-16 rounded-md border p-3 text-left text-xs ${p.id===period?.id ? "border-cyan bg-cyan/10" : "border-line bg-panel"}`}
@@ -535,9 +541,9 @@ function Agreed({ w }: { w: AunorWorkspace }) {
               </button>)}
             </div>}
             <div className="my-4 rounded-[10px] border border-cyan/30 bg-panel-secondary p-4">
-              <p className="data-label text-cyan-ink">{period ? `${period.cadence==="annual" ? "Vigencia anual" : "Control mensual"} · ${periodLabel(period)}` : "Periodo por confirmar"}</p>
+              <p className="data-label text-cyan-ink">{period ? `${period.cadence==="annual" ? "Control anual" : "Control mensual"} · ${periodLabel(period)}` : "Periodo por confirmar"}</p>
               <div className="mt-2 flex items-baseline gap-3"><strong className="display-title text-4xl tabular-nums">{progress.ratio}</strong><span className="text-sm text-ink-muted">trabajos entregados</span></div>
-              {progress.target===null ? <p className="mt-2 text-sm text-ink-muted">Meta por confirmar. No se calcula un porcentaje sin una cuota acordada.</p> : <>
+              {progress.target===null ? <p className="mt-2 text-sm text-ink-muted">{!period && contractReferences[selected]?.target!==null && contractReferences[selected] ? "Periodo por confirmar. La meta de referencia no se aplica a fechas no confirmadas." : "Meta por confirmar. No se calcula un porcentaje sin una cuota acordada."}</p> : <>
                 <progress className="mt-3 h-2 w-full accent-[#11b4c6]" value={Math.min(progress.count,progress.target)} max={progress.target} aria-label="Cumplimiento del periodo"/>
                 <p className="mt-2 text-sm font-bold">{progress.excess ? `${progress.excess} adicionales · sin traslado a otro periodo` : `${Math.max(0,progress.target-progress.count)} pendientes para alcanzar la meta`}</p>
               </>}
