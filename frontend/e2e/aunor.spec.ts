@@ -52,7 +52,7 @@ test("navegación cliente conserva datos por pantalla y actualiza el panel",asyn
   await expect(page.getByRole("heading",{name:"Detalle de actividad",exact:true})).toBeVisible();
   await expect(page.getByRole("button",{name:"Confirmar esta entrega"})).toHaveCount(0);
   await page.getByRole("link",{name:"Contrato",exact:true}).click();
-  await expect(page.getByRole("heading",{name:"Qué está previsto",exact:true})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"Servicios del mes",exact:true})).toBeVisible();
   await expect(page.getByText("Observado: tiene reemplazo",{exact:true}).first()).toBeVisible();
 });
 

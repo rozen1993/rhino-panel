@@ -10,7 +10,7 @@ Fuente: imagen aportada por Marco de la cláusula 2.2 (página 2 de 12), más su
 | Videos para redes sociales | 4 | Mensual | Marco resuelve «cinco (4)» |
 | Micronews internos | 1 | Mensual | Marco corrige la cantidad del documento |
 | Videos de resumen anual | 2 | Anual | Resumen anual según documento |
-| Videos de fiesta de fin de año | 2 | Mensual | Sin periodicidad explícita: mensual por instrucción de Marco |
+| Videos de fiesta de fin de año | 2 | Anual | Corrección expresa posterior de Marco: anual, no mensual |
 | Videos de campañas internas | 12 | Mensual | Sin periodicidad explícita: mensual por instrucción de Marco |
 | Videos sociales y ambientales | 2 | Anual | El documento dice «videos anuales» |
 | Videos de seguridad vial | 24 | Mensual | Marco resuelve «Veinticuatro (21)» |

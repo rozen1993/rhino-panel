@@ -7,7 +7,7 @@ Se incorporaron las doce metas y las correcciones expresas de Marco: redes 4/mes
 ## Alcance local
 
 - La demo presenta metas mensuales desde abril de 2026 hasta el mes actual.
-- Resumen anual, sociales/ambientales y OSITRAN: 2 por ciclo operativo abril de 2026–marzo de 2027. No declara el vencimiento del contrato.
+- Resumen anual, fiesta de fin de año, sociales/ambientales y OSITRAN: 2 por ciclo operativo abril de 2026–marzo de 2027. No declara el vencimiento del contrato. Fiesta de fin de año fue corregida expresamente por Marco a anual después de la primera configuración.
 - Aunor ve el X/Y del periodo, la referencia y la periodicidad. El numerador exige trabajos entregados y asignados; no se rellena con cifras inventadas.
 - Admin prepara cuotas y fechas con «Usar referencia confirmada». El guardado sigue pasando por la acción existente, con permisos y trazabilidad; preparar no realiza escrituras.
 - Al detectar un periodo existente, se muestran sus valores sin sobrescribirlos. Las asignaciones de actividades siguen siendo explícitas.

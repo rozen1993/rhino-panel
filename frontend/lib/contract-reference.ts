@@ -15,7 +15,7 @@ export const contractReferences: Record<string, ContractReference> = {
   redes: {cadence:"monthly",target:4,source:"4 al mes confirmados por Marco; sustituye la contradicción cinco (4)."},
   micronews: {cadence:"monthly",target:1,source:"1 al mes confirmado por Marco; sustituye la cantidad del documento."},
   "resumen-anual": {cadence:"annual",target:2,source:"Dos videos de resumen anual, cláusula 2.2."},
-  fiesta: {cadence:"monthly",target:2,source:"Dos videos de fiesta de fin de año. Mensual por instrucción de Marco al no especificarse periodicidad."},
+  fiesta: {cadence:"annual",target:2,source:"Dos videos de fiesta de fin de año al año. Periodicidad anual corregida expresamente por Marco el 29/09/2026."},
   campanas: {cadence:"monthly",target:12,source:"Doce videos de campañas internas. Mensual por instrucción de Marco."},
   "social-ambiental": {cadence:"annual",target:2,source:"Dos videos anuales de actividades sociales y ambientales."},
   "seguridad-vial": {cadence:"monthly",target:24,source:"24 al mes confirmados por Marco; sustituye la contradicción Veinticuatro (21)."},

@@ -104,3 +104,18 @@ El diálogo inicia el foco en Cancelar y lo devuelve al cerrar.
 
 Marca vigente: **DA VINCI**. Esta ronda no autoriza publicación, cambios de
 contraseña reales ni uso de registros reales como pruebas.
+
+## Contrato Aunor — propuesta 02 elegida el 29 de septiembre de 2026
+
+Referencia: `docs/propuestas-contrato-aunor-2026-09-29/`.
+Se adopta **Tarjetas por servicio**: selector de mes, cuadrícula mensual con X/Y
+y cumplimiento por servicio, y tarjetas anuales compactas en una sección independiente.
+Cada tarjeta abre un detalle de consulta con entregas; se conservan los avisos
+de sustituciones, trabajos no computables y asignaciones pendientes. El verde
+indica meta alcanzada y el cian cumplimiento parcial. No se aplica un porcentaje global
+mezclando servicios. Un periodo o una meta no confirmados nunca se inventan.
+
+La adaptación móvil usa una columna y diálogo con desplazamiento propio, cierre
+por Escape y retorno del foco. Aunor sigue siendo solo consulta, sin responsables
+internos ni acciones de administración. La implementación de esta ronda es local;
+no autoriza modificar datos reales ni publicar automáticamente.
