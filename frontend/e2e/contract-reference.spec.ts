@@ -35,7 +35,7 @@ test('Aunor consulta las doce metas desde abril y el ciclo anual sin asignacione
   expect(await page.evaluate(()=>Boolean(document.activeElement?.closest('dialog')))).toBe(true);
   await page.getByRole('button',{name:'Cerrar detalle'}).click();
   await expect(list.getByRole('button',{name:/^Videos de resumen anual:/})).toBeFocused();
-  const dir='../docs/implementacion-contrato-tarjetas-2026-09-29';
+  const dir=process.env.SISTEMA_R_CAPTURE_DIR ?? '../docs/implementacion-contrato-tarjetas-2026-09-29';
   await page.setViewportSize({width:1440,height:1000});
   await page.getByRole('heading',{name:'Contrato',exact:true}).click();
   await page.screenshot({path:resolve(dir,'contrato-escritorio.png'),fullPage:true});
@@ -57,13 +57,13 @@ test('Aunor consulta las doce metas desde abril y el ciclo anual sin asignacione
 test('Admin prepara la cuota sin guardar ni duplicar periodos ya existentes',async({page})=>{
   await login(page,'admin');await page.goto('/actividades/cobertura-norte');
   await page.getByText('Configurar periodos y metas del servicio',{exact:true}).click();
-  const region=page.getByRole('region',{name:'Periodo contractual'});
+  const region=page.getByRole('region',{name:'Configuración de periodos'});
   await region.getByLabel('Mes a preparar').fill('2026-04');
   await region.getByRole('button',{name:'Usar referencia confirmada'}).click();
   await expect(region.getByText(/Ese periodo ya existe/)).toBeVisible();
   await expect(region.getByLabel('Meta (opcional)',{exact:true})).toHaveValue('10');
   await expect(region.getByLabel('Inicio',{exact:true})).toHaveValue('2026-04-01');
   await expect(region.getByLabel('Fin',{exact:true})).toHaveValue('2026-04-30');
-  await expect(region.getByLabel('Periodo de esta actividad')).toHaveValue('');
-  await expect(region.getByRole('button',{name:'Confirmar periodo',exact:true})).toBeDisabled();
+  await expect(page.getByRole('combobox',{name:'Periodo contractual',exact:true})).toHaveValue('');
+  await expect(page.getByText('Periodo pendiente de confirmar',{exact:true})).toBeVisible();
 });

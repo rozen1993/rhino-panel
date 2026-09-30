@@ -22,7 +22,7 @@ try {
  grant usage on schema public,auth,extensions to anon,authenticated,service_role;
  revoke all on function auth.jwt(),auth.uid() from public;grant execute on function auth.jwt(),auth.uid() to anon,authenticated,service_role;`);
  const files=readdirSync(migrations).filter(f=>f.endsWith('.sql')).sort();
- if(files.at(-1)!=='202609280002_contract_periods.sql')throw Error('Review migration boundary');
+ if(files.at(-1)!=='202609300001_admin_compact_management.sql')throw Error('Review migration boundary');
  for(const f of files)sql(readFileSync(migrations+'/'+f,'utf8'));
  console.log('PASS complete migration chain');
  sql(`insert into auth.users values ${[1,2,3,4].map(n=>`('${id(100+n)}')`).join(',')};
@@ -70,7 +70,28 @@ try {
  deny(1,`public.assign_contract_period_v1('${a}',6,2,'${p}',true)`,'SR003');
  sql(as(1,`select public.aunor_mutate_v1('publish','${a}','${randomUUID()}','{"expectedVersion":2,"summary":"Resumen sintético","serviceId":"cobertura","notPerformedReason":""}');`));
  sql(as(4,`do $$begin assert(select contract_period_id is null from public.aunor_activities where id='${a}');end $$;`));
- sql(as(1,`select public.restart_activity_v2('${a}',6,'Reinicio sintético');`));
+ const relationKey=randomUUID();
+ const relation={activityVersion:6,publicationVersion:3,summary:'Resumen compacto',serviceId:'cobertura',periodId:p,notPerformedReason:'',confirmed:true};
+ const bundle=(command,activity,key,payload)=>`public.save_admin_activity_bundle_v1('${command}','${activity}','${key}','${JSON.stringify(payload)}')`;
+ deny(2,bundle('relation',a,relationKey,relation));deny(4,bundle('relation',a,relationKey,relation));
+ deny(1,bundle('relation',a,randomUUID(),{...relation,confirmed:false}),'SR003');
+ deny(1,bundle('relation',a,randomUUID(),{...relation,activityVersion:1}),'SR001');
+ deny(1,bundle('relation',a,randomUUID(),{...relation,serviceId:'redes'}),'SR003');
+ sql(`do $$begin assert(select version=3 from private.aunor_publications where activity_id='${a}' and superseded_at is null);assert(select contract_period_id is null and version=6 from public.activities where id='${a}');end $$;`);
+ sql(as(1,`select ${bundle('relation',a,relationKey,relation)};select ${bundle('relation',a,relationKey,relation)};`));
+ deny(1,bundle('relation',a,relationKey,{...relation,summary:'Different'}),'SR006');
+ sql(`do $$begin assert(select version=4 from private.aunor_publications where activity_id='${a}' and superseded_at is null);assert(select contract_period_id='${p}' and version=7 and status='Entregada' from public.activities where id='${a}');end $$;`);
+ const replacementKey=randomUUID(),replacement={activityVersion:7,originalId:e,agreementId:'',reason:'Acuerdo de sustitución sintético',channel:'Llamada',contactedAt:'2026-04-12T12:00:00Z',requesterDeclared:'Solicitante sintético',evidenceLink:''};
+ const beforeAgreements=sql('select count(*) from private.aunor_agreements;').trim();
+ // The agreement insert succeeds, but the replacement constraint fails: both roll back.
+ deny(1,bundle('replacement',a,randomUUID(),{...replacement,reason:'x'.repeat(3001)}),'SR003');
+ if(sql('select count(*) from private.aunor_agreements;').trim()!==beforeAgreements)throw Error('Partial agreement persisted');
+ deny(2,bundle('replacement',a,replacementKey,replacement));deny(4,bundle('replacement',a,replacementKey,replacement));
+ sql(as(1,`select ${bundle('replacement',a,replacementKey,replacement)};select ${bundle('replacement',a,replacementKey,replacement)};`));
+ sql(`do $$begin assert(select count(*)=1 from private.aunor_replacements where original_activity_id='${e}' and substitute_activity_id='${a}');assert(select count(*)=${Number(beforeAgreements)+1} from private.aunor_agreements);end $$;`);
+ deny(1,bundle('replacement',a,randomUUID(),replacement),'SR001');
+ console.log('PASS compact relation and replacement: Admin only, stale versions, atomic rollback, idempotent retries, no status changes');
+ sql(as(1,`select public.restart_activity_v2('${a}',7,'Reinicio sintético');`));
  sql(`do $$begin assert exists(select 1 from public.activities where id<>'${a}' and classification='special' and status='Programada' and historical_regularized_at is null);end $$;`);
  console.log('PASS editing deadline, immutable journeys, explicit contract periods, overlaps, wrong-service exclusion and restart');
 } finally {

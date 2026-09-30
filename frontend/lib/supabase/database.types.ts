@@ -160,6 +160,10 @@ export type Database = {
       Relationships: [];
     } };
     Functions: {
+      save_admin_activity_bundle_v1: {
+        Args: { p_command:string; p_activity_id:string; p_request_id:string; p_payload:Json };
+        Returns: Json;
+      };
       configure_contract_period_v1:{Args:{p_period_id:string|null;p_expected_version:number|null;p_service_id:string;p_cadence:string;p_starts_on:string;p_ends_on:string;p_target:number|null};Returns:string};
       assign_contract_period_v1:{Args:{p_activity_id:string;p_expected_version:number;p_publication_version:number;p_period_id:string|null;p_confirmed:boolean};Returns:undefined};
       save_activity_plan_v4: {

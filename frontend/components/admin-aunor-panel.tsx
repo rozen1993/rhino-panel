@@ -1,459 +1,525 @@
 "use client";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import { getAunorWorkspaceAction } from "@/app/aunor/actions";
+import { saveAdminActivityAction } from "@/app/aunor/admin-management-actions";
 import {
-  getAunorWorkspaceAction,
-  performAunorAction,
-} from "@/app/aunor/actions";
-import {
-  AgreementList,
-  AunorJourneys,
-  ReplacementSummary,
-} from "@/components/aunor-space";
-import { Button } from "@/components/button";
-import { AdminContractPeriod } from "@/components/admin-contract-period";
-import {
-  emptyAunorWorkspace,
-  type AunorWorkspace,
-  type AunorCommand,
-} from "@/lib/aunor";
+  type AdminActivityInput,
+  previewContractRelation,
+} from "@/lib/admin-activity-management";
+import { type AunorWorkspace, type AunorActivityRow } from "@/lib/aunor";
 import type { SimulatedActivity } from "@/lib/activity-simulation";
 import type { Role } from "@/lib/roles";
-import type { Json } from "@/lib/supabase/database.types";
-import s from "./aunor-space.module.css";
+import { periodLabel } from "@/lib/contract-progress";
+import { safeMaterialUrl } from "@/lib/external-link";
+import { AdminContractPeriod } from "./admin-contract-period";
+import { AdminAunorAdvanced } from "./admin-aunor-advanced";
+import { AgreementList, ReplacementSummary } from "./aunor-space";
+import { Button } from "./button";
+import { SystemIcon } from "./system-icon";
+import s from "./admin-aunor-panel.module.css";
 
-export function AdminAunorPanel({
-  item,
-  role,
-  onAssigned,
-}: {
+type Props = {
   item: SimulatedActivity;
   role: Role;
-  onAssigned?: (activity:SimulatedActivity|null) => void;
-}) {
-  const [w, setW] = useState<AunorWorkspace>(emptyAunorWorkspace);
-  const [loaded, setLoaded] = useState(false),
-    [error, setError] = useState(""),
-    [notice, setNotice] = useState("");
-  const [publicationVersion, setPublicationVersion] = useState(0);
-  const [summary, setSummary] = useState(""),
-    [service, setService] = useState(""),
-    [reason, setReason] = useState("");
-  const [channel, setChannel] = useState("Llamada"),
-    [contact, setContact] = useState(""),
-    [requester, setRequester] = useState(""),
-    [body, setBody] = useState(""),
-    [evidence, setEvidence] = useState("");
-  const [original, setOriginal] = useState(item.id),
-    [substitute, setSubstitute] = useState(""),
-    [agreement, setAgreement] = useState(""),
-    [replacementReason, setReplacementReason] = useState(""),
-    [note, setNote] = useState("");
-  const [replacementEvidence, setReplacementEvidence] = useState("");
-  const [agreementCorrection, setAgreementCorrection] = useState(""),
-    [replacementCorrection, setReplacementCorrection] = useState("");
-  const [deliveryLabel, setDeliveryLabel] = useState(item.title);
-  const [pending, startTransition] = useTransition();
-  const requests = useRef(new Map<string, string>());
-  const load = useCallback(async () => {
-    const r = await getAunorWorkspaceAction();
-    if (r.ok) {
-      setW(r.data);
-      setLoaded(true);
-      return r.data;
-    }
-    setError(r.error);
+  onAssigned?: (item: SimulatedActivity | null) => void;
+};
+export function AdminAunorPanel(props: Props) {
+  if (
+    props.role.id !== "admin" ||
+    props.item.origin === "burson" ||
+    props.item.deletedAt
+  )
     return null;
+  return <CompactManagement key={props.item.id} {...props} />;
+}
+function CompactManagement({ item, role, onAssigned }: Props) {
+  const [w, setW] = useState<AunorWorkspace | null>(null);
+  const [draft, setDraft] = useState({
+    service: "",
+    period: "",
+    summary: "",
+    reason: "",
+    version: 0,
+  });
+  const [error, setError] = useState(""),
+    [notice, setNotice] = useState("");
+  const [pending, transition] = useTransition();
+  const [advanced, setAdvanced] = useState(false);
+  const requests = useRef(new Map<string, string>()),
+    initialized = useRef(false);
+  const accept = useCallback((a: AunorActivityRow | undefined) => {
+    setDraft({
+      service: a?.service_id ?? "",
+      period: a?.contract_period_id ?? "",
+      summary: a?.summary || "",
+      reason: a?.not_performed_reason ?? "",
+      version: a?.publication_version ?? 0,
+    });
   }, []);
+  const load = useCallback(async () => {
+    try {
+      const result = await getAunorWorkspaceAction();
+      if (!result.ok) {
+        setError(result.error);
+        return null;
+      }
+      setW(result.data);
+      if (!initialized.current) {
+        accept(result.data.activities.find((a) => a.id === item.id));
+        initialized.current = true;
+      }
+      return result.data;
+    } catch {
+      setError("No se pudo cargar el contrato. Reintenta para continuar.");
+      return null;
+    }
+  }, [accept, item.id]);
   useEffect(() => {
     let active = true;
-    void getAunorWorkspaceAction().then((result) => {
-      if (!active) return;
+    void Promise.resolve().then(() => {
+      if (active) void load();
+    });
+    const refresh = () => {
+      if (document.visibilityState === "visible") void load();
+    };
+    window.addEventListener("focus", refresh);
+    return () => {
+      active = false;
+      window.removeEventListener("focus", refresh);
+    };
+  }, [load]);
+  const published = w?.activities.find((a) => a.id === item.id);
+  const conflict = Boolean(
+    published && published.publication_version !== draft.version,
+  );
+  const periods =
+    w?.contractPeriods
+      ?.filter((p) => p.service_id === draft.service)
+      .sort((a, b) => a.starts_on.localeCompare(b.starts_on)) ?? [];
+  const preview = w
+    ? previewContractRelation(
+        w,
+        item.id,
+        draft.service,
+        draft.period,
+        draft.summary,
+      )
+    : null;
+  const [original, setOriginal] = useState(""),
+    [agreement, setAgreement] = useState(""),
+    [reason, setReason] = useState("");
+  const [requester, setRequester] = useState(""),
+    [contact, setContact] = useState(""),
+    [channel, setChannel] = useState("Llamada"),
+    [evidence, setEvidence] = useState("");
+  const replacementDetails = useRef<HTMLDetailsElement>(null),
+    replacementSummary = useRef<HTMLElement>(null);
+  const replacements =
+    w?.replacements.filter(
+      (r) =>
+        r.original_activity_id === item.id ||
+        r.substitute_activity_id === item.id,
+    ) ?? [];
+  const currentReplacements = replacements.filter((r) => r.is_current);
+  const agreements =
+    w?.agreements.filter(
+      (g) => g.is_current && [original, item.id].includes(g.activity_id),
+    ) ?? [];
+  async function save(
+    input:
+      | Omit<Extract<AdminActivityInput, { command: "relation" }>, "requestId">
+      | Omit<
+          Extract<AdminActivityInput, { command: "replacement" }>,
+          "requestId"
+        >,
+  ) {
+    const key = JSON.stringify(input),
+      requestId = requests.current.get(key) ?? crypto.randomUUID();
+    requests.current.set(key, requestId);
+    setError("");
+    setNotice("");
+    try {
+      const result = await saveAdminActivityAction(
+        { ...input, requestId },
+        item,
+      );
       if (!result.ok) {
         setError(result.error);
         return;
       }
-      setW(result.data);
-      setLoaded(true);
-      const a = result.data.activities.find((a) => a.id === item.id);
-      if (a) {
-        setPublicationVersion(a.publication_version);
-        setSummary(a.summary);
-        setService(a.service_id ?? "");
-        setReason(a.not_performed_reason);
-      }
-    });
-    return () => {
-      active = false;
-    };
-  }, [item.id]);
-  useEffect(() => {
-    let active = true,
-      inFlight = false;
-    const poll = async () => {
-      if (document.visibilityState !== "visible" || inFlight) return;
-      inFlight = true;
-      try {
-        const result = await getAunorWorkspaceAction();
-        if (active && result.ok) setW(result.data);
-      } catch {
-        if (active) setError("No se pudo actualizar Aunor. Usa Reintentar.");
-      } finally {
-        inFlight = false;
-      }
-    };
-    const timer = setInterval(() => void poll(), 30_000);
-    window.addEventListener("focus", poll);
-    return () => {
-      active = false;
-      clearInterval(timer);
-      window.removeEventListener("focus", poll);
-    };
-  }, []);
-  const published = w.activities.find((a) => a.id === item.id);
-  const publicationChanged = Boolean(
-    published && published.publication_version !== publicationVersion,
-  );
-  function acceptLatestPublication() {
-    if (!published) return;
-    setPublicationVersion(published.publication_version);
-    setSummary(published.summary);
-    setService(published.service_id ?? "");
-    setReason(published.not_performed_reason);
-  }
-  const mutate = useCallback(
-    async (
-      command: AunorCommand,
-      activityId: string,
-      payload: Record<string, Json>,
-    ) => {
-      const key = JSON.stringify([command, activityId, payload]),
-        requestId = requests.current.get(key) ?? crypto.randomUUID();
-      requests.current.set(key, requestId);
-      return await new Promise<boolean>((resolve) =>
-        startTransition(async () => {
-          setError("");
-          const result = await performAunorAction({
-            command,
-            activityId,
-            requestId,
-            payload,
-            demoSource:
-              command === "publish" || command === "delivery"
-                ? {
-                    id: item.id,
-                    type: item.type,
-                    title: item.title,
-                    status: item.status,
-                    place: item.place,
-                    spans: item.spans,
-                    materialLink: item.materialLink,
-                    recordingModes: item.recordingModes,
-                    classification:item.classification,deliveryDueOn:item.deliveryDueOn,historicalRegularizedAt:item.historicalRegularizedAt,
-                    deliveredAt: item.deliveredAt,
-                    version: item.version,
-                    origin: item.origin,
-                    deletedAt: item.deletedAt,
-                  }
-                : undefined,
-          });
-          if (!result.ok) {
-            setError(result.error);
-            resolve(false);
-            return;
-          }
-          requests.current.delete(key);
-          if(result.activity) onAssigned?.(result.activity);
-          const fresh = await load();
-          if (command === "publish" && fresh)
-            setPublicationVersion(
-              fresh.activities.find((a) => a.id === item.id)
-                ?.publication_version ?? 0,
-            );
-          if (command !== "read")
-            setNotice(
-              "Registro publicado para Aunor. No confirma por el cliente ni aprueba pagos.",
-            );
-          resolve(true);
-        }),
+      requests.current.delete(key);
+      onAssigned?.(result.activity);
+      setNotice(
+        input.command === "relation"
+          ? "Relación contractual guardada. El estado de la actividad no cambia."
+          : "Reemplazo y acuerdo registrados. Ambas actividades se conservan.",
       );
-    },
-    [item, load, onAssigned],
-  );
-  if (role.id !== "admin" || item.origin === "burson" || item.deletedAt)
-    return null;
+      const fresh = await load();
+      if (fresh) accept(fresh.activities.find((a) => a.id === item.id));
+      if (input.command === "replacement") {
+        if (replacementDetails.current) replacementDetails.current.open = false;
+        replacementSummary.current?.focus();
+        setOriginal("");
+        setAgreement("");
+        setReason("");
+        setRequester("");
+        setContact("");
+        setEvidence("");
+      }
+    } catch {
+      setError(
+        "No se pudo confirmar el guardado. Reintenta con los mismos campos para evitar duplicados.",
+      );
+    }
+  }
   return (
-    <section aria-label="Gestión Aunor" className={s.stack}>
-      <header className={s.head}>
-        <p className="data-label text-cyan-ink">
-          Ficha de actividad · gestión Admin
-        </p>
-        <h2 className="section-title text-2xl">Contrato y entregas de Aunor</h2>
-        <p className={s.muted}>
-          La planificación y la ejecución no cambian. Publica únicamente
-          información que el cliente pueda ver.
-        </p>
+    <section aria-label="Gestión Aunor" className={s.panel} aria-busy={pending}>
+      <header className={s.heading}>
+        <div>
+          <h2 className="section-title text-2xl">Relación con el contrato</h2>
+          <p>Elige el servicio y confirma el periodo en un solo paso.</p>
+        </div>
+        <small className="data-label">Cliente Aunor</small>
       </header>
       {error && (
-        <div className={s.error} role="alert">
+        <div role="alert" className={`${s.feedback} ${s.error}`}>
           {error}{" "}
-          <button type="button" onClick={() => void load()}>
-            Reintentar
-          </button>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setError("");
+              void load();
+            }}
+          >
+            Recargar información
+          </Button>
         </div>
       )}
       {notice && (
-        <p className={s.notice} role="status">
+        <p role="status" className={s.feedback}>
           {notice}
         </p>
       )}
-      {publicationChanged && (
-        <div className={s.notice} role="status">
-          <strong>Hay una publicación más reciente.</strong>
-          <p>
-            Tu borrador se conserva. Cargar la versión vigente reemplazará los
-            campos de publicación del formulario.
-          </p>
-          <Button variant="secondary" onClick={acceptLatestPublication}>
+      {conflict && (
+        <div role="status" className={`${s.feedback} ${s.conflict}`}>
+          <p>Hay una publicación más reciente. Tu borrador se conserva.</p>
+          <Button variant="secondary" onClick={() => accept(published)}>
             Cargar versión vigente
           </Button>
         </div>
       )}
-      {!loaded ? (
-        <p role="status">Cargando información del canal Aunor…</p>
+      {!w ? (
+        <p role="status">Cargando relación contractual…</p>
       ) : (
         <>
-          <div className={s.detail}>
-            <div className={s.card}>
-              <div className={s.hero + " technical-surface"}>
-                <p className="data-label">
-                  Cliente Aunor · visibilidad automática
-                </p>
-                <p className={s.activityName}>{item.title}</p>
-              </div>
+          <div className={s.card}>
+            <div className={s.grid}>
               <form
-                className={s.step}
-                onSubmit={async (e) => {
+                className={s.form}
+                onSubmit={(e) => {
                   e.preventDefault();
-                  await mutate("publish", item.id, {
-                    expectedVersion: publicationVersion,
-                    summary,
-                    serviceId: service,
-                    notPerformedReason: reason,
-                  });
+                  transition(() =>
+                    save({
+                      command: "relation",
+                      activityId: item.id,
+                      activityVersion: item.version,
+                      publicationVersion: draft.version,
+                      serviceId: draft.service,
+                      periodId: draft.period || null,
+                      summary:
+                        draft.summary.trim() ||
+                        item.description.trim() ||
+                        item.title,
+                      notPerformedReason: draft.reason,
+                      confirmed: true,
+                    }),
+                  );
                 }}
               >
-                <h3>1 · Resumen y referencia contractual</h3>
-                <div className={s.fields}>
-                  <label className={s.label + " " + s.full}>
-                    Resumen para Aunor
-                    <textarea
-                      className={s.input}
-                      rows={3}
-                      required
-                      maxLength={5000}
-                      value={summary}
-                      onChange={(e) => setSummary(e.target.value)}
-                    />
-                    <small>No copies opiniones ni notas internas.</small>
-                  </label>
-                  <label className={s.label + " " + s.full}>
-                    Servicio de referencia
+                <fieldset
+                  disabled={pending || conflict}
+                  className="min-w-0 border-0 p-0"
+                >
+                  <div className={s.fields}>
+                    <label className={s.label}>
+                      Servicio del contrato
+                      <select
+                        className={s.input}
+                        value={draft.service}
+                        onChange={(e) =>
+                          setDraft({
+                            ...draft,
+                            service: e.target.value,
+                            period: "",
+                          })
+                        }
+                      >
+                        <option value="">Por relacionar</option>
+                        {w.services.map((service) => (
+                          <option key={service.id} value={service.id}>
+                            {service.label}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className={s.label}>
+                      Periodo contractual
+                      <select
+                        className={s.input}
+                        value={draft.period}
+                        disabled={!draft.service}
+                        onChange={(e) =>
+                          setDraft({ ...draft, period: e.target.value })
+                        }
+                      >
+                        <option value="">Por confirmar</option>
+                        {periods.map((period) => (
+                          <option key={period.id} value={period.id}>
+                            {periodLabel(period)} ·{" "}
+                            {period.target === null
+                              ? "Meta por confirmar"
+                              : `${period.target} trabajos`}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                  <p className={s.help}>
+                    {draft.period
+                      ? "Al guardar confirmas que este es el periodo contractual correcto."
+                      : "Sin un periodo confirmado, esta actividad no suma al contrato."}{" "}
+                    Solo cuentan actividades entregadas, no sustituidas y
+                    realizadas.
+                  </p>
+                  {draft.service && !periods.length && (
+                    <p className={s.help}>
+                      Este servicio aún no tiene periodos configurados.
+                      Prepáralos en «Configurar periodos y metas».
+                    </p>
+                  )}
+                  <div className={s.save}>
+                    <span className={s.saved}>
+                      <SystemIcon name="calendar" className="size-4" />
+                      {published?.contract_period_id
+                        ? "Periodo guardado: " +
+                          (w.contractPeriods?.find(
+                            (p) => p.id === published.contract_period_id,
+                          )
+                            ? periodLabel(
+                                w.contractPeriods!.find(
+                                  (p) => p.id === published.contract_period_id,
+                                )!,
+                              )
+                            : "por revisar")
+                        : "Periodo pendiente de confirmar"}
+                    </span>
+                    <Button type="submit" disabled={pending || conflict}>
+                      {pending ? "Guardando…" : "Guardar relación"}
+                      <SystemIcon name="check" className="ml-2 size-4" />
+                    </Button>
+                  </div>
+                </fieldset>
+              </form>
+              <aside className={s.preview} aria-label="Vista previa del conteo">
+                <p className="data-label text-cyan-ink">
+                  Vista previa del conteo
+                </p>
+                {preview ? (
+                  <>
+                    <strong>{periodLabel(preview.label)}</strong>
+                    <div className={s.numbers}>
+                      <span>
+                        {preview.before}
+                        <small>/{preview.target ?? "—"}</small>
+                      </span>
+                      <SystemIcon name="arrow-right" className="size-5" />
+                      <span>
+                        {preview.after}
+                        <small>/{preview.target ?? "—"}</small>
+                      </span>
+                    </div>
+                    {preview.target !== null && (
+                      <div className={s.bar} aria-hidden="true">
+                        <span
+                          style={{
+                            width: `${Math.min(100, (preview.after / preview.target) * 100)}%`,
+                          }}
+                        />
+                      </div>
+                    )}
+                    <p className={s.help}>
+                      {preview.delta > 0
+                        ? `Al guardar: +${preview.delta} trabajo.`
+                        : "Esta selección no añade trabajos al conteo."}{" "}
+                      El conteo aún no cambia.
+                      {preview.target === null ? " Meta por confirmar." : ""}
+                    </p>
+                  </>
+                ) : (
+                  <p className={s.help}>
+                    Selecciona un periodo para ver cómo quedaría su conteo. No
+                    se asigna por la fecha de la actividad.
+                  </p>
+                )}
+              </aside>
+            </div>
+            <details className={s.disclosure}>
+              <summary>Personalizar resumen para Aunor · opcional</summary>
+              <label className={s.label}>
+                Resumen para Aunor
+                <textarea
+                  className={s.input}
+                  rows={3}
+                  maxLength={5000}
+                  disabled={pending || conflict}
+                  value={draft.summary}
+                  onChange={(e) =>
+                    setDraft({ ...draft, summary: e.target.value })
+                  }
+                />
+              </label>
+              <p className={s.help}>
+                Se guarda con «Guardar relación». No incluyas opiniones ni notas
+                internas.
+              </p>
+            </details>
+          </div>
+          <div className={s.rows}>
+            <details className={s.row} ref={replacementDetails}>
+              <summary ref={replacementSummary}>
+                <span className={s.icon}>
+                  <SystemIcon name="swap" className="size-5" />
+                </span>
+                <span>
+                  <strong>Reemplazo</strong>
+                  <small>
+                    {currentReplacements.length
+                      ? "Esta actividad tiene una relación de reemplazo. Consulta el historial."
+                      : "Esta actividad no tiene un reemplazo registrado."}
+                  </small>
+                </span>
+                <em>Registrar reemplazo →</em>
+              </summary>
+              <form
+                className={s.body}
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  transition(() =>
+                    save({
+                      command: "replacement",
+                      activityId: item.id,
+                      activityVersion: item.version,
+                      originalId: original,
+                      agreementId: agreement,
+                      reason,
+                      channel,
+                      contactedAt: contact
+                        ? new Date(contact).toISOString()
+                        : "",
+                      requesterDeclared: requester,
+                      evidenceLink: evidence,
+                    }),
+                  );
+                }}
+              >
+                <h3 className="section-title text-xl">
+                  Esta actividad reemplaza a…
+                </h3>
+                <div className={s.fixed}>
+                  <span className={s.help}>
+                    Actividad sustituta · ficha actual
+                  </span>
+                  <strong>{item.title}</strong>
+                </div>
+                <fieldset
+                  disabled={pending}
+                  className={`${s.fields} min-w-0 border-0 p-0`}
+                >
+                  <label className={`${s.label} ${s.full}`}>
+                    Actividad original
                     <select
                       className={s.input}
-                      value={service}
-                      onChange={(e) => setService(e.target.value)}
+                      required
+                      value={original}
+                      onChange={(e) => {
+                        setOriginal(e.target.value);
+                        setAgreement("");
+                      }}
                     >
-                      <option value="">Por relacionar</option>
-                      {w.services.map((service) => (
-                        <option key={service.id} value={service.id}>
-                          {service.label} · 2.2
-                        </option>
-                      ))}
+                      <option value="">Selecciona la actividad original</option>
+                      {w.activities
+                        .filter(
+                          (a) =>
+                            a.id !== item.id &&
+                            !w.replacements.some(
+                              (r) =>
+                                r.is_current && r.original_activity_id === a.id,
+                            ),
+                        )
+                        .map((a) => (
+                          <option key={a.id} value={a.id}>
+                            {a.title} ·{" "}
+                            {w.journeys.find((j) => j.activity_id === a.id)
+                              ?.start_date ?? a.id.slice(-6)}
+                          </option>
+                        ))}
                     </select>
-                    <small>
-                      Sin referencia contractual, la actividad sigue siendo
-                      visible.
-                    </small>
                   </label>
-                  <label className={s.label + " " + s.full}>
-                    Motivo de trabajo no realizado (si corresponde)
+                  {agreements.length > 0 && (
+                    <label className={`${s.label} ${s.full}`}>
+                      Acuerdo de respaldo
+                      <select
+                        className={s.input}
+                        value={agreement}
+                        onChange={(e) => setAgreement(e.target.value)}
+                      >
+                        <option value="">Registrar un nuevo acuerdo</option>
+                        {agreements.map((g) => (
+                          <option key={g.id} value={g.id}>
+                            {g.channel} · {g.body.slice(0, 100)}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
+                  <label className={`${s.label} ${s.full}`}>
+                    Motivo y acuerdo registrado
                     <textarea
                       className={s.input}
-                      rows={2}
+                      required
+                      minLength={2}
                       maxLength={3000}
+                      rows={3}
                       value={reason}
                       onChange={(e) => setReason(e.target.value)}
-                      disabled={item.status === "Entregada"}
+                      placeholder="Describe por qué cambió el trabajo y qué se acordó."
                     />
                   </label>
-                </div>
-                <p className={s.footnote}>
-                  Aunor ya puede consultar título, categoría, estado, días y lugares.
-                  Este formulario personaliza su resumen y referencia contractual;
-                  las revisiones anteriores se conservan.
-                </p>
-                <Button
-                  className="mt-4"
-                  type="submit"
-                  disabled={pending || !summary.trim()}
-                >
-                  {published
-                    ? "Actualizar publicación"
-                    : "Publicar actividad para Aunor"}
-                </Button>
-              </form>
-              <AdminContractPeriod key={`${item.id}-${published?.service_id ?? ""}-${published?.contract_period_id ?? ""}`} w={w} activityId={item.id} activityVersion={item.version} onRefresh={load} onAssigned={activity=>onAssigned?.(activity)}/>
-              {published && (
-                <form
-                  className={s.step}
-                  onSubmit={async (e) => {
-                    e.preventDefault();
-                    await mutate("delivery", item.id, {
-                      expectedActivityVersion: item.version,
-                      label: deliveryLabel,
-                    });
-                  }}
-                >
-                  <h3>2 · Registrar una versión de entrega</h3>
-                  <label className={s.label}>
-                    Nombre de la entrega
-                    <input
-                      className={s.input}
-                      value={deliveryLabel}
-                      maxLength={180}
-                      required
-                      onChange={(e) => setDeliveryLabel(e.target.value)}
-                    />
-                  </label>
-                  <p className={s.footnote}>
-                    Se usará el enlace de material actual de la actividad. Cada
-                    publicación tendrá su propia versión. Aunor consulta el material
-                    sin necesidad de confirmarlo.
-                  </p>
-                  <Button
-                    className="mt-4"
-                    type="submit"
-                    disabled={
-                      pending ||
-                      item.status !== "Entregada" ||
-                      !item.materialLink
-                    }
-                  >
-                    Publicar entrega para revisión
-                  </Button>
-                </form>
-              )}
-            </div>
-            <aside className={s.card + " " + s.confirm + " " + s.pad}>
-              <p className="data-label text-cyan-ink">Vista previa · cliente</p>
-              <h2 className="section-title">Qué verá Aunor</h2>
-              <div className={s.box}>
-                <strong>{item.title}</strong>
-                <p>{summary || "Escribe el resumen público."}</p>
-                <p className={s.footnote}>
-                  {item.status} · {item.type}
-                </p>
-                {item.spans.map((j, i) => (
-                  <p className={s.footnote} key={i}>
-                    {j.start}
-                    {j.start !== j.end ? " – " + j.end : ""} ·{" "}
-                    {j.place || item.place || "Lugar por indicar"}
-                  </p>
-                ))}
-              </div>
-              <p className={s.footnote}>
-                {service
-                  ? w.services.find((s) => s.id === service)?.label
-                  : "Por relacionar"}
-              </p>
-              <div className={s.stamp + " " + s.sectionGap}>
-                <strong>
-                  Visible para Aunor · solo lectura
-                </strong>
-                <p>
-                  Las opiniones del operario, conversación interna y auditoría
-                  nunca se publican.
-                </p>
-              </div>
-            </aside>
-          </div>
-          {published && (
-            <>
-              <div className={s.detail}>
-                <div className={s.card}>
-                  <form
-                    className={s.step}
-                    onSubmit={async (e) => {
-                      e.preventDefault();
-                      const at = Date.parse(contact);
-                      if (!Number.isFinite(at)) {
-                        setError("Indica una fecha de contacto válida.");
-                        return;
-                      }
-                      if (
-                        await mutate("agreement", original, {
-                          channel,
-                          contactedAt: new Date(at).toISOString(),
-                          requesterDeclared: requester,
-                          body,
-                          evidenceLink: evidence,
-                          correctsId: agreementCorrection || null,
-                        })
-                      ) {
-                        setBody("");
-                        setEvidence("");
-                        setAgreementCorrection("");
-                      }
-                    }}
-                  >
-                    <h3>3 · Registrar lo acordado por llamada</h3>
-                    <div className={s.fields}>
-                      <label className={s.label + " " + s.full}>
-                        Actividad del acuerdo
-                        <select
+                  {!agreement && (
+                    <>
+                      <label className={s.label}>
+                        Solicitado por
+                        <input
                           className={s.input}
-                          value={original}
-                          onChange={(e) => {
-                            setOriginal(e.target.value);
-                            setAgreement("");
-                            setAgreementCorrection("");
-                            setReplacementCorrection("");
-                          }}
-                        >
-                          {w.activities.map((a) => (
-                            <option key={a.id} value={a.id}>
-                              {a.title}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label className={s.label + " " + s.full}>
-                        Registro que corrige (opcional)
-                        <select
-                          className={s.input}
-                          value={agreementCorrection}
-                          onChange={(e) =>
-                            setAgreementCorrection(e.target.value)
-                          }
-                        >
-                          <option value="">Nuevo acuerdo</option>
-                          {w.agreements
-                            .filter(
-                              (g) => g.activity_id === original && g.is_current,
-                            )
-                            .map((g) => (
-                              <option key={g.id} value={g.id}>
-                                {g.id.slice(-8)} · {g.body.slice(0, 80)}
-                              </option>
-                            ))}
-                        </select>
-                        <small>
-                          Una corrección crea un registro nuevo; no borra el
-                          anterior.
-                        </small>
+                          required
+                          minLength={2}
+                          maxLength={180}
+                          value={requester}
+                          onChange={(e) => setRequester(e.target.value)}
+                        />
                       </label>
                       <label className={s.label}>
-                        Canal de origen
+                        Fecha del acuerdo
+                        <input
+                          className={s.input}
+                          required
+                          type="datetime-local"
+                          value={contact}
+                          onChange={(e) => setContact(e.target.value)}
+                        />
+                      </label>
+                      <label className={s.label}>
+                        Canal del acuerdo
                         <select
                           className={s.input}
                           value={channel}
@@ -464,253 +530,162 @@ export function AdminAunorPanel({
                           <option>Acuerdo verbal</option>
                         </select>
                       </label>
-                      <label className={s.label}>
-                        Fecha del contacto
-                        <input
-                          className={s.input}
-                          required
-                          type="datetime-local"
-                          value={contact}
-                          onChange={(e) => setContact(e.target.value)}
-                        />
-                      </label>
-                      <label className={s.label + " " + s.full}>
-                        Solicitante declarado
-                        <input
-                          className={s.input}
-                          value={requester}
-                          required
-                          maxLength={180}
-                          minLength={2}
-                          onChange={(e) => setRequester(e.target.value)}
-                        />
-                        <small>
-                          Texto declarado; no identifica de forma comprobada a
-                          una persona.
-                        </small>
-                      </label>
-                      <label className={s.label + " " + s.full}>
-                        Qué se acordó
-                        <textarea
-                          className={s.input}
-                          required
-                          rows={3}
-                          minLength={2}
-                          maxLength={5000}
-                          value={body}
-                          onChange={(e) => setBody(e.target.value)}
-                        />
-                      </label>
-                      <label className={s.label + " " + s.full}>
-                        Enlace de evidencia (opcional)
-                        <input
-                          className={s.input}
-                          type="url"
-                          placeholder="https://"
-                          value={evidence}
-                          onChange={(e) => setEvidence(e.target.value)}
-                        />
-                      </label>
-                    </div>
-                    <p className={s.footnote}>
-                      Registrado por Admin · DA VINCI. El registro administrativo
-                      no es una confirmación de Aunor.
-                    </p>
-                    <Button className="mt-4" disabled={pending} type="submit">
-                      Publicar acuerdo registrado
-                    </Button>
-                  </form>
-                  <form
-                    className={s.step}
-                    onSubmit={async (e) => {
-                      e.preventDefault();
-                      await mutate("replacement", original, {
-                        substituteId: substitute,
-                        agreementId: agreement,
-                        reason: replacementReason,
-                        evidenceNote: note,
-                        evidenceLink: replacementEvidence,
-                        correctsId: replacementCorrection || null,
-                      });
+                    </>
+                  )}
+                  <label className={s.label}>
+                    Enlace de respaldo · opcional
+                    <input
+                      className={s.input}
+                      type="url"
+                      placeholder="https://"
+                      value={evidence}
+                      onChange={(e) => setEvidence(e.target.value)}
+                    />
+                  </label>
+                </fieldset>
+                <p className={s.help}>
+                  Se conservan ambas actividades. La original queda identificada
+                  como sustituida y no se cuenta dos veces. Admin registra; no
+                  representa aprobación del cliente.
+                </p>
+                <div className={s.save}>
+                  <Button
+                    variant="secondary"
+                    type="button"
+                    disabled={pending}
+                    onClick={() => {
+                      if (replacementDetails.current)
+                        replacementDetails.current.open = false;
+                      replacementSummary.current?.focus();
                     }}
                   >
-                    <h3>4 · Relacionar original y sustituto</h3>
-                    <div className={s.fields}>
-                      <label className={s.label + " " + s.full}>
-                        Reemplazo que corrige (opcional)
-                        <select
-                          className={s.input}
-                          value={replacementCorrection}
-                          onChange={(e) =>
-                            setReplacementCorrection(e.target.value)
-                          }
-                        >
-                          <option value="">Nuevo reemplazo</option>
-                          {w.replacements
-                            .filter(
-                              (r) =>
-                                r.original_activity_id === original &&
-                                r.is_current,
-                            )
-                            .map((r) => (
-                              <option key={r.id} value={r.id}>
-                                {r.id.slice(-8)} · {r.substitute_title}
-                              </option>
-                            ))}
-                        </select>
-                        <small>
-                          La nueva relación no hereda confirmaciones anteriores.
-                        </small>
-                      </label>
-                      <label className={s.label + " " + s.full}>
-                        Actividad original
-                        <select
-                          className={s.input}
-                          value={original}
-                          onChange={(e) => {
-                            setOriginal(e.target.value);
-                            setAgreement("");
-                          }}
-                        >
-                          {w.activities.map((a) => (
-                            <option key={a.id} value={a.id}>
-                              {a.title}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label className={s.label + " " + s.full}>
-                        Actividad sustituta
-                        <select
-                          className={s.input}
-                          required
-                          value={substitute}
-                          onChange={(e) => setSubstitute(e.target.value)}
-                        >
-                          <option value="">
-                            Seleccionar actividad publicada
-                          </option>
-                          {w.activities
-                            .filter((a) => a.id !== original)
-                            .map((a) => (
-                              <option key={a.id} value={a.id}>
-                                {a.title}
-                              </option>
-                            ))}
-                        </select>
-                      </label>
-                      <label className={s.label + " " + s.full}>
-                        Acuerdo registrado
-                        <select
-                          className={s.input}
-                          required
-                          value={agreement}
-                          onChange={(e) => setAgreement(e.target.value)}
-                        >
-                          <option value="">Seleccionar acuerdo</option>
-                          {w.agreements
-                            .filter(
-                              (g) =>
-                                g.activity_id === original ||
-                                g.activity_id === substitute,
-                            )
-                            .map((g) => (
-                              <option key={g.id} value={g.id}>
-                                {g.channel} · {g.body.slice(0, 90)}
-                              </option>
-                            ))}
-                        </select>
-                      </label>
-                      <label className={s.label + " " + s.full}>
-                        Motivo de la relación
-                        <textarea
-                          className={s.input}
-                          required
-                          rows={2}
-                          minLength={2}
-                          maxLength={3000}
-                          value={replacementReason}
-                          onChange={(e) => setReplacementReason(e.target.value)}
-                        />
-                      </label>
-                      <label className={s.label + " " + s.full}>
-                        Enlace de evidencia del reemplazo (opcional)
-                        <input
-                          className={s.input}
-                          type="url"
-                          value={replacementEvidence}
-                          onChange={(e) =>
-                            setReplacementEvidence(e.target.value)
-                          }
-                        />
-                      </label>
-                      <label className={s.label + " " + s.full}>
-                        Evidencia del acuerdo
-                        <textarea
-                          className={s.input}
-                          required
-                          rows={2}
-                          minLength={2}
-                          maxLength={3000}
-                          value={note}
-                          onChange={(e) => setNote(e.target.value)}
-                        />
-                        <small>
-                          Puede ser una nota de la llamada registrada; no
-                          inventes una aprobación escrita.
-                        </small>
-                      </label>
-                    </div>
-                    <p className={s.footnote}>
-                      Se conservan las dos actividades. La confirmación de Aunor
-                      quedará pendiente; no se calcula una equivalencia ni se
-                      modifican entregas.
-                    </p>
-                    <Button
-                      className="mt-4"
-                      type="submit"
-                      disabled={pending || !substitute || !agreement}
-                    >
-                      Publicar reemplazo para Aunor
-                    </Button>
-                  </form>
+                    Cancelar
+                  </Button>
+                  <Button type="submit" disabled={pending || !original}>
+                    Registrar reemplazo
+                  </Button>
                 </div>
-                <aside className={s.card + " " + s.pad}>
-                  <h2 className="section-title">Revisar antes de publicar</h2>
-                  <div className={s.box}>
-                    <strong>Original conservado</strong>
-                    {w.activities.find((a) => a.id === original)?.title}
-                  </div>
-                  <p className="py-3 text-center text-cyan-ink">↓</p>
-                  <div className={s.box}>
-                    <strong>Sustituto identificado</strong>
-                    {w.activities.find((a) => a.id === substitute)?.title ??
-                      "Selecciona el sustituto"}
-                  </div>
-                  {substitute && <AunorJourneys w={w} id={substitute} />}
-                  <div className={s.stamp + " " + s.sectionGap}>
-                    <strong>Pendiente de confirmación por Aunor</strong>Admin
-                    registra; no confirma en nombre del cliente.
-                  </div>
-                </aside>
-              </div>
-              <AgreementList w={w} id={item.id} />
-              {w.replacements
-                .filter(
-                  (r) =>
-                    r.original_activity_id === item.id ||
-                    r.substitute_activity_id === item.id,
-                )
-                .map((r) => (
-                  <section className={s.card + " " + s.pad} key={r.id}>
-                    <p className="data-label text-cyan-ink">
-                      Reemplazo {r.id.slice(-8)}
-                    </p>
+              </form>
+            </details>
+            <details className={s.row}>
+              <summary>
+                <span className={s.icon}>
+                  <SystemIcon name="history" className="size-5" />
+                </span>
+                <span>
+                  <strong>Historial y respaldos</strong>
+                  <small>
+                    Versiones del material, acuerdos y reemplazos conservados.
+                  </small>
+                </span>
+                <em>Ver historial →</em>
+              </summary>
+              <div className={`${s.body} ${s.history}`}>
+                <AgreementList w={w} id={item.id} />
+                {replacements.map((r) => (
+                  <article key={r.id} className={s.history}>
                     <ReplacementSummary r={r} w={w} admin />
-                  </section>
+                    <p>
+                      <strong>Motivo:</strong> {r.reason}
+                    </p>
+                    <p>
+                      <strong>Respaldo:</strong> {r.evidence_note}
+                    </p>
+                    {safeMaterialUrl(r.evidence_link) && (
+                      <a
+                        href={safeMaterialUrl(r.evidence_link)!}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Abrir respaldo del reemplazo ↗
+                      </a>
+                    )}
+                    {w.agreements.find((g) => g.id === r.agreement_id)
+                      ?.activity_id !== item.id && (
+                      <AgreementList
+                        w={{
+                          ...w,
+                          agreements: w.agreements.filter(
+                            (g) => g.id === r.agreement_id,
+                          ),
+                        }}
+                        id={
+                          w.agreements.find((g) => g.id === r.agreement_id)
+                            ?.activity_id ?? ""
+                        }
+                      />
+                    )}
+                  </article>
                 ))}
-            </>
-          )}
+                <h3 className="section-title text-xl">
+                  Versiones del material
+                </h3>
+                <ul>
+                  {w.deliveries
+                    .filter((d) => d.activity_id === item.id)
+                    .map((d) => (
+                      <li key={d.id}>
+                        <strong>
+                          {d.label} · v{d.version}
+                        </strong>
+                        <p>
+                          {d.is_current
+                            ? "Versión vigente"
+                            : "Versión anterior"}
+                        </p>
+                        {safeMaterialUrl(d.material_link) && (
+                          <a
+                            href={safeMaterialUrl(d.material_link)!}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Abrir material ↗
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                </ul>
+                {!w.deliveries.some((d) => d.activity_id === item.id) && (
+                  <p className={s.help}>
+                    No hay versiones adicionales registradas. El material actual
+                    sigue disponible en la ficha.
+                  </p>
+                )}
+              </div>
+            </details>
+          </div>
+          <AdminContractPeriod
+            key={draft.service}
+            w={w}
+            activityId={item.id}
+            activityVersion={item.version}
+            onRefresh={load}
+            onAssigned={(a) => onAssigned?.(a)}
+            configOnly
+            serviceOverride={draft.service}
+          />
+          <details
+            className={s.advanced}
+            onToggle={(e) => {
+              setAdvanced(e.currentTarget.open);
+              if (!e.currentTarget.open) void load();
+            }}
+          >
+            <summary>
+              Más opciones · versiones, trabajos no realizados y correcciones
+            </summary>
+            {advanced && (
+              <AdminAunorAdvanced
+                item={item}
+                role={role}
+                onAssigned={onAssigned}
+              />
+            )}
+          </details>
+          <p className={s.help}>
+            Aunor consulta; Admin gestiona. Relacionar un trabajo no cambia su
+            estado ni aprueba pagos.
+          </p>
         </>
       )}
     </section>

@@ -4,6 +4,38 @@ import { canMutateAunor, canUseAunor, type AunorCommand, type AunorWorkspace } f
 import type { ActivityType, Role } from "@/lib/roles";
 import { safeMaterialUrl } from "@/lib/external-link";
 import type { ContractPeriod } from "@/lib/contract-progress";
+import type { AdminActivityInput } from "@/lib/admin-activity-management";
+
+/** Synthetic memory only: commit both records or restore the complete prior state. */
+export function mutateDemoAdminActivity(role:Role,input:AdminActivityInput,source?:DemoAunorSource) {
+  if(role.id!=="admin" || !canUseAunor(role)) throw Error("Solo Admin");
+  const s=state(),key=role.accountId+":"+input.requestId,hash=JSON.stringify(['admin-bundle',input]);
+  const previous=s.requests.get(key);
+  if(previous){if(previous.hash!==hash)throw Error('Reintento distinto');return previous.result;}
+  const snapshot=structuredClone(s);
+  try {
+    if(source && source.version!==input.activityVersion) throw Error('Actividad cambiada');
+    if(input.command==='relation') {
+      if(input.periodId && !s.workspace.contractPeriods?.some(p=>p.id===input.periodId && p.service_id===input.serviceId)) throw Error('Periodo incompatible');
+      const publication=mutateDemoAunor(role,'publish',input.activityId,crypto.randomUUID(),{
+        expectedVersion:input.publicationVersion,summary:input.summary,serviceId:input.serviceId,notPerformedReason:input.notPerformedReason,
+      },source);
+      assignDemoContractPeriod(role,input.activityId,Number(publication.version),input.periodId);
+    } else {
+      const w=s.workspace;
+      if(w.replacements.some(r=>r.original_activity_id===input.originalId && r.is_current)) throw Error('Original reemplazado');
+      let agreementId=input.agreementId;
+      if(agreementId && !w.agreements.some(g=>g.id===agreementId && g.is_current && [input.originalId,input.activityId].includes(g.activity_id))) throw Error('Acuerdo cambiado');
+      if(!agreementId) agreementId=String(mutateDemoAunor(role,'agreement',input.originalId,crypto.randomUUID(),{
+        channel:input.channel,contactedAt:input.contactedAt,requesterDeclared:input.requesterDeclared,body:input.reason,evidenceLink:input.evidenceLink,
+      }).id);
+      mutateDemoAunor(role,'replacement',input.originalId,crypto.randomUUID(),{
+        substituteId:input.activityId,agreementId,reason:input.reason,evidenceNote:input.reason,evidenceLink:input.evidenceLink,
+      });
+    }
+    const result={ok:true};s.requests.set(key,{hash,result});return result;
+  } catch(error){memory.__sistemaRAunorDemo=snapshot;throw error;}
+}
 
 export function configureDemoContractPeriod(role:Role,p:Omit<ContractPeriod,"id"|"version"> & {id?:string;version?:number}) {
   if(!canUseAunor(role) || role.id!=="admin") throw Error("Solo Admin");

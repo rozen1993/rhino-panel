@@ -22,6 +22,7 @@
 /.next-historical-test/
 /.next-aunor-test/
 /.verificacion/aunor-*/
+/.verificacion/admin-compact-regressions/
 /.verificacion/historico-*/
 /out/
 

@@ -60,18 +60,18 @@ for(const width of [1440,390]) test(`edición, marcaje y entrega histórica sin 
 });
 test('contrato: configuración explícita, asignación y consulta cliente sin acciones',async({page})=>{
  await login(page,'admin');await page.goto('/actividades/cobertura-norte');
- await expect(page.getByRole('heading',{name:'Contrato y entregas de Aunor'})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Relación con el contrato'})).toBeVisible();
  await page.getByText('Configurar periodos y metas del servicio',{exact:true}).click();
- const panel=page.getByRole('region',{name:'Periodo contractual'});
+ const panel=page.getByRole('region',{name:'Configuración de periodos'});
  await panel.getByLabel('Inicio',{exact:true}).fill('2026-01-01');
  await panel.getByLabel('Fin',{exact:true}).fill('2026-01-31');
  await panel.getByLabel('Meta (opcional)',{exact:true}).fill('10');
  await panel.getByRole('button',{name:'Guardar periodo contractual',exact:true}).click();
  await expect(panel.getByText(/Periodo guardado/)).toBeVisible();
- await panel.getByLabel('Periodo de esta actividad').selectOption({label:'enero de 2026 · 10 trabajos'});
- await panel.getByRole('checkbox',{name:/Confirmo que este es/}).check();
- await panel.getByRole('button',{name:'Confirmar periodo',exact:true}).click();
- await expect(panel.getByLabel('Periodo de esta actividad')).not.toHaveValue('');
+ await page.getByRole('combobox',{name:'Periodo contractual',exact:true}).selectOption({label:'enero de 2026 · 10 trabajos'});
+ await page.getByRole('button',{name:'Guardar relación',exact:true}).click();
+ await expect(page.getByText('Relación contractual guardada. El estado de la actividad no cambia.',{exact:true})).toBeVisible();
+ await expect(page.getByRole('combobox',{name:'Periodo contractual',exact:true})).not.toHaveValue('');
  await logout(page);await login(page,'aunor');await page.goto('/aunor/contrato');
  await page.getByLabel('Consultar mes').fill('2026-01');
  await expect(page.getByText('1/10',{exact:true}).first()).toBeVisible();

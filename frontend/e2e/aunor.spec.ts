@@ -101,7 +101,7 @@ test("Aunor consulta entregas y sustituciones sin confirmaciones ni datos intern
   await page.screenshot({path:info.outputPath("contrato-solo-lectura.png"),fullPage:true});
   const context=await browser.newContext(); const admin=await context.newPage();
   await login(admin,"admin"); await admin.goto("/actividades/cobertura-norte");
-  await expect(admin.getByRole("heading",{name:"Contrato y entregas de Aunor"})).toBeVisible();
+  await expect(admin.getByRole("heading",{name:"Relación con el contrato"})).toBeVisible();
   await context.close();
 });
 
@@ -161,14 +161,14 @@ test("capturas del Admin con gestión externa dentro de la ficha",async({page},i
   await login(page,"admin");
   for(const width of [1366,390]) {
     await page.setViewportSize({width,height:900});await page.goto("/actividades/cobertura-norte");
-    await expect(page.getByRole("heading",{name:"Contrato y entregas de Aunor"})).toBeVisible();
-    await expect(page.getByRole("button",{name:"Actualizar publicación"})).toBeVisible();
+    await expect(page.getByRole("heading",{name:"Relación con el contrato"})).toBeVisible();
+    await expect(page.getByRole("button",{name:"Guardar relación"})).toBeVisible();
     expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
     await page.screenshot({path:info.outputPath(`07-admin-${width}.png`),fullPage:true});
     if(width===390) {
       await page.getByText('Configurar periodos y metas del servicio',{exact:true}).click();
       const forms=page.getByRole("region",{name:"Gestión Aunor"}).locator("form");
-      for(let i=0;i<await forms.count();i++) await forms.nth(i).screenshot({path:info.outputPath(`08-admin-form-${i+1}-390.png`)});
+      for(let i=0;i<await forms.count();i++) if(await forms.nth(i).isVisible()) await forms.nth(i).screenshot({path:info.outputPath(`08-admin-form-${i+1}-390.png`)});
     }
   }
 });

@@ -128,3 +128,19 @@ fondo y borde #216337, texto blanco y check decorativo del sistema, radio de
 5 px y altura mínima de 28 px. No es un botón ni introduce aprobación del
 cliente o aceptación contractual. Programada, En proceso y los sellos de
 clasificación mantienen su diseño.
+
+## Ficha Admin — opción 01 aprobada el 30 de septiembre de 2026
+
+Referencia: `docs/propuestas-ficha-admin-2026-09-30/01-escritorio.png`.
+La gestión contractual usa una ficha compacta blanca con borde cian superior:
+servicio y periodo juntos, vista previa de X/Y a la derecha y una sola acción
+lima «Guardar relación». El resumen público es opcional y plegable.
+Reemplazo e historial se presentan como filas desplegables con iconos del
+sistema; en móvil las acciones pasan bajo el texto para evitar columnas estrechas.
+La llamada se registra dentro del reemplazo, no como una tarea obligatoria
+independiente. Las versiones, trabajos no realizados y correcciones anteriores
+siguen disponibles en opciones adicionales. Aunor no confirma ni aprueba.
+El conteo distingue datos guardados y previsualizados; la clasificación Especial
+no multiplica unidades. Guardar la relación no cambia el estado de ejecución.
+Servicio/periodo y acuerdo/reemplazo se guardan atómicamente en sus respectivos
+flujos. Esta ronda es local: no autoriza publicación ni cambios de datos reales.
