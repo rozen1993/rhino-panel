@@ -44,7 +44,11 @@ for(const width of [1440,390]) test(`edición, marcaje y entrega histórica sin 
  await page.getByRole('checkbox',{name:/Confirmo que este trabajo/}).check();
  await page.getByRole('button',{name:'Confirmar entrega histórica',exact:true}).click();
  await expect(page.getByText('Entrega histórica regularizada, sin inventar la fecha real de entrega.',{exact:true})).toBeVisible();
- await expect(page.getByText(/^●\s*Entregada$/).first()).toBeVisible();
+ const delivered=page.getByText('Entregada',{exact:true}).first();
+ await expect(delivered).toBeVisible();
+ await expect(delivered).toHaveCSS('background-color','rgb(33, 99, 55)');
+ await expect(delivered).toHaveCSS('color','rgb(255, 255, 255)');
+ await expect(delivered.locator('svg[aria-hidden="true"]')).toHaveCount(1);
  await page.screenshot({path:resolve(captureDirectory,`regularizacion-${width}.png`),fullPage:true});
  await page.goto('/historico?anio=2026&tipo=edicion');
  await page.getByRole('combobox',{name:'Clasificación',exact:true}).selectOption('special');

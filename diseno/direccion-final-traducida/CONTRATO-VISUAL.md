@@ -119,3 +119,12 @@ La adaptación móvil usa una columna y diálogo con desplazamiento propio, cier
 por Escape y retorno del foco. Aunor sigue siendo solo consulta, sin responsables
 internos ni acciones de administración. La implementación de esta ronda es local;
 no autoriza modificar datos reales ni publicar automáticamente.
+
+## Estado Entregada — opción 01 aprobada
+
+Marco eligió Verde sólido entre las tres propuestas de
+`docs/propuestas-estado-entregada-2026-09-29/`. El indicador compartido utiliza
+fondo y borde #216337, texto blanco y check decorativo del sistema, radio de
+5 px y altura mínima de 28 px. No es un botón ni introduce aprobación del
+cliente o aceptación contractual. Programada, En proceso y los sellos de
+clasificación mantienen su diseño.
