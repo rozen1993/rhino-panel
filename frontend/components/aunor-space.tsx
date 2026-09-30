@@ -178,7 +178,7 @@ function ActivityDetail({
           <ClassificationBadge value={a.classification}/>
           {a.delivery_due_on && <p className={s.muted}>Entrega prevista: {a.delivery_due_on}</p>}
           {a.historical_regularized_at && <p className={s.muted}>Entrega histórica regularizada. Fecha real de entrega desconocida.</p>}
-          <div className="status-in-hero mt-4">
+          <div className={a.status === "Programada" ? "status-in-hero mt-4" : "mt-4"}>
             <StatusPill status={a.status} />
           </div>
         </div>
