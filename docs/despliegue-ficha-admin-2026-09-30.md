@@ -36,9 +36,20 @@ Dry-run posterior sin migraciones pendientes.
   reintentos sin duplicación y rollback del conjunto ante una falla parcial.
 - Capturas sintéticas: `docs/implementacion-ficha-admin-2026-09-30/`.
 
-La publicación del frontend y su comprobación contra el alias público están
-pendientes al crear este registro. No se ejecutarán guardados ni reemplazos
-reales para probar la interfaz en producción.
+## Publicación verificada
+
+- Código publicado: `5a481fd29cacbd2b8e37f3a5a87addf853c512c8`, rama `master`.
+- GitHub Actions: ejecución `36730982581`, completada con resultado `success`.
+- Vercel Production: `dpl_EAVSu6fJY3haZgMKazsmffKVYf4f`, estado `READY`.
+- GitHub Deployment `6762265978` vincula esa publicación con el SHA indicado;
+  su estado es `success`.
+- Alias público: <https://rhino-panel.vercel.app>. `/acceso` responde HTTP 200
+  y contiene la marca DA VINCI.
+
+No se ejecutaron guardados ni reemplazos reales para probar producción. Las
+46 pruebas interactivas corresponden al entorno demo aislado, no a producción.
+La comprobación pública fue HTTP: no había navegador conectado disponible
+para una revisión visual autenticada del despliegue.
 
 ## Recuperación
 
