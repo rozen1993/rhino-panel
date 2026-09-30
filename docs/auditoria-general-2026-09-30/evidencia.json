@@ -1,0 +1,39 @@
+{
+  "date": "2026-09-30",
+  "timezone": "America/Lima",
+  "code_sha": "1c2e03f247f851a992dea1eeab70ac254950778f",
+  "production_business_writes": false,
+  "unit_tests": {"files": 49, "passed": 381},
+  "edge_function_tests": {"passed": 28},
+  "demo_browser_tests": {"passed": 46},
+  "diagnostic_reproductions": {"confirmed": 5, "purpose": "confirm defects, not acceptance"},
+  "sql": {"disposable_database": "sr_history_test_4a9d0dd72db846afb89fb6419a13e25b", "passed": true, "disposable_removed": true},
+  "production_aggregates": {
+    "profiles": 7, "activities_total": 23, "active_activities": 17, "trashed": 6,
+    "delivered_april_2026": 14, "scheduled_september_2026": 3, "in_progress": 0,
+    "delivered_without_material": 0, "unclassified_active": 16,
+    "current_service_relations": {"cobertura": 12, "micronews": 1, "redes": 1},
+    "configured_contract_periods": 0, "activities_with_period": 0,
+    "database_size_pretty": "14 MB", "migration_count": 23,
+    "verified_mfa_factors": 0, "forced_password_changes": 0,
+    "app_sessions_total": 170, "expired_app_sessions": 166
+  },
+  "final_dependency_audit": {
+    "production": {"critical": 1, "high": 0, "total_packages": 1},
+    "all": {"critical": 1, "high": 2, "total_packages": 3},
+    "packages": ["next@16.3.4", "brace-expansion@1.1.18 and 5.0.9", "undici@7.29.0"],
+    "next_advisory": "https://github.com/vercel/next.js/security/advisories/GHSA-vcvr-r3jv-pc5j",
+    "next_og_usage_found_in_app": false,
+    "exploitation_demonstrated": false
+  },
+  "public_http": {
+    "access_status": 200,
+    "access_headers_ms": [3191, 308, 340],
+    "access_bytes_decoded": 22307,
+    "private_routes_status": 307,
+    "private_routes_redirect": "/acceso",
+    "routes_checked": ["/actividades", "/cuentas", "/historico", "/papelera", "/aunor/contrato"],
+    "optimized_images_1080_webp_bytes": {"grabacion": 25716, "edicion": 39154}
+  },
+  "limitations": ["No authenticated production browser", "No load testing", "No real erasure or mutation tests", "No billing inspection", "No complete WCAG certification"]
+}
