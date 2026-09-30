@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { activityDetailHref } from "@/lib/dashboard-navigation";
 import { StatusPill, type InternalStatus } from "@/components/status-pill";
 import { ClassificationBadge } from "@/components/classification-badge";
 import type { Activity } from "@/lib/activities";
@@ -46,11 +47,13 @@ export function ActivityTable({
   showResponsible = false,
   selectedId,
   onSelect,
+  returnTo,
 }: {
   activities: readonly Activity[];
   showResponsible?: boolean;
   selectedId?: string;
   onSelect?: (activity: Activity) => void;
+  returnTo?: string;
 }) {
   return (
     <div className="hidden overflow-x-auto md:block">
@@ -119,7 +122,7 @@ export function ActivityTable({
                       <Link
                         aria-label={`Ver ${activity.title}`}
                         className="grid size-9 place-items-center rounded-full border border-line bg-white text-ink transition hover:border-cyan hover:text-cyan"
-                        href={`/actividades/${activity.id}`}
+                        href={activityDetailHref(activity.id, returnTo)}
                       >
                         <EyeIcon />
                       </Link>

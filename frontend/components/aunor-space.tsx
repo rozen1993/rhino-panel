@@ -54,6 +54,11 @@ const serviceName = (w: AunorWorkspace, id: string | null) =>
 export function AunorJourneys({ w, id }: { w: AunorWorkspace; id: string }) {
   const a = w.activities.find((a) => a.id === id);
   const journeys = w.journeys.filter((j) => j.activity_id === id);
+  if (a?.delivery_due_on) return <div className={s.journey}>
+    <SystemIcon name="calendar" className="size-4" />
+    <strong>Entrega prevista: {date(a.delivery_due_on)}</strong>
+    <span>Fecha registrada para el proyecto; no es una confirmación de entrega.</span>
+  </div>;
   return (
     <div>
       {journeys.length ? (

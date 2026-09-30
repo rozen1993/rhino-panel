@@ -17,6 +17,7 @@ import {
   deleteSupabaseActivityMessageAction,
   editSupabaseActivityMessageAction,
   postSupabaseActivityMessageAction,
+  type ActivityServerResult,
 } from "@/app/actividades/actions";
 import { softDeleteOwnSupabaseActivityAction, softDeleteSupabaseActivityAction } from "@/app/papelera/actions";
 import { formatActivityDates } from "@/components/activity-card";
@@ -66,6 +67,15 @@ export function ActivityDetail({
     (activity) => activity.id === id && !activity.deletedAt,
   );
   const [serverItem, setServerItem] = useState(initialActivity ?? null);
+  const [needsRefresh, setNeedsRefresh] = useState(false);
+  const [previousInitial, setPreviousInitial] = useState(initialActivity);
+  if (initialActivity !== previousInitial) {
+    setPreviousInitial(initialActivity);
+    setNeedsRefresh(false);
+    // Never roll back a newer action result with an older cached response.
+    if (!initialActivity || !serverItem || initialActivity.id !== serverItem.id || initialActivity.version >= serverItem.version)
+      setServerItem(initialActivity ?? null);
+  }
   const item = dataSource === "supabase" ? serverItem : simulatedItem;
   const [notice, setNotice] = useState("");
   const [message, setMessage] = useState("");
@@ -76,6 +86,10 @@ export function ActivityDetail({
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
+  if (needsRefresh) return <Card className="space-y-3 p-6">
+    <p role="status">Los cambios se guardaron. Actualiza la ficha antes de realizar otra acción.</p>
+    <Button onClick={() => router.refresh()}>Actualizar ficha</Button>
+  </Card>;
   if (!item) return <Card className="p-6">Actividad no encontrada.</Card>;
   if (!canViewActivity(item, role))
     return (
@@ -98,13 +112,14 @@ export function ActivityDetail({
     success: string,
   ) => setNotice(result.ok ? success : result.error);
   const reportActivity = (
-    result:
-      | { ok: true; activity: SimulatedActivity }
-      | { ok: false; error: string },
+    result: ActivityServerResult,
     success: string,
   ) => {
-    report(result, success);
-    if (result.ok && dataSource === "supabase") setServerItem(result.activity);
+    report(result, result.ok && result.warning ? result.warning : success);
+    if (result.ok && dataSource === "supabase") {
+      if (result.activity) setServerItem(result.activity);
+      else { setNeedsRefresh(true); router.refresh(); }
+    }
   };
   const postMessage = () => {
     const expectedVersion = item.threadOpenedAt ? null : item.version;
@@ -353,8 +368,7 @@ export function ActivityDetail({
                               item.id,
                               item.version,
                             );
-                            report(result, success);
-                            if (result.ok) setServerItem(result.activity);
+                            reportActivity(result, success);
                           });
                         } else {
                           report(
@@ -415,7 +429,12 @@ export function ActivityDetail({
                     startTransition(async () => {
                       const result = dataSource === "supabase" ? await resetSupabaseActivityAction(item.id, item.version, resetReason) : resetActivity(window.localStorage, item.id, resetReason, actor, item.version);
                       reportActivity(result, "Actividad restablecida a Programada.");
-                      if (result.ok) { setResetReason(""); router.replace(`/actividades/${result.activity.id}`); router.refresh(); }
+                      if (result.ok) {
+                        setResetReason("");
+                        const nextId = result.activity?.id ?? ("activityId" in result ? result.activityId : null);
+                        if (nextId) router.replace(`/actividades/${nextId}`);
+                        router.refresh();
+                      }
                     });
                   }}>Confirmar restablecimiento</Button>
                 </div>
@@ -436,7 +455,9 @@ export function ActivityDetail({
                     La baja es lógica y reversible. Conserva la planificación,
                     la ejecución, la conversación y toda la auditoría.
                   </p>
+                  <label htmlFor="activity-deletion-reason" className="mt-3 block text-xs font-bold">Motivo de la baja</label>
                   <textarea
+                    id="activity-deletion-reason"
                     className="mt-3 min-h-20 w-full rounded-md border border-line p-3 text-sm outline-none focus:border-cyan"
                     maxLength={1000}
                     onChange={(event) => setReason(event.target.value)}

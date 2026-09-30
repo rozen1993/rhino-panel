@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { resolve } from "node:path";
-const captures = "../docs/implementacion-ficha-admin-2026-09-30";
+const captures = process.env.SISTEMA_R_CAPTURE_DIR ?? "../docs/implementacion-ficha-admin-2026-09-30";
 for (const width of [1440, 390])
   test(`ficha compacta: contrato y reemplazo ${width}`, async ({ page }) => {
     const errors: string[] = [];

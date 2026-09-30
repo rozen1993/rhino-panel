@@ -20,7 +20,7 @@ function planOptions(fields: ActivityDraftFields, admin: boolean) {
 }
 
 export type ActivityServerResult =
-  | { ok: true; activity: SimulatedActivity; replayed?: boolean }
+  | { ok: true; activity: SimulatedActivity | null; activityId?: string; warning?: string; replayed?: boolean }
   | { ok: false; error: string };
 
 function validateExecution(
@@ -91,13 +91,15 @@ async function currentActiveSupabaseRole() {
 }
 
 async function refreshActivity(id: string): Promise<ActivityServerResult> {
-  const activity = await getSupabaseActivity(id);
-  if (!activity) return { ok: false, error: "La actividad no existe." };
   revalidatePath("/actividades");
   revalidatePath("/historico");
   revalidatePath("/aunor", "layout");
   revalidatePath(`/actividades/${id}`);
-  return { ok: true, activity };
+  // The mutation has already committed. A failed read must not report a failed write.
+  const activity = await getSupabaseActivity(id).catch(() => null);
+  return { ok: true, activity, activityId: id, ...(!activity ? {
+    warning: "Los cambios se guardaron. No pudimos actualizar la ficha; vuelve a cargarla antes de realizar otra acción.",
+  } : {}) };
 }
 
 export async function planSupabaseActivityAction(

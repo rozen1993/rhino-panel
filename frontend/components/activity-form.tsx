@@ -34,6 +34,8 @@ import {
   createIdempotencyKey,
   readActivityDraft,
   writeActivityDraft,
+  browserDraftStorage,
+  removeActivityDraft,
   type ActivityDraftFields,
 } from "@/lib/activity-draft";
 import {
@@ -158,6 +160,9 @@ export function ActivityForm({
   const [fields, setFields] = useState<ActivityDraftFields>(initial);
   const [notice, setNotice] = useState("");
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [needsRefresh, setNeedsRefresh] = useState(false);
+  const [draftUnavailable, setDraftUnavailable] = useState(false);
+  const dirty = useRef(false);
   const [pending, startTransition] = useTransition();
   const router = useRouter();
   const actor = actorFromRole(role);
@@ -178,13 +183,14 @@ export function ActivityForm({
     if (!editing || !existing || loadedActivityId.current === existing.id)
       return;
     setFields(initial);
+    setNeedsRefresh(false);
     expectedVersion.current = existing.version;
     loadedActivityId.current = existing.id;
   }, [editing, existing, initial]);
 
   useEffect(() => {
     if (!savesDraft) return;
-    const saved = readActivityDraft(window.localStorage, draftKey);
+    const saved = readActivityDraft(browserDraftStorage(), draftKey);
     const timer = window.setTimeout(() => {
       if (saved && hasDraftContent(saved.fields)) {
         setFields(saved.fields);
@@ -198,21 +204,33 @@ export function ActivityForm({
   useEffect(() => {
     if (!savesDraft || !draftReady.current || savedId) return;
     if (!hasDraftContent(fields)) {
-      window.localStorage.removeItem(draftKey);
+      removeActivityDraft(browserDraftStorage(), draftKey);
       return;
     }
     const timer = window.setTimeout(
-      () =>
-        writeActivityDraft(window.localStorage, draftKey, {
+      () => {
+        const saved = writeActivityDraft(browserDraftStorage(), draftKey, {
           version: 5,
           idempotencyKey: idempotencyKey.current,
           savedAt: new Date().toISOString(),
           fields,
-        }),
+        });
+        setDraftUnavailable(!saved);
+      },
       200,
     );
     return () => window.clearTimeout(timer);
   }, [draftKey, fields, savedId, savesDraft]);
+
+  useEffect(() => {
+    const warn = (event: BeforeUnloadEvent) => {
+      if (!dirty.current) return;
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, []);
 
   function change(
     event: ChangeEvent<
@@ -237,6 +255,7 @@ export function ActivityForm({
 
   function submit(event: FormEvent) {
     event.preventDefault();
+    if (pending || needsRefresh) return;
     if (planningMode) {
       const error = recordingModesError(fields.type, fields.recordingModes);
       if (error) { setNotice(error); return; }
@@ -357,13 +376,16 @@ export function ActivityForm({
         : result.error,
     );
     if (!result.ok) return;
+    dirty.current = false;
     const savedItem = "activity" in result ? result.activity : result.request;
-    setSavedId(savedItem.id);
-    if ("activity" in result)
+    setSavedId(savedItem?.id ?? ("activityId" in result ? result.activityId ?? null : null));
+    if ("warning" in result && result.warning) setNotice(result.warning);
+    if ("activity" in result && !result.activity) setNeedsRefresh(true);
+    if ("activity" in result && result.activity)
       expectedVersion.current = result.activity.version;
     if (savesDraft) {
       draftReady.current = false;
-      window.localStorage.removeItem(draftKey);
+      removeActivityDraft(browserDraftStorage(), draftKey);
     }
     router.refresh();
   }
@@ -395,14 +417,16 @@ export function ActivityForm({
           : "Crear actividad propia";
 
   return (
-    <form className="space-y-3" onSubmit={submit}>
+    <form className="space-y-3" onSubmit={submit} onChangeCapture={() => {dirty.current = true;}}>
+      {draftUnavailable && <p role="status" className="rounded-md border border-orange/40 bg-orange/10 p-3 text-xs">El navegador no permite guardar el borrador. Puedes guardar la actividad, pero no cierres esta pestaña antes de hacerlo.</p>}
       {notice && (
         <p
           aria-live="polite"
           className="rounded-md border border-cyan/40 bg-cyan/10 p-3 text-xs font-bold"
         >
-          {notice}
-          {savedId && !editing && (
+          <span>{notice}</span>
+          {savedId && executionMode && !needsRefresh && existing?.status !== "Entregada" && <span className="mt-1 block">Registrar material no finaliza la actividad. Para completarla, vuelve a la ficha y pulsa «Entregar» cuando esté En proceso.</span>}
+          {savedId && (
             <>
               {" "}
               <Link
@@ -676,6 +700,7 @@ export function ActivityForm({
             className="w-full"
             disabled={
               pending ||
+              needsRefresh ||
               deliveryLocked ||
               Boolean(savedId && !editing)
             }

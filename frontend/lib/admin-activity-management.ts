@@ -1,5 +1,6 @@
 import type { AunorWorkspace } from "./aunor";
 import { contractProgress } from "./contract-progress";
+import { activityContractPeriod } from "./contract-calendar";
 import { safeMaterialUrl } from "./external-link";
 
 export type ContractRelationInput = {
@@ -76,9 +77,10 @@ export function previewContractRelation(
   periodId: string,
   summary: string,
 ) {
-  const period = w.contractPeriods?.find(
+  const candidate = w.activities.find(a => a.id === id);
+  const period = periodId ? w.contractPeriods?.find(
     (p) => p.id === periodId && p.service_id === serviceId,
-  );
+  ) : candidate ? activityContractPeriod(w, {...candidate, service_id: serviceId, contract_period_id: null}) : undefined;
   if (!period) return null;
   const before = contractProgress(w, serviceId, period);
   const after = contractProgress(
@@ -89,7 +91,7 @@ export function previewContractRelation(
           ? {
               ...a,
               service_id: serviceId,
-              contract_period_id: periodId,
+              contract_period_id: periodId || null,
               summary,
             }
           : a,

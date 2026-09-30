@@ -27,3 +27,13 @@ jobs:
       - run: npm run test:functions
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
+  sql-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      # UUID container + UUID DB; no host ports, project link or secrets.
+      - name: Verify migrations, authorization, rollback and contract
+        run: node frontend/scripts/verify-sql-ci.mjs

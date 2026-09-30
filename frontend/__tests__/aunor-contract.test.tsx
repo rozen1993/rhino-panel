@@ -47,9 +47,17 @@ describe("tarjetas de contrato Aunor",()=>{
     expect(document.body.style.overflow).not.toBe("hidden");
   });
   it("filters monthly counts without reassigning data and keeps annual cycle",()=>{
-    const w=fixture(),before=JSON.stringify(w);mount(w);
+    const w=fixture();
+    // April uses the confirmed reference; September still has a stored assignment.
+    w.contractPeriods=w.contractPeriods!.filter(p=>!(p.service_id==="cobertura"&&p.starts_on==="2026-04-01"));
+    const before=JSON.stringify(w);mount(w);
     fireEvent.change(screen.getByLabelText("Consultar mes"),{target:{value:"2026-04"}});
     expect(screen.getByRole("button",{name:/^Cobertura.*0\/10/})).toBeTruthy();
+    const coverageDialog=openCoverage();
+    const periodSelect=within(coverageDialog).getByLabelText("Periodos registrados") as HTMLSelectElement;
+    expect(periodSelect.value).toBe("");
+    expect(periodSelect.selectedOptions[0].textContent).toBe("Según fecha registrada · referencia confirmada");
+    fireEvent.click(within(coverageDialog).getByRole("button",{name:"Cerrar detalle"}));
     fireEvent.click(screen.getByRole("button",{name:/^Videos de resumen anual:/}));
     expect(within(screen.getByRole("dialog")).getByText(/Control anual · 2026-04-01 — 2027-03-31/)).toBeTruthy();
     expect(JSON.stringify(w)).toBe(before);

@@ -11,6 +11,7 @@ const names={activities:"aunor_activities",services:"aunor_services",journeys:"a
 let w:AunorWorkspace;
 let calls:string[];
 let cap:number;
+let transferred: Record<string,number>;
 beforeEach(()=>{
   const example=createAunorExamples();
   const ids=new Map<string,string>();let n=1;
@@ -19,7 +20,7 @@ beforeEach(()=>{
   w.messages=[];
   w.contractPeriods=[];
   const data=Object.fromEntries(Object.entries(names).map(([key,table])=>[table,w[key as keyof AunorWorkspace]]));
-  calls=[];cap=200;
+  calls=[];cap=200;transferred={};
   mocks.create.mockResolvedValue({from:(table:string)=>{
     let rows=[...(data[table] ?? [])] as unknown as Record<string,unknown>[];
     let limit=200;
@@ -32,7 +33,10 @@ beforeEach(()=>{
       in:(column:string,values:unknown[])=>{rows=rows.filter(r=>values.includes(r[column]));return q;},
       gt:(column:string,value:string)=>{rows=rows.filter(r=>String(r[column])>value);return q;},
       or:(filter:string)=>{
-        if(filter.startsWith("original_activity_id")){
+        if(filter.startsWith("status.neq.Entregada,")){
+          const cutoff=filter.split('delivered_at.gt.')[1];
+          rows=rows.filter(r=>r.status!=="Entregada" || (typeof r.delivered_at==='string' && Date.parse(r.delivered_at)>Date.parse(cutoff)));
+        }else if(filter.startsWith("original_activity_id")){
           const id=filter.split(",")[0].split(".eq.")[1];rows=rows.filter(r=>r.original_activity_id===id||r.substitute_activity_id===id);
         }else{
           const id=filter.split(",")[0].split(".gt.")[1];const position=Number(filter.match(/position.gt.(\d+)/)![1]);
@@ -42,6 +46,7 @@ beforeEach(()=>{
       },
       then:(resolve:(value:unknown)=>unknown)=>{
         calls.push(table);
+        transferred[table]=(transferred[table]??0)+Math.min(rows.length,limit,cap);
         rows.sort((a,b)=>{
           for(const column of orderColumns){
             const left=a[column],right=b[column];
@@ -81,4 +86,28 @@ it("rechaza identificadores que puedan alterar los filtros antes de crear el cli
   mocks.create.mockClear();
   await expect(readSupabaseAunor({scene:"detail",id:"id,role.eq.admin"})).rejects.toThrow("Invalid");
   expect(mocks.create).not.toHaveBeenCalled();
+});
+
+it("el panel no descarga actividades ni jornadas de entregas fuera de las 72 horas",async()=>{
+  const source=w.activities[0];
+  for(let i=0;i<500;i++){
+    const id=`00000000-0000-4000-9000-${String(i).padStart(12,'0')}`;
+    w.activities.push({...source,id,status:'Entregada',delivered_at:'2026-04-10T12:00:00Z'});
+    w.journeys.push({activity_id:id,position:0,start_date:'2026-04-10',end_date:'2026-04-10',place:'Ejemplo'});
+  }
+  const expected=scopeAunorWorkspace(w,{scene:'panel'});
+  expect(canonical(await readSupabaseAunor({scene:'panel'}))).toEqual(canonical(expected));
+  expect(transferred.aunor_activities).toBe(expected.activities.length);
+  expect(transferred.aunor_journeys).toBe(expected.journeys.length);
+  expect(calls.filter(c=>c==='aunor_activities')).toHaveLength(1);
+});
+
+it("mantiene la paginación cuando hay más de cien actividades vigentes",async()=>{
+  const source=w.activities[0];cap=2;
+  for(let i=0;i<105;i++){
+    const id=`00000000-0000-4000-9000-${String(i).padStart(12,'0')}`;
+    w.activities.push({...source,id,status:'Programada'});
+    w.journeys.push({activity_id:id,position:0,start_date:'2026-09-30',end_date:'2026-09-30',place:'Ejemplo'});
+  }
+  expect(canonical(await readSupabaseAunor({scene:'panel'}))).toEqual(canonical(scopeAunorWorkspace(w,{scene:'panel'})));
 });

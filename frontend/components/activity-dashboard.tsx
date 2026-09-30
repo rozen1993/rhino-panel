@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { useDashboardFilters } from "@/lib/use-dashboard-filters";
+import { activityDetailHref } from "@/lib/dashboard-navigation";
 import { ActivityCard, formatActivityDates } from "@/components/activity-card";
 import { ActivityTable } from "@/components/activity-table";
 import { Card } from "@/components/card";
@@ -69,29 +71,24 @@ function DashboardTable({
   role,
   selected,
   onSelect,
+  query, status, onFilter, total, returnTo,
 }: {
   activities: SimulatedActivity[];
   role: Role;
   selected?: string;
   onSelect: (activity: Activity) => void;
+  query: string; status: string;
+  onFilter: (patch: { query?: string; status?: string }) => void;
+  total: number; returnTo: string;
 }) {
-  const [query, setQuery] = useState("");
-  const [status, setStatus] = useState("");
-  const filtered = activities.filter(
-    (item) =>
-      (!query.trim() ||
-        `${item.title} ${item.type} ${item.responsible}`
-          .toLowerCase()
-          .includes(query.trim().toLowerCase())) &&
-      (!status || item.status === status),
-  );
+  const filtered = activities;
   return (
     <Card className="overflow-hidden shadow-[var(--shadow-2)]">
       <header className="flex flex-col gap-3 p-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="section-title text-xl">Actividad reciente</h2>
           <p className="mt-2 text-xs text-ink-muted">
-            {filtered.length} de {activities.length} actividades visibles
+            {filtered.length} de {total} actividades visibles
           </p>
         </div>
         <div className="grid gap-2 sm:grid-cols-[1fr_9.5rem]">
@@ -103,7 +100,7 @@ function DashboardTable({
             />
             <input
               className="min-h-10 w-full rounded-md border border-line bg-white pl-9 pr-3 text-xs outline-none transition focus:border-cyan focus:ring-2 focus:ring-cyan/15"
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => onFilter({query: event.target.value})}
               placeholder="Buscar actividad"
               type="search"
               value={query}
@@ -113,7 +110,7 @@ function DashboardTable({
             <span className="sr-only">Filtrar por estado</span>
             <select
               className="min-h-10 w-full rounded-md border border-line bg-white px-3 text-xs outline-none focus:border-cyan"
-              onChange={(event) => setStatus(event.target.value)}
+              onChange={(event) => onFilter({status: event.target.value})}
               value={status}
             >
               <option value="">Todos los estados</option>
@@ -132,11 +129,13 @@ function DashboardTable({
                 activity={item}
                 key={item.id}
                 showResponsible={role.seesAllActivities}
+                returnTo={returnTo}
               />
             ))}
           </div>
           <ActivityTable
             activities={filtered}
+            returnTo={returnTo}
             onSelect={role.id === "admin" ? onSelect : undefined}
             selectedId={selected}
             showResponsible={role.seesAllActivities}
@@ -151,7 +150,7 @@ function DashboardTable({
   );
 }
 
-function ActivityPreview({ item }: { item: SimulatedActivity | undefined }) {
+function ActivityPreview({ item, returnTo }: { item: SimulatedActivity | undefined; returnTo: string }) {
   if (!item)
     return (
       <Card className="p-5 text-sm text-ink-muted">
@@ -199,7 +198,7 @@ function ActivityPreview({ item }: { item: SimulatedActivity | undefined }) {
         <div className="grid gap-2">
           <Link
             className="action-surface flex min-h-11 items-center justify-center rounded-md px-4 text-sm font-extrabold text-[#173000]"
-            href={`/actividades/${item.id}`}
+            href={activityDetailHref(item.id, returnTo)}
           >
             Abrir ficha completa
           </Link>
@@ -235,9 +234,9 @@ export function ActivityDashboard({
     (item) => !item.deletedAt && canViewActivity(item, role),
   );
   const period = currentLimaPeriod();
-  const [selectedMonth, setSelectedMonth] = useState(period.month);
-  const [selectedYear, setSelectedYear] = useState(period.year);
-  const years = activityYears(allActivities, period.year);
+  const {filters, change, returnTo} = useDashboardFilters(period);
+  const {month: selectedMonth, year: selectedYear, query, status} = filters;
+  const years = [...new Set([...activityYears(allActivities, period.year), selectedYear])].sort((a,b)=>a-b);
   const activities = allActivities.filter((item) =>
     touchesMonth(item, selectedMonth, selectedYear),
   );
@@ -248,9 +247,12 @@ export function ActivityDashboard({
       allActivities.filter((item) => touchesMonth(item, month, selectedYear))
         .length,
   );
-  const [selectedId, setSelectedId] = useState(activities[0]?.id ?? "");
+  const filtered = activities.filter(item =>
+    (!query.trim() || `${item.title} ${item.type} ${item.responsible}`.toLowerCase().includes(query.trim().toLowerCase())) &&
+    (!status || item.status === status));
+  const [selectedId, setSelectedId] = useState("");
   const selected =
-    activities.find((item) => item.id === selectedId) ?? activities[0];
+    filtered.find((item) => item.id === selectedId) ?? filtered[0];
 
   return (
     <>
@@ -266,7 +268,7 @@ export function ActivityDashboard({
           <select
             aria-label="Año de actividades"
             className="min-h-10 rounded-md border border-line bg-white px-3 outline-none focus:border-cyan"
-            onChange={(event) => setSelectedYear(Number(event.target.value))}
+            onChange={(event) => change({year: Number(event.target.value)})}
             value={selectedYear}
           >
             {years.map((year) => (
@@ -280,7 +282,7 @@ export function ActivityDashboard({
       <MonthStrip
         activeMonth={months[selectedMonth]}
         counts={monthCounts}
-        onSelect={setSelectedMonth}
+        onSelect={month => change({month})}
         year={selectedYear}
       />
       <section
@@ -336,7 +338,8 @@ export function ActivityDashboard({
             )}
           </Card>
           <DashboardTable
-            activities={activities}
+            activities={filtered}
+            query={query} status={status} onFilter={change} total={activities.length} returnTo={returnTo}
             onSelect={() => undefined}
             role={role}
           />
@@ -344,13 +347,14 @@ export function ActivityDashboard({
       ) : (
         <div className="md:grid md:grid-cols-1 md:items-start md:gap-4 xl:grid-cols-[minmax(0,1fr)_20rem]">
           <DashboardTable
-            activities={activities}
+            activities={filtered}
+            query={query} status={status} onFilter={change} total={activities.length} returnTo={returnTo}
             onSelect={(item) => setSelectedId(item.id)}
             role={role}
             selected={selected?.id}
           />
           <aside className="mt-4 hidden md:block xl:mt-0">
-            <ActivityPreview item={selected} />
+            <ActivityPreview item={selected} returnTo={returnTo} />
           </aside>
         </div>
       )}

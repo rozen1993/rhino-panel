@@ -65,5 +65,5 @@ test('Admin prepara la cuota sin guardar ni duplicar periodos ya existentes',asy
   await expect(region.getByLabel('Inicio',{exact:true})).toHaveValue('2026-04-01');
   await expect(region.getByLabel('Fin',{exact:true})).toHaveValue('2026-04-30');
   await expect(page.getByRole('combobox',{name:'Periodo contractual',exact:true})).toHaveValue('');
-  await expect(page.getByText('Periodo pendiente de confirmar',{exact:true})).toBeVisible();
+  await expect(page.getByText('Periodo según fecha registrada',{exact:true})).toBeVisible();
 });

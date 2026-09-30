@@ -1,0 +1,82 @@
+import {cleanup, fireEvent, render, screen, waitFor} from '@testing-library/react';
+import {afterEach, beforeEach, it, expect, vi} from 'vitest';
+import {ActivityDetail} from '@/components/activity-detail';
+import {ActivityDashboard} from '@/components/activity-dashboard';
+import {AunorJourneys} from '@/components/aunor-space';
+import {parseActivityStore} from '@/lib/activity-simulation';
+import {emptyAunorWorkspace} from '@/lib/aunor';
+import {roles} from '@/lib/roles';
+import {safeDashboardReturn} from '@/lib/dashboard-navigation';
+const mocks=vi.hoisted(()=>({advance:vi.fn(),refresh:vi.fn()}));
+vi.mock('next/navigation',()=>({useRouter:()=>({push:vi.fn(),refresh:mocks.refresh,prefetch:vi.fn()})}));
+vi.mock('@/app/actividades/actions',()=>({advanceSupabaseActivityAction:mocks.advance,resetSupabaseActivityAction:vi.fn(),deleteSupabaseActivityMessageAction:vi.fn(),editSupabaseActivityMessageAction:vi.fn(),postSupabaseActivityMessageAction:vi.fn()}));
+vi.mock('@/app/papelera/actions',()=>({softDeleteSupabaseActivityAction:vi.fn(),softDeleteOwnSupabaseActivityAction:vi.fn()}));
+vi.mock('@/components/admin-aunor-panel',()=>({AdminAunorPanel:()=>null}));
+beforeEach(()=>{window.history.replaceState(null,'','/actividades');vi.clearAllMocks();});
+afterEach(()=>{cleanup();vi.useRealTimers();window.history.replaceState(null,'','/');});
+const sample=()=>({...parseActivityStore(null)[0],title:'Titulo anterior',status:'Programada' as const});
+it('incorpora nuevas props sin perder un mensaje en preparación',()=>{
+ const a={...sample(),status:'Entregada' as const,threadOpenedAt:'2026-09-30T12:00:00Z'};
+ const props={id:a.id,role:{...roles.operario,accountId:a.responsibleAccountId},dataSource:'supabase' as const};
+ const {rerender}=render(<ActivityDetail {...props} initialActivity={a}/>);
+ fireEvent.change(screen.getByRole('textbox',{name:'Mensaje'}),{target:{value:'Borrador conservado'}});
+ rerender(<ActivityDetail {...props} initialActivity={{...a,title:'Titulo nuevo',version:a.version+1}}/>);
+ expect(screen.getByRole('heading',{name:'Titulo nuevo'})).toBeTruthy();
+ expect(screen.queryByRole('heading',{name:'Titulo anterior'})).toBeNull();
+ expect((screen.getByRole('textbox',{name:'Mensaje'}) as HTMLInputElement).value).toBe('Borrador conservado');
+});
+it('oculta acciones obsoletas si se guardó pero la lectura posterior falló',async()=>{
+ const a=sample();mocks.advance.mockResolvedValue({ok:true,activity:null,activityId:a.id,warning:'Guardado'});
+ const props={id:a.id,role:{...roles.operario,accountId:a.responsibleAccountId},dataSource:'supabase' as const};
+ const {rerender}=render(<ActivityDetail {...props} initialActivity={a}/>);
+ fireEvent.click(screen.getByRole('button',{name:'Iniciar'}));
+ await waitFor(()=>expect(screen.getByRole('button',{name:'Actualizar ficha'})).toBeTruthy());
+ expect(screen.queryByRole('button',{name:'Iniciar'})).toBeNull();
+ rerender(<ActivityDetail {...props} initialActivity={{...a,status:'En proceso',version:a.version+1}}/>);
+ expect(screen.queryByRole('button',{name:'Actualizar ficha'})).toBeNull();
+});
+it('no sustituye el resultado recién guardado por props antiguas',async()=>{
+ const a=sample(),updated={...a,title:'Version nueva',version:a.version+1};
+ mocks.advance.mockResolvedValue({ok:true,activity:updated});
+ const props={id:a.id,role:{...roles.operario,accountId:a.responsibleAccountId},dataSource:'supabase' as const};
+ const {rerender}=render(<ActivityDetail {...props} initialActivity={a}/>);
+ fireEvent.click(screen.getByRole('button',{name:'Iniciar'}));
+ await waitFor(()=>expect(screen.getByRole('heading',{name:'Version nueva'})).toBeTruthy());
+ rerender(<ActivityDetail {...props} initialActivity={{...a}}/>);
+ expect(screen.getByRole('heading',{name:'Version nueva'})).toBeTruthy();
+});
+it('un filtro sin coincidencias vacía también la vista previa',()=>{
+ vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-30T17:00:00Z'));
+ const a={...sample(),spans:[{start:'2026-09-30',end:'2026-09-30'}]};
+ render(<ActivityDashboard role={roles.admin} dataSource="supabase" initialActivities={[a]}/>);
+ fireEvent.change(screen.getByRole('searchbox'),{target:{value:'NoCoincideConNinguna'}});
+ expect(screen.getByText('No hay actividades que coincidan con la búsqueda.')).toBeTruthy();
+ expect(screen.queryByRole('link',{name:'Abrir ficha completa'})).toBeNull();
+});
+it('conserva mes, búsqueda y estado al remontar; el enlace permite volver al mismo contexto',()=>{
+ vi.useFakeTimers();vi.setSystemTime(new Date('2026-09-30T17:00:00Z'));
+ const a={...sample(),spans:[{start:'2026-04-10',end:'2026-04-10'}]};
+ window.history.replaceState(null,'','/actividades?periodo=2026-04');
+ const props={role:roles.admin,dataSource:'supabase' as const,initialActivities:[a]};
+ const first=render(<ActivityDashboard {...props}/>);
+ fireEvent.change(screen.getByRole('searchbox'),{target:{value:'Titulo'}});
+ fireEvent.change(screen.getByLabelText('Filtrar por estado'),{target:{value:'Programada'}});
+ const href=screen.getByRole('link',{name:'Abrir ficha completa'}).getAttribute('href')!;
+ expect(decodeURIComponent(href)).toContain('volver=/actividades?periodo=2026-04&buscar=Titulo&estado=Programada');
+ first.unmount();render(<ActivityDashboard {...props}/>);
+ expect(document.querySelector('[aria-current="date"]')?.getAttribute('aria-label')).toContain('abr');
+ expect((screen.getByRole('searchbox') as HTMLInputElement).value).toBe('Titulo');
+ expect((screen.getByLabelText('Filtrar por estado') as HTMLSelectElement).value).toBe('Programada');
+});
+it('no permite retornos externos ni parámetros arbitrarios',()=>{
+ expect(safeDashboardReturn('https://example.invalid')).toBe('/actividades');
+ expect(safeDashboardReturn('//example.invalid')).toBe('/actividades');
+ expect(safeDashboardReturn('/actividades?periodo=2026-04&token=secreto')).toBe('/actividades?periodo=2026-04');
+});
+it('Aunor muestra la entrega prevista, no jornadas antiguas ni lugar de una edición',()=>{
+ const w=emptyAunorWorkspace();
+ w.activities=[{id:'synthetic',type:'Edición',title:'Edicion sintetica',status:'Programada',place:'',summary:'',service_id:null,not_performed_reason:'',publication_version:0,published_at:'',unread_count:0,delivery_due_on:'2026-05-15'}];
+ w.journeys=[{activity_id:'synthetic',position:0,start_date:'2026-04-15',end_date:'2026-04-15',place:''}];
+ render(<AunorJourneys w={w} id="synthetic"/>);
+ expect(screen.queryByText(/15 abr/)).toBeNull();expect(screen.getByText(/15 may/)).toBeTruthy();expect(screen.queryByText('Lugar por indicar')).toBeNull();
+});

@@ -8,6 +8,7 @@ import { ClassificationBadge } from "@/components/classification-badge";
 import { replacementsForService, type AunorActivityRow, type AunorReplacement, type AunorWorkspace } from "@/lib/aunor";
 import { contractReferences, referenceLabel } from "@/lib/contract-reference";
 import { contractProgress, periodLabel, type ContractPeriod } from "@/lib/contract-progress";
+import { contractPeriodForMonth } from "@/lib/contract-calendar";
 import s from "./aunor-contract.module.css";
 
 const iconFor: Record<string, IconName> = {
@@ -59,10 +60,10 @@ export function AunorContract({ w, initialMonth, renderReplacement }: {
   const titleId = useId();
   const periods = useMemo(() => w.contractPeriods ?? [], [w.contractPeriods]);
   const entries = useMemo(() => w.services.map(service => {
-    const period = periods.find(p => p.service_id === service.id && p.starts_on.slice(0,7) <= month && p.ends_on.slice(0,7) >= month);
+    const period = contractPeriodForMonth(w, service.id, month);
     return { service, period, cadence: period?.cadence ?? contractReferences[service.id]?.cadence,
       progress: contractProgress(w, service.id, period), replacements: replacementsForService(w, service.id) };
-  }), [w, periods, month]);
+  }), [w, month]);
   const selectedEntry = entries.find(e => e.service.id === selected);
   const open = selected !== null;
   useEffect(() => {
@@ -142,7 +143,7 @@ export function AunorContract({ w, initialMonth, renderReplacement }: {
       {unlinked.length>0 && <button type="button" aria-expanded={showUnlinked} onClick={()=>setShowUnlinked(v=>!v)}>{showUnlinked ? "Ocultar trabajos" : "Ver trabajos"}<SystemIcon name="arrow-right" className="size-4"/></button>}
       {showUnlinked && <div className={s.unlinkedList}><WorkList activities={unlinked}/></div>}
     </section>
-    <details className={s.rules}><summary>Cómo se calcula el avance</summary><p>Solo se cuentan actividades entregadas, vinculadas al servicio y con periodo confirmado por Admin. Los excedentes permanecen en su periodo. El marcaje Especial no duplica unidades ni aprueba pagos. Los originales sustituidos y los trabajos no realizados se conservan en el detalle, sin sumarse al cumplimiento.</p><p>Nombres abreviados para lectura. Esta lista no modifica el texto firmado.</p></details>
+    <details className={s.rules}><summary>Cómo se calcula el avance</summary><p>Solo se cuentan actividades entregadas y vinculadas al servicio. Se usa el periodo asignado por Admin o, si no hay una asignación, las fechas registradas de la actividad y las metas confirmadas. Si las fechas abarcan más de un periodo, Admin debe indicar cuál corresponde. No se utiliza la fecha de carga ni de regularización. Los excedentes permanecen en su periodo. El marcaje Especial no duplica unidades ni aprueba pagos. Los originales sustituidos y los trabajos no realizados se conservan sin sumarse al cumplimiento.</p><p>Nombres abreviados para lectura. Esta lista no modifica el texto firmado.</p></details>
     {open && <dialog ref={dialog} className={s.dialog} tabIndex={-1} aria-labelledby={titleId} onCancel={event=>{event.preventDefault();close();}}
       onKeyDown={event=>{
         if(event.key!=="Tab")return;
@@ -157,8 +158,8 @@ export function AunorContract({ w, initialMonth, renderReplacement }: {
       {selectedEntry ? <div className={s.dialogBody}>
         <p className={s.footnote}>Referencia contractual: {selectedEntry.service.reference}</p>
         {contractReferences[selected!] && <p className={s.footnote}>Referencia confirmada: {referenceLabel(selected!)}. Inicio operativo: abril de 2026.</p>}
-        {periods.some(p=>p.service_id===selected) && <label className={s.periodSelect}>Periodos registrados<select value={selectedEntry.period?.id ?? ""} onChange={e=>{const p=periods.find(p=>p.id===e.target.value);if(p)setMonth(p.starts_on.slice(0,7));}}>
-          <option value="" disabled>Sin periodo para el mes consultado</option>
+        {periods.some(p=>p.service_id===selected) && <label className={s.periodSelect}>Periodos registrados<select value={periods.some(p=>p.id===selectedEntry.period?.id) ? selectedEntry.period!.id : ""} onChange={e=>{const p=periods.find(p=>p.id===e.target.value);if(p)setMonth(p.starts_on.slice(0,7));}}>
+          <option value="" disabled>{selectedEntry.period ? "Según fecha registrada · referencia confirmada" : "Sin periodo para el mes consultado"}</option>
           {periods.filter(p=>p.service_id===selected).sort((a,b)=>a.starts_on.localeCompare(b.starts_on)).map(p=><option key={p.id} value={p.id}>{periodLabel(p)}</option>)}
         </select></label>}
         {periodSummary(selectedEntry.progress,selectedEntry.period)}

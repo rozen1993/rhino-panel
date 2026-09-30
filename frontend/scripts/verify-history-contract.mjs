@@ -3,7 +3,8 @@ import {spawnSync} from 'node:child_process';
 import {readFileSync,readdirSync} from 'node:fs';
 import {randomUUID} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
-const container='supabase_db_sistema-r';
+const container=process.env.SISTEMA_R_TEST_DB_CONTAINER || 'supabase_db_sistema-r';
+if(!/^[a-zA-Z0-9_-]+$/.test(container))throw Error('Invalid disposable test container');
 const database='sr_history_test_'+randomUUID().replaceAll('-','');
 const migrations=fileURLToPath(new URL('../../supabase/migrations/',import.meta.url));
 function run(args,input){const r=spawnSync('docker',['exec',...(input?['-i']:[]),container,...args],{input,encoding:'utf8',windowsHide:true});if(r.error||r.status!==0)throw Error(r.error?.message||r.stderr||r.stdout);return r.stdout;}

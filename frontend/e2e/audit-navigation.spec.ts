@@ -1,0 +1,31 @@
+import {expect,test} from '@playwright/test';
+
+test('conserva abril y búsqueda al abrir/volver y vacía una vista previa filtrada',async({page})=>{
+ await page.route('**/*',route=>new URL(route.request().url()).hostname==='localhost'?route.continue():route.abort());
+ await page.goto('/acceso');
+ await page.getByRole('listitem').filter({hasText:'Marco Admin'}).getByRole('button',{name:'Ingresar'}).click();
+ await page.locator('#usuario').fill('admin');await page.locator('#clave').fill('admin2026');
+ await page.getByRole('button',{name:'Entrar',exact:true}).click();await page.waitForURL(url=>url.pathname!=='/acceso');
+ await page.goto('/actividades/nueva');
+ await page.getByLabel('Operario responsable').selectOption({label:'Ana Torres'});
+ await page.getByLabel('Tipo de servicio').selectOption('Edición');
+ await page.getByLabel('Actividad o proyecto').fill('Auditoría sintética de navegación');
+ await page.getByLabel('Fecha de entrega del proyecto').fill('2026-04-17');
+ await page.getByRole('button',{name:'Planificar y asignar',exact:true}).click();
+ await expect(page.getByRole('link',{name:'Ver actividad',exact:true})).toBeVisible();
+ await page.goto('/actividades?periodo=2026-04');
+ await page.getByRole('searchbox').fill('Auditoría sintética de navegación');
+ await page.getByLabel('Filtrar por estado').selectOption('Programada');
+ await expect(page.getByRole('link',{name:'Abrir ficha completa'})).toBeVisible();
+ await page.getByRole('link',{name:'Abrir ficha completa'}).click();
+ await expect(page.getByRole('heading',{name:'Auditoría sintética de navegación',exact:true})).toBeVisible();
+ await page.getByRole('link',{name:'Volver',exact:true}).click();
+ await expect(page).toHaveURL(/periodo=2026-04/);
+ await expect(page.getByRole('searchbox')).toHaveValue('Auditoría sintética de navegación');
+ await expect(page.getByLabel('Filtrar por estado')).toHaveValue('Programada');
+ await page.getByRole('searchbox').fill('Sin coincidencias sintéticas');
+ await expect(page.getByText('No hay actividades que coincidan con la búsqueda.')).toBeVisible();
+ await expect(page.getByRole('link',{name:'Abrir ficha completa'})).toHaveCount(0);
+ await page.reload();
+ await expect(page.getByRole('searchbox')).toHaveValue('Sin coincidencias sintéticas');
+});

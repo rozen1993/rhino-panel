@@ -177,7 +177,7 @@ function CompactManagement({ item, role, onAssigned }: Props) {
       <header className={s.heading}>
         <div>
           <h2 className="section-title text-2xl">Relación con el contrato</h2>
-          <p>Elige el servicio y confirma el periodo en un solo paso.</p>
+          <p>Relaciona el servicio. El periodo toma las fechas registradas salvo que indiques otro.</p>
         </div>
         <small className="data-label">Cliente Aunor</small>
       </header>
@@ -272,7 +272,7 @@ function CompactManagement({ item, role, onAssigned }: Props) {
                           setDraft({ ...draft, period: e.target.value })
                         }
                       >
-                        <option value="">Por confirmar</option>
+                        <option value="">Según fecha de la actividad</option>
                         {periods.map((period) => (
                           <option key={period.id} value={period.id}>
                             {periodLabel(period)} ·{" "}
@@ -287,14 +287,13 @@ function CompactManagement({ item, role, onAssigned }: Props) {
                   <p className={s.help}>
                     {draft.period
                       ? "Al guardar confirmas que este es el periodo contractual correcto."
-                      : "Sin un periodo confirmado, esta actividad no suma al contrato."}{" "}
+                      : "Se usan las fechas de la actividad; si cruzan periodos o faltan, debes confirmar uno."}{" "}
                     Solo cuentan actividades entregadas, no sustituidas y
                     realizadas.
                   </p>
                   {draft.service && !periods.length && (
                     <p className={s.help}>
-                      Este servicio aún no tiene periodos configurados.
-                      Prepáralos en «Configurar periodos y metas».
+                      Se aplican las metas confirmadas del contrato. Puedes definir una excepción en «Configurar periodos y metas».
                     </p>
                   )}
                   <div className={s.save}>
@@ -311,7 +310,7 @@ function CompactManagement({ item, role, onAssigned }: Props) {
                                 )!,
                               )
                             : "por revisar")
-                        : "Periodo pendiente de confirmar"}
+                        : "Periodo según fecha registrada"}
                     </span>
                     <Button type="submit" disabled={pending || conflict}>
                       {pending ? "Guardando…" : "Guardar relación"}
@@ -342,7 +341,7 @@ function CompactManagement({ item, role, onAssigned }: Props) {
                       <div className={s.bar} aria-hidden="true">
                         <span
                           style={{
-                            width: `${Math.min(100, (preview.after / preview.target) * 100)}%`,
+                            width: `${preview.target > 0 ? Math.min(100, (preview.after / preview.target) * 100) : 0}%`,
                           }}
                         />
                       </div>
@@ -357,8 +356,7 @@ function CompactManagement({ item, role, onAssigned }: Props) {
                   </>
                 ) : (
                   <p className={s.help}>
-                    Selecciona un periodo para ver cómo quedaría su conteo. No
-                    se asigna por la fecha de la actividad.
+                    Selecciona el servicio. Si las fechas faltan o cruzan periodos, indica un periodo para ver el conteo.
                   </p>
                 )}
               </aside>

@@ -91,16 +91,26 @@ export function parseActivityDraft(raw: string | null): ActivityDraft | null {
   }
 }
 
-export function readActivityDraft(storage: Storage, key: string) {
-  const value = parseActivityDraft(storage.getItem(key));
-  if (!value) storage.removeItem(key);
-  return value;
+export function browserDraftStorage(): Storage | null {
+  try { return window.localStorage; } catch { return null; }
+}
+
+export function removeActivityDraft(storage: Storage | null, key: string) {
+  try { storage?.removeItem(key); return Boolean(storage); } catch { return false; }
+}
+
+export function readActivityDraft(storage: Storage | null, key: string) {
+  try {
+    const value = parseActivityDraft(storage?.getItem(key) ?? null);
+    if (!value) removeActivityDraft(storage, key);
+    return value;
+  } catch { return null; }
 }
 
 export function writeActivityDraft(
-  storage: Storage,
+  storage: Storage | null,
   key: string,
   draft: ActivityDraft,
 ) {
-  storage.setItem(key, JSON.stringify(draft));
+  try { storage?.setItem(key, JSON.stringify(draft)); return Boolean(storage); } catch { return false; }
 }
