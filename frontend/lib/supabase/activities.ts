@@ -89,7 +89,7 @@ async function fetchActivityRows(
   const query = (cursor?: string) => {
     let request = supabase
       .from("activities")
-      .select("*");
+      .select("*", { count: "exact" });
     request =
       scope === "active"
         ? request.is("deleted_at", null)
@@ -109,7 +109,7 @@ async function fetchActivityRows(
   const rows: ActivityRow[] = [];
   let cursor: string | null = null;
   for (;;) {
-    const { data, error } = await query(cursor ?? undefined).limit(
+    const { data, error, count } = await query(cursor ?? undefined).limit(
       supabasePageSize,
     );
     if (error)
@@ -120,6 +120,8 @@ async function fetchActivityRows(
     if (!page.length) break;
     rows.push(...page);
     cursor = advanceStringCursor(page, cursor, "actividades");
+    // Exact remaining count, not the requested limit: PostgREST may cap pages.
+    if (count === page.length) break;
   }
   return rows.sort(compareActivityRows(scope));
 }
@@ -131,6 +133,7 @@ async function fetchBursonRequestRows(id?: string) {
       .from("activities")
       .select(
         "id, type, title, responsible_name, status, description, place, material_link, reference_link, created_at, updated_at, delivered_at",
+        { count: "exact" },
       )
       .eq("origin", "burson")
       .is("deleted_at", null);
@@ -151,7 +154,7 @@ async function fetchBursonRequestRows(id?: string) {
   const rows: BursonRequestRow[] = [];
   let cursor: string | null = null;
   for (;;) {
-    const { data, error } = await query(cursor ?? undefined).limit(
+    const { data, error, count } = await query(cursor ?? undefined).limit(
       supabasePageSize,
     );
     if (error)
@@ -162,6 +165,7 @@ async function fetchBursonRequestRows(id?: string) {
     if (!page.length) break;
     rows.push(...page);
     cursor = advanceStringCursor(page, cursor, "encargos Burson");
+    if (count === page.length) break;
   }
   return rows.sort(
     (left, right) =>
@@ -230,9 +234,9 @@ async function hydrateBursonRequests(
       const batchRows: BursonSpanRow[] = [];
       let cursor = 0;
       for (;;) {
-        const { data, error } = await supabase
+        const { data, error, count } = await supabase
           .from("activity_date_spans")
-          .select("id, activity_id, position, start_date, end_date, place")
+          .select("id, activity_id, position, start_date, end_date, place", { count: "exact" })
           .in("activity_id", batchIds)
           .gt("id", cursor)
           .order("id", { ascending: true })
@@ -245,6 +249,7 @@ async function hydrateBursonRequests(
         if (!page.length) break;
         batchRows.push(...page);
         cursor = advanceNumericCursor(page, cursor, "jornadas Burson");
+        if (count === page.length) break;
       }
       return batchRows;
     },
@@ -294,9 +299,9 @@ async function fetchActivitySpans(
       const rows: ActivitySpanRow[] = [];
       let cursor = 0;
       for (;;) {
-        const { data, error } = await supabase
+        const { data, error, count } = await supabase
           .from("activity_date_spans")
-          .select("*")
+          .select("*", { count: "exact" })
           .in("activity_id", batchIds)
           .gt("id", cursor)
           .order("id", { ascending: true })
@@ -309,6 +314,7 @@ async function fetchActivitySpans(
         if (!page.length) break;
         rows.push(...page);
         cursor = advanceNumericCursor(page, cursor, "jornadas");
+        if (count === page.length) break;
       }
       return rows;
     },
@@ -327,9 +333,9 @@ async function fetchActivityAudits(
       const rows: ActivityAuditRow[] = [];
       let cursor = 0;
       for (;;) {
-        const { data, error } = await supabase
+        const { data, error, count } = await supabase
           .from("audit_events")
-          .select("*")
+          .select("*", { count: "exact" })
           .in("activity_id", batchIds)
           .gt("id", cursor)
           .order("id", { ascending: true })
@@ -342,6 +348,7 @@ async function fetchActivityAudits(
         if (!page.length) break;
         rows.push(...page);
         cursor = advanceNumericCursor(page, cursor, "auditoria de actividades");
+        if (count === page.length) break;
       }
       return rows;
     },
@@ -364,11 +371,12 @@ async function fetchActivityMessages(
           .from("activity_messages")
           .select(
             "id, activity_id, author_id, author_name, author_role, body, opens_thread, version, created_at, edited_at",
+            { count: "exact" },
           )
           .in("activity_id", batchIds)
           .is("deleted_at", null);
         if (cursor !== null) query = query.gt("id", cursor);
-        const { data, error } = await query
+        const { data, error, count } = await query
           .order("id", { ascending: true })
           .limit(supabasePageSize);
         if (error)
@@ -379,6 +387,7 @@ async function fetchActivityMessages(
         if (!page.length) break;
         rows.push(...page);
         cursor = advanceStringCursor(page, cursor, "mensajes de actividades");
+        if (count === page.length) break;
       }
       return rows;
     },
@@ -400,10 +409,10 @@ async function fetchDeletionActors(
       for (;;) {
         let query = supabase
           .from("profiles")
-          .select("id, display_name, role")
+          .select("id, display_name, role", { count: "exact" })
           .in("id", batchIds);
         if (cursor !== null) query = query.gt("id", cursor);
-        const { data, error } = await query
+        const { data, error, count } = await query
           .order("id", { ascending: true })
           .limit(supabasePageSize);
         if (error)
@@ -414,6 +423,7 @@ async function fetchDeletionActors(
         if (!page.length) break;
         rows.push(...page);
         cursor = advanceStringCursor(page, cursor, "responsables de la baja");
+        if (count === page.length) break;
       }
       return rows;
     },

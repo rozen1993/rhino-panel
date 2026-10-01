@@ -27,7 +27,7 @@ import {
 type Row = Record<string, unknown>;
 type Operation = { name: string; args: unknown[] };
 type QueryCall = { table: string; operations: Operation[] };
-type Response = { data: Row[]; error: null };
+type Response = { data: Row[]; error: null; count?: number | null };
 
 function compareValues(left: unknown, right: unknown) {
   if (left === right) return 0;
@@ -41,6 +41,7 @@ function compareValues(left: unknown, right: unknown) {
 function behavioralClient(
   tables: Record<string, Row[]>,
   maxRows: number,
+  reportCount = true,
 ) {
   const calls: QueryCall[] = [];
   const client = {
@@ -110,7 +111,9 @@ function behavioralClient(
           typeof requested === "number"
             ? Math.min(requested, maxRows)
             : maxRows;
-        return Promise.resolve({ data: rows.slice(0, limit), error: null }).then(
+        const counted = reportCount && operations.some(operation =>
+          operation.name === "select" && (operation.args[1] as { count?: string } | undefined)?.count === "exact");
+        return Promise.resolve({ data: rows.slice(0, limit), error: null, count: counted ? rows.length : null }).then(
           resolve,
           reject,
         );
@@ -176,6 +179,21 @@ beforeEach(() => {
 });
 
 describe("paginacion keyset de lecturas Supabase", () => {
+  it.each([true, false])("el panel omite viajes vacíos con conteo exacto=%s y conserva el fallback", async (reportCount) => {
+    const activities = Array.from({length: 23}, (_, index) => activity(index + 1));
+    const spans = activities.map((item, index) => ({
+      id: index + 1, activity_id: item.id, position: 0,
+      start_date: "2026-04-12", end_date: "2026-04-12",
+    }));
+    const setup = behavioralClient({activities, activity_date_spans: spans}, 1000, reportCount);
+    mocks.createServerClient.mockResolvedValue(setup.client);
+    const result = await listSupabaseActivities();
+    expect(result).toHaveLength(23);
+    expect(result.every(item => item.spans.length === 1)).toBe(true);
+    expect(setup.calls.filter(call => call.table === "activities")).toHaveLength(reportCount ? 1 : 2);
+    expect(setup.calls.filter(call => call.table === "activity_date_spans")).toHaveLength(reportCount ? 1 : 2);
+  });
+
   it("no trunca actividades ni jornadas y omite auditoria en el listado", async () => {
     const activities = Array.from({ length: 5 }, (_, index) =>
       activity(index + 1),

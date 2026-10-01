@@ -24,6 +24,7 @@
 /.verificacion/aunor-*/
 /.verificacion/admin-compact-regressions/
 /.verificacion/historico-*/
+/.verificacion/performance-*/
 /out/
 
 # production

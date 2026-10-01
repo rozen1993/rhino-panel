@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import type { Role } from "@/lib/roles";
+import { WorkspaceLoading } from "@/components/workspace-loading";
 import { ActivityDashboard } from "@/components/activity-dashboard";
 import { MobileShell, requireRole } from "@/components/mobile-shell";
 import { resolveDataSource } from "@/lib/data-source";
@@ -8,9 +11,6 @@ export default async function ActivitiesPage() {
   const role = await requireRole(
     (item) => item.id === "operario" || item.id === "admin",
   );
-  const dataSource = resolveDataSource();
-  const activities =
-    dataSource === "supabase" ? await listSupabaseActivities() : [];
   return (
     <MobileShell role={role}>
       <main className="mx-auto max-w-[1700px] space-y-4 px-3 py-4 md:px-5 md:py-5 lg:px-6">
@@ -48,12 +48,16 @@ export default async function ActivitiesPage() {
             </span>
           )}
         </header>
-        <ActivityDashboard
-          dataSource={dataSource}
-          initialActivities={activities}
-          role={role}
-        />
+        <Suspense fallback={<WorkspaceLoading label="Cargando actividades…" />}>
+          <DashboardContent role={role} />
+        </Suspense>
       </main>
     </MobileShell>
   );
+}
+
+async function DashboardContent({ role }: { role: Role }) {
+  const dataSource = resolveDataSource();
+  const activities = dataSource === "supabase" ? await listSupabaseActivities() : [];
+  return <ActivityDashboard dataSource={dataSource} initialActivities={activities} role={role} />;
 }

@@ -3,6 +3,7 @@ import {spawnSync} from 'node:child_process';
 import {readFileSync,readdirSync} from 'node:fs';
 import {randomUUID} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
+import {verifyContractReadPerformance} from './contract-performance-check.mjs';
 const container=process.env.SISTEMA_R_TEST_DB_CONTAINER || 'supabase_db_sistema-r';
 if(!/^[a-zA-Z0-9_-]+$/.test(container))throw Error('Invalid disposable test container');
 const database='sr_history_test_'+randomUUID().replaceAll('-','');
@@ -23,9 +24,9 @@ try {
  grant usage on schema public,auth,extensions to anon,authenticated,service_role;
  revoke all on function auth.jwt(),auth.uid() from public;grant execute on function auth.jwt(),auth.uid() to anon,authenticated,service_role;`);
  const files=readdirSync(migrations).filter(f=>f.endsWith('.sql')).sort();
- if(files.at(-1)!=='202609300002_historical_registration.sql')throw Error('Review migration boundary');
- for(const f of files)sql(readFileSync(migrations+'/'+f,'utf8'));
- console.log('PASS complete migration chain');
+ if(files.at(-1)!=='202609300003_contract_read_performance.sql')throw Error('Review migration boundary');
+ for(const f of files.slice(0,-1))sql(readFileSync(migrations+'/'+f,'utf8'));
+ console.log('PASS migration chain before read optimization');
  sql(`insert into auth.users values ${[1,2,3,4].map(n=>`('${id(100+n)}')`).join(',')};
  insert into public.profiles(id,username,display_name,role,can_create_own_activities) values
  ('${id(101)}','test.admin','Admin','admin',false),('${id(102)}','test.creator','Creator','operario',true),
@@ -120,6 +121,8 @@ try {
  deny(1,historicalCall(ordinaryKey),'SR006');
  sql(`do $$begin assert(select status='Programada' from public.activities where idempotency_key='${ordinaryKey}');assert not has_function_privilege('anon','public.register_historical_activity_v1(uuid,jsonb)','execute');assert not has_function_privilege('service_role','public.register_historical_activity_v1(uuid,jsonb)','execute');end $$;`);
  console.log('PASS historical registration: all four types, Admin only, one reference date, atomic rollback, private Aunor projections and idempotent retries');
+ verifyContractReadPerformance({sql,as,id,migration:readFileSync(migrations+'/'+files.at(-1),'utf8')});
+ console.log('PASS complete migration chain including read optimization');
 } finally {
  if(created && /^sr_history_test_[a-f0-9]{32}$/.test(database)) {run(['dropdb','-U','postgres','--force',database]);console.log('Removed only the disposable database '+database);}
 }
