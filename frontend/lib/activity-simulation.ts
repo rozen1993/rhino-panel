@@ -295,6 +295,11 @@ export function parseActivityStore(raw: string | null): SimulatedActivity[] {
 export function readActivities(storage: Pick<Storage, "getItem">) {
   return parseActivityStore(storage.getItem(activityStoreKey));
 }
+/** Demo-only mirror of a successful synthetic server registration; never used for Supabase. */
+export function rememberDemoHistorical(storage:Pick<Storage,"getItem"|"setItem">,activity:SimulatedActivity) {
+  const items=readActivities(storage);
+  if(!items.some(a=>a.id===activity.id))save(storage,[...items,activity]);
+}
 function save(
   storage: Pick<Storage, "setItem">,
   activities: SimulatedActivity[],

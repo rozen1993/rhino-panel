@@ -23,7 +23,7 @@ try {
  grant usage on schema public,auth,extensions to anon,authenticated,service_role;
  revoke all on function auth.jwt(),auth.uid() from public;grant execute on function auth.jwt(),auth.uid() to anon,authenticated,service_role;`);
  const files=readdirSync(migrations).filter(f=>f.endsWith('.sql')).sort();
- if(files.at(-1)!=='202609300001_admin_compact_management.sql')throw Error('Review migration boundary');
+ if(files.at(-1)!=='202609300002_historical_registration.sql')throw Error('Review migration boundary');
  for(const f of files)sql(readFileSync(migrations+'/'+f,'utf8'));
  console.log('PASS complete migration chain');
  sql(`insert into auth.users values ${[1,2,3,4].map(n=>`('${id(100+n)}')`).join(',')};
@@ -95,6 +95,31 @@ try {
  sql(as(1,`select public.restart_activity_v2('${a}',7,'Reinicio sintético');`));
  sql(`do $$begin assert exists(select 1 from public.activities where id<>'${a}' and classification='special' and status='Programada' and historical_regularized_at is null);end $$;`);
  console.log('PASS editing deadline, immutable journeys, explicit contract periods, overlaps, wrong-service exclusion and restart');
+ const historical={type:'Grabación',title:'Registro histórico sintético',description:'Descripción sintética',placeName:'Lugar de prueba',responsibleAccountId:id(102),spans:[{start:'2026-04-17',end:'2026-04-17'}],recordingModes:['Video'],deliveryDueOn:'',classification:'standard',materialLink:'https://example.invalid/historico',serviceId:'cobertura',confirmed:true};
+ const historicalCall=(key,payload=historical)=>`public.register_historical_activity_v1('${key}','${JSON.stringify(payload)}'::jsonb)`;
+ const historicalKey=randomUUID();
+ deny(2,historicalCall(historicalKey));deny(4,historicalCall(historicalKey));
+ deny(1,historicalCall(randomUUID(),{...historical,confirmed:false}),'SR003');
+ deny(1,historicalCall(randomUUID(),{...historical,materialLink:'http://example.invalid'}),'SR003');
+ deny(1,historicalCall(randomUUID(),{...historical,serviceId:'no-service'}),'SR003');
+ const countBefore=sql('select count(*) from public.activities;').trim();
+ deny(1,historicalCall(randomUUID(),{...historical,spans:[{start:'2099-01-01',end:'2099-01-01'}]}),'SR003');
+ if(sql('select count(*) from public.activities;').trim()!==countBefore)throw Error('Partial historical activity persisted');
+ sql(as(1,`select ${historicalCall(historicalKey)};select ${historicalCall(historicalKey)};`));
+ deny(1,historicalCall(historicalKey,{...historical,title:'Changed retry'}),'SR006');
+ const historicalId=sql(`select id from public.activities where idempotency_key='${historicalKey}';`).trim();
+ sql(`do $$begin assert(select count(*)=${Number(countBefore)+1} from public.activities);assert(select status='Entregada' and delivered_at is null and historical_regularized_at is not null and delivery_due_on is null from public.activities where id='${historicalId}');assert(select start_date='2026-04-17' from public.activity_date_spans where activity_id='${historicalId}');end $$;`);
+ sql(as(4,`do $$begin assert(select service_id='cobertura' and status='Entregada' and material_link='https://example.invalid/historico' from public.aunor_activities where id='${historicalId}');end $$;`));
+ const newEditionKey=randomUUID();
+ sql(as(1,`select ${historicalCall(newEditionKey,{...historical,type:'Edición',description:'',placeName:'',spans:[],recordingModes:[],deliveryDueOn:'2026-04-21',serviceId:'redes'})};`));
+ sql(`do $$begin assert(select status='Entregada' and delivery_due_on='2026-04-21' and description='' and place='' from public.activities where idempotency_key='${newEditionKey}');end $$;`);
+ for(const type of ['Creatividad','Locución'])sql(as(1,`select ${historicalCall(randomUUID(),{...historical,type,recordingModes:[],serviceId:''})};`));
+ deny(1,historicalCall(randomUUID(),{...historical,type:'Locución',recordingModes:[],deliveryDueOn:'2026-04-21'}),'SR003');
+ // Ordinary planning keys cannot be reused to convert existing activities.
+ const ordinaryKey=randomUUID();sql(as(1,`select * from ${plan(ordinaryKey)};`));
+ deny(1,historicalCall(ordinaryKey),'SR006');
+ sql(`do $$begin assert(select status='Programada' from public.activities where idempotency_key='${ordinaryKey}');assert not has_function_privilege('anon','public.register_historical_activity_v1(uuid,jsonb)','execute');assert not has_function_privilege('service_role','public.register_historical_activity_v1(uuid,jsonb)','execute');end $$;`);
+ console.log('PASS historical registration: all four types, Admin only, one reference date, atomic rollback, private Aunor projections and idempotent retries');
 } finally {
  if(created && /^sr_history_test_[a-f0-9]{32}$/.test(database)) {run(['dropdb','-U','postgres','--force',database]);console.log('Removed only the disposable database '+database);}
 }

@@ -5,6 +5,27 @@ import type { ActivityType, Role } from "@/lib/roles";
 import { safeMaterialUrl } from "@/lib/external-link";
 import type { ContractPeriod } from "@/lib/contract-progress";
 import type { AdminActivityInput } from "@/lib/admin-activity-management";
+import type { HistoricalRegistration } from './historical-registration';
+import { historicalRegistrationError } from './historical-registration';
+import type { SimulatedActivity } from './activity-simulation';
+
+export function registerDemoHistorical(role:Role,p:HistoricalRegistration,key:string,responsible:string):SimulatedActivity {
+  if(role.id!=='admin'||!canUseAunor(role)||historicalRegistrationError(p))throw Error('Registro no autorizado o incompleto');
+  const s=state(),requestKey=role.accountId+':'+key,hash=JSON.stringify(['historical-registration',p]);
+  const prior=s.requests.get(requestKey);
+  if(prior){if(prior.hash!==hash)throw Error('Reintento distinto');return structuredClone(prior.result.activity as SimulatedActivity);}
+  const snapshot=structuredClone(s),now=new Date().toISOString();
+  const activity:SimulatedActivity={id:crypto.randomUUID(),type:p.type,title:p.title.trim(),responsible,responsibleAccountId:p.responsibleAccountId,
+    status:'Entregada',origin:'operario',spans:p.type==='Edición'?[{start:p.deliveryDueOn!,end:p.deliveryDueOn!}]:p.spans,
+    description:p.type==='Edición'?'':p.description.trim(),place:p.type==='Edición'?'':p.placeName.trim(),materialLink:p.materialLink.trim(),operatorOpinion:'',
+    recordingModes:p.recordingModes??[],classification:p.classification??null,deliveryDueOn:p.type==='Edición'?p.deliveryDueOn:null,historicalRegularizedAt:now,
+    createdByAccountId:role.accountId!,createdByRoleId:'admin',createdAt:now,updatedAt:now,version:2,referenceLink:'',detailHydration:'complete',thread:[],
+    audit:[{action:'Trabajo histórico registrado',moment:now,actor:{accountId:role.accountId!,name:role.accountName??'Admin',roleId:'admin',roleLabel:'Admin'},detail:'Confirmado por Admin. Se conserva la fecha del trabajo.'}]};
+  try {
+    mutateDemoAunor(role,'publish',activity.id,crypto.randomUUID(),{expectedVersion:0,summary:p.description.trim()||p.title.trim(),serviceId:p.serviceId,notPerformedReason:''},activity);
+    s.requests.set(requestKey,{hash,result:{activity}});return structuredClone(activity);
+  }catch(error){memory.__sistemaRAunorDemo=snapshot;throw error;}
+}
 
 /** Synthetic memory only: commit both records or restore the complete prior state. */
 export function mutateDemoAdminActivity(role:Role,input:AdminActivityInput,source?:DemoAunorSource) {

@@ -28,6 +28,7 @@ const destinations: {
     href: "/cuentas",
     when: (role) => role.id === "admin",
   },
+  {label:"Contrato",short:"Contrato",icon:"complete",href:"/contrato",when:role=>role.id==='admin'},
   {
     label: "Histórico",
     short: "Histórico",

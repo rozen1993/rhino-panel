@@ -42,7 +42,8 @@ it("keeps Admin navigation independent from Aunor routing",()=>{
   mocks.path="/cuentas";
   render(<ShellFrame role={roles.admin} active="Cuentas">Cuentas</ShellFrame>);
   expect(screen.getAllByRole("link",{name:"Cuentas"}).every(a=>a.getAttribute("aria-current")==="page")).toBe(true);
-  expect(screen.queryByRole("link",{name:"Contrato"})).toBeNull();
+  expect(screen.getAllByRole("link",{name:"Contrato"}).every(a=>a.getAttribute("href")==="/contrato" && a.getAttribute("aria-current")!=="page")).toBe(true);
+  expect(screen.queryByRole("link",{name:"Ver contrato Aunor"})).toBeNull();
 });
 it("announces loading without inventing work data",()=>{
   render(<AunorLoading/>);

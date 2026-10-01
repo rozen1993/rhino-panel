@@ -31,3 +31,10 @@ export function safeDashboardReturn(value: string | string[] | undefined) {
   if (!/^(20\d{2})-(0[1-9]|1[0-2])$/.test(params.get("periodo") ?? "")) return "/actividades";
   return dashboardHref(parseDashboardFilters(params.toString(), { month: 0, year: 2026 }));
 }
+export function safeActivityReturn(value:string|string[]|undefined,admin=false){
+  if(admin&&typeof value==='string'&&value.startsWith('/contrato?')){
+    const month=new URLSearchParams(value.slice('/contrato?'.length)).get('mes');
+    if(month&&/^20\d{2}-(0[1-9]|1[0-2])$/.test(month))return `/contrato?mes=${month}`;
+  }
+  return safeDashboardReturn(value);
+}

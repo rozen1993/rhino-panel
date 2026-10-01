@@ -23,6 +23,7 @@ export async function configureContractPeriodAction(p:Omit<ContractPeriod,"id"|"
       if(error) return {ok:false as const,error:error.code==="SR001"?"El periodo cambió. Recarga antes de continuar.":"No se guardó: revisa que el periodo no se superponga y que sus fechas sean válidas."};
     } else configureDemoContractPeriod(role,p);
     revalidatePath("/aunor","layout");
+    revalidatePath("/contrato");
     return {ok:true as const};
   } catch { return {ok:false as const,error:"No se pudo guardar el periodo. Revisa sus datos y vuelve a intentarlo."}; }
 }

@@ -27,6 +27,7 @@ export default async function ActivitiesPage() {
           </div>
           {role.id === "admin" ? (
             <div className="flex flex-wrap gap-2">
+              <Link className="inline-flex min-h-11 items-center justify-center rounded-md border border-line bg-panel px-4 text-sm font-bold text-cyan-ink" href="/actividades/registro-historico">Registrar trabajo terminado</Link>
               <Link
                 className="inline-flex min-h-11 items-center justify-center rounded-md border border-line bg-panel px-4 text-sm font-extrabold text-ink transition hover:border-cyan hover:text-[#08718a]"
                 href="/papelera"

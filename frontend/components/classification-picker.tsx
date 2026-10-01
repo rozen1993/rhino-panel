@@ -3,9 +3,10 @@ import type { ActivityClassification } from "@/lib/activity-classification";
 import { ClassificationBadge } from "./classification-badge";
 import s from "./classification-picker.module.css";
 
-export function ClassificationPicker({ value, onChange }: {
+export function ClassificationPicker({ value, onChange, allowUnknown = true }: {
   value: ActivityClassification | null;
   onChange: (value: ActivityClassification | null) => void;
+  allowUnknown?: boolean;
 }) {
   const id = useId();
   return <fieldset className={s.field} aria-describedby={`${id}-hint`}>
@@ -22,11 +23,11 @@ export function ClassificationPicker({ value, onChange }: {
         </span>
       </label>)}
     </div>
-    <label className={s.unknown}>
+    {allowUnknown && <label className={s.unknown}>
       <input type="radio" name={`${id}-classification`} value="" checked={value === null}
         aria-labelledby={`${id}-unknown-name`} aria-describedby={`${id}-unknown-description`} onChange={() => onChange(null)} />
       <span id={`${id}-unknown-name`}><ClassificationBadge value={null}/></span>
       <span id={`${id}-unknown-description`}>Disponible si falta evaluar el trabajo.</span>
-    </label>
+    </label>}
   </fieldset>;
 }

@@ -64,8 +64,8 @@ export function AdminContractPeriod({
         <>
           <h3>Periodo de cumplimiento</h3>
           <p className={s.footnote}>
-            La fecha de la actividad no asigna el mes automáticamente. Confirma
-            el periodo acordado; solo contará al estar Entregada.
+            Se usa la fecha registrada de la actividad. Una asignación explícita
+            permite resolver excepciones; solo contará al estar Entregada.
           </p>
         </>
       )}
@@ -86,7 +86,7 @@ export function AdminContractPeriod({
                 setConfirmed(false);
               }}
             >
-              <option value="">Por confirmar</option>
+              <option value="">Según fecha de la actividad</option>
               {periods.map((p) => (
                 <option key={p.id} value={p.id}>
                   {periodLabel(p)} ·{" "}

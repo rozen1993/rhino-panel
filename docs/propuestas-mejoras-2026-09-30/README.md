@@ -1,5 +1,12 @@
 # Propuestas para elevar DA VINCI
 
+## Decisión posterior de Marco
+
+Las propuestas 01 y 02, con la regla de fechas corregida, fueron aprobadas para
+implementar y publicar. Ver [implementación y pruebas](../implementacion-historico-centro-2026-09-30/README.md).
+Las propuestas 03, 04 y 05 siguen pendientes; los textos de aprobación pendiente
+que aparecen más abajo describen el estado anterior de la galería, no esta decisión.
+
 Maquetas para aprobación, no funcionalidades implementadas. Todos los nombres,
 enlaces y conteos de estas imágenes son ejemplos ficticios. No hay conexión a
 Supabase, Vercel, servicios de IA ni herramientas de pago.

@@ -160,6 +160,7 @@ export type Database = {
       Relationships: [];
     } };
     Functions: {
+      register_historical_activity_v1: { Args: {p_request_id:string;p_payload:Json}; Returns: Json };
       save_admin_activity_bundle_v1: {
         Args: { p_command:string; p_activity_id:string; p_request_id:string; p_payload:Json };
         Returns: Json;

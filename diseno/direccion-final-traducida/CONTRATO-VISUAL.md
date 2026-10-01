@@ -144,3 +144,21 @@ El conteo distingue datos guardados y previsualizados; la clasificación Especia
 no multiplica unidades. Guardar la relación no cambia el estado de ejecución.
 Servicio/periodo y acuerdo/reemplazo se guardan atómicamente en sus respectivos
 flujos. Esta ronda es local: no autoriza publicación ni cambios de datos reales.
+
+## Registro histórico y centro de contrato — aprobación posterior del 30/09/2026
+
+Marco aprobó las propuestas 01 y 02 de `docs/propuestas-mejoras-2026-09-30/`
+y autorizó su sincronización con Vercel. Se mantiene el sistema visual vigente:
+tarjetas blancas con borde cian, tipografía condensada de interfaz, navegación
+azul noche, confirmación lima y estado Entregada verde sólido.
+
+Admin dispone de «Registrar trabajo terminado» y «Contrato». El primer flujo
+requiere revisión y confirmación, material final y clasificación explícita,
+sin simular el inicio de un Operario. Grabación, Locución y Creatividad usan
+fecha de realización; Edición, fecha de entrega del proyecto. Las jornadas
+múltiples siguen disponibles sin añadir una segunda fecha de entrega.
+
+El centro muestra los ocho servicios mensuales y los cuatro anuales, con X/Y,
+detalle de trabajos y excepciones. Aunor conserva su diseño y acceso de consulta;
+las nuevas herramientas de gestión no están disponibles para Operario ni Aunor.
+Las propuestas 03–05 no están incluidas en esta aprobación.
