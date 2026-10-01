@@ -176,6 +176,7 @@ export type Database = {
         Returns: { activity_id: string; activity_version: number; replayed: boolean }[];
       };
       classify_activity_v1: { Args: {p_activity_id:string;p_expected_version:number;p_classification:string|null};Returns:undefined };
+      normalize_editing_location_v1: { Args: {p_activity_id:string;p_expected_version:number};Returns:undefined };
       regularize_historical_activity_v1: {Args:{p_activity_id:string;p_expected_version:number;p_confirmed:boolean};Returns:undefined};
       access_directory_v1: {
         Args: Record<string, never>;

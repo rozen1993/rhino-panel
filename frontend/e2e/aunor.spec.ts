@@ -57,10 +57,10 @@ test("navegación cliente conserva datos por pantalla y actualiza el panel",asyn
 });
 
 test("Aunor conserva la cabecera durante una navegación lenta",async({page},info)=>{
+  const warmed=page.waitForResponse(r=>new URL(r.url()).pathname==="/aunor/contrato"&&r.request().method()==="GET");
   await login(page,"aunor");
   await expect(page.getByRole("heading",{name:"Actividades",exact:true})).toBeVisible();
   await page.locator("header.technical-surface").evaluate(el=>el.setAttribute("data-navigation-probe","original"));
-  const warmed=page.waitForResponse(r=>new URL(r.url()).pathname==="/aunor/contrato"&&r.request().method()==="GET");
   await page.getByRole("link",{name:"Contrato",exact:true}).focus();
   // A partial RSC prefetch can keep its stream open; do not wait for EOF.
   await warmed;
@@ -74,7 +74,7 @@ test("Aunor conserva la cabecera durante una navegación lenta",async({page},inf
   });
   try {
     await page.getByRole("link",{name:"Contrato",exact:true}).click();
-    await expect(page.getByRole("status").filter({hasText:"Cargando información"})).toBeVisible();
+    await expect(page.getByRole("status",{name:"Abriendo tu espacio"})).toBeVisible();
     await expect(page.locator('header[data-navigation-probe="original"]')).toBeVisible();
     await expect(page.getByRole("button",{name:"Cerrar sesión"})).toBeVisible();
     await page.screenshot({path:info.outputPath("aunor-carga-progresiva.png"),fullPage:true});

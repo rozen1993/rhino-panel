@@ -13,6 +13,7 @@ import {
   type HistoricalActivity,
 } from "@/lib/historical";
 import type { ActivityType } from "@/lib/roles";
+import s from "./annual-calendar-view.module.css";
 
 
 export type CalendarActivity = Pick<HistoricalActivity, "id"|"type"|"title"|"status"|"spans"|"place"|"classification"|"deliveryDueOn">;
@@ -114,7 +115,7 @@ function MiniMonth({
   activitiesByDate,
   monthTotal,
   onSelect,
-  selectedId,
+  selectedDate,
   today,
 }: {
   year: number;
@@ -126,32 +127,28 @@ function MiniMonth({
     trigger: HTMLButtonElement,
     date: string,
   ) => void;
-  selectedId?: string;
+  selectedDate?: string;
   today: string;
 }) {
   const first = new Date(Date.UTC(year, month, 1));
   const days = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
   const offset = (first.getUTCDay() + 6) % 7;
   return (
-    <section className="group relative min-h-[13rem] rounded-[8px] border border-line bg-panel p-2.5 shadow-[0_3px_10px_rgba(3,29,54,0.035)] transition hover:-translate-y-0.5 hover:border-cyan/45 hover:shadow-[var(--shadow-2)]">
-      <div className="flex items-center justify-center gap-2">
-        <h3 className="text-center text-[0.6875rem] font-extrabold tracking-[0.08em] text-ink">
+    <section className={s.month} aria-label={monthNames[month]}>
+      <div className={s.heading}>
+        <h3>
           {monthNames[month]}
         </h3>
-        {monthTotal > 0 && (
-          <span className="grid size-4 place-items-center rounded-full bg-night text-[0.5rem] font-black text-white">
-            {monthTotal}
-          </span>
-        )}
+        <span>{monthTotal ? `${monthTotal} ${monthTotal === 1 ? "trabajo" : "trabajos"}` : "—"}</span>
       </div>
-      <div className="mt-2 grid grid-cols-7 text-center text-[0.5625rem] font-bold text-ink-muted">
+      <div className={s.week}>
         {weekdays.map((day) => (
           <span aria-label={day.label} key={day.label}>
             {day.short}
           </span>
         ))}
       </div>
-      <div className="mt-1 grid grid-cols-7 gap-y-1 text-center text-[0.625rem] sm:text-[0.6875rem]">
+      <div className={s.days}>
         {Array.from({ length: offset }, (_, index) => (
           <span key={`empty-${index}`} />
         ))}
@@ -162,29 +159,23 @@ function MiniMonth({
           if (!matches.length)
             return (
               <span
-                className="flex min-h-6 items-center justify-center"
+                className={s.emptyDay}
                 key={iso}
               >
                 {day}
               </span>
             );
-          const found = matches.find((entry) => entry.item.id === selectedId) ?? matches[0];
-          const previous = utcDate(iso);
-          previous.setUTCDate(previous.getUTCDate() - 1);
-          const next = utcDate(iso);
-          next.setUTCDate(next.getUTCDate() + 1);
-          const before = found.dates.has(isoDate(previous));
-          const after = found.dates.has(isoDate(next));
-          const selected = matches.some(
-            (entry) => entry.item.id === selectedId,
-          );
+          const found = matches[0];
+          const selected = iso === selectedDate;
           const overdue = matches.some((entry) =>
             isOverdue(entry.item, today),
           );
           return (
             <button
               aria-label={`${day} de ${monthNames[month].toLowerCase()}: ${matches.map((entry) => `${entry.item.type}, ${entry.item.title}`).join("; ")}${overdue ? ". Hay una actividad atrasada." : ""}`}
-              className={`relative flex min-h-6 items-center justify-center font-extrabold focus:z-10 ${colors[found.item.type][before || after ? "range" : "solid"]} ${before ? "rounded-l-none" : "rounded-l-full"} ${after ? "rounded-r-none" : "rounded-r-full"} ${selected ? "z-[1] ring-2 ring-night ring-offset-1" : ""}`}
+              className={`${s.day} ${selected ? s.selected : colors[found.item.type].range}`}
+              aria-pressed={selected}
+              aria-current={iso === today ? "date" : undefined}
               key={iso}
               onClick={(event) =>
                 onSelect(
@@ -195,22 +186,10 @@ function MiniMonth({
               }
               type="button"
             >
-              {day}
-              {matches.length > 1 && (
-                <span
-                  aria-hidden="true"
-                  className="absolute -right-1 -top-1 grid size-3.5 place-items-center rounded-full bg-night text-[0.45rem] text-white"
-                >
-                  {matches.length}
-                </span>
-              )}
-              {matches.some(entry=>entry.item.classification==="special") && <span aria-hidden="true" className="absolute -bottom-1 right-0 rounded-full bg-white px-0.5 text-[.55rem] text-[#5b2bb5]">◆</span>}
-              {overdue && (
-                <span
-                  aria-hidden="true"
-                  className="absolute -left-0.5 -top-0.5 size-1.5 rounded-full bg-red"
-                />
-              )}
+              <span>{day}</span>
+              {matches.length > 1
+                ? <span aria-hidden="true" className={s.count}>×{matches.length}</span>
+                : <span aria-hidden="true" className={s.underline}/>}
             </button>
           );
         })}
@@ -225,7 +204,7 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
 }) {
   const [classificationFilter,setClassificationFilter]=useState("all");
   const visible = useMemo(
-    () => activities.filter((item) => (!category || item.type === category) && activityOverlapsYear(item, year) && (classificationFilter==="all" || (item.classification ?? "unknown")===classificationFilter)),
+    () => activities.filter((item) => (!category || item.type === category) && activityOverlapsYear(item, year) && (classificationFilter==="all" || (item.classification ?? "standard")===classificationFilter)),
     [activities, year, category, classificationFilter],
   );
   const calendarIndex = useMemo(() => {
@@ -459,10 +438,10 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
           ))}
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-[0.6875rem] text-ink-muted">Color = categoría · ◆ = especial · Número oscuro = actividades del día.</p>
+          <p className="text-[0.6875rem] text-ink-muted">Color = categoría · ×2 = dos actividades · Pulsa una fecha para ver sus trabajos.</p>
           <label className="flex items-center gap-2 text-xs font-bold">Clasificación
             <select className="min-h-11 rounded-md border border-line bg-panel px-3" value={classificationFilter} onChange={e=>{setClassificationFilter(e.target.value);setSelectionKey(value=>value+1);}}>
-              <option value="all">Todas</option><option value="standard">Estándar</option><option value="special">Especial</option><option value="unknown">Sin clasificar</option>
+              <option value="all">Todas</option><option value="standard">Estándar</option><option value="special">Especial</option>
             </select>
           </label>
         </div>
@@ -480,7 +459,7 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
             {emptyMessage}
           </p>
         )}
-        <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-4">
+        <div className={s.months}>
           {monthNames.map((_, month) => (
             <MiniMonth
               activitiesByDate={calendarIndex.activitiesByDate}
@@ -488,7 +467,7 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
               month={month}
               monthTotal={calendarIndex.monthTotals[month]}
               onSelect={select}
-              selectedId={selected?.id}
+              selectedDate={selectedDate}
               today={today}
               year={year}
             />

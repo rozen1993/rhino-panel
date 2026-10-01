@@ -24,8 +24,10 @@ try {
  grant usage on schema public,auth,extensions to anon,authenticated,service_role;
  revoke all on function auth.jwt(),auth.uid() from public;grant execute on function auth.jwt(),auth.uid() to anon,authenticated,service_role;`);
  const files=readdirSync(migrations).filter(f=>f.endsWith('.sql')).sort();
- if(files.at(-1)!=='202609300003_contract_read_performance.sql')throw Error('Review migration boundary');
- for(const f of files.slice(0,-1))sql(readFileSync(migrations+'/'+f,'utf8'));
+ const performanceMigration='202609300003_contract_read_performance.sql';
+ const defaultsMigration='202610010001_activity_presentation_defaults.sql';
+ if(files.at(-1)!==defaultsMigration)throw Error('Review migration boundary');
+ for(const f of files.filter(f=>f<performanceMigration))sql(readFileSync(migrations+'/'+f,'utf8'));
  console.log('PASS migration chain before read optimization');
  sql(`insert into auth.users values ${[1,2,3,4].map(n=>`('${id(100+n)}')`).join(',')};
  insert into public.profiles(id,username,display_name,role,can_create_own_activities) values
@@ -121,7 +123,23 @@ try {
  deny(1,historicalCall(ordinaryKey),'SR006');
  sql(`do $$begin assert(select status='Programada' from public.activities where idempotency_key='${ordinaryKey}');assert not has_function_privilege('anon','public.register_historical_activity_v1(uuid,jsonb)','execute');assert not has_function_privilege('service_role','public.register_historical_activity_v1(uuid,jsonb)','execute');end $$;`);
  console.log('PASS historical registration: all four types, Admin only, one reference date, atomic rollback, private Aunor projections and idempotent retries');
- verifyContractReadPerformance({sql,as,id,migration:readFileSync(migrations+'/'+files.at(-1),'utf8')});
+ verifyContractReadPerformance({sql,as,id,migration:readFileSync(migrations+'/'+performanceMigration,'utf8')});
+ sql(readFileSync(migrations+'/'+defaultsMigration,'utf8'));
+ // Migration itself leaves historical material, dates, versions and locations intact.
+ sql(`do $$begin assert(select place='' from public.activities where id='${e}');end $$;`);
+ const defaultsKey=randomUUID();
+ sql(as(2,`select * from ${plan(defaultsKey,'Edición',"'2026-05-12'")};select * from ${plan(defaultsKey,'Edición',"'2026-05-12'")};`));
+ sql(`do $$begin assert(select place='Lima' and classification='standard' and version=1 from public.activities where idempotency_key='${defaultsKey}');assert(select s.place='Lima' and s.start_date='2026-05-12' from public.activity_date_spans s join public.activities a on a.id=s.activity_id where a.idempotency_key='${defaultsKey}');end $$;`);
+ // Old request fingerprints remain valid even after introducing new defaults.
+ sql(as(2,`select * from ${plan(editKey,'Edición',"'2026-04-15'")};`));
+ deny(2,`public.normalize_editing_location_v1('${e}',2)`);
+ deny(4,`public.normalize_editing_location_v1('${e}',2)`);
+ deny(1,`public.normalize_editing_location_v1('${e}',1)`,'SR001');
+ const beforeLocation=sql(`select md5((to_jsonb(a)-'place'-'version'-'updated_at'-'classification')::text) from public.activities a where id='${e}';`).trim();
+ sql(as(1,`select public.normalize_editing_location_v1('${e}',2);`));
+ if(sql(`select md5((to_jsonb(a)-'place'-'version'-'updated_at'-'classification')::text) from public.activities a where id='${e}';`).trim()!==beforeLocation)throw Error('Location correction changed unrelated data');
+ sql(`do $$begin assert(select place='Lima' and version=3 from public.activities where id='${e}');assert(select place='Lima' and start_date='2026-04-15' from public.activity_date_spans where activity_id='${e}');assert exists(select 1 from public.audit_events where activity_id='${e}' and action='Ubicación de Edición normalizada');end $$;`);
+ console.log('PASS presentation defaults, legacy/new retries, Admin-only audited location correction and preserved real-work fields');
  console.log('PASS complete migration chain including read optimization');
 } finally {
  if(created && /^sr_history_test_[a-f0-9]{32}$/.test(database)) {run(['dropdb','-U','postgres','--force',database]);console.log('Removed only the disposable database '+database);}

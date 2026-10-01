@@ -560,7 +560,7 @@ export function ActivityForm({
                   required value={fields.deliveryDueOn ?? ""} onChange={change}/>
               </label>
               <p className="mt-2 text-xs text-ink-muted">Fecha prevista. No marca el proyecto como entregado ni sustituye la fecha real de entrega.</p>
-              {existing && <p className="mt-2 text-xs text-ink-muted">La descripción, los lugares y las jornadas anteriores se conservarán sin cambios.</p>}
+              <p className="mt-2 text-xs text-ink-muted">Ubicación de Edición: Lima.{existing ? " Se conservan la descripción y las fechas anteriores." : ""}</p>
             </section> : <section className="border-t border-line bg-panel-secondary/65 p-4 md:p-5">
               <div className="flex items-end justify-between gap-3">
                 <div>

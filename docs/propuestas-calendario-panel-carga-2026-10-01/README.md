@@ -30,7 +30,7 @@ El criterio de diseño mantiene azul marino, cian, lima, tipografía condensada 
 3. `save_activity_plan_v4` conserva el lugar legado en ediciones existentes y deja vacío el lugar de ediciones nuevas. Por eso ocultar el campo del formulario no convierte automáticamente «variado» en Lima. La regla solicitada requiere corregir guardado y lecturas/proyecciones, más una corrección auditada de la fila real. Aún no aplicada.
 4. `frontend/app/contrato/loading.tsx` muestra solo un párrafo durante la carga de ruta, antes del esqueleto interno. La opción elegida debe cubrir ambos momentos y adaptarse al contenido de cada sección.
 
-Primero se elige una opción de cada bloque. Después se implementa el conjunto, incluidas las reglas ya decididas, con pruebas aisladas y respaldo verificado antes de cualquier modificación remota. Esta entrega contiene solo documentación y visuales; no cambia registros reales, esquema, contraseñas ni despliegue.
+Marco aprobó Calendario 01, Actividades 01 y Carga 02. La implementación local y las capturas de la aplicación están en [implementación aprobada](../implementacion-calendario-panel-carga-2026-10-01/README.md). Esta carpeta conserva las propuestas originales; no representa evidencia de publicación ni de cambios en datos reales.
 
 ## Verificación de las maquetas
 

@@ -4,11 +4,23 @@ import { MobileShell, requireRole } from "@/components/mobile-shell";
 import { resolveDataSource } from "@/lib/data-source";
 import { calendarDateInLima, parseHistoricalCategory, parseHistoricalYear } from "@/lib/historical";
 import { listSupabaseTeamHistoricalActivities } from "@/lib/supabase/historical";
+import { Suspense } from "react";
+import { WorkspaceLoading } from "@/components/workspace-loading";
 
 export default async function HistoricalPage({
   searchParams,
 }: PageProps<"/historico">) {
   const role = await requireRole((item) => item.id === "admin" || item.id === "operario");
+  return <MobileShell active="Histórico" role={role}>
+    <main className="mx-auto max-w-[1700px] p-3 md:p-5 xl:p-6">
+      <Suspense fallback={<WorkspaceLoading label="Abriendo tu histórico" description="Estamos consultando las actividades del calendario." icon="calendar"/>}>
+        <HistoricalContent searchParams={searchParams}/>
+      </Suspense>
+    </main>
+  </MobileShell>;
+}
+
+async function HistoricalContent({searchParams}: Pick<PageProps<"/historico">,"searchParams">) {
   const params = await searchParams;
   const year = parseHistoricalYear(params.anio);
   const category = parseHistoricalCategory(params.tipo);
@@ -20,18 +32,12 @@ export default async function HistoricalPage({
     showCalendar && dataSource === "supabase"
       ? await listSupabaseTeamHistoricalActivities(year)
       : [];
-  return (
-    <MobileShell active="Histórico" role={role}>
-      <main className="mx-auto max-w-[1700px] p-3 md:p-5 xl:p-6">
-        {showCalendar ? <AnnualCalendar
+  return showCalendar ? <AnnualCalendar
           category={category}
           dataSource={dataSource}
           initialActivities={activities}
           key={`${dataSource}-${year}-${category ?? "todos"}`}
           today={today}
           year={year}
-        /> : <HistoricalEntry year={year} />}
-      </main>
-    </MobileShell>
-  );
+        /> : <HistoricalEntry year={year} />;
 }

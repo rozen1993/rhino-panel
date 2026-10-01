@@ -9,7 +9,11 @@ type Props = { counts: readonly number[]; activeMonth?: (typeof months)[number];
 export function MonthStrip({ counts, activeMonth, onSelect, year = 2026, initialMonth = 0 }: Props) {
   if (counts.length !== months.length) throw new Error("MonthStrip necesita exactamente doce conteos.");
   const activeIndex = activeMonth ? months.indexOf(activeMonth) : initialMonth;
-  const [focusMonth, setFocusMonth] = useState(activeIndex);
+  const [focus, setFocus] = useState({ activeIndex, month: activeIndex });
+  // URL restoration can change the active month after hydration. Keep the
+  // selected month visible without undoing explicit previous/next navigation.
+  const focusMonth = focus.activeIndex === activeIndex ? focus.month : activeIndex;
+  const setFocusMonth = (month: number) => setFocus({ activeIndex, month });
 
   return <nav aria-label="Navegación mensual" className="panel-glow overflow-hidden rounded-[10px] border border-line bg-panel">
     <MonthWindow activeMonth={activeMonth} className="grid md:hidden" counts={counts} focusMonth={focusMonth} onFocus={setFocusMonth} onSelect={onSelect} size={3} year={year} />

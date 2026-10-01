@@ -2,7 +2,8 @@
 import { useState, useTransition } from "react";
 import { classifySupabaseActivityAction, regularizeSupabaseActivityAction, type ActivityServerResult } from "@/app/actividades/actions";
 import { actorFromRole, classifyActivity, regularizeHistoricalActivity, type SimulatedActivity } from "@/lib/activity-simulation";
-import { classificationLabel, type ActivityClassification } from "@/lib/activity-classification";
+import type { ActivityClassification } from "@/lib/activity-classification";
+import { ClassificationPicker } from "./classification-picker";
 import { calendarDateInLima } from "@/lib/historical";
 import { lastDate } from "@/lib/activities";
 import { safeMaterialUrl } from "@/lib/external-link";
@@ -13,19 +14,14 @@ import { Card } from "./card";
 
 export function ActivityHistoryControls({item, role, dataSource, onResult}:{item:SimulatedActivity;role:Role;dataSource:DataSource;onResult:(r:ActivityServerResult,notice:string)=>void}) {
   const [confirmed,setConfirmed]=useState(false), [pending,start]=useTransition();
-  const [classification,setClassification]=useState<ActivityClassification|null>(item.classification ?? null);
+  const [classification,setClassification]=useState<ActivityClassification|null>(item.classification ?? "standard");
   if(role.id!=="admin" || role.mustChangePassword || item.deletedAt) return null;
   const historical=(item.deliveryDueOn || lastDate(item))<calendarDateInLima();
   return <Card className="space-y-4 p-4">
     <div><p className="data-label text-cyan-ink">Control de archivo · Admin</p><h3 className="display-title mt-1 text-xl">Clasificación del trabajo</h3></div>
-    <label className="block text-xs font-bold">Marcaje
-      <select className="mt-2 min-h-11 w-full rounded-md border border-line bg-panel px-3" value={classification ?? ""}
-        onChange={e=>setClassification((e.target.value || null) as ActivityClassification|null)}>
-        {([null,"standard","special"] as const).map(value=><option key={value ?? ""} value={value ?? ""}>{classificationLabel(value)}</option>)}
-      </select>
-    </label>
+    <ClassificationPicker value={classification} onChange={setClassification}/>
     <p className="text-xs text-ink-muted">No altera el estado ni multiplica las unidades del contrato.</p>
-    <Button variant="secondary" disabled={pending || classification===(item.classification ?? null)} onClick={()=>start(async()=>{
+    <Button variant="secondary" disabled={pending || classification===(item.classification ?? "standard")} onClick={()=>start(async()=>{
       const result=dataSource==="supabase" ? await classifySupabaseActivityAction(item.id,item.version,classification) : classifyActivity(window.localStorage,item.id,actorFromRole(role),item.version,classification);
       onResult(result,"Clasificación actualizada.");
     })}>Guardar marcaje</Button>

@@ -21,4 +21,11 @@ describe("contrato visual Aunor", () => {
     fireEvent.click(screen.getAllByRole("button", { name: "Meses siguientes" })[0]);
     expect(screen.getAllByText("NOV").length).toBeGreaterThan(0);
   });
+
+  it("muestra el mes recuperado de la URL aunque cambie después del primer render", () => {
+    const props = { counts: Array(12).fill(0), onSelect: () => undefined };
+    const { rerender } = render(createElement(MonthStrip, { ...props, activeMonth: "OCT" }));
+    rerender(createElement(MonthStrip, { ...props, activeMonth: "ABR" }));
+    expect(screen.getAllByRole("button", { name: "Mostrar abr de 2026: 0 actividades" })).toHaveLength(3);
+  });
 });

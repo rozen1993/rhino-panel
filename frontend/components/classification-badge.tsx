@@ -1,6 +1,7 @@
 import { classificationLabel, type ActivityClassification } from "@/lib/activity-classification";
 import s from "./classification-badge.module.css";
-export function ClassificationBadge({ value }: { value?: ActivityClassification | null }) {
+export function ClassificationBadge({ value: rawValue }: { value?: ActivityClassification | null }) {
+  const value = rawValue ?? "standard";
   return <span className={`${s.badge} ${value === "special" ? s.special : value === "standard" ? s.standard : s.unknown}`}>
     <span className={s.mark} aria-hidden="true">
       {value ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" focusable="false">

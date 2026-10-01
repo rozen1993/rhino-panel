@@ -23,8 +23,7 @@ test('cursor de acción en acceso, planificación, histórico, cuentas y contrat
   await expect(page.getByLabel('Tipo de servicio')).toHaveCSS('cursor','pointer');
   await expect(page.getByRole('button',{name:'Planificar y asignar',exact:true})).toHaveCSS('cursor','pointer');
   await expect(page.getByRole('button',{name:'Eliminar periodo',exact:true})).toHaveCSS('cursor','not-allowed');
-  await expect(page.getByRole('radio',{name:'Sin clasificar',exact:true})).toHaveCSS('cursor','pointer');
-  await expect(page.getByRole('radio',{name:'Especial',exact:true})).toHaveCSS('cursor','pointer');
+  await expect(page.getByRole('checkbox',{name:/Esta actividad es especial/})).toHaveCSS('cursor','pointer');
   await expect(page.getByRole('checkbox',{name:'Fotografía',exact:true})).toHaveCSS('cursor','pointer');
   await expect(page.getByLabel('Actividad o proyecto')).toHaveCSS('cursor','text');
   await page.goto('/historico?anio=2026&tipo=grabacion');

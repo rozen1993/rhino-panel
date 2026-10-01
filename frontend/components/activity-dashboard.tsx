@@ -8,7 +8,7 @@ import { ActivityTable } from "@/components/activity-table";
 import { Card } from "@/components/card";
 import { MonthStrip, months } from "@/components/month-strip";
 import { StatusPill } from "@/components/status-pill";
-import { ClassificationBadge } from "@/components/classification-badge";
+import { ActivityTitle } from "@/components/special-activity-mark";
 import { SummaryTile } from "@/components/summary-tile";
 import { SystemIcon } from "@/components/system-icon";
 import {
@@ -168,10 +168,9 @@ function ActivityPreview({ item, returnTo }: { item: SimulatedActivity | undefin
             {item.origin === "burson" ? " · Burson" : ""}
           </p>
           <StatusPill status={item.status} />
-          <ClassificationBadge value={item.classification}/>
         </div>
         <h2 className="display-title mt-3 text-[1.35rem] leading-tight">
-          {item.title}
+          <ActivityTitle title={item.title} value={item.classification}/>
         </h2>
         <dl className="mt-5 grid grid-cols-[6rem_1fr] gap-3 border-y border-line py-4 text-xs">
           <dt className="font-bold">Responsable</dt>

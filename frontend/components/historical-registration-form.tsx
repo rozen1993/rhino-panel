@@ -33,7 +33,7 @@ const empty: HistoricalRegistration = {
   spans: [{ start: "", end: "" }],
   deliveryDueOn: "",
   recordingModes: [],
-  classification: null,
+  classification: "standard",
   materialLink: "",
   notes: "",
   referenceLink: "",
@@ -457,7 +457,6 @@ export function HistoricalRegistrationForm({
                   </label>
                   <div className={s.full}>
                     <ClassificationPicker
-                      allowUnknown={false}
                       value={fields.classification ?? null}
                       onChange={(classification) => change({ classification })}
                     />

@@ -1,7 +1,5 @@
+import { WorkspaceLoading } from "@/components/workspace-loading";
+
 export default function Loading() {
-  return (
-    <p role="status" className="p-6 text-sm text-ink-muted">
-      Cargando el centro de contrato…
-    </p>
-  );
+  return <div className="p-4 md:p-6"><WorkspaceLoading label="Abriendo tu contrato" description="Estamos consultando los trabajos y las metas." icon="complete"/></div>;
 }

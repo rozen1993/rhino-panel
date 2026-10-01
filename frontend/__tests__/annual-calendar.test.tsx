@@ -100,7 +100,7 @@ describe("calendario anual compartido", () => {
     expect(screen.getByText("Archivo operativo · 2 registros")).toBeTruthy();
     expect(screen.queryByText("Otra categoría")).toBeNull();
     const day = screen.getByRole("button", { name: /1 de agosto: Grabación/ });
-    expect(day.textContent).toBe("12");
+    expect(day.textContent).toBe("1×2");
     fireEvent.click(day);
     const choices = screen.getByRole("region", { name: "Actividades de esta fecha" });
     expect(within(choices).getAllByRole("button")).toHaveLength(2);
@@ -189,7 +189,7 @@ describe("calendario anual compartido", () => {
     ).toBe("/historico?anio=2026");
   });
 
-  it("muestra el vacío en móvil y conserva la rejilla aprobada 1/2/4", () => {
+  it("muestra el vacío en móvil y conserva los doce meses de agenda", () => {
     render(
       <AnnualCalendar
         dataSource="supabase"
@@ -205,8 +205,8 @@ describe("calendario anual compartido", () => {
       ),
     ).toBe(true);
     const january = screen.getByText("ENERO", { exact: true }).closest("section");
-    expect(january?.parentElement?.className).toContain("md:grid-cols-2");
-    expect(january?.parentElement?.className).toContain("xl:grid-cols-4");
+    expect(january?.parentElement?.children).toHaveLength(12);
+    expect(january?.className).not.toContain("hover:");
   });
 
   it("abre un detalle móvil accesible, atrapa el foco y lo cierra al rotar", async () => {
@@ -277,7 +277,7 @@ describe("calendario anual compartido", () => {
     expect(document.body.style.overflow).toBe("");
   });
 
-  it("mantiene el borde de un rango que cruza el inicio del año", () => {
+  it("mantiene todas las fechas de un rango que cruza el inicio del año", () => {
     const crossing = activity("crossing", "Cruce anual");
     crossing.spans = [{ start: "2026-12-30", end: "2027-01-03" }];
     render(
@@ -292,7 +292,8 @@ describe("calendario anual compartido", () => {
     const first = screen.getByRole("button", {
       name: /1 de enero: Edición, Cruce anual/i,
     });
-    expect(first.className).toContain("rounded-l-none");
-    expect(first.className).toContain("rounded-r-none");
+    expect(first.textContent).toBe("1");
+    expect(screen.getByRole("button", {name: /2 de enero: Edición, Cruce anual/i})).toBeTruthy();
+    expect(first.querySelector("[aria-hidden=true]")).toBeTruthy();
   });
 });

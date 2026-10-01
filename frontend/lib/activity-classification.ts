@@ -3,5 +3,5 @@ export function validClassification(value: unknown): value is ActivityClassifica
   return value === null || value === "standard" || value === "special";
 }
 export function classificationLabel(value?: ActivityClassification | null) {
-  return value === "special" ? "Especial" : value === "standard" ? "Estándar" : "Sin clasificar";
+  return value === "special" ? "Especial" : "Estándar";
 }

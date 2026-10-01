@@ -32,7 +32,7 @@ for (const width of [1440, 390])
       .getByLabel("Actividad o proyecto")
       .fill(`Ficha compacta sintética ${width}`);
     await page.getByLabel("Fecha de entrega del proyecto").fill("2026-04-12");
-    await page.getByRole("radio", { name: "Estándar", exact: true }).check();
+    await expect(page.getByRole("checkbox", { name: /Esta actividad es especial/ })).not.toBeChecked();
     await page
       .getByRole("button", { name: "Planificar y asignar", exact: true })
       .click();

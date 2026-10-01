@@ -6,7 +6,7 @@ import { Card } from "@/components/card";
 import { StatusPill } from "@/components/status-pill";
 import { SummaryTile } from "@/components/summary-tile";
 import { RecordingModeTags } from "@/components/recording-mode-tags";
-import { ClassificationBadge } from "@/components/classification-badge";
+import { ActivityTitle } from "@/components/special-activity-mark";
 import { SystemIcon, type IconName } from "@/components/system-icon";
 import { MonthStrip, months } from "@/components/month-strip";
 import { aunorCode, type AunorWorkspace } from "@/lib/aunor";
@@ -88,7 +88,7 @@ export function AunorDashboard({w, today, initialNow}: {w:AunorWorkspace; today:
             if(window.matchMedia("(max-width: 1279px)").matches) preview.current?.focus();
           }} className={`grid w-full grid-cols-[1fr_auto] items-center gap-3 px-4 py-4 text-left transition hover:bg-cyan/10 md:grid-cols-[1fr_2fr_1fr_1fr_3rem] ${chosen?.id===a.id ? "bg-cyan/5" : ""}`}>
             <span className="text-xs font-semibold text-cyan-ink">{journeys(a.id).length ? day(journeys(a.id)[0].start_date) : "Fecha por indicar"}</span>
-            <span className="order-first col-span-2 min-w-0 md:order-none md:col-span-1"><strong className="block text-sm">{a.title}</strong><span className="mt-1 block text-xs text-ink-muted">{a.type}</span><ClassificationBadge value={a.classification}/></span>
+            <span className="order-first col-span-2 min-w-0 md:order-none md:col-span-1"><strong className="block text-sm"><ActivityTitle title={a.title} value={a.classification}/></strong><span className="mt-1 block text-xs text-ink-muted">{a.type}</span></span>
             <span className="hidden truncate text-xs text-ink-muted md:block">{a.place || journeys(a.id)[0]?.place || "Por indicar"}</span>
             <StatusPill status={a.status}/><SystemIcon name="eye" className="hidden size-5 justify-self-center md:block"/>
           </button>
@@ -97,10 +97,9 @@ export function AunorDashboard({w, today, initialNow}: {w:AunorWorkspace; today:
       </Card>
       {chosen && <Card className="overflow-hidden border-t-[3px] border-t-cyan p-5 xl:sticky xl:top-4" aria-label="Vista previa de actividad">
         <div className="flex flex-wrap items-center justify-between gap-2"><p className="data-label text-cyan-ink">{chosen.type}</p><StatusPill status={chosen.status}/></div>
-        <h2 ref={preview} tabIndex={-1} className="section-title mt-4 scroll-mt-4 break-words">{chosen.title}</h2>
+        <h2 ref={preview} tabIndex={-1} className="section-title mt-4 scroll-mt-4 break-words"><ActivityTitle title={chosen.title} value={chosen.classification}/></h2>
         <p className="mt-4 line-clamp-4 whitespace-pre-line text-sm leading-6 text-ink-muted">{chosen.summary}</p>
         <RecordingModeTags modes={chosen.recording_modes} />
-        <div className="mt-2"><ClassificationBadge value={chosen.classification}/></div>
         <div className="my-4 space-y-3 border-y border-line/40 py-4">{journeys(chosen.id).map(j=><p key={j.position} className="text-sm"><strong className="block">{day(j.start_date)}{j.start_date!==j.end_date ? ` – ${day(j.end_date)}` : ""}</strong><span className="text-ink-muted">{j.place || chosen.place || "Lugar por indicar"}</span></p>)}</div>
         <Link href={href(chosen.id)} className="flex min-h-11 items-center justify-center rounded-md bg-lime px-4 text-sm font-bold text-night">Ver actividad completa →</Link>
         {chosen.status==="Entregada" && safeMaterialUrl(chosen.material_link ?? "") && <a className="mt-3 flex min-h-11 items-center justify-center text-sm font-semibold text-cyan-ink" href={safeMaterialUrl(chosen.material_link!)!} target="_blank" rel="noopener noreferrer">Abrir material ↗</a>}

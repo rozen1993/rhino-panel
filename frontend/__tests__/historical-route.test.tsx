@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Children, Suspense, cloneElement, isValidElement, type ReactElement, type ReactNode } from "react";
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { HistoricalActivity } from "@/lib/historical";
@@ -60,18 +60,31 @@ const activity: HistoricalActivity = {
   operatorOpinion: "",
 };
 
+// Resolve the async server child explicitly; jsdom is not a React Server renderer.
+async function resolveServerContent(node: ReactNode): Promise<ReactNode> {
+  if (!isValidElement<{children?:ReactNode}>(node)) return node;
+  if (node.type === Suspense) {
+    const child = node.props.children as ReactElement;
+    return await (child.type as (props:unknown)=>Promise<ReactNode>)(child.props);
+  }
+  if (node.props.children === undefined) return node;
+  const children = await Promise.all(Children.toArray(node.props.children).map(resolveServerContent));
+  return cloneElement(node, undefined, ...children);
+}
+
 async function renderPage(anio?: string) {
   const element = await HistoricalPage({
     params: Promise.resolve({}),
     searchParams: Promise.resolve(anio === undefined ? {} : { anio }),
   } as never);
-  render(element);
+  expect(mocks.listTeamHistorical).not.toHaveBeenCalled();
+  render(await resolveServerContent(element));
 }
 
 describe("ruta del Histórico", () => {
   it("un filtro repetido o desconocido vuelve a la entrada sin leer actividades", async () => {
     mocks.resolveDataSource.mockReturnValue("supabase");
-    render(await HistoricalPage({ params: Promise.resolve({}), searchParams: Promise.resolve({ tipo: ["todos", "x"], anio: "2026" }) } as never));
+    render(await resolveServerContent(await HistoricalPage({ params: Promise.resolve({}), searchParams: Promise.resolve({ tipo: ["todos", "x"], anio: "2026" }) } as never)));
     expect(mocks.listHistorical).not.toHaveBeenCalled();
     expect(screen.getByRole("link", { name: "Ver histórico de grabación" })).toBeTruthy();
   });

@@ -378,9 +378,9 @@ function planningError(fields: ActivityDraftFields) {
 
 function editionFields(fields: ActivityDraftFields, previous?: SimulatedActivity) {
   return { deliveryDueOn: fields.type === "Edición" ? fields.deliveryDueOn : null,
-    spans: fields.type === "Edición" ? previous?.spans ?? [{start:fields.deliveryDueOn!, end:fields.deliveryDueOn!}] : normalizeSpans(fields.spans),
+    spans: fields.type === "Edición" ? (previous?.spans ?? [{start:fields.deliveryDueOn!, end:fields.deliveryDueOn!}]).map(span=>({...span,place:"Lima"})) : normalizeSpans(fields.spans),
     description: fields.type === "Edición" ? previous?.description ?? "" : fields.description.trim(),
-    place: fields.type === "Edición" ? previous?.place ?? "" : fields.placeName.trim() };
+    place: fields.type === "Edición" ? "Lima" : fields.placeName.trim() };
 }
 
 function planningFingerprint(
@@ -485,7 +485,7 @@ export function planActivity(
     referenceLink: "",
     createdByAccountId: actor.accountId,
     createdByRoleId: "admin",
-    classification: fields.classification ?? null,
+    classification: fields.classification ?? "standard",
     ...editionFields(fields),
     createdAt: now,
     updatedAt: now,
@@ -547,7 +547,7 @@ export function createOwnActivity(
     referenceLink: "",
     createdByAccountId: actor.accountId,
     createdByRoleId: actor.roleId,
-    classification: null,
+    classification: "standard",
     ...editionFields(fields),
     createdAt: now,
     updatedAt: now,
@@ -601,7 +601,7 @@ export function replanActivity(
       title: fields.title.trim(),
       responsible: responsible.name,
       responsibleAccountId: responsible.id,
-      classification: fields.classification ?? null,
+      classification: fields.classification ?? "standard",
       ...editionFields(fields, item),
       audit: audit(
         item,

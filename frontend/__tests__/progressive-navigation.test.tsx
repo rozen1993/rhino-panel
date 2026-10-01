@@ -47,8 +47,8 @@ it("keeps Admin navigation independent from Aunor routing",()=>{
 });
 it("announces loading without inventing work data",()=>{
   render(<AunorLoading/>);
-  expect(screen.getByRole("main").getAttribute("aria-busy")).toBe("true");
-  expect(screen.getByRole("status").textContent).toContain("Cargando");
+  expect(screen.getByRole("status").getAttribute("aria-busy")).toBe("true");
+  expect(screen.getByRole("status").textContent).toContain("Abriendo tu espacio");
   expect(screen.queryByRole("button")).toBeNull();
 });
 it("announces navigation even before the loading shell is available",()=>{

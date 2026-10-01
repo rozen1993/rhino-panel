@@ -409,8 +409,8 @@ test("el Histórico responde en cuatro viewports", async ({ page }, testInfo) =>
       expect(Math.abs(january.y - february.y)).toBeLessThan(3);
       expect(march.y).toBeGreaterThan(january.y);
     } else {
-      expect(Math.abs(january.y - april.y)).toBeLessThan(3);
-      expect(may.y).toBeGreaterThan(january.y);
+      expect(Math.abs(january.y - march.y)).toBeLessThan(3);
+      expect(april.y).toBeGreaterThan(january.y);
     }
     await page.screenshot({
       fullPage: true,

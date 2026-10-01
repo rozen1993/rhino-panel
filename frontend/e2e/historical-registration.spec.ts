@@ -78,7 +78,7 @@ for (const width of [1440, 390])
     await page
       .getByLabel("Material final · enlace HTTPS", { exact: true })
       .fill("https://example.invalid/material");
-    await page.getByRole("radio", { name: "Estándar", exact: true }).check();
+    await expect(page.getByRole("checkbox", { name: /Esta actividad es especial/ })).not.toBeChecked();
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({
       path: resolve(capture, `registro-edicion-${width}.png`),

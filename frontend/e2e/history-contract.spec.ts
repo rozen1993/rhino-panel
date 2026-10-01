@@ -17,13 +17,11 @@ for(const width of [1440,390]) test(`edición, marcaje y entrega histórica sin 
  await page.getByLabel('Tipo de servicio').selectOption('Edición');
  await page.getByLabel('Actividad o proyecto').fill(`Edición sintética ${width}`);
  await page.getByLabel('Fecha de entrega del proyecto').fill('2026-04-12');
- const standard=page.getByRole('radio',{name:'Estándar',exact:true});
- const special=page.getByRole('radio',{name:'Especial',exact:true});
- await standard.check();
- await standard.focus();
- await page.keyboard.press('ArrowRight');
+ const special=page.getByRole('checkbox',{name:/Esta actividad es especial/});
+ await expect(special).not.toBeChecked();
+ await special.focus();
+ await page.keyboard.press('Space');
  await expect(special).toBeChecked();
- await expect(standard).not.toBeChecked();
  await expect(special).toBeFocused();
  await expect(page.getByLabel('Descripción',{exact:true})).toHaveCount(0);
  await expect(page.getByLabel('Lugar o referencia')).toHaveCount(0);

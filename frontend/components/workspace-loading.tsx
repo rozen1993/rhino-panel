@@ -1,13 +1,15 @@
-/** Keeps the authenticated shell usable while the private data streams in. */
-export function WorkspaceLoading({ label }: { label: string }) {
-  return (
-    <section role="status" aria-label={label} aria-busy="true" className="rounded-xl border border-line bg-panel p-5">
-      <p className="text-sm text-ink-muted">{label}</p>
-      <div aria-hidden="true" className="mt-4 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {[0, 1, 2, 3].map((key) => (
-          <div key={key} className="h-28 rounded-lg border border-line bg-cyan/[.04] motion-safe:animate-pulse" />
-        ))}
-      </div>
-    </section>
-  );
+import { SystemIcon, type IconName } from "./system-icon";
+import s from "./workspace-loading.module.css";
+
+/** No identity, private data, timers or artificial delay. */
+export function WorkspaceLoading({ label = "Abriendo tu espacio", description = "Estamos preparando esta sección.", icon = "activities" }: {
+  label?: string; description?: string; icon?: IconName;
+}) {
+  return <section role="status" aria-label={label} aria-busy="true" className={s.panel}>
+    <div className={s.sign} aria-hidden="true"><SystemIcon name={icon} className="size-9"/></div>
+    <h2 className="display-title">{label}</h2>
+    <p>{description}</p>
+    <div className={s.track} aria-hidden="true"><span/></div>
+    <small>DA VINCI · Control de actividades</small>
+  </section>;
 }

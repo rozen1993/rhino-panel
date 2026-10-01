@@ -2,7 +2,7 @@ import Link from "next/link";
 import { activityDetailHref } from "@/lib/dashboard-navigation";
 import { Card } from "@/components/card";
 import { StatusPill } from "@/components/status-pill";
-import { ClassificationBadge } from "@/components/classification-badge";
+import { ActivityTitle } from "@/components/special-activity-mark";
 import { firstDate, lastDate, type Activity } from "@/lib/activities";
 
 const shortDate = new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "short", timeZone: "America/Lima" });
@@ -13,5 +13,5 @@ export function formatActivitySpans(activity: Pick<Activity, "spans">) { if (!ac
 
 export function ActivityCard({ activity, showResponsible = false, returnTo }: { activity: Activity; showResponsible?: boolean; returnTo?: string }) {
   const rail = activity.status === "Programada" ? "border-l-cyan" : activity.status === "En proceso" ? "border-l-process" : "border-l-green";
-  return <Link aria-label={`Ver ${activity.title}`} href={activityDetailHref(activity.id, returnTo)}><Card className={`border-l-[4px] p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-2)] ${rail}`}><div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="data-label text-cyan-ink">{formatActivityDates(activity)} · {activity.type}</p><h2 className="display-title mt-1.5 text-[0.95rem] leading-5 text-ink">{activity.title}</h2><div className="mt-2"><ClassificationBadge value={activity.classification}/></div>{showResponsible && <p className="mt-1.5 text-xs text-ink-muted">Responsable: <strong className="text-ink">{activity.responsible}</strong></p>}{activity.origin === "burson" && <span className="mt-2 inline-flex rounded-full bg-violet/10 px-2 py-1 text-[0.625rem] font-extrabold text-violet-ink">Origen Burson</span>}</div><StatusPill status={activity.status} /></div></Card></Link>;
+  return <Link aria-label={`Ver ${activity.title}${activity.classification === "special" ? " · Actividad especial" : ""}`} href={activityDetailHref(activity.id, returnTo)}><Card className={`border-l-[4px] p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-2)] ${rail}`}><div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="data-label text-cyan-ink">{formatActivityDates(activity)} · {activity.type}</p><h2 className="display-title mt-1.5 text-[0.95rem] leading-5 text-ink"><ActivityTitle title={activity.title} value={activity.classification}/></h2>{showResponsible && <p className="mt-1.5 text-xs text-ink-muted">Responsable: <strong className="text-ink">{activity.responsible}</strong></p>}{activity.origin === "burson" && <span className="mt-2 inline-flex rounded-full bg-violet/10 px-2 py-1 text-[0.625rem] font-extrabold text-violet-ink">Origen Burson</span>}</div><StatusPill status={activity.status} /></div></Card></Link>;
 }

@@ -48,7 +48,7 @@ export default async function ActivitiesPage() {
             </span>
           )}
         </header>
-        <Suspense fallback={<WorkspaceLoading label="Cargando actividades…" />}>
+        <Suspense fallback={<WorkspaceLoading label="Abriendo tus actividades" description="Estamos consultando el trabajo del equipo." />}>
           <DashboardContent role={role} />
         </Suspense>
       </main>
