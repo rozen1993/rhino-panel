@@ -103,3 +103,25 @@ decisión de alojamiento. No se cambiaron contraseñas, planes ni facturación.
 
 La migración es aditiva y compatible con el frontend anterior. Una recuperación
 de interfaz no debe restaurar la base sobre trabajos posteriores ni ejecutar reset.
+
+### Primera publicación y ajuste del verificador
+
+Frontend `61802ea90f95b92d21f2ffcb542ca52d3ee121c0` publicado en Vercel Production
+con resultado `success`: GitHub Deployment `6773586877`, Vercel
+`CsqTDd1ksTCW4CwE1hpchdziLmDx`. En GitHub Actions `36798893444`, el nuevo job SQL
+detectó una carrera en el arranque del contenedor de pruebas: `pg_isready` por
+socket aceptaba el servidor temporal de inicialización antes de su reinicio.
+El verificador ahora espera TCP interno, disponible en el servidor definitivo.
+No modifica la aplicación ni la base remota y no oculta ni omite pruebas.
+
+La comprobación HTTP de `/contrato` sin sesión no mostró contenido privado,
+pero devolvió el redireccionamiento de Next dentro de una respuesta 200.
+Se incluyó `/contrato` en el proxy de rutas protegidas para redirigir con HTTP
+307 antes del streaming, igual que las otras secciones. Se añaden regresiones
+para ausencia de sesión, cuenta inactiva y cambio obligatorio de clave.
+
+Reverificación local: TypeScript y ESLint correctos, las seis regresiones nuevas
+del proxy correctas, verificador SQL completo correcto con el arranque TCP.
+El job frontend de la primera publicación terminó correctamente, incluidas las
+51 pruebas de navegador en Linux. El commit de ajuste vuelve a ejecutar ambos
+jobs y a desplegar Vercel; su estado final se verifica por su nuevo SHA.

@@ -14,7 +14,9 @@ try {
  created=true;
  let ready=false;
  for(let attempt=0;attempt<60;attempt++){
-  const r=spawnSync('docker',['exec',container,'pg_isready','-U','postgres'],{encoding:'utf8',windowsHide:true});
+  // The image's initialization server accepts Unix sockets briefly, then stops.
+  // TCP becomes ready only on the final server; avoid racing that restart in CI.
+  const r=spawnSync('docker',['exec',container,'pg_isready','-h','127.0.0.1','-U','postgres'],{encoding:'utf8',windowsHide:true});
   if(r.status===0){ready=true;break;}
   await new Promise(resolve=>setTimeout(resolve,500));
  }

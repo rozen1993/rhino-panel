@@ -11,6 +11,7 @@ const protectedPrefixes = [
   "/actividades",
   "/burson",
   "/cuentas",
+  "/contrato",
   "/historico",
   "/papelera",
   "/cambiar-clave",
