@@ -1,13 +1,26 @@
-.panel { min-height: 535px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 32px; border: 1px solid #bdcbd5; border-radius: 12px; background: var(--panel); text-align: center; }
-.panel::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: linear-gradient(90deg, var(--blue) 0 65%, var(--amber)); }
-.sign { position: relative; display: grid; place-items: center; width: 80px; height: 80px; margin-bottom: 30px; border-radius: 16px; background: var(--navy); color: var(--blue); }
-.sign::after { content: ""; position: absolute; inset: -10px; border: 1px solid #d9e9ed; border-top-color: var(--blue); border-radius: 50%; animation: section-orbit 3s linear infinite; }
-.panel h2 { font-size: 30px; line-height: 1.2; }
-.panel p { max-width: 380px; margin-top: 12px; color: var(--ink-muted); font-size: 13px; line-height: 1.7; }
-.track { width: min(235px, 100%); height: 3px; margin: 30px 0 20px; overflow: hidden; border-radius: 4px; background: #e1e9ee; }
-.track span { display: block; width: 40%; height: 100%; background: var(--blue); animation: section-progress 1.8s ease-in-out infinite alternate; }
-.panel small { font-size: 10px; color: var(--ink-muted); letter-spacing: .04em; }
-@keyframes section-orbit { to { transform: rotate(360deg); } }
-@keyframes section-progress { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
-@media (max-width: 767px) { .panel { min-height: 470px; padding: 25px; } .panel h2 { font-size: 25px; } .panel p { font-size: 12px; } }
-@media (prefers-reduced-motion: reduce) { .sign::after, .track span { animation: none; } .track span { margin: auto; } }
+.panel { min-height: 535px; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); overflow: hidden; border: 1px solid #bdcbd5; border-radius: 12px; background: var(--panel); }
+.brand { min-width: 0; padding: 42px; display: flex; flex-direction: column; justify-content: center; color: white; background: repeating-linear-gradient(145deg, transparent 0 80px, #11b7c911 82px 84px), linear-gradient(135deg, #021326, #06374c); }
+.brand .wordmark { color: white; font-size: clamp(39px, 4vw, 52px); letter-spacing: .05em; line-height: 1.2; }
+.brandCaption { margin-top: 13px; color: var(--blue); font: 700 10px/1.5 Consolas, monospace; letter-spacing: .1em; text-transform: uppercase; }
+.signature { display: flex; gap: 7px; margin-top: 55px; }
+.signature span { width: 25px; height: 6px; background: var(--blue); transform: skew(-35deg); }
+.signature span:last-child { background: var(--amber); }
+.content { min-width: 0; padding: 45px 35px; display: flex; flex-direction: column; justify-content: center; }
+.rule { width: 36px; height: 3px; margin-bottom: 20px; background: var(--blue); }
+.status { display: flex; align-items: center; gap: 10px; color: var(--cyan-ink); font-size: 12px; line-height: 1.6; }
+.spinner { width: 17px; height: 17px; flex: none; border: 2px solid #bcebf0; border-top-color: var(--cyan-ink); border-radius: 50%; animation: brand-orbit 1.2s linear infinite; }
+.content h2 { margin: 19px 0 12px; font-size: 30px; line-height: 1.2; }
+.description { color: var(--ink-muted); font-size: 13px; line-height: 1.8; }
+.track { width: min(235px, 100%); height: 3px; margin-top: 28px; overflow: hidden; background: #e1e9ee; }
+.track span { display: block; width: 32%; height: 100%; background: var(--blue); animation: brand-progress 1.8s ease-in-out infinite alternate; }
+.sectionName { margin-top: 38px; border-top: 1px solid #dce5eb; padding-top: 20px; color: var(--ink-muted); font: 10px/1.5 Consolas, monospace; text-transform: uppercase; }
+@keyframes brand-orbit { to { transform: rotate(360deg); } }
+@keyframes brand-progress { from { transform: translateX(-100%); } to { transform: translateX(315%); } }
+@media (max-width: 767px) {
+  .panel { min-height: 0; grid-template-columns: minmax(0, 1fr); }
+  .brand, .content { padding: 30px; }
+  .brand .wordmark { font-size: 39px; }
+  .signature { margin-top: 25px; }
+  .content h2 { font-size: 27px; }
+}
+@media (prefers-reduced-motion: reduce) { .spinner, .track span { animation: none; } }

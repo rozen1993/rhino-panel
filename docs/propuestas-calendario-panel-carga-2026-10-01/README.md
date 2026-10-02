@@ -32,6 +32,10 @@ El criterio de diseño mantiene azul marino, cian, lima, tipografía condensada 
 
 Marco aprobó Calendario 01, Actividades 01 y Carga 02. La implementación local y las capturas de la aplicación están en [implementación aprobada](../implementacion-calendario-panel-carga-2026-10-01/README.md). Esta carpeta conserva las propuestas originales; no representa evidencia de publicación ni de cambios en datos reales.
 
+Actualización posterior: Marco sustituyó Carga 02 por **Carga 03 — Transición DA VINCI**.
+La implementación y capturas nuevas están en [Carga 03](../implementacion-carga-03-2026-10-01/README.md).
+Calendario 01 y Actividades 01 se mantienen.
+
 ## Verificación de las maquetas
 
 `node docs/propuestas-calendario-panel-carga-2026-10-01/render.mjs`

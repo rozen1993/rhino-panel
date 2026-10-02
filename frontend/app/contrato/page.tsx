@@ -21,7 +21,7 @@ export default async function ContractCenterPage({
             revisan aquí.
           </p>
         </header>
-        <Suspense fallback={<WorkspaceLoading label="Abriendo tu contrato" description="Estamos consultando los trabajos y las metas." icon="complete" />}>
+        <Suspense fallback={<WorkspaceLoading label="Abriendo tu contrato" description="Estamos consultando los trabajos y las metas." section="Contrato" />}>
           <ContractContent searchParams={searchParams} />
         </Suspense>
       </main>

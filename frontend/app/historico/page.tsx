@@ -13,7 +13,7 @@ export default async function HistoricalPage({
   const role = await requireRole((item) => item.id === "admin" || item.id === "operario");
   return <MobileShell active="Histórico" role={role}>
     <main className="mx-auto max-w-[1700px] p-3 md:p-5 xl:p-6">
-      <Suspense fallback={<WorkspaceLoading label="Abriendo tu histórico" description="Estamos consultando las actividades del calendario." icon="calendar"/>}>
+      <Suspense fallback={<WorkspaceLoading label="Abriendo tu histórico" description="Estamos consultando las actividades del calendario." section="Histórico"/>}>
         <HistoricalContent searchParams={searchParams}/>
       </Suspense>
     </main>

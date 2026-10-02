@@ -63,7 +63,14 @@ for (const width of [1440,390]) test(`diseños aprobados, teclado y meses estát
     const indicator=loading.getByRole("status",{name:"Abriendo tu contrato"}).first();
     await expect(indicator).toBeVisible();
     await expect(indicator).not.toContainText("%");
-    await loading.screenshot({path:resolve(captures,`carga-02-${width}.png`),fullPage:false});
+    await expect(indicator.getByRole("heading",{name:"Tu trabajo, en un solo lugar."})).toBeVisible();
+    await expect(indicator).toContainText("Contrato · DA VINCI");
+    expect(await indicator.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(" ").length)).toBe(width<768?1:2);
+    expect(await indicator.locator('[aria-hidden="true"], [aria-hidden="true"] span').evaluateAll(elements=>elements.every(el=>getComputedStyle(el).animationName==="none"))).toBe(true);
+    expect(await loading.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+    await loading.screenshot({path:resolve("../docs/implementacion-carga-03-2026-10-01",`carga-03-${width}.png`),fullPage:false});
+    await loading.setViewportSize({width:320,height:900});
+    expect(await loading.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   } finally { await context.close(); }
   expect(errors).toEqual([]);
 });
