@@ -8,6 +8,10 @@ export default async function ContractCenterPage({
   searchParams,
 }: PageProps<"/contrato">) {
   const role = await requireRole((r) => r.id === "admin");
+  // Keep this the only loading boundary. A route-level loading.tsx would replace
+  // MobileShell during navigation, hiding the header/menu before this shell loads.
+  // Until authorization resolves, Next keeps the previous page and IntentLink's
+  // pending indicator; then only ContractContent is replaced by the fallback.
   return (
     <MobileShell role={role} active="Contrato">
       <main className="mx-auto max-w-[1500px] px-3 py-5 md:px-6">
