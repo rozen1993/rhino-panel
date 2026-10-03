@@ -12,6 +12,7 @@ let w:AunorWorkspace;
 let calls:string[];
 let cap:number;
 let transferred: Record<string,number>;
+let selections: Record<string,string>;
 beforeEach(()=>{
   const example=createAunorExamples();
   const ids=new Map<string,string>();let n=1;
@@ -20,15 +21,16 @@ beforeEach(()=>{
   w.messages=[];
   w.contractPeriods=[];
   const data=Object.fromEntries(Object.entries(names).map(([key,table])=>[table,w[key as keyof AunorWorkspace]]));
-  calls=[];cap=200;transferred={};
+  calls=[];cap=200;transferred={};selections={};
   mocks.create.mockResolvedValue({from:(table:string)=>{
     let rows=[...(data[table] ?? [])] as unknown as Record<string,unknown>[];
     let limit=200;
     const orderColumns:string[]=[];
     const q={
-      select:(_columns:string,options:{count:string})=>{expect(options.count).toBe("exact");return q;},
+      select:(columns:string,options:{count:string})=>{selections[table]=columns;expect(options.count).toBe("exact");return q;},
       order:(column:string)=>{orderColumns.push(column);return q;},
       limit:(n:number)=>{limit=n;return q;},
+      returns:()=>q,
       eq:(column:string,value:unknown)=>{rows=rows.filter(r=>r[column]===value);return q;},
       in:(column:string,values:unknown[])=>{rows=rows.filter(r=>values.includes(r[column]));return q;},
       gt:(column:string,value:string)=>{rows=rows.filter(r=>String(r[column])>value);return q;},
@@ -110,4 +112,23 @@ it("mantiene la paginación cuando hay más de cien actividades vigentes",async(
     w.journeys.push({activity_id:id,position:0,start_date:'2026-09-30',end_date:'2026-09-30',place:'Ejemplo'});
   }
   expect(canonical(await readSupabaseAunor({scene:'panel'}))).toEqual(canonical(scopeAunorWorkspace(w,{scene:'panel'})));
+});
+
+it("contrato solicita solo columnas de resumen y conserva material completo en detalle",async()=>{
+  const result=await readSupabaseAunor({scene:"acordado"});
+  const columns=selections.aunor_activities.split(",");
+  expect(columns).not.toContain("summary");expect(columns).not.toContain("material_link");
+  expect(columns).toContain("contract_period_id");expect(columns).toContain("delivered_at");
+  expect(result.activities.every(a=>a.summary===""&&a.material_link==="")).toBe(true);
+  await readSupabaseAunor({scene:"detail",id:w.activities[0].id});
+  expect(selections.aunor_activities.split(",")).toContain("summary");
+  expect(selections.aunor_activities.split(",")).toContain("material_link");
+});
+
+it("reduce viajes de red cuando el servidor permite páginas mayores, sin truncar",async()=>{
+  cap=1000;const base=w.activities[0];
+  for(let i=0;i<500;i++)w.activities.push({...base,id:`00000000-0000-4000-9000-${String(i).padStart(12,"0")}`});
+  const result=await readSupabaseAunor({scene:"acordado"});
+  expect(result.activities).toHaveLength(w.activities.length);
+  expect(calls.filter(table=>table==="aunor_activities")).toHaveLength(1);
 });

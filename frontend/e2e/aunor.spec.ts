@@ -52,7 +52,7 @@ test("navegación cliente conserva datos por pantalla y actualiza el panel",asyn
   await expect(page.getByRole("heading",{name:"Detalle de actividad",exact:true})).toBeVisible();
   await expect(page.getByRole("button",{name:"Confirmar esta entrega"})).toHaveCount(0);
   await page.getByRole("link",{name:"Contrato",exact:true}).click();
-  await expect(page.getByRole("heading",{name:"Servicios del mes",exact:true})).toBeVisible();
+  await expect(page.getByRole("region",{name:"Servicios mensuales",exact:true})).toBeVisible();
   await expect(page.getByText("Observado: tiene reemplazo",{exact:true}).first()).toBeVisible();
 });
 
@@ -79,7 +79,7 @@ test("Aunor conserva la cabecera durante una navegación lenta",async({page},inf
     await expect(page.getByRole("button",{name:"Cerrar sesión"})).toBeVisible();
     await page.screenshot({path:info.outputPath("aunor-carga-progresiva.png"),fullPage:true});
   } finally {release();}
-  await expect(page.getByRole("heading",{name:"Contrato",exact:true})).toBeVisible();
+  await expect(page.getByRole("heading",{name:"Centro de contrato",exact:true})).toBeVisible();
   await expect(page.locator('header[data-navigation-probe="original"]')).toBeVisible();
   await expect(page.getByRole("link",{name:"Contrato",exact:true})).toHaveAttribute("aria-current","page");
 });

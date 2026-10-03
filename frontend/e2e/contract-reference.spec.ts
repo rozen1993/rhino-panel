@@ -18,33 +18,37 @@ test('Aunor consulta las doce metas desde abril y el ciclo anual sin asignacione
     ['Videos de resumen anual','0/2'],['Videos de fiesta de fin de año','0/2'],['Videos de campañas internas','0/12'],
     ['Videos sociales y ambientales','0/2'],['Videos de seguridad vial','0/24'],['Videos de voluntariado','0/2'],
     ['Postproducción de resumen OSITRAN','0/2'],['Webinars','0/3'],['Spots radiales','0/4'],
-  ]) await expect(list.getByRole('button',{name:new RegExp('^'+name+':')})).toContainText(ratio);
-  await expect(page.getByRole('region',{name:'Servicios del mes'}).getByRole('button')).toHaveCount(8);
-  const annual=page.getByRole('region',{name:'Compromisos del ciclo'});
+  ]) {
+    const annualNames=['Videos de resumen anual','Videos de fiesta de fin de año','Videos sociales y ambientales','Postproducción de resumen OSITRAN'];
+    await page.getByRole('button',{name:annualNames.includes(name)?'Anual':'Mensual',exact:true}).click();
+    await expect(list.getByRole('button',{name:new RegExp('^'+name+':')})).toHaveAttribute('aria-label',`${name}: ${ratio}. Ver trabajos`);
+  }
+  await page.getByRole('button',{name:'Mensual',exact:true}).click();
+  await expect(page.getByRole('region',{name:'Servicios mensuales'}).getByRole('button')).toHaveCount(8);
+  await page.getByRole('button',{name:'Anual',exact:true}).click();
+  const annual=page.getByRole('region',{name:'Servicios anuales'});
   await expect(annual.getByRole('button')).toHaveCount(4);
   await annual.getByRole('button',{name:/^Videos de fiesta de fin de año:/}).click();
-  await expect(page.getByRole('dialog').getByText(/Control anual · 2026-04-01 — 2027-03-31/)).toBeVisible();
-  await expect(page.getByRole('dialog').getByRole('progressbar')).toHaveAttribute('max','2');
+  await expect(page.getByRole('region',{name:'Detalle del servicio'}).getByText(/2026-04-01 — 2027-03-31 · 0\/2/)).toBeVisible();
+  await expect(annual.getByRole('article').filter({hasText:'Videos de fiesta de fin de año'}).getByRole('progressbar')).toHaveAttribute('max','2');
   await page.getByRole('button',{name:'Cerrar detalle'}).click();
-  await list.getByRole('button').filter({hasText:'Videos de resumen anual'}).click();
-  const dialog=page.getByRole('dialog');
-  await expect(dialog.getByText(/Control anual · 2026-04-01 — 2027-03-31/)).toBeVisible();
-  await expect(dialog.getByRole('progressbar')).toHaveAttribute('max','2');
-  await expect(dialog.getByRole('button',{name:'Cerrar detalle'})).toBeFocused();
-  await page.keyboard.press('Shift+Tab');
-  expect(await page.evaluate(()=>Boolean(document.activeElement?.closest('dialog')))).toBe(true);
+  await list.getByRole('button',{name:/^Videos de resumen anual:/}).click();
+  const dialog=page.getByRole('region',{name:'Detalle del servicio'});
+  await expect(dialog.getByText(/2026-04-01 — 2027-03-31 · 0\/2/)).toBeVisible();
+  await expect(dialog).toBeFocused();
   await page.getByRole('button',{name:'Cerrar detalle'}).click();
   await expect(list.getByRole('button',{name:/^Videos de resumen anual:/})).toBeFocused();
-  const dir=process.env.SISTEMA_R_CAPTURE_DIR ?? '../docs/implementacion-contrato-tarjetas-2026-09-29';
+  const dir=process.env.SISTEMA_R_CAPTURE_DIR ?? '../docs/implementacion-contrato-actividades-2026-10-03';
   await page.setViewportSize({width:1440,height:1000});
-  await page.getByRole('heading',{name:'Contrato',exact:true}).click();
+  await page.getByRole('heading',{name:'Centro de contrato',exact:true}).click();
   await page.screenshot({path:resolve(dir,'contrato-escritorio.png'),fullPage:true});
   await page.setViewportSize({width:390,height:844});
+  await page.getByRole('button',{name:'Mensual',exact:true}).click();
   await page.getByRole('button',{name:/^Videos de seguridad vial:/}).click();
-  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.getByRole('region',{name:'Detalle del servicio'})).toBeVisible();
   await page.screenshot({path:resolve(dir,'contrato-detalle-movil.png'),fullPage:false});
-  await page.keyboard.press('Escape');
-  await page.getByRole('heading',{name:'Contrato',exact:true}).click();
+  await page.getByRole('button',{name:'Cerrar detalle',exact:true}).click();
+  await page.getByRole('heading',{name:'Centro de contrato',exact:true}).click();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await page.screenshot({path:resolve(dir,'contrato-movil.png'),fullPage:false});
   for(const width of [320,768,1024,1920]){

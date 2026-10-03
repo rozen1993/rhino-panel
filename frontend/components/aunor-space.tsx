@@ -463,16 +463,16 @@ function ReplacementDetail({
   );
 }
 export function AunorSpace({
-  initial, scene, id = "", demo = false, year = 2026, today = "2026-09-06", initialNow, category,
+  initial, scene, id = "", demo = false, year = 2026, today = "2026-09-06", initialNow, category, contractMonth,
 }: {
   initial: AunorWorkspace; role: Role; scene: AunorScene; id?: string;
-  demo?: boolean; year?: number; today?: string; initialNow?: number; category?: HistoricalCategory;
+  demo?: boolean; year?: number; today?: string; initialNow?: number; category?: HistoricalCategory; contractMonth?:string;
 }) {
   const {w,error,refresh} = useAunorWorkspace(initial,scene,id);
   const names = {
     panel: ["Actividades", "Seguimiento del trabajo audiovisual de DA VINCI."],
     detail: ["Detalle de actividad", "Consulta de jornadas, estado y material."],
-    acordado: ["Contrato", "Cada compromiso tiene su espacio; consulta el detalle de sus entregas."],
+    acordado: ["Centro de contrato", "Consulta las entregas y el avance de cada compromiso por periodo."],
     calendar: ["Histórico", "Todas las actividades, organizadas por fecha."],
     replacement: ["Reemplazo documentado", "Original, sustituto, motivo y evidencia conservados."],
   };
@@ -489,7 +489,7 @@ export function AunorSpace({
     {scene === "calendar" && <div className="mb-4 flex justify-end"><Button variant="secondary" onClick={()=>void refresh(true)}>Actualizar</Button></div>}
     {scene === "panel" && <AunorDashboard w={w} today={today} initialNow={initialNow ?? Date.parse(today+"T12:00:00Z")}/>}
     {scene === "detail" && <ActivityDetail key={id} w={w} id={id}/>}
-    {scene === "acordado" && <AunorContract w={w} initialMonth={today.slice(0,7)} renderReplacement={r=><ReplacementSummary r={r} w={w}/>}/>}
+    {scene === "acordado" && <AunorContract w={w} initialMonth={contractMonth ?? today.slice(0,7)} renderReplacement={r=><ReplacementSummary r={r} w={w}/>}/>}
     {scene === "replacement" && <ReplacementDetail key={id} w={w} id={id}/>}
     {scene === "calendar" && <AnnualCalendarView basePath="/aunor/historico" category={category} activities={calendarItems} year={year} today={today}
       renderDetail={props => {

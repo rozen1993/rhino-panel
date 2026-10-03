@@ -1,10 +1,11 @@
 import "server-only";
 import { emptyAunorWorkspace, type AunorWorkspace } from "@/lib/aunor";
-import { scopeAunorWorkspace, validAunorReadScope, type AunorReadScope } from "@/lib/aunor-read-scope";
+import { contractActivitySummary, scopeAunorWorkspace, validAunorReadScope, type AunorReadScope } from "@/lib/aunor-read-scope";
 import { isUuid } from "@/lib/uuid";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { collectCursorPages } from "@/lib/cursor-pages";
 import { AUNOR_DELIVERY_WINDOW_MS } from "@/lib/aunor-visibility";
+import { chunkValues, mapWithConcurrency, supabaseBatchConcurrency } from "@/lib/supabase/pagination";
 
 export async function readSupabaseAunor(scope: AunorReadScope = {scene:"admin"}): Promise<AunorWorkspace> {
   if (!validAunorReadScope(scope) || (scope.id !== undefined && !isUuid(scope.id))) throw new Error("Invalid Aunor scope");
@@ -24,20 +25,20 @@ export async function readSupabaseAunor(scope: AunorReadScope = {scene:"admin"})
   const activityIds = replacement ? [chosen[0].original_activity_id,chosen[0].substitute_activity_id] : detail ? [scope.id!] : null;
   const now = Date.now();
   const activitiesRequest = collectCursorPages<AunorWorkspace["activities"][number]>(last => {
-      let query = db.from("aunor_activities").select("id,type,title,status,place,summary,service_id,not_performed_reason,publication_version,published_at,unread_count,delivered_at,material_link,recording_modes,classification,delivery_due_on,historical_regularized_at,contract_period_id",{count:"exact"}).order("id").limit(200);
+      let query = db.from("aunor_activities").select(scope.scene === "acordado"
+        ? "id,type,title,status,service_id,not_performed_reason,publication_version,published_at,unread_count,delivered_at,classification,delivery_due_on,historical_regularized_at,contract_period_id"
+        : "id,type,title,status,place,summary,service_id,not_performed_reason,publication_version,published_at,unread_count,delivered_at,material_link,recording_modes,classification,delivery_due_on,historical_regularized_at,contract_period_id" as string,{count:"exact"}).order("id").limit(1000);
       if (activityIds) query = query.in("id",activityIds);
       if (scope.scene === "panel") query = query.or(`status.neq.Entregada,delivered_at.gt.${new Date(now - AUNOR_DELIVERY_WINDOW_MS).toISOString()}`);
       if(last) query = query.gt("id", last.id);
-      return query;
+      return query.returns<AunorWorkspace["activities"]>().then(result => ({...result, data: result.data?.map(row => scope.scene === "acordado" ? contractActivitySummary(row) : row) ?? null}));
     }, row => row.id);
   // Read related rows only for current panel activities; bounded ID batches avoid
   // oversized URLs. All queries still use the caller's RLS-protected projections.
   async function related<T>(read: (ids: string[] | null) => Promise<T[]>): Promise<T[]> {
     if (scope.scene !== "panel") return read(activityIds);
     const ids = (await activitiesRequest).map(a => a.id);
-    const rows: T[] = [];
-    for (let start=0; start<ids.length; start+=100) rows.push(...await read(ids.slice(start,start+100)));
-    return rows;
+    return (await mapWithConcurrency(chunkValues(ids, 100), supabaseBatchConcurrency, read)).flat();
   }
   const [activities,services,deliveries,agreements,replacements,journeys,contractPeriods] = await Promise.all([
     activitiesRequest,
@@ -63,7 +64,7 @@ export async function readSupabaseAunor(scope: AunorReadScope = {scene:"admin"})
     }, row => row.id),
     replacement ? Promise.resolve(chosen) : ["detail","acordado","admin"].includes(scope.scene) ? readReplacements() : Promise.resolve([]),
     related(ids => collectCursorPages<AunorWorkspace["journeys"][number]>(last => {
-      let query = db.from("aunor_journeys").select("activity_id,position,start_date,end_date,place",{count:"exact"}).order("activity_id").order("position").limit(200);
+      let query = db.from("aunor_journeys").select("activity_id,position,start_date,end_date,place",{count:"exact"}).order("activity_id").order("position").limit(1000);
       if (ids) query = query.in("activity_id",ids);
       if(last) query = query.or(`activity_id.gt.${last.activity_id},and(activity_id.eq.${last.activity_id},position.gt.${last.position})`);
       return query;

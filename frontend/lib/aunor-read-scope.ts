@@ -38,6 +38,7 @@ export function scopeAunorWorkspace(w: AunorWorkspace, scope: AunorReadScope, no
     result.deliveries = scope.scene === "panel" ? w.deliveries.filter(d => d.is_current) : [];
   }
   if (scope.includeServices === false) result.services = [];
+  if (scope.scene === "acordado") result.activities = w.activities.map(contractActivitySummary);
   if (scope.scene === "panel") {
     result.activities = w.activities.filter(a => isCurrentAunorActivity(a,now));
     const ids = new Set(result.activities.map(a => a.id));
@@ -45,4 +46,10 @@ export function scopeAunorWorkspace(w: AunorWorkspace, scope: AunorReadScope, no
     result.deliveries = result.deliveries.filter(d => ids.has(d.activity_id));
   }
   return result;
+}
+
+/** Contract cards/listing need identity, dates and eligibility, not long bodies
+ * or material URLs. Full detail continues to load through its authorized route. */
+export function contractActivitySummary(a: AunorWorkspace["activities"][number]): AunorWorkspace["activities"][number] {
+  return {...a, summary: "", place: "", material_link: "", recording_modes: []};
 }

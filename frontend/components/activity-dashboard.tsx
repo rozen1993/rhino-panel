@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDashboardFilters } from "@/lib/use-dashboard-filters";
 import { activityDetailHref } from "@/lib/dashboard-navigation";
 import { ActivityCard, formatActivityDates } from "@/components/activity-card";
@@ -130,6 +130,7 @@ function DashboardTable({
                 key={item.id}
                 showResponsible={role.seesAllActivities}
                 returnTo={returnTo}
+                onSelect={role.id === "admin" ? onSelect : undefined}
               />
             ))}
           </div>
@@ -159,9 +160,10 @@ function ActivityPreview({ item, returnTo }: { item: SimulatedActivity | undefin
     );
   const url = safeMaterialUrl(item.materialLink);
   return (
-    <Card className="sticky top-6 overflow-hidden shadow-[var(--shadow-2)]">
+    <Card className="flex max-h-[calc(100dvh-3rem)] flex-col overflow-hidden shadow-[var(--shadow-2)]">
       <div className="h-1 bg-gradient-to-r from-cyan via-cyan to-lime" />
-      <div className="p-5">
+      <div className="min-h-0 overflow-y-auto p-5">
+        <p className="mb-4 border-b border-line pb-3 text-xs font-bold text-cyan-ink">Vista rápida</p>
         <div className="flex items-start justify-between gap-3">
           <p className="data-label text-cyan-ink">
             {item.type}
@@ -194,7 +196,8 @@ function ActivityPreview({ item, returnTo }: { item: SimulatedActivity | undefin
             </p>
           </section>
         )}
-        <div className="grid gap-2">
+      </div>
+        <div className="grid shrink-0 gap-3 border-t border-line bg-panel p-5">
           <Link
             className="action-surface flex min-h-11 items-center justify-center rounded-md px-4 text-sm font-extrabold text-[#173000]"
             href={activityDetailHref(item.id, returnTo)}
@@ -212,7 +215,6 @@ function ActivityPreview({ item, returnTo }: { item: SimulatedActivity | undefin
             </a>
           )}
         </div>
-      </div>
     </Card>
   );
 }
@@ -229,27 +231,45 @@ export function ActivityDashboard({
   const simulatedActivities = useSimulatedActivities(dataSource === "demo");
   const sourceActivities =
     dataSource === "supabase" ? initialActivities : simulatedActivities;
-  const allActivities = sourceActivities.filter(
+  const allActivities = useMemo(() => sourceActivities.filter(
     (item) => !item.deletedAt && canViewActivity(item, role),
-  );
+  ), [sourceActivities, role]);
   const period = currentLimaPeriod();
   const {filters, change, returnTo} = useDashboardFilters(period);
   const {month: selectedMonth, year: selectedYear, query, status} = filters;
-  const years = [...new Set([...activityYears(allActivities, period.year), selectedYear])].sort((a,b)=>a-b);
-  const activities = allActivities.filter((item) =>
+  const years = useMemo(() => [...new Set([...activityYears(allActivities, period.year), selectedYear])].sort((a,b)=>a-b), [allActivities, period.year, selectedYear]);
+  const activities = useMemo(() => allActivities.filter((item) =>
     touchesMonth(item, selectedMonth, selectedYear),
-  );
+  ), [allActivities, selectedMonth, selectedYear]);
   const count = (status: string) =>
     activities.filter((item) => item.status === status).length;
-  const monthCounts = months.map(
+  const monthCounts = useMemo(() => months.map(
     (_, month) =>
       allActivities.filter((item) => touchesMonth(item, month, selectedYear))
         .length,
-  );
+  ), [allActivities, selectedYear]);
   const filtered = activities.filter(item =>
     (!query.trim() || `${item.title} ${item.type} ${item.responsible}`.toLowerCase().includes(query.trim().toLowerCase())) &&
     (!status || item.status === status));
   const [selectedId, setSelectedId] = useState("");
+  const [quickView, setQuickView] = useState(false);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const trigger = useRef<HTMLElement | null>(null);
+  function selectActivity(item: Activity) {
+    setSelectedId(item.id);
+    if (!window.matchMedia("(min-width: 1440px)").matches) {
+      trigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      setQuickView(true);
+    }
+  }
+  useEffect(() => {
+    if (!quickView) return;
+    const element = dialog.current;
+    element?.showModal();
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { element?.close(); document.body.style.overflow = overflow; trigger.current?.focus({preventScroll:true}); };
+  }, [quickView]);
   const selected =
     filtered.find((item) => item.id === selectedId) ?? filtered[0];
 
@@ -344,17 +364,21 @@ export function ActivityDashboard({
           />
         </div>
       ) : (
-        <div className="md:grid md:grid-cols-1 md:items-start md:gap-4 xl:grid-cols-[minmax(0,1fr)_20rem]">
+        <div className="grid items-start gap-4 min-[1440px]:grid-cols-[minmax(0,1fr)_20rem]">
           <DashboardTable
             activities={filtered}
             query={query} status={status} onFilter={change} total={activities.length} returnTo={returnTo}
-            onSelect={(item) => setSelectedId(item.id)}
+            onSelect={selectActivity}
             role={role}
             selected={selected?.id}
           />
-          <aside className="mt-4 hidden md:block xl:mt-0">
+          <aside aria-label="Resumen de actividad" className="sticky top-6 hidden min-w-0 min-[1440px]:block">
             <ActivityPreview item={selected} returnTo={returnTo} />
           </aside>
+          {quickView && <dialog ref={dialog} className="fixed inset-x-0 bottom-0 top-auto m-0 max-h-[90dvh] w-full max-w-none overflow-hidden rounded-t-xl border border-line bg-panel p-0 shadow-xl backdrop:bg-night/50 sm:inset-0 sm:m-auto sm:w-[420px] sm:rounded-xl" aria-label="Vista rápida de actividad" onCancel={event => {event.preventDefault();setQuickView(false);}}>
+            <header className="flex items-center justify-between border-b border-line px-5 py-3"><strong className="text-sm">Resumen de actividad</strong><button type="button" className="min-h-10 rounded-md border border-line px-3 text-sm" onClick={() => setQuickView(false)}>Cerrar resumen</button></header>
+            <div className="[&>div]:max-h-[calc(90dvh-4.5rem)]"><ActivityPreview item={selected} returnTo={returnTo}/></div>
+          </dialog>}
         </div>
       )}
     </>

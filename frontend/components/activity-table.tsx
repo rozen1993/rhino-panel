@@ -57,14 +57,14 @@ export function ActivityTable({
 }) {
   return (
     <div className="hidden overflow-x-auto md:block">
-      <table className="w-full table-fixed border-collapse text-left text-[0.75rem]">
+      <table className="w-full min-w-[760px] table-fixed border-collapse text-left text-[0.75rem]">
         <thead className="border-y border-line bg-panel-secondary text-[0.625rem] uppercase tracking-[0.12em] text-ink-muted">
           <tr>
             <th className="w-[8rem] px-3 py-3">Fechas</th>
             <th className="px-3 py-3">Actividad</th>
             <th className="w-[8rem] px-3 py-3">Lugar</th>
             {showResponsible && (
-              <th className="w-[10rem] px-3 py-3">Responsable</th>
+              <th className="w-[7rem] px-3 py-3">Responsable</th>
             )}
             <th className="w-[8.5rem] px-3 py-3">Estado</th>
             <th className="w-[6.5rem] px-3 py-3 text-center">Acciones</th>
@@ -75,7 +75,12 @@ export function ActivityTable({
             const url = safeMaterialUrl(activity.materialLink);
             return (
               <tr
-                className={`transition-colors hover:bg-cyan/[.035] ${selectedId === activity.id ? "bg-cyan/[.055]" : ""}`}
+                className={`transition-colors hover:bg-cyan/[.035] ${onSelect ? "cursor-pointer" : ""} ${selectedId === activity.id ? "bg-cyan/[.055]" : ""}`}
+                onClick={onSelect ? event => {
+                  if ((event.target as HTMLElement).closest("a,button,input,select,textarea") || window.getSelection()?.toString()) return;
+                  event.currentTarget.querySelector<HTMLButtonElement>("button")?.focus({preventScroll:true});
+                  onSelect(activity);
+                } : undefined}
                 key={activity.id}
               >
                 <td
@@ -84,9 +89,11 @@ export function ActivityTable({
                   {formatActivityDates(activity)}
                 </td>
                 <td className="px-3 py-3.5">
-                  <strong className="block text-[0.78rem] text-ink">
+                  {onSelect ? <button type="button" className="block min-h-9 rounded-sm text-left text-[0.78rem] font-bold text-ink focus-visible:outline-2 focus-visible:outline-cyan" aria-pressed={selectedId === activity.id} onClick={() => onSelect(activity)}>
+                    <strong className="block text-[0.78rem]"><ActivityTitle title={activity.title} value={activity.classification}/></strong>
+                  </button> : <strong className="block text-[0.78rem] text-ink">
                     <ActivityTitle title={activity.title} value={activity.classification}/>
-                  </strong>
+                  </strong>}
                   <span className="mt-0.5 block text-[0.6875rem] text-ink-muted">
                     {activity.type}
                     {activity.origin === "burson" ? " · Burson" : ""}

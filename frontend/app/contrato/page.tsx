@@ -21,8 +21,7 @@ export default async function ContractCenterPage({
           </p>
           <h1 className="display-title mt-1 text-3xl">Centro de contrato</h1>
           <p className="mt-2 text-sm text-ink-muted">
-            El mes contractual nace de la fecha registrada. Las excepciones se
-            revisan aquí.
+            Consulta las entregas y el avance de cada compromiso por periodo.
           </p>
         </header>
         <Suspense fallback={<WorkspaceLoading label="Abriendo tu contrato" description="Estamos consultando los trabajos y las metas." section="Contrato" />}>
