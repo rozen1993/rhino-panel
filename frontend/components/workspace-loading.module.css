@@ -1,26 +1,24 @@
-.panel { min-height: 535px; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); overflow: hidden; border: 1px solid #bdcbd5; border-radius: 12px; background: var(--panel); }
-.brand { min-width: 0; padding: 42px; display: flex; flex-direction: column; justify-content: center; color: white; background: repeating-linear-gradient(145deg, transparent 0 80px, #11b7c911 82px 84px), linear-gradient(135deg, #021326, #06374c); }
-.brand .wordmark { color: white; font-size: clamp(39px, 4vw, 52px); letter-spacing: .05em; line-height: 1.2; }
-.brandCaption { margin-top: 13px; color: var(--blue); font: 700 10px/1.5 Consolas, monospace; letter-spacing: .1em; text-transform: uppercase; }
-.signature { display: flex; gap: 7px; margin-top: 55px; }
-.signature span { width: 25px; height: 6px; background: var(--blue); transform: skew(-35deg); }
-.signature span:last-child { background: var(--amber); }
-.content { min-width: 0; padding: 45px 35px; display: flex; flex-direction: column; justify-content: center; }
-.rule { width: 36px; height: 3px; margin-bottom: 20px; background: var(--blue); }
-.status { display: flex; align-items: center; gap: 10px; color: var(--cyan-ink); font-size: 12px; line-height: 1.6; }
-.spinner { width: 17px; height: 17px; flex: none; border: 2px solid #bcebf0; border-top-color: var(--cyan-ink); border-radius: 50%; animation: brand-orbit 1.2s linear infinite; }
-.content h2 { margin: 19px 0 12px; font-size: 30px; line-height: 1.2; }
-.description { color: var(--ink-muted); font-size: 13px; line-height: 1.8; }
-.track { width: min(235px, 100%); height: 3px; margin-top: 28px; overflow: hidden; background: #e1e9ee; }
-.track span { display: block; width: 32%; height: 100%; background: var(--blue); animation: brand-progress 1.8s ease-in-out infinite alternate; }
-.sectionName { margin-top: 38px; border-top: 1px solid #dce5eb; padding-top: 20px; color: var(--ink-muted); font: 10px/1.5 Consolas, monospace; text-transform: uppercase; }
-@keyframes brand-orbit { to { transform: rotate(360deg); } }
-@keyframes brand-progress { from { transform: translateX(-100%); } to { transform: translateX(315%); } }
-@media (max-width: 767px) {
-  .panel { min-height: 0; grid-template-columns: minmax(0, 1fr); }
-  .brand, .content { padding: 30px; }
-  .brand .wordmark { font-size: 39px; }
-  .signature { margin-top: 25px; }
-  .content h2 { font-size: 27px; }
+.panel { min-width: 0; width: 100%; }
+.status { display: flex; align-items: center; gap: 10px; margin: 0 0 22px; color: var(--cyan-ink); font-size: 13px; line-height: 1.6; }
+.spinner { width: 17px; height: 17px; flex: none; border: 2px solid #bcebf0; border-top-color: var(--cyan-ink); border-radius: 50%; animation: skeleton-orbit 1.2s linear infinite; }
+.toolbar { display: flex; justify-content: space-between; gap: 20px; padding: 18px 22px; margin-bottom: 18px; border: 1px solid #bdcbd5; border-radius: 9px; background: var(--panel); }
+.toolbar span { width: 140px; max-width: 28%; height: 26px; border-radius: 3px; background: #e7edf1; }
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 17px; }
+.card { min-width: 0; min-height: 213px; padding: 22px; border: 1px solid #cad9e3; border-top: 3px solid #bcebf0; border-radius: 10px; background: var(--panel); }
+.card span { display: block; height: 10px; border-radius: 3px; background: #e7edf1; }
+.card .caption { width: 40%; margin-bottom: 16px; }
+.card .title { width: 65%; margin-bottom: 16px; background: #dbe5eb; }
+.card .metric { width: 72px; max-width: 100%; height: 35px; }
+.divider { height: 1px; margin: 30px 0 14px; background: #dce5eb; }
+.card .line { width: 65%; }
+.hint { display: flex; align-items: center; gap: 10px; margin: 24px 0 0; color: var(--ink-muted); font-size: 12px; line-height: 1.6; }
+.hint svg { flex: none; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@keyframes skeleton-orbit { to { transform: rotate(360deg); } }
+@media (max-width: 1023px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) {
+  .cards { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .toolbar { padding: 16px; gap: 12px; }
+  .card { padding: 20px; }
 }
-@media (prefers-reduced-motion: reduce) { .spinner, .track span { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }

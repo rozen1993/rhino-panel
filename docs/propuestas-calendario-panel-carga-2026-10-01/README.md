@@ -36,6 +36,10 @@ Actualización posterior: Marco sustituyó Carga 02 por **Carga 03 — Transici�
 La implementación y capturas nuevas están en [Carga 03](../implementacion-carga-03-2026-10-01/README.md).
 Calendario 01 y Actividades 01 se mantienen.
 
+El 03/10 Marco sustituyó Carga 03 por **Carga 01 — Estructura anticipada**.
+Implementación y capturas actuales: [Carga 01](../implementacion-carga-01-2026-10-03/README.md).
+Se conserva la navegación durante la carga; las propuestas anteriores quedan como referencia histórica.
+
 ## Verificación de las maquetas
 
 `node docs/propuestas-calendario-panel-carga-2026-10-01/render.mjs`

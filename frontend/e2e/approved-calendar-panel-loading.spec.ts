@@ -63,12 +63,16 @@ for (const width of [1440,390]) test(`diseños aprobados, teclado y meses estát
     const indicator=loading.getByRole("status",{name:"Abriendo tu contrato"}).first();
     await expect(indicator).toBeVisible();
     await expect(indicator).not.toContainText("%");
-    await expect(indicator.getByRole("heading",{name:"Tu trabajo, en un solo lugar."})).toBeVisible();
-    await expect(indicator).toContainText("Contrato · DA VINCI");
-    expect(await indicator.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(" ").length)).toBe(width<768?1:2);
+    await expect(indicator.getByRole("heading")).toHaveCount(0);
+    await expect(indicator).toContainText("Puedes seguir usando el menú.");
+    const skeleton=indicator.locator('[data-loading-skeleton="cards"]');
+    await expect(skeleton).toHaveAttribute("aria-hidden","true");
+    expect(await skeleton.locator(':scope > div').count()).toBe(6);
+    expect(await skeleton.evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(" ").length)).toBe(width<600?1:3);
+    expect(await indicator.evaluate(el=>Boolean(el.closest('#contenido-principal main')))).toBe(true);
     expect(await indicator.locator('[aria-hidden="true"], [aria-hidden="true"] span').evaluateAll(elements=>elements.every(el=>getComputedStyle(el).animationName==="none"))).toBe(true);
     expect(await loading.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
-    await loading.screenshot({path:resolve("../docs/implementacion-carga-03-2026-10-01",`carga-03-${width}.png`),fullPage:false});
+    await loading.screenshot({path:resolve("../docs/implementacion-carga-01-2026-10-03",`carga-01-${width}.png`),fullPage:false});
     await loading.setViewportSize({width:320,height:900});
     expect(await loading.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   } finally { await context.close(); }
