@@ -102,7 +102,7 @@ export function AunorActivityCard({
           <p className="data-label text-cyan-ink">
             {a.type} · {aunorCode(a.id, a.type)}
           </p>
-          <StatusPill status={a.status} />
+          <StatusPill status={a.status} classification={a.classification} />
         </div>
         <h2 className="section-title">{a.title}</h2>
       </div>
@@ -184,7 +184,7 @@ function ActivityDetail({
           {a.delivery_due_on && <p className={s.muted}>Entrega prevista: {a.delivery_due_on}</p>}
           {a.historical_regularized_at && <p className={s.muted}>Entrega histórica regularizada. Fecha real de entrega desconocida.</p>}
           <div className={a.status === "Programada" ? "status-in-hero mt-4" : "mt-4"}>
-            <StatusPill status={a.status} />
+            <StatusPill status={a.status} classification={a.classification} />
           </div>
         </div>
         <dl className={s.meta}>

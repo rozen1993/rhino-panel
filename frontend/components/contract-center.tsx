@@ -70,7 +70,7 @@ export function ContractCenter({
                 {replaced.has(a.id) ? " · Sustituida" : ""}
               </small>
             </div>
-            <StatusPill status={a.status} />
+            <StatusPill status={a.status} classification={a.classification} />
           </li>
         ))}
       </ul>

@@ -195,7 +195,7 @@ export function HistoricalRegistrationForm({
                 </h2>
                 <p>Solo Admin · no envía tareas nuevas al Operario</p>
               </div>
-              <StatusPill status="Entregada" />
+              <StatusPill status="Entregada" classification={fields.classification} />
             </header>
             {review ? (
               <div className={s.body}>
@@ -567,7 +567,7 @@ export function HistoricalRegistrationForm({
               <div>
                 <dt>Estado al registrar</dt>
                 <dd>
-                  <StatusPill status="Entregada" />
+                  <StatusPill status="Entregada" classification={fields.classification} />
                 </dd>
               </div>
             </dl>

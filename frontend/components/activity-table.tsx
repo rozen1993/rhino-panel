@@ -111,7 +111,7 @@ export function ActivityTable({
                   </td>
                 )}
                 <td className="px-3 py-3.5">
-                  <StatusPill status={activity.status} />
+                  <StatusPill status={activity.status} classification={activity.classification} />
                 </td>
                 <td className="px-3 py-3.5">
                   <div className="flex justify-center gap-1.5">

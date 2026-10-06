@@ -1,9 +1,10 @@
-export type IconName = "activities" | "calendar" | "progress" | "complete" | "add" | "history" | "profile" | "burson" | "accounts" | "import" | "search" | "link" | "location" | "trash" | "messages" | "eye" | "edit" | "camera" | "video" | "drone" | "check" | "arrow-right" | "swap";
+export type IconName = "activities" | "calendar" | "progress" | "complete" | "add" | "history" | "profile" | "burson" | "accounts" | "import" | "search" | "link" | "location" | "trash" | "messages" | "eye" | "edit" | "camera" | "video" | "drone" | "check" | "arrow-right" | "swap" | "diamond";
 
 export function SystemIcon({ name, className = "size-6" }: { name: IconName; className?: string }) {
   const common = { fill: "none", stroke: "currentColor", strokeLinecap: "round" as const, strokeLinejoin: "round" as const, strokeWidth: 1.8 };
   return (
     <svg aria-hidden="true" className={className} viewBox="0 0 24 24" {...common}>
+      {name === "diamond" && <><path d="m12 3 8 9-8 9-8-9Z"/><path d="M4 12h16M12 3l3 9-3 9-3-9Z"/></>}
       {name === "edit" && <><path d="m14 5 5 5M4 20l5-1L21 7a2 2 0 0 0-5-5L4 14v6Z" /></>}
       {name === "camera" && <><path d="M8 6l2-3h4l2 3h4v14H4V6h4Z" /><circle cx="12" cy="13" r="4" /></>}
       {name === "video" && <><rect x="3" y="6" width="12" height="12" rx="2" /><path d="m15 10 6-4v12l-6-4" /></>}

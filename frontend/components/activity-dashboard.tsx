@@ -169,7 +169,7 @@ function ActivityPreview({ item, returnTo }: { item: SimulatedActivity | undefin
             {item.type}
             {item.origin === "burson" ? " · Burson" : ""}
           </p>
-          <StatusPill status={item.status} />
+          <StatusPill status={item.status} classification={item.classification} />
         </div>
         <h2 className="display-title mt-3 text-[1.35rem] leading-tight">
           <ActivityTitle title={item.title} value={item.classification}/>

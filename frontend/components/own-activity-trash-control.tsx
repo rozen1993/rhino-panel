@@ -69,7 +69,7 @@ export function OwnActivityTrashControl({ item, disabled, onConfirm }: {
       </div>
       <p id={descriptionId} className="mt-4 text-sm leading-6 text-ink-muted">Dejará de aparecer en los paneles y en Histórico. Admin podrá recuperarla mientras no se vacíe la Papelera.</p>
       <div className={styles.dialogActivity}>
-        <div className="flex flex-wrap items-center justify-between gap-2"><span className="data-label text-cyan-ink">{item.type}</span><StatusPill status={item.status} /></div>
+        <div className="flex flex-wrap items-center justify-between gap-2"><span className="data-label text-cyan-ink">{item.type}</span><StatusPill status={item.status} classification={item.classification} /></div>
         <p className="mt-3 break-words text-sm font-bold">{item.title}</p>
         <p className="mt-2 flex items-center gap-2 text-xs text-ink-muted"><SystemIcon name="calendar" className="size-4 shrink-0" />{formatActivityDates(item)}</p>
       </div>

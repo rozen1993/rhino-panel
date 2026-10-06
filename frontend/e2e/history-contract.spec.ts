@@ -44,7 +44,7 @@ for(const width of [1440,390]) test(`edición, marcaje y entrega histórica sin 
  await expect(page.getByText('Entrega histórica regularizada, sin inventar la fecha real de entrega.',{exact:true})).toBeVisible();
  const delivered=page.getByText('Entregada',{exact:true}).first();
  await expect(delivered).toBeVisible();
- await expect(delivered).toHaveCSS('background-color','rgb(33, 99, 55)');
+ await expect(delivered).toHaveCSS('background-color','rgb(103, 70, 150)');
  await expect(delivered).toHaveCSS('color','rgb(255, 255, 255)');
  await expect(delivered.locator('svg[aria-hidden="true"]')).toHaveCount(1);
  await page.screenshot({path:resolve(captureDirectory,`regularizacion-${width}.png`),fullPage:true});

@@ -201,7 +201,7 @@ export function TrashDashboard({
                           {item.title}
                         </h2>
                       </div>
-                      <StatusPill status={item.status} />
+                      <StatusPill status={item.status} classification={item.classification} />
                     </div>
 
                     <dl className="mt-4 grid gap-3 rounded-md border border-line bg-panel-secondary/60 p-4 text-xs sm:grid-cols-2">

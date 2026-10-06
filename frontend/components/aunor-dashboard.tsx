@@ -90,13 +90,13 @@ export function AunorDashboard({w, today, initialNow}: {w:AunorWorkspace; today:
             <span className="text-xs font-semibold text-cyan-ink">{journeys(a.id).length ? day(journeys(a.id)[0].start_date) : "Fecha por indicar"}</span>
             <span className="order-first col-span-2 min-w-0 md:order-none md:col-span-1"><strong className="block text-sm"><ActivityTitle title={a.title} value={a.classification}/></strong><span className="mt-1 block text-xs text-ink-muted">{a.type}</span></span>
             <span className="hidden truncate text-xs text-ink-muted md:block">{a.place || journeys(a.id)[0]?.place || "Por indicar"}</span>
-            <StatusPill status={a.status}/><SystemIcon name="eye" className="hidden size-5 justify-self-center md:block"/>
+            <StatusPill status={a.status} classification={a.classification} /><SystemIcon name="eye" className="hidden size-5 justify-self-center md:block"/>
           </button>
         </li>)}</ul>
         {!visible.length && <p className="p-6 text-sm text-ink-muted">{current.length ? "No hay actividades que coincidan con estos filtros." : "No hay actividades en seguimiento. Las anteriores siguen disponibles en Histórico."}</p>}
       </Card>
       {chosen && <Card className="overflow-hidden border-t-[3px] border-t-cyan p-5 xl:sticky xl:top-4" aria-label="Vista previa de actividad">
-        <div className="flex flex-wrap items-center justify-between gap-2"><p className="data-label text-cyan-ink">{chosen.type}</p><StatusPill status={chosen.status}/></div>
+        <div className="flex flex-wrap items-center justify-between gap-2"><p className="data-label text-cyan-ink">{chosen.type}</p><StatusPill status={chosen.status} classification={chosen.classification} /></div>
         <h2 ref={preview} tabIndex={-1} className="section-title mt-4 scroll-mt-4 break-words"><ActivityTitle title={chosen.title} value={chosen.classification}/></h2>
         <p className="mt-4 line-clamp-4 whitespace-pre-line text-sm leading-6 text-ink-muted">{chosen.summary}</p>
         <RecordingModeTags modes={chosen.recording_modes} />

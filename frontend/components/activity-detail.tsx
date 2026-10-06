@@ -258,7 +258,7 @@ export function ActivityDetail({
                 </p>
                 <RecordingModeTags modes={item.recordingModes} dark />
               </div>
-              <div className="flex flex-col items-end gap-2"><StatusPill status={item.status} /><ClassificationBadge value={item.classification}/></div>
+              <div className="flex flex-col items-end gap-2"><StatusPill status={item.status} classification={item.classification} /><ClassificationBadge value={item.classification}/></div>
             </div>
           </div>
 

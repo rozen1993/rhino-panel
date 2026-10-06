@@ -108,7 +108,7 @@ test("Aunor consulta entregas y sustituciones sin confirmaciones ni datos intern
 test("la cabecera de Aunor conserva los colores de los tres estados",async({page})=>{
   await login(page,"aunor");
   for(const [id,status,background,color] of [
-    ["cobertura-norte","Entregada","rgb(33, 99, 55)","rgb(255, 255, 255)"],
+    ["cobertura-norte","Entregada","rgb(18, 75, 87)","rgb(255, 255, 255)"],
     ["edicion-seguridad","En proceso","rgb(37, 99, 235)","rgb(255, 255, 255)"],
     ["aunor-original","Programada","rgb(255, 255, 255)","rgb(8, 113, 138)"],
   ]) {

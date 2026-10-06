@@ -9,6 +9,7 @@ import { SystemIcon } from "@/components/system-icon";
 import { lastDate } from "@/lib/activities";
 import { safeMaterialUrl } from "@/lib/external-link";
 import type { HistoricalActivity } from "@/lib/historical";
+import s from "./historical-activity-card.module.css";
 export type DetailActivity = Omit<HistoricalActivity, "responsible" | "origin" | "operatorOpinion"> & Partial<Pick<HistoricalActivity, "responsible" | "origin" | "operatorOpinion">>;
 function isOverdue(item: DetailActivity, today: string) {
   const end = lastDate(item);
@@ -79,26 +80,34 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
           <h2 id={titleId} className="mb-3 text-xs font-semibold text-ink-muted">
             {choices.length} {choices.length === 1 ? "actividad" : "actividades"} en esta fecha
           </h2>
-          <div className="grid gap-3">
+          <div className="grid gap-4">
             {choices.map((choice) => {
               const places = [...new Set(choice.spans.map(span => spanPlace(span, choice.place) || "Sin lugar indicado"))].join(" · ");
               const sameTitle = choices.filter(candidate => candidate.title === choice.title).length > 1;
               return (
-                <article key={choice.id} className="min-w-0 rounded-[10px] border border-line/40 bg-panel p-3.5 shadow-[var(--shadow-1)]">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="data-label text-cyan-ink">{choice.type}</p>
-                    <StatusPill status={choice.status} />
+                <article key={choice.id} className={s.card}>
+                  <div className={s.content}>
+                    <div className={s.heading}>
+                      <p className={`data-label ${s.type}`}>{choice.type}</p>
+                      <StatusPill status={choice.status} classification={choice.classification} />
+                    </div>
+                    <h3 className={`display-title ${s.title}`}>{choice.title}</h3>
+                    {(Boolean(choice.recordingModes?.length) || choice.classification === "special") && (
+                      <ul aria-label="Características de la actividad" className={s.attributes}>
+                        {choice.recordingModes?.map(mode => <li key={mode}>
+                          <SystemIcon name={mode === "Fotografía" ? "camera" : mode === "Video" ? "video" : "drone"} />{mode}
+                        </li>)}
+                        {choice.classification === "special" && <li className={s.special}><SystemIcon name="diamond" />Especial</li>}
+                      </ul>
+                    )}
+                    {sameTitle && <p title={`ID: ${choice.id}`} className="mt-2 break-all font-mono text-[0.625rem] text-ink-muted">Ref. {choice.id}</p>}
                   </div>
-                  <h3 className="display-title mt-3 break-words text-lg leading-snug text-ink">{choice.title}</h3>
-                  <RecordingModeTags modes={choice.recordingModes} />
-                  {choice.classification === "special" && <div className="mt-2"><ClassificationBadge value={choice.classification}/></div>}
-                  {sameTitle && <p title={`ID: ${choice.id}`} className="mt-1 break-all font-mono text-[0.625rem] text-ink-muted">Ref. {choice.id}</p>}
-                  <p className="mt-2 line-clamp-2 break-words text-sm leading-5 text-ink-muted">{choice.description}</p>
-                  <div className="mt-3 grid gap-1.5 text-xs text-ink-muted">
-                    {!clientView && <p className="flex items-center gap-2"><SystemIcon name="profile" className="size-4 shrink-0" /><span className="min-w-0 break-words font-semibold text-ink">{choice.responsible}</span></p>}
-                    <p className="flex items-start gap-2" title={places}><SystemIcon name="location" className="size-4 shrink-0" /><span className="line-clamp-1 break-all">{places}</span></p>
-                  </div>
-                  <button type="button" className={`${secondaryAction} mt-3 flex w-full items-center justify-between gap-2 border-t border-line/25 px-1 pt-2`}
+                  <div className={s.bottom}>
+                    <div className={s.facts}>
+                      {!clientView && <p className={s.person}><SystemIcon name="profile" /><span>{choice.responsible}</span></p>}
+                      <p title={places}><SystemIcon name="location" /><span>{places}</span></p>
+                    </div>
+                  <button type="button" className={s.action}
                     aria-label={`Ver detalles: ${choice.type} · ${choice.title}. ID: ${choice.id}`}
                     ref={element => { if (element) choiceRefs.current.set(choice.id, element); else choiceRefs.current.delete(choice.id); }}
                     onClick={() => {
@@ -107,8 +116,9 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
                       onChoose(choice);
                       setShowDetail(true);
                     }}>
-                    Ver detalles <span aria-hidden="true">→</span>
+                    <span>Ver detalles</span><span className={s.arrow} aria-hidden="true"><SystemIcon name="arrow-right" /></span>
                   </button>
+                  </div>
                 </article>
               );
             })}
@@ -119,7 +129,7 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
           <div>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="data-label text-cyan-ink">{item.type}</p>
-              <StatusPill status={item.status} />
+              <StatusPill status={item.status} classification={item.classification} />
             </div>
             <h2 className="display-title mt-3 break-words text-2xl leading-tight text-ink" id={titleId}>{item.title}</h2>
             <RecordingModeTags modes={item.recordingModes} />
