@@ -5,6 +5,23 @@ import { createAunorExamples } from "@/lib/aunor-examples";
 import { DetailPanel } from "@/components/calendar-detail-panel";
 
 afterEach(()=>{cleanup();vi.useRealTimers();});
+it("muestra una sola tarjeta en el histórico Aunor y conserva su privacidad al abrir y volver", () => {
+  const item={id:"single",title:"Una cobertura",type:"Grabación" as const,status:"Programada" as const,
+    classification:"standard" as const,place:"Lima",description:"Resumen",materialLink:"",
+    spans:[{start:"2026-04-07",end:"2026-04-07",place:"Lima"}],responsible:"OPERARIO PRIVADO",
+    operatorOpinion:"OPINIÓN PRIVADA",origin:"operario" as const};
+  render(<DetailPanel clientView item={item} choices={[item]} onChoose={()=>{}} titleId="single-title" today="2026-10-05" selectedDate="2026-04-07"/>);
+  expect(screen.getAllByRole("article")).toHaveLength(1);
+  expect(screen.getByText("1 actividad en esta fecha")).toBeTruthy();
+  expect(screen.queryByText("Estándar", {exact:true})).toBeNull();
+  fireEvent.click(screen.getByRole("button",{name:/Ver detalles:/}));
+  expect(screen.queryByText("OPERARIO PRIVADO")).toBeNull();
+  expect(screen.queryByText("OPINIÓN PRIVADA")).toBeNull();
+  expect(screen.queryByText("Estándar",{exact:true})).toBeNull();
+  fireEvent.click(screen.getByRole("button",{name:"Volver a las actividades del día"}));
+  expect(screen.getAllByRole("article")).toHaveLength(1);
+  expect(document.activeElement).toBe(screen.getByRole("button",{name:/Ver detalles:/}));
+});
 it("muestra todos los estados y retira solo la entrega al cumplir las 72 horas",()=>{
   vi.useFakeTimers();
   const w=createAunorExamples();

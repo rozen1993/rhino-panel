@@ -80,8 +80,12 @@ describe("contrato mínimo de accesibilidad", () => {
     );
     expect(interfaceSource).not.toContain("placeholder:text-ink-muted/");
     expect(interfaceSource).not.toMatch(/\btext-orange\b/);
-    expect(readFileSync(join(frontend, "components", "annual-calendar-view.tsx"), "utf8"))
-      .toContain('range: "bg-cyan/20 text-cyan-ink"');
+    const calendarCss = readFileSync(join(frontend, "components", "annual-calendar-view.module.css"), "utf8");
+    expect(calendarCss).toContain("color: var(--cyan-ink); background: #cff2f6");
+    expect(calendarCss).toContain("color: #5b2bb5; background: #e9defa");
+    expect(contrast(cssColor("cyan-ink"), "#cff2f6"), "fechas celestes").toBeGreaterThanOrEqual(4.5);
+    expect(contrast("#5b2bb5", "#e9defa"), "fechas especiales").toBeGreaterThanOrEqual(4.5);
+    expect(calendarCss.match(/\.selected\s*\{([^}]+)\}/)?.[1]).not.toMatch(/(?:background|color):/);
   });
 
   it("conserva foco visible, salto al contenido y reducción de movimiento", () => {

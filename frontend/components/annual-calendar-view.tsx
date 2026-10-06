@@ -53,26 +53,18 @@ const weekdays = [
 ];
 const colors: Record<
   ActivityType,
-  { solid: string; range: string; marker: string }
+  { marker: string }
 > = {
   Grabación: {
-    solid: "bg-cyan text-night",
-    range: "bg-cyan/20 text-cyan-ink",
     marker: "bg-cyan",
   },
   Edición: {
-    solid: "bg-orange text-night",
-    range: "bg-orange/20 text-[#8a5200]",
     marker: "bg-orange",
   },
   Creatividad: {
-    solid: "bg-lime text-night",
-    range: "bg-lime/25 text-[#376300]",
     marker: "bg-lime",
   },
   Locución: {
-    solid: "bg-[#7c3aed] text-white",
-    range: "bg-violet/15 text-[#5b2bb5]",
     marker: "bg-violet",
   },
 };
@@ -165,15 +157,15 @@ function MiniMonth({
                 {day}
               </span>
             );
-          const found = matches[0];
+          const special = matches.some((entry) => entry.item.classification === "special");
           const selected = iso === selectedDate;
           const overdue = matches.some((entry) =>
             isOverdue(entry.item, today),
           );
           return (
             <button
-              aria-label={`${day} de ${monthNames[month].toLowerCase()}: ${matches.map((entry) => `${entry.item.type}, ${entry.item.title}`).join("; ")}${overdue ? ". Hay una actividad atrasada." : ""}`}
-              className={`${s.day} ${selected ? s.selected : colors[found.item.type].range}`}
+              aria-label={`${day} de ${monthNames[month].toLowerCase()}: ${matches.map((entry) => `${entry.item.type}, ${entry.item.title}`).join("; ")}. ${matches.length} ${matches.length === 1 ? "actividad" : "actividades"}${special ? ". Incluye actividad especial" : ""}${overdue ? ". Hay una actividad atrasada." : ""}`}
+              className={`${s.day} ${special ? s.special : s.standard} ${selected ? s.selected : ""}`}
               aria-pressed={selected}
               aria-current={iso === today ? "date" : undefined}
               key={iso}
@@ -187,9 +179,7 @@ function MiniMonth({
               type="button"
             >
               <span>{day}</span>
-              {matches.length > 1
-                ? <span aria-hidden="true" className={s.count}>×{matches.length}</span>
-                : <span aria-hidden="true" className={s.underline}/>}
+              <span aria-hidden="true" className={s.count}>×{matches.length}</span>
             </button>
           );
         })}
@@ -438,7 +428,7 @@ export function AnnualCalendarView({category, activities, today, year, basePath=
           ))}
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <p className="text-[0.6875rem] text-ink-muted">Color = categoría · ×2 = dos actividades · Pulsa una fecha para ver sus trabajos.</p>
+          <p className="text-[0.6875rem] text-ink-muted">Celeste = actividades estándar · Morado = incluye especiales · ×1 = una actividad. Pulsa una fecha para ver sus trabajos.</p>
           <label className="flex items-center gap-2 text-xs font-bold">Clasificación
             <select className="min-h-11 rounded-md border border-line bg-panel px-3" value={classificationFilter} onChange={e=>{setClassificationFilter(e.target.value);setSelectionKey(value=>value+1);}}>
               <option value="all">Todas</option><option value="standard">Estándar</option><option value="special">Especial</option>

@@ -53,6 +53,7 @@ for(const width of [1440,390]) test(`edición, marcaje y entrega histórica sin 
  await page.getByRole('button',{name:new RegExp(`12 de abril:.*Edición sintética ${width}`)}).click();
  const detail=width===390?page.getByRole('dialog'):page.locator('aside[aria-labelledby]');
  await expect(detail.getByText('Especial',{exact:true})).toBeVisible();
+ await detail.getByRole('button',{name:/Ver detalles:.*Edición sintética/}).click();
  await expect(detail.getByText(/fecha real de entrega desconocida/i)).toBeVisible();
  await page.screenshot({path:resolve(captureDirectory,`historico-${width}.png`),fullPage:true});
 });

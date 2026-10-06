@@ -9,9 +9,10 @@
 .day { flex-direction: column; gap: 3px; padding: 0; border: 0; border-radius: 5px; font-weight: 700; line-height: 1; }
 .day:hover { outline: 1px solid var(--cyan-ink); }
 .day:focus-visible { outline: 3px solid var(--cyan-ink); outline-offset: 2px; position: relative; z-index: 1; }
-.selected { color: white; background: var(--navy); box-shadow: 0 0 0 2px white, 0 0 0 3px var(--navy); }
+.standard { color: var(--cyan-ink); background: #cff2f6; }
+.special { color: #5b2bb5; background: #e9defa; }
+.selected { box-shadow: 0 0 0 2px white, 0 0 0 3px var(--navy); }
 .count { font: 8px/1 Consolas, monospace; }
-.underline { width: 10px; height: 2px; background: currentColor; opacity: .6; }
 @media (min-width: 768px) { .months { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 1280px) { .months { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 767px) {

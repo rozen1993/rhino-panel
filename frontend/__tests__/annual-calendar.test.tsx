@@ -76,6 +76,49 @@ function changeMobile(matches: boolean) {
 }
 
 describe("calendario anual compartido", () => {
+  it.each(["Grabación", "Edición"] as const)("cuenta ×1 y conserva el color al seleccionar una fecha de %s", (type) => {
+    setMobile(false);
+    const plain = { ...activity("plain", "Actividad estándar", type), classification: "standard" as const };
+    const special = { ...activity("special", "Actividad especial", type), classification: "special" as const,
+      spans: [{ start: "2026-08-02", end: "2026-08-02" }] };
+    render(<AnnualCalendar dataSource="supabase" category={type} today="2026-08-31" year={2026} initialActivities={[plain, special]} />);
+    const plainDay = screen.getByRole("button", { name: /1 de agosto:/ });
+    const specialDay = screen.getByRole("button", { name: /2 de agosto:/ });
+    expect(plainDay.textContent).toBe("1×1");
+    expect(specialDay.textContent).toBe("2×1");
+    expect(plainDay.className).toContain("standard");
+    expect(specialDay.className).toContain("special");
+    expect(specialDay.getAttribute("aria-label")).toContain("Incluye actividad especial");
+    fireEvent.click(plainDay);
+    expect(plainDay.className).toContain("standard");
+    expect(plainDay.getAttribute("aria-pressed")).toBe("true");
+    const choices = screen.getByRole("region", { name: "Actividades de esta fecha" });
+    expect(within(choices).getAllByRole("article")).toHaveLength(1);
+    expect(within(choices).getByText("1 actividad en esta fecha")).toBeTruthy();
+    expect(within(choices).queryByText("Estándar", { exact: true })).toBeNull();
+    fireEvent.click(within(choices).getByRole("button", { name: /Ver detalles:/ }));
+    expect(within(screen.getByRole("complementary")).queryByText("Estándar", { exact: true })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Volver a las actividades del día" }));
+    expect(screen.getByRole("region", { name: "Actividades de esta fecha" })).toBeTruthy();
+    fireEvent.click(specialDay);
+    expect(specialDay.className).toContain("special");
+    expect(within(screen.getByRole("complementary")).getByText("Especial", { exact: true })).toBeTruthy();
+  });
+
+  it("marca en morado una fecha mixta aunque su primera actividad sea estándar", () => {
+    setMobile(false);
+    render(<AnnualCalendar dataSource="supabase" today="2026-08-31" year={2026} initialActivities={[
+      { ...activity("plain", "Normal", "Grabación"), classification: "standard" },
+      { ...activity("special", "Especial", "Grabación"), classification: "special" },
+    ]} />);
+    const day = screen.getByRole("button", { name: /1 de agosto:/ });
+    expect(day.textContent).toBe("1×2");
+    expect(day.className).toContain("special");
+    fireEvent.change(screen.getByRole("combobox", { name: "Clasificación" }), { target: { value: "standard" } });
+    const filteredDay = screen.getByRole("button", { name: /1 de agosto:/ });
+    expect(filteredDay.textContent).toBe("1×1");
+    expect(filteredDay.className).toContain("standard");
+  });
   it("selecciona todas las actividades de hoy al cargar, no el primer registro", () => {
     setMobile(false);
     const yesterday={...activity("old","Actividad anterior"),spans:[{start:"2026-07-31",end:"2026-07-31"}]};
@@ -146,11 +189,11 @@ describe("calendario anual compartido", () => {
     render(<AnnualCalendar dataSource="supabase" year={2026} today="2026-08-01" initialActivities={[activity("a", "Actividad A")]} />);
     fireEvent.click(screen.getByRole("button", { name: /1 de agosto:/ }));
     const dialog = screen.getByRole("dialog");
-    const close = within(dialog).getByRole("button", { name: "Cerrar detalle" });
+    fireEvent.click(within(dialog).getByRole("button", { name: /Ver detalles:/ }));
     fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
     expect(document.activeElement).toBe(within(dialog).getByText("Referencia de la actividad"));
     fireEvent.keyDown(document, { key: "Tab" });
-    expect(document.activeElement).toBe(close);
+    expect(document.activeElement).toBe(within(dialog).getByRole("button", { name: "Volver a las actividades del día" }));
   });
 
   it("navega por URL y bloquea el año anterior en el piso 2026", () => {
@@ -292,7 +335,7 @@ describe("calendario anual compartido", () => {
     const first = screen.getByRole("button", {
       name: /1 de enero: Edición, Cruce anual/i,
     });
-    expect(first.textContent).toBe("1");
+    expect(first.textContent).toBe("1×1");
     expect(screen.getByRole("button", {name: /2 de enero: Edición, Cruce anual/i})).toBeTruthy();
     expect(first.querySelector("[aria-hidden=true]")).toBeTruthy();
   });

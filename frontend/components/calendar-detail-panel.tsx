@@ -32,7 +32,7 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
 }) {
   const url = safeMaterialUrl(item.materialLink);
   const [showDetail, setShowDetail] = useState(false);
-  const listing = choices.length > 1 && !showDetail;
+  const listing = choices.length > 0 && !showDetail;
   const panelRef = useRef<HTMLElement>(null);
   const backRef = useRef<HTMLButtonElement>(null);
   const choiceRefs = useRef(new Map<string, HTMLButtonElement>());
@@ -51,7 +51,7 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
       className="relative max-h-[82dvh] overflow-y-auto overscroll-contain bg-panel md:max-h-[calc(100dvh-2rem)]">
       <header className="sticky top-0 z-10 border-b border-line/30 border-t-[3px] border-t-cyan bg-panel px-4 py-3">
         <div className="flex items-center justify-between gap-2">
-          {!listing && choices.length > 1 ? (
+          {!listing && choices.length > 0 ? (
             <button type="button" ref={backRef} aria-label="Volver a las actividades del día" className={`${secondaryAction} px-2 text-left`}
               onClick={() => { focusPending.current = true; setShowDetail(false); }}>
               ← Volver
@@ -77,7 +77,7 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
       {listing ? (
         <section aria-label="Actividades de esta fecha" className="bg-panel-secondary p-4">
           <h2 id={titleId} className="mb-3 text-xs font-semibold text-ink-muted">
-            {choices.length} actividades en esta fecha
+            {choices.length} {choices.length === 1 ? "actividad" : "actividades"} en esta fecha
           </h2>
           <div className="grid gap-3">
             {choices.map((choice) => {
@@ -91,7 +91,7 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
                   </div>
                   <h3 className="display-title mt-3 break-words text-lg leading-snug text-ink">{choice.title}</h3>
                   <RecordingModeTags modes={choice.recordingModes} />
-                  <div className="mt-2"><ClassificationBadge value={choice.classification}/></div>
+                  {choice.classification === "special" && <div className="mt-2"><ClassificationBadge value={choice.classification}/></div>}
                   {sameTitle && <p title={`ID: ${choice.id}`} className="mt-1 break-all font-mono text-[0.625rem] text-ink-muted">Ref. {choice.id}</p>}
                   <p className="mt-2 line-clamp-2 break-words text-sm leading-5 text-ink-muted">{choice.description}</p>
                   <div className="mt-3 grid gap-1.5 text-xs text-ink-muted">
@@ -123,7 +123,7 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
             </div>
             <h2 className="display-title mt-3 break-words text-2xl leading-tight text-ink" id={titleId}>{item.title}</h2>
             <RecordingModeTags modes={item.recordingModes} />
-            <div className="mt-2"><ClassificationBadge value={item.classification}/></div>
+            {item.classification === "special" && <div className="mt-2"><ClassificationBadge value={item.classification}/></div>}
             {item.deliveryDueOn && <p className="mt-3 text-sm">Entrega prevista: <strong>{item.deliveryDueOn}</strong></p>}
             {item.historicalRegularizedAt && <p className="mt-3 text-xs text-ink-muted">Entrega histórica regularizada · fecha real de entrega desconocida.</p>}
             {isOverdue(item, today) && <p className="mt-3 text-xs font-bold text-red">Actividad atrasada</p>}

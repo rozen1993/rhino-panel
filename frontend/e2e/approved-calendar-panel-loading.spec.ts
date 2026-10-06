@@ -46,6 +46,7 @@ for (const width of [1440,390]) test(`diseños aprobados, teclado y meses estát
   await page.getByRole("combobox",{name:"Clasificación",exact:true}).selectOption("standard");
   await expect(month).toContainText("2 trabajos"); // includes the legacy unmarked activity
   await expect(month.getByRole("button",{name:/12 de abril/})).not.toContainText("×2");
+  await expect(month.getByRole("button",{name:/12 de abril/})).toContainText("×1");
   await page.goto("/actividades?periodo=2026-04");
   await expect(page.getByRole("button",{name:"Mostrar abr de 2026: 3 actividades"}).filter({visible:true})).toBeVisible();
   await expect(page.getByRole("img",{name:"Actividad especial"}).first()).toBeVisible();
