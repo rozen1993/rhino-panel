@@ -60,7 +60,7 @@ for (const width of [1440,390]) test(`diseños aprobados, teclado y meses estát
   try {
     const loading=await context.newPage();
     await loading.route("**/*",r=>new URL(r.request().url()).hostname==="localhost"?r.continue():r.abort());
-    await loading.goto("http://localhost:3100/contrato");
+    await loading.goto(new URL("/contrato", page.url()).href);
     const indicator=loading.getByRole("status",{name:"Abriendo tu contrato"}).first();
     await expect(indicator).toBeVisible();
     await expect(indicator).not.toContainText("%");

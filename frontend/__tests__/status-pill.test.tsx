@@ -2,6 +2,21 @@ import { render, screen } from "@testing-library/react";
 import { expect, it } from "vitest";
 import { StatusPill } from "@/components/status-pill";
 
+it.each(["standard", "special"] as const)("reduce ligeramente la entrega %s cuando el histórico lo solicita", classification => {
+  const {container} = render(<StatusPill status="Entregada" classification={classification} compact/>);
+  const badge = screen.getByText("Entregada");
+  expect(badge.getAttribute("data-compact")).toBe("true");
+  expect(badge.classList.contains("min-h-[26px]")).toBe(true);
+  expect(badge.classList.contains("min-h-7")).toBe(false);
+  expect(container.querySelector("svg")?.classList.contains("size-[14px]")).toBe(true);
+});
+
+it.each(["Programada", "En proceso"] as const)("compact no modifica %s", status => {
+  render(<StatusPill status={status} compact/>);
+  expect(screen.getByText(status).getAttribute("data-compact")).toBeNull();
+  expect(screen.getByText(status).classList.contains("text-[0.6875rem]")).toBe(true);
+});
+
 it("representa Entregada con el petróleo compartido con Ver detalles y check decorativo", () => {
   const { container } = render(<StatusPill status="Entregada" />);
   const badge = screen.getByText("Entregada", { exact: true });

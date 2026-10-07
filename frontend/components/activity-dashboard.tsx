@@ -2,13 +2,11 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDashboardFilters } from "@/lib/use-dashboard-filters";
-import { activityDetailHref } from "@/lib/dashboard-navigation";
-import { ActivityCard, formatActivityDates } from "@/components/activity-card";
+import { ActivityCard } from "@/components/activity-card";
+import { ActivityPreview } from "@/components/activity-preview";
 import { ActivityTable } from "@/components/activity-table";
 import { Card } from "@/components/card";
 import { MonthStrip, months } from "@/components/month-strip";
-import { StatusPill } from "@/components/status-pill";
-import { ActivityTitle } from "@/components/special-activity-mark";
 import { SummaryTile } from "@/components/summary-tile";
 import { SystemIcon } from "@/components/system-icon";
 import {
@@ -16,7 +14,6 @@ import {
   type SimulatedActivity,
   useSimulatedActivities,
 } from "@/lib/activity-simulation";
-import { safeMaterialUrl } from "@/lib/external-link";
 import type { Activity } from "@/lib/activities";
 import { effectiveSpans } from "@/lib/activities";
 import type { DataSource } from "@/lib/data-source";
@@ -147,74 +144,6 @@ function DashboardTable({
           No hay actividades que coincidan con la búsqueda.
         </p>
       )}
-    </Card>
-  );
-}
-
-function ActivityPreview({ item, returnTo }: { item: SimulatedActivity | undefined; returnTo: string }) {
-  if (!item)
-    return (
-      <Card className="p-5 text-sm text-ink-muted">
-        Selecciona una actividad para ver su detalle.
-      </Card>
-    );
-  const url = safeMaterialUrl(item.materialLink);
-  return (
-    <Card className="flex max-h-[calc(100dvh-3rem)] flex-col overflow-hidden shadow-[var(--shadow-2)]">
-      <div className="h-1 bg-gradient-to-r from-cyan via-cyan to-lime" />
-      <div className="min-h-0 overflow-y-auto p-5">
-        <p className="mb-4 border-b border-line pb-3 text-xs font-bold text-cyan-ink">Vista rápida</p>
-        <div className="flex items-start justify-between gap-3">
-          <p className="data-label text-cyan-ink">
-            {item.type}
-            {item.origin === "burson" ? " · Burson" : ""}
-          </p>
-          <StatusPill status={item.status} classification={item.classification} />
-        </div>
-        <h2 className="display-title mt-3 text-[1.35rem] leading-tight">
-          <ActivityTitle title={item.title} value={item.classification}/>
-        </h2>
-        <dl className="mt-5 grid grid-cols-[6rem_1fr] gap-3 border-y border-line py-4 text-xs">
-          <dt className="font-bold">Responsable</dt>
-          <dd>{item.responsible}</dd>
-          <dt className="font-bold">Fechas</dt>
-          <dd>{formatActivityDates(item)}</dd>
-          <dt className="font-bold">Origen</dt>
-          <dd>{item.origin === "burson" ? "Burson" : "Ordinaria"}</dd>
-        </dl>
-        <section className="py-4">
-          <h3 className="text-xs font-extrabold">Descripción</h3>
-          <p className="mt-2 text-xs leading-5 text-ink-muted">
-            {item.description}
-          </p>
-        </section>
-        {item.operatorOpinion && (
-          <section className="border-t border-line py-4">
-            <h3 className="text-xs font-extrabold">Opinión del operario</h3>
-            <p className="mt-2 rounded-md bg-panel-secondary p-3 text-xs leading-5 text-ink-muted">
-              {item.operatorOpinion}
-            </p>
-          </section>
-        )}
-      </div>
-        <div className="grid shrink-0 gap-3 border-t border-line bg-panel p-5">
-          <Link
-            className="action-surface flex min-h-11 items-center justify-center rounded-md px-4 text-sm font-extrabold text-[#173000]"
-            href={activityDetailHref(item.id, returnTo)}
-          >
-            Abrir ficha completa
-          </Link>
-          {url && (
-            <a
-              className="text-center text-xs font-bold text-[#08718a] underline decoration-cyan underline-offset-4"
-              href={url}
-              rel="noreferrer"
-              target="_blank"
-            >
-              Abrir material ↗
-            </a>
-          )}
-        </div>
     </Card>
   );
 }

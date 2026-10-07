@@ -47,6 +47,8 @@ for (const viewport of [{width:1440,height:1000},{width:390,height:844}]) {
     await expect(page.getByRole('heading',{name:'Histórico 2026',exact:true})).toBeVisible();
     await expect(page.getByRole('link',{name:'Cuentas',exact:true})).toHaveCount(0);
     await page.getByRole('button',{name:/22 de septiembre: Grabación, Cobertura corregida/}).click();
+    await expect(page.getByRole('list',{name:'Características de la actividad'})).toContainText('Vuelo con dron');
+    await page.getByRole('button',{name:/Ver detalles: Grabación · Cobertura corregida/}).click();
     await expect(page.getByRole('list',{name:'Modalidades de grabación'})).toContainText('Vuelo con dron');
     await page.screenshot({path:testInfo.outputPath('historico.png'),fullPage:true});
   });

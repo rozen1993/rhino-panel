@@ -85,11 +85,11 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
               const places = [...new Set(choice.spans.map(span => spanPlace(span, choice.place) || "Sin lugar indicado"))].join(" · ");
               const sameTitle = choices.filter(candidate => candidate.title === choice.title).length > 1;
               return (
-                <article key={choice.id} className={s.card}>
+                <article key={choice.id} className={`${s.card} ${choice.classification === "special" ? s.specialCard : ""}`}>
                   <div className={s.content}>
                     <div className={s.heading}>
                       <p className={`data-label ${s.type}`}>{choice.type}</p>
-                      <StatusPill status={choice.status} classification={choice.classification} />
+                      <StatusPill status={choice.status} classification={choice.classification} compact />
                     </div>
                     <h3 className={`display-title ${s.title}`}>{choice.title}</h3>
                     {(Boolean(choice.recordingModes?.length) || choice.classification === "special") && (
@@ -129,7 +129,7 @@ export function DetailPanel({ item, choices, onChoose, close, titleId, closeButt
           <div>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="data-label text-cyan-ink">{item.type}</p>
-              <StatusPill status={item.status} classification={item.classification} />
+              <StatusPill status={item.status} classification={item.classification} compact />
             </div>
             <h2 className="display-title mt-3 break-words text-2xl leading-tight text-ink" id={titleId}>{item.title}</h2>
             <RecordingModeTags modes={item.recordingModes} />

@@ -26,3 +26,6 @@
 .action:focus-visible { outline: 3px solid var(--delivered-special); outline-offset: 3px; }
 .arrow { display: grid; place-items: center; width: 1.625rem; height: 1.625rem; border-radius: 50%; background: rgb(255 255 255 / 8%); color: #c8ecea; }
 .arrow svg { width: 1rem; height: 1rem; }
+.specialCard .action { background: var(--delivered-special); }
+.specialCard .action:hover { background: #563980; }
+.specialCard .arrow { color: #eee4fc; }

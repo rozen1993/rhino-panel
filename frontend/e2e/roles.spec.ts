@@ -455,15 +455,21 @@ test("el Histórico navega por año y devuelve el foco del detalle móvil", asyn
   });
   await day.focus();
   await page.keyboard.press("Enter");
-  const dialog = page.getByRole("dialog", {
-    name: "Cobertura audiovisual Norte",
-  });
+  const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
   const close = dialog.getByRole("button", { name: "Cerrar detalle" });
   await expect(close).toBeFocused();
   expect(await page.evaluate(() => document.body.style.overflow)).toBe(
     "hidden",
   );
+  const details = dialog.getByRole("button", {name:/Ver detalles: Grabación · Cobertura audiovisual Norte/});
+  await page.keyboard.press("Tab");
+  await expect(details).toBeFocused();
+  await page.keyboard.press("Enter");
+  const back = dialog.getByRole("button", {name:"Volver a las actividades del día"});
+  await expect(back).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(close).toBeFocused();
   const material = dialog.getByRole("link", { name: "Abrir material ↗" });
   await page.keyboard.press("Tab");
   await expect(material).toBeFocused();
@@ -475,6 +481,10 @@ test("el Histórico navega por año y devuelve el foco del detalle móvil", asyn
   await expect(dialog.locator("summary").filter({ hasText: "Referencia de la actividad" })).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(dialog.getByText("ID: cobertura-norte", { exact: true })).toBeVisible();
+  await page.keyboard.press("Tab");
+  await expect(back).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(details).toBeFocused();
   await page.keyboard.press("Tab");
   await expect(close).toBeFocused();
   await page.keyboard.press("Escape");

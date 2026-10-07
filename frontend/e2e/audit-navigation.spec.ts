@@ -1,6 +1,7 @@
 import {expect,test} from '@playwright/test';
 
 test('conserva abril y búsqueda al abrir/volver y vacía una vista previa filtrada',async({page})=>{
+ await page.setViewportSize({width:1440,height:950});
  await page.route('**/*',route=>new URL(route.request().url()).hostname==='localhost'?route.continue():route.abort());
  await page.goto('/acceso');
  await page.getByRole('listitem').filter({hasText:'Marco Admin'}).getByRole('button',{name:'Ingresar'}).click();

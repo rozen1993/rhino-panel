@@ -5,6 +5,8 @@ Selección: opción 02 de la tercera ronda, sin descripción en la tarjeta. Se c
 - Commit de respaldo anterior al cambio: `a04e1b9`.
 - Entregada normal: petróleo `#124b57`, idéntico al botón Ver detalles.
 - Entregada especial: morado `#674696`, como en la propuesta elegida.
+- Refinamiento del 06/10: Ver detalles también usa `#674696` cuando la actividad es especial; las demás conservan petróleo.
+- Ajuste de tamaño del 06/10: Entregada pasa de 29px a 26px de alto y de 11px a 10,5px de texto solo en el histórico (lista y detalle); fuera del histórico se mantiene el tamaño original.
 - `StatusPill` compartido por paneles, fichas, histórico, contrato, papelera y registros; no se crea un estado nuevo ni cambia el flujo de trabajo.
 - Nuevo CSS de tarjetas aislado para no alterar otros componentes ni los calendarios.
 - Sin migraciones ni modificaciones de datos reales.

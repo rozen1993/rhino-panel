@@ -37,8 +37,14 @@ for (const user of ["admin","ana"] as const) for (const width of [1440,390]) {
     const special=cards.getByRole("article").filter({hasText:fixtures[0].title});
     const normal=cards.getByRole("article").filter({hasText:fixtures[1].title});
     await expect(special.getByText("Entregada",{exact:true})).toHaveCSS("background-color","rgb(103, 70, 150)");
+    await expect(special.getByRole("button",{name:/Ver detalles:/})).toHaveCSS("background-color","rgb(103, 70, 150)");
     await expect(normal.getByText("Entregada",{exact:true})).toHaveCSS("background-color","rgb(18, 75, 87)");
     await expect(normal.getByRole("button",{name:/Ver detalles:/})).toHaveCSS("background-color","rgb(18, 75, 87)");
+    for (const card of [special, normal]) {
+      const badge = card.getByText("Entregada", {exact:true});
+      await expect(badge).toHaveCSS("height", "26px");
+      await expect(badge).toHaveCSS("font-size", "10.5px");
+    }
     const attributes=special.getByRole("list",{name:"Características de la actividad"});
     expect(await attributes.getByRole("listitem").evaluateAll(items=>new Set(items.map(li=>Math.round(li.getBoundingClientRect().top))).size)).toBe(1);
     await panel.screenshot({path:resolve(captures,`${user}-${width}-tarjetas.png`)});
@@ -64,4 +70,5 @@ for(const width of [1440,390]) test(`Aunor: tarjetas y etiqueta compartida a ${w
   await panel.screenshot({path:resolve(captures,`aunor-${width}-tarjetas.png`)});
   await page.goto("/aunor/actividades/cobertura-norte");
   await expect(page.locator('[data-activity-status="Entregada"]').first()).toHaveCSS("background-color","rgb(18, 75, 87)");
+  await expect(page.locator('[data-activity-status="Entregada"]').first()).not.toHaveAttribute("data-compact", "true");
 });

@@ -14,6 +14,7 @@ it("agrupa modalidades y Especial, no muestra descripción y mantiene detalle/re
   const onChoose = vi.fn();
   render(<DetailPanel item={item} choices={[item]} onChoose={onChoose} titleId="panel" today="2026-04-27" />);
   const card = screen.getByRole("article");
+  expect(card.className).toContain("specialCard");
   const attributes = within(card).getByRole("list", { name: "Características de la actividad" });
   expect(within(attributes).getAllByRole("listitem").map(li => li.textContent)).toEqual(["Fotografía", "Video", "Vuelo con dron", "Especial"]);
   expect(within(attributes).getAllByRole("listitem").every(li => li.querySelector('svg[aria-hidden="true"]'))).toBe(true);
@@ -42,6 +43,7 @@ it.each([undefined, null, "standard"] as const)("una edición con clasificación
   const edition = { ...item, type: "Edición" as const, recordingModes: [], classification };
   render(<DetailPanel item={edition} choices={[edition]} onChoose={vi.fn()} titleId="edition" today="2026-04-27" />);
   expect(screen.queryByRole("list", { name: "Características de la actividad" })).toBeNull();
+  expect(screen.getByRole("article").className).not.toContain("specialCard");
   expect(screen.getByText("Entregada").className).toContain("bg-delivered ");
   expect(screen.getByRole("button", { name: /Ver detalles:/ })).toBeTruthy();
 });
