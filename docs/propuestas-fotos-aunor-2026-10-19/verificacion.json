@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-20T00:14:32.523Z",
+  "checks": [
+    {
+      "option": 1,
+      "desktop": "1440x1040",
+      "mobile": [
+        390,
+        320
+      ],
+      "preview": "OK",
+      "search": "OK",
+      "overflow": false
+    },
+    {
+      "option": 2,
+      "desktop": "1440x1040",
+      "mobile": [
+        390,
+        320
+      ],
+      "preview": "OK",
+      "search": "OK",
+      "overflow": false
+    },
+    {
+      "option": 3,
+      "desktop": "1440x1040",
+      "mobile": [
+        390,
+        320
+      ],
+      "preview": "OK",
+      "search": "OK",
+      "overflow": false
+    }
+  ],
+  "pageErrors": []
+}
