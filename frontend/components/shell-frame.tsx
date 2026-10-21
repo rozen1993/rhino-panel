@@ -1,5 +1,6 @@
 "use client";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
+import { safeAunorReturn } from "@/lib/dashboard-navigation";
 import type { ReactNode } from "react";
 import { NavBar, type NavLabel } from "@/components/nav-bar";
 import { TopBar } from "@/components/top-bar";
@@ -17,9 +18,10 @@ export function ShellFrame({
   backHref?: string;
 }) {
   const pathname = usePathname();
+  const search = useSearchParams();
   if (role.id === "aunor") {
-    active = pathname.startsWith("/aunor/contrato") || pathname.startsWith("/aunor/reemplazos") ? "Contrato" : pathname.startsWith("/aunor/historico") || pathname.startsWith("/aunor/calendario") ? "Histórico" : "Actividades";
-    backHref = pathname.startsWith("/aunor/actividades/") ? "/aunor" : pathname.startsWith("/aunor/reemplazos/") ? "/aunor/contrato" : undefined;
+    active = pathname.startsWith("/aunor/fotos") ? "Fotos para redes" : pathname.startsWith("/aunor/contrato") || pathname.startsWith("/aunor/reemplazos") ? "Contrato" : pathname.startsWith("/aunor/historico") || pathname.startsWith("/aunor/calendario") ? "Histórico" : "Actividades";
+    backHref = pathname.startsWith("/aunor/actividades/") ? safeAunorReturn(search.get("volver")) : pathname.startsWith("/aunor/reemplazos/") ? "/aunor/contrato" : undefined;
   }
   const initials = (role.accountName ?? role.label)
     .split(/\s+/)

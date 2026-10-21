@@ -1,5 +1,4 @@
 import { emptyAunorWorkspace, type AunorWorkspace } from "@/lib/aunor";
-import { isCurrentAunorActivity } from "@/lib/aunor-visibility";
 
 export type AunorReadScene = "panel" | "calendar" | "acordado" | "detail" | "replacement" | "admin";
 export type AunorReadScope = { scene: AunorReadScene; id?: string; includeServices?: boolean };
@@ -15,7 +14,7 @@ export function validAunorReadScope(value: unknown): value is AunorReadScope {
 }
 
 // Same scene boundaries for isolated examples and server-side Supabase reads.
-export function scopeAunorWorkspace(w: AunorWorkspace, scope: AunorReadScope, now = Date.now()): AunorWorkspace {
+export function scopeAunorWorkspace(w: AunorWorkspace, scope: AunorReadScope): AunorWorkspace {
   const result = { ...w, messages: [], contractPeriods: ["acordado","admin"].includes(scope.scene) ? w.contractPeriods ?? [] : [] };
   if (scope.scene === "replacement") {
     const r = w.replacements.find(r => r.id === scope.id);
@@ -40,10 +39,13 @@ export function scopeAunorWorkspace(w: AunorWorkspace, scope: AunorReadScope, no
   if (scope.includeServices === false) result.services = [];
   if (scope.scene === "acordado") result.activities = w.activities.map(contractActivitySummary);
   if (scope.scene === "panel") {
-    result.activities = w.activities.filter(a => isCurrentAunorActivity(a,now));
+    // Preview uses the safe activity material link; contract/detail load their
+    // own services and delivery revisions only when opened.
+    result.services = [];
+    result.deliveries = [];
+    result.activities = w.activities;
     const ids = new Set(result.activities.map(a => a.id));
     result.journeys = result.journeys.filter(j => ids.has(j.activity_id));
-    result.deliveries = result.deliveries.filter(d => ids.has(d.activity_id));
   }
   return result;
 }

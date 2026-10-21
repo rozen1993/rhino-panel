@@ -67,7 +67,7 @@ const canonical=(value:AunorWorkspace)=>Object.fromEntries(Object.entries(value)
 it.each(["panel","calendar","acordado","detail","replacement","admin"] as const)("%s conserva exactamente los datos necesarios",async scene=>{
   const scope:AunorReadScope={scene,...(scene==="detail"?{id:w.activities[0].id}:scene==="replacement"?{id:w.replacements[0].id}:{})};
   expect(canonical(await readSupabaseAunor(scope))).toEqual(canonical(scopeAunorWorkspace(w,scope)));
-  if(scene==="panel")expect(calls.sort()).toEqual(["aunor_activities","aunor_deliveries","aunor_journeys","aunor_services"]);
+  if(scene==="panel")expect(calls.sort()).toEqual(["aunor_activities","aunor_journeys"]);
   if(scene==="calendar")expect(calls.sort()).toEqual(["aunor_activities","aunor_journeys","aunor_services"]);
   if(scene==="acordado")expect(calls).not.toContain("aunor_agreements");
 });
@@ -78,7 +78,7 @@ it("mantiene todos los datos con páginas de solo dos filas",async()=>{
 });
 it("permite reutilizar solo el catálogo sin consultar servicios",async()=>{
   const result=await readSupabaseAunor({scene:"panel",includeServices:false});
-  expect(result.services).toEqual([]);expect(calls).toHaveLength(3);expect(calls).not.toContain("aunor_services");
+  expect(result.services).toEqual([]);expect(calls).toHaveLength(2);expect(calls).not.toContain("aunor_services");
 });
 it("un reemplazo inexistente no dispara lecturas relacionadas",async()=>{
   const result=await readSupabaseAunor({scene:"replacement",id:"00000000-0000-4000-8000-999999999999"});
@@ -90,7 +90,7 @@ it("rechaza identificadores que puedan alterar los filtros antes de crear el cli
   expect(mocks.create).not.toHaveBeenCalled();
 });
 
-it("el panel no descarga actividades ni jornadas de entregas fuera de las 72 horas",async()=>{
+it("el panel conserva las entregas antiguas y sus jornadas sin caducidad",async()=>{
   const source=w.activities[0];
   for(let i=0;i<500;i++){
     const id=`00000000-0000-4000-9000-${String(i).padStart(12,'0')}`;
@@ -101,7 +101,8 @@ it("el panel no descarga actividades ni jornadas de entregas fuera de las 72 hor
   expect(canonical(await readSupabaseAunor({scene:'panel'}))).toEqual(canonical(expected));
   expect(transferred.aunor_activities).toBe(expected.activities.length);
   expect(transferred.aunor_journeys).toBe(expected.journeys.length);
-  expect(calls.filter(c=>c==='aunor_activities')).toHaveLength(1);
+  expect(expected.activities).toHaveLength(w.activities.length);
+  expect(expected.journeys).toHaveLength(w.journeys.length);
 });
 
 it("mantiene la paginación cuando hay más de cien actividades vigentes",async()=>{

@@ -1,10 +1,10 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { AunorDashboard } from "@/components/aunor-dashboard";
 import { createAunorExamples } from "@/lib/aunor-examples";
 import { DetailPanel } from "@/components/calendar-detail-panel";
 
-afterEach(()=>{cleanup();vi.useRealTimers();});
+afterEach(()=>{cleanup();vi.useRealTimers();window.history.replaceState(null,'','/');});
 it("muestra una sola tarjeta en el histórico Aunor y conserva su privacidad al abrir y volver", () => {
   const item={id:"single",title:"Una cobertura",type:"Grabación" as const,status:"Programada" as const,
     classification:"standard" as const,place:"Lima",description:"Resumen",materialLink:"",
@@ -22,28 +22,25 @@ it("muestra una sola tarjeta en el histórico Aunor y conserva su privacidad al 
   expect(screen.getAllByRole("article")).toHaveLength(1);
   expect(document.activeElement).toBe(screen.getByRole("button",{name:/Ver detalles:/}));
 });
-it("muestra todos los estados y retira solo la entrega al cumplir las 72 horas",()=>{
-  vi.useFakeTimers();
+it("abre el mes actual y mantiene entregas antiguas y regularizadas sin fecha de cierre",()=>{
   const w=createAunorExamples();
-  const now=Date.parse("2026-09-14T20:00:00Z");
-  vi.setSystemTime(now);
-  w.activities[0].delivered_at=new Date(now-72*3600000+1000).toISOString();
-  w.activities[3].delivered_at="2026-01-01T00:00:00Z";
-  render(<AunorDashboard w={w} today="2026-09-14" initialNow={now}/>);
-  expect(screen.getByRole("button",{name:"Ver detalles: Cobertura audiovisual Norte"})).toBeTruthy();
-  expect(screen.getByRole("button",{name:"Ver detalles: Edición campaña de seguridad vial"})).toBeTruthy();
-  expect(screen.getByRole("button",{name:"Ver detalles: Taller de seguridad vial"})).toBeTruthy();
-  expect(screen.queryByRole("button",{name:/Ver detalles: Registro de señalización/})).toBeNull();
-  act(()=>vi.advanceTimersByTime(1000));
-  expect(screen.queryByRole("button",{name:"Ver detalles: Cobertura audiovisual Norte"})).toBeNull();
+  w.activities[0].delivered_at="2026-01-04T12:00:00Z";
+  w.activities[3].delivered_at=null;
+  window.history.replaceState(null,'','/aunor?periodo=2026-01');
+  render(<AunorDashboard w={w} today="2026-10-19"/>);
+  expect(screen.getAllByRole("button",{name:"Vista rápida de Cobertura audiovisual Norte"}).length).toBeGreaterThan(0);
+  expect(screen.getAllByRole("button",{name:"Vista rápida de Registro de señalización"}).length).toBeGreaterThan(0);
+  expect(screen.queryByRole("button",{name:"Vista rápida de Edición campaña de seguridad vial"})).toBeNull();
+  expect(screen.getByRole('link',{name:'Abrir ficha completa'}).getAttribute('href')).toContain('/aunor/actividades/');
   expect(w.activities).toHaveLength(4);
 });
 it("ofrece filtros y una vista previa sin responsable ni acciones de gestión",()=>{
   const w=createAunorExamples();
-  render(<AunorDashboard w={w} today="2026-09-14" initialNow={Date.parse("2026-09-14")}/>);
+  render(<AunorDashboard w={w} today="2026-01-14"/>);
   fireEvent.change(screen.getByLabelText("Buscar actividad"),{target:{value:"Taller"}});
-  expect(screen.queryByRole("button",{name:/Ver detalles: Edición/})).toBeNull();
-  expect(screen.getByRole("link",{name:/Ver actividad completa/}).getAttribute("href")).toBe("/aunor/actividades/aunor-original");
+  expect(screen.queryByRole("button",{name:/Vista rápida de Edición/})).toBeNull();
+  expect(screen.getByRole("link",{name:/Abrir ficha completa/}).getAttribute("href")).toContain("/aunor/actividades/aunor-original?volver=");
+  expect(window.location.pathname).toBe('/aunor');
   expect(screen.queryByText("Responsable")).toBeNull();
   expect(screen.queryByRole("button",{name:/Eliminar|Confirmar|Planificar|Restablecer/})).toBeNull();
 });

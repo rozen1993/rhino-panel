@@ -13,15 +13,23 @@ export function parseDashboardFilters(search: string, fallback: Pick<DashboardFi
   };
 }
 
-export function dashboardHref(filters: DashboardFilters) {
+export function dashboardHref(filters: DashboardFilters, basePath: "/actividades" | "/aunor" = "/actividades") {
   const params = new URLSearchParams({ periodo: `${filters.year}-${String(filters.month + 1).padStart(2, "0")}` });
   if (filters.query) params.set("buscar", filters.query);
   if (filters.status) params.set("estado", filters.status);
-  return `/actividades?${params}`;
+  return `${basePath}?${params}`;
 }
 
 export function activityDetailHref(id: string, returnTo?: string) {
-  return `/actividades/${encodeURIComponent(id)}${returnTo ? `?volver=${encodeURIComponent(returnTo)}` : ""}`;
+  const basePath = returnTo?.startsWith("/aunor?") ? "/aunor/actividades" : "/actividades";
+  return `${basePath}/${encodeURIComponent(id)}${returnTo ? `?volver=${encodeURIComponent(returnTo)}` : ""}`;
+}
+
+export function safeAunorReturn(value: string | null | undefined) {
+  if (!value?.startsWith("/aunor?")) return "/aunor";
+  const params = new URLSearchParams(value.slice("/aunor?".length));
+  if (!/^(20\d{2})-(0[1-9]|1[0-2])$/.test(params.get("periodo") ?? "")) return "/aunor";
+  return dashboardHref(parseDashboardFilters(params.toString(), {month: 0, year: 2026}), "/aunor");
 }
 
 /** Only the local activity dashboard is an allowed return destination. */

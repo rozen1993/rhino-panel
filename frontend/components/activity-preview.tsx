@@ -16,7 +16,7 @@ const typeIcons: Record<Activity["type"], IconName> = {
 };
 
 /** The editorial preview is read-only; selection, sticky layout and mobile focus stay in the dashboard. */
-export function ActivityPreview({ item, returnTo }: { item: Activity | undefined; returnTo: string }) {
+export function ActivityPreview({ item, returnTo, clientView = false }: { item: Activity | undefined; returnTo: string; clientView?: boolean }) {
   if (!item) return <Card className="p-5 text-sm text-ink-muted">Selecciona una actividad para ver su detalle.</Card>;
   const url = safeMaterialUrl(item.materialLink);
   const first = firstDate(item);
@@ -42,11 +42,13 @@ export function ActivityPreview({ item, returnTo }: { item: Activity | undefined
       </div>
       {multipleDates && <p className={s.dateRange}>{formatActivitySpans(item)}</p>}
       <dl className={s.facts}>
-        <div><dt>Responsable</dt><dd><SystemIcon name="profile" className={s.icon}/><span>{item.responsible || "Sin asignar"}</span></dd></div>
-        <div><dt>Origen</dt><dd>{item.origin === "burson" ? "Burson" : "Ordinaria"}</dd></div>
+        {clientView ? <div><dt>Lugar</dt><dd><SystemIcon name="location" className={s.icon}/><span>{item.place || "Sin lugar indicado"}</span></dd></div> : <>
+          <div><dt>Responsable</dt><dd><SystemIcon name="profile" className={s.icon}/><span>{item.responsible || "Sin asignar"}</span></dd></div>
+          <div><dt>Origen</dt><dd>{item.origin === "burson" ? "Burson" : "Ordinaria"}</dd></div>
+        </>}
       </dl>
       {item.description && <section className={s.summary}><h3>Descripción</h3><p>{item.description}</p></section>}
-      {item.operatorOpinion && <section className={s.summary}><h3>Opinión del operario</h3><p>{item.operatorOpinion}</p></section>}
+      {!clientView && item.operatorOpinion && <section className={s.summary}><h3>Opinión del operario</h3><p>{item.operatorOpinion}</p></section>}
     </div>
     <div className={s.actions}>
       <Link className={s.primary} href={activityDetailHref(item.id, returnTo)}>

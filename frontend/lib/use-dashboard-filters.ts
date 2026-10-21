@@ -11,14 +11,14 @@ function subscribe(listener: () => void) {
 const getSnapshot = () => window.location.search;
 const getServerSnapshot = () => "";
 
-export function useDashboardFilters(period: Pick<DashboardFilters, "month" | "year">) {
+export function useDashboardFilters(period: Pick<DashboardFilters, "month" | "year">, basePath: "/actividades" | "/aunor" = "/actividades") {
   const search = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const filters = parseDashboardFilters(search, period);
   function change(patch: Partial<DashboardFilters>) {
     const next = { ...parseDashboardFilters(window.location.search, period), ...patch };
     // Next integrates native History: no server request for each search keystroke.
-    window.history.replaceState(null, "", dashboardHref(next));
+    window.history.replaceState(null, "", dashboardHref(next, basePath));
     window.dispatchEvent(new Event(eventName));
   }
-  return { filters, change, returnTo: dashboardHref(filters) };
+  return { filters, change, returnTo: dashboardHref(filters, basePath) };
 }

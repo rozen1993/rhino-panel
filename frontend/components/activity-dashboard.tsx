@@ -20,7 +20,7 @@ import type { DataSource } from "@/lib/data-source";
 import type { Role } from "@/lib/roles";
 
 export function touchesMonth(
-  item: SimulatedActivity,
+  item: Activity,
   month: number,
   year: number,
 ) {
@@ -48,7 +48,7 @@ function currentLimaPeriod() {
 }
 
 export function activityYears(
-  activities: readonly SimulatedActivity[],
+  activities: readonly Activity[],
   currentYear: number,
 ) {
   const years = new Set<number>([Math.max(2026, currentYear)]);
@@ -70,7 +70,7 @@ function DashboardTable({
   onSelect,
   query, status, onFilter, total, returnTo,
 }: {
-  activities: SimulatedActivity[];
+  activities: Activity[];
   role: Role;
   selected?: string;
   onSelect: (activity: Activity) => void;
@@ -127,14 +127,14 @@ function DashboardTable({
                 key={item.id}
                 showResponsible={role.seesAllActivities}
                 returnTo={returnTo}
-                onSelect={role.id === "admin" ? onSelect : undefined}
+                onSelect={role.id !== "operario" ? onSelect : undefined}
               />
             ))}
           </div>
           <ActivityTable
             activities={filtered}
             returnTo={returnTo}
-            onSelect={role.id === "admin" ? onSelect : undefined}
+            onSelect={role.id !== "operario" ? onSelect : undefined}
             selectedId={selected}
             showResponsible={role.seesAllActivities}
           />
@@ -152,19 +152,23 @@ export function ActivityDashboard({
   role,
   dataSource = "demo",
   initialActivities = [],
+  clientActivities,
+  initialPeriod,
 }: {
   role: Role;
   dataSource?: DataSource;
   initialActivities?: SimulatedActivity[];
+  clientActivities?: Activity[];
+  initialPeriod?: {year: number; month: number};
 }) {
-  const simulatedActivities = useSimulatedActivities(dataSource === "demo");
-  const sourceActivities =
-    dataSource === "supabase" ? initialActivities : simulatedActivities;
-  const allActivities = useMemo(() => sourceActivities.filter(
-    (item) => !item.deletedAt && canViewActivity(item, role),
-  ), [sourceActivities, role]);
-  const period = currentLimaPeriod();
-  const {filters, change, returnTo} = useDashboardFilters(period);
+  const clientView = role.id === "aunor";
+  const simulatedActivities = useSimulatedActivities(!clientView && dataSource === "demo");
+  const allActivities = useMemo(() => (clientView ? clientActivities ?? [] :
+    dataSource === "supabase" ? initialActivities : simulatedActivities).filter(
+    (item) => !item.deletedAt && (clientView || canViewActivity(item as SimulatedActivity, role)),
+  ), [clientActivities, initialActivities, simulatedActivities, dataSource, role, clientView]);
+  const period = initialPeriod ?? currentLimaPeriod();
+  const {filters, change, returnTo} = useDashboardFilters(period, clientView ? "/aunor" : "/actividades");
   const {month: selectedMonth, year: selectedYear, query, status} = filters;
   const years = useMemo(() => [...new Set([...activityYears(allActivities, period.year), selectedYear])].sort((a,b)=>a-b), [allActivities, period.year, selectedYear]);
   const activities = useMemo(() => allActivities.filter((item) =>
@@ -208,7 +212,7 @@ export function ActivityDashboard({
         <div>
           <p className="data-label text-cyan-ink">Periodo operativo</p>
           <p className="mt-1 text-xs text-ink-muted">
-            Consulta el año actual o actividades planificadas a futuro.
+            Consulta las actividades de cada mes, incluidas las entregadas.
           </p>
         </div>
         <label className="text-xs font-extrabold">
@@ -302,11 +306,11 @@ export function ActivityDashboard({
             selected={selected?.id}
           />
           <aside aria-label="Resumen de actividad" className="sticky top-6 hidden min-w-0 min-[1440px]:block">
-            <ActivityPreview item={selected} returnTo={returnTo} />
+            <ActivityPreview item={selected} returnTo={returnTo} clientView={clientView} />
           </aside>
           {quickView && <dialog ref={dialog} className="fixed inset-x-0 bottom-0 top-auto m-0 max-h-[90dvh] w-full max-w-none overflow-hidden rounded-t-xl border border-line bg-panel p-0 shadow-xl backdrop:bg-night/50 sm:inset-0 sm:m-auto sm:w-[420px] sm:rounded-xl" aria-label="Vista rápida de actividad" onCancel={event => {event.preventDefault();setQuickView(false);}}>
             <header className="flex items-center justify-between border-b border-line px-5 py-3"><strong className="text-sm">Resumen de actividad</strong><button type="button" className="min-h-10 rounded-md border border-line px-3 text-sm" onClick={() => setQuickView(false)}>Cerrar resumen</button></header>
-            <div className="[&>div]:max-h-[calc(90dvh-4.5rem)]"><ActivityPreview item={selected} returnTo={returnTo}/></div>
+            <div className="[&>div]:max-h-[calc(90dvh-4.5rem)]"><ActivityPreview item={selected} returnTo={returnTo} clientView={clientView}/></div>
           </dialog>}
         </div>
       )}

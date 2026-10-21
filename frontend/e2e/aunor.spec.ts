@@ -29,7 +29,7 @@ test("Operario no accede al espacio externo",async({browser})=>{
   for(const user of ["carlos"] as const) {
     const context=await browser.newContext();const page=await context.newPage();
     await login(page,user);
-    for(const path of ["/aunor","/aunor/contrato","/aunor/actividades/cobertura-norte"]) {
+    for(const path of ["/aunor","/aunor/fotos","/aunor/contrato","/aunor/actividades/cobertura-norte"]) {
       await page.goto(path);await expect(page).toHaveURL(/\/sin-acceso$/);
     }
     await context.close();
@@ -37,23 +37,39 @@ test("Operario no accede al espacio externo",async({browser})=>{
 });
 
 test("navegación cliente conserva datos por pantalla y actualiza el panel",async({page})=>{
+  await page.setViewportSize({width:1600,height:1000});
   await login(page,"aunor");
-  await expect(page.locator('a[href="/aunor/actividades/cobertura-norte"]').first()).toBeVisible();
-  const activities=await page.locator('a[href="/aunor/actividades/cobertura-norte"]').count();
+  await page.goto('/aunor?periodo=2026-01');
+  const links=page.locator('a[href^="/aunor/actividades/cobertura-norte?"]');
+  await expect(links.first()).toBeVisible();
+  const activities=await links.count();
   expect(activities).toBeGreaterThan(0);
   await page.getByRole("link",{name:"Histórico",exact:true}).click();
   await expect(page.getByRole("link",{name:"Ver histórico de grabación",exact:true})).toBeVisible();
   await page.getByRole("link",{name:"Actividades",exact:true}).click();
-  await expect(page.locator('a[href="/aunor/actividades/cobertura-norte"]')).toHaveCount(activities);
-  const refreshed=page.waitForResponse(r=>r.request().method()==="POST"&&r.url().endsWith("/aunor"));
+  await page.goto('/aunor?periodo=2026-01');
+  await expect(links).toHaveCount(activities);
+  const refreshed=page.waitForResponse(r=>r.request().method()==="POST"&&new URL(r.url()).pathname==="/aunor");
   await page.getByRole("button",{name:"Actualizar",exact:true}).click();
   expect((await refreshed).ok()).toBe(true);
-  await page.locator('a[href="/aunor/actividades/cobertura-norte"]').first().click();
+  await links.first().click();
   await expect(page.getByRole("heading",{name:"Detalle de actividad",exact:true})).toBeVisible();
   await expect(page.getByRole("button",{name:"Confirmar esta entrega"})).toHaveCount(0);
   await page.getByRole("link",{name:"Contrato",exact:true}).click();
   await expect(page.getByRole("region",{name:"Servicios mensuales",exact:true})).toBeVisible();
-  await expect(page.getByText("Observado: tiene reemplazo",{exact:true}).first()).toBeVisible();
+  await expect(page.getByRole('button',{name:'Periodos y metas'})).toHaveCount(0);
+});
+
+test('Fotos para redes conserva el espacio Aunor y muestra vacío sin inventar fotos',async({page})=>{
+  await login(page,'aunor');
+  await page.getByRole('link',{name:'Fotos para redes',exact:true}).click();
+  await expect(page).toHaveURL(/\/aunor\/fotos$/);
+  await expect(page.getByRole('heading',{name:'Todavía no hay fotos para redes'})).toBeVisible();
+  await expect(page.getByRole('button',{name:'Añadir foto al álbum'})).toHaveCount(0);
+  await expect(page.getByText('Responsable',{exact:true})).toHaveCount(0);
+  await page.setViewportSize({width:390,height:844});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await expect(page.getByRole('link',{name:'Fotos para redes',exact:true})).toHaveAttribute('aria-current','page');
 });
 
 test("Aunor conserva la cabecera durante una navegación lenta",async({page},info)=>{

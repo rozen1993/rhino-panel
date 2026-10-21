@@ -1,5 +1,6 @@
 "use client";
 import { AdminAunorPanel } from "@/components/admin-aunor-panel";
+import { ActivitySocialPhotos } from "@/components/activity-social-photos";
 import { ActivityHistoryControls } from "@/components/activity-history-controls";
 import { ClassificationBadge } from "@/components/classification-badge";
 import { ActivityJourneys } from "@/components/activity-journeys";
@@ -610,6 +611,8 @@ export function ActivityDetail({
           )}
         </Card>
       )}
+
+      {(role.id === "admin" || (role.id === "operario" && role.accountId === item.responsibleAccountId)) && <ActivitySocialPhotos key={item.id} activityId={item.id} demo={dataSource === "demo"}/>}
 
       {role.id !== "burson" && (
         <Card className="overflow-hidden">

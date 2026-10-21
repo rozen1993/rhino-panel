@@ -21,7 +21,7 @@ export async function previewErasureAction(kind: ErasureKind,target: string|null
   if (error || !data) return {ok:false,error:"No se pudo preparar la eliminación. La cuenta debe estar desactivada y sin operaciones pendientes."};
   return {ok:true,preview:data as unknown as ErasurePreview};
 }
-export async function executeErasureAction(kind: ErasureKind,target: string|null,fingerprint: string,password: string,confirmation: string): Promise<{ok:true}|{ok:false;error:string}> {
+export async function executeErasureAction(kind: ErasureKind,target: string|null,fingerprint: string,password: string,confirmation: string): Promise<{ok:true;warning?:string}|{ok:false;error:string}> {
   if ((await currentActiveSupabaseRole())?.id !== "admin" || !validTarget(kind,target)) return {ok:false,error:"Solo Admin puede eliminar definitivamente."};
   if (typeof password!=="string" || password.length<1 || password.length>256 || !/^[a-f0-9]{64}$/.test(fingerprint) || confirmation!==erasureConfirmation) return {ok:false,error:"Revisa la contraseña y escribe la confirmación completa."};
   const supabase = await createSupabaseServerClient();
@@ -37,5 +37,5 @@ export async function executeErasureAction(kind: ErasureKind,target: string|null
   },"No se pudo confirmar la eliminación. Actualiza la página antes de reintentar.")};
   if (data?.ok!==true) return {ok:false,error:"El servidor no confirmó la eliminación."};
   revalidatePath("/","layout");
-  return {ok:true};
+  return {ok:true,...(data.photosCleanupPending?{warning:"Los registros se eliminaron. Queda pendiente liberar algunos archivos de fotos; se reintentará en la siguiente limpieza autorizada."}:{})};
 }

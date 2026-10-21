@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 import type { ReactNode } from "react";
 const mocks=vi.hoisted(()=>({path:"/aunor",pending:false}));
-vi.mock("next/navigation",()=>({usePathname:()=>mocks.path}));
+vi.mock("next/navigation",()=>({usePathname:()=>mocks.path,useSearchParams:()=>new URLSearchParams()}));
 vi.mock("next/link",()=>({useLinkStatus:()=>({pending:mocks.pending}),default:({prefetch,children,...props}:{prefetch?:boolean|null;children:ReactNode})=><a {...props} data-prefetch={prefetch===null?"auto":String(prefetch)}>{children}</a>}));
 vi.mock("@/app/acceso/actions",()=>({salir:vi.fn()}));
 import { IntentLink } from "@/components/intent-link";

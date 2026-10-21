@@ -1,0 +1,19 @@
+{
+  "environment": "isolated demo, synthetic photographs",
+  "widths": [
+    1600,
+    390
+  ],
+  "overflow": false,
+  "pageErrors": [],
+  "albumDownload": "fotos-aunor-2026-10.zip",
+  "checks": [
+    "Aunor read-only",
+    "no responsible identity",
+    "empty state",
+    "3 albums",
+    "viewer selection",
+    "Escape",
+    "ZIP download"
+  ]
+}

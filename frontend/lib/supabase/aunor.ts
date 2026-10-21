@@ -4,7 +4,6 @@ import { contractActivitySummary, scopeAunorWorkspace, validAunorReadScope, type
 import { isUuid } from "@/lib/uuid";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { collectCursorPages } from "@/lib/cursor-pages";
-import { AUNOR_DELIVERY_WINDOW_MS } from "@/lib/aunor-visibility";
 import { chunkValues, mapWithConcurrency, supabaseBatchConcurrency } from "@/lib/supabase/pagination";
 
 export async function readSupabaseAunor(scope: AunorReadScope = {scene:"admin"}): Promise<AunorWorkspace> {
@@ -23,13 +22,11 @@ export async function readSupabaseAunor(scope: AunorReadScope = {scene:"admin"})
   const chosen = replacement ? await readReplacements() : [];
   if (replacement && !chosen.length) return emptyAunorWorkspace();
   const activityIds = replacement ? [chosen[0].original_activity_id,chosen[0].substitute_activity_id] : detail ? [scope.id!] : null;
-  const now = Date.now();
   const activitiesRequest = collectCursorPages<AunorWorkspace["activities"][number]>(last => {
       let query = db.from("aunor_activities").select(scope.scene === "acordado"
         ? "id,type,title,status,service_id,not_performed_reason,publication_version,published_at,unread_count,delivered_at,classification,delivery_due_on,historical_regularized_at,contract_period_id"
         : "id,type,title,status,place,summary,service_id,not_performed_reason,publication_version,published_at,unread_count,delivered_at,material_link,recording_modes,classification,delivery_due_on,historical_regularized_at,contract_period_id" as string,{count:"exact"}).order("id").limit(1000);
       if (activityIds) query = query.in("id",activityIds);
-      if (scope.scene === "panel") query = query.or(`status.neq.Entregada,delivered_at.gt.${new Date(now - AUNOR_DELIVERY_WINDOW_MS).toISOString()}`);
       if(last) query = query.gt("id", last.id);
       return query.returns<AunorWorkspace["activities"]>().then(result => ({...result, data: result.data?.map(row => scope.scene === "acordado" ? contractActivitySummary(row) : row) ?? null}));
     }, row => row.id);
@@ -42,12 +39,12 @@ export async function readSupabaseAunor(scope: AunorReadScope = {scene:"admin"})
   }
   const [activities,services,deliveries,agreements,replacements,journeys,contractPeriods] = await Promise.all([
     activitiesRequest,
-    scope.includeServices === false || replacement ? Promise.resolve([]) : collectCursorPages<AunorWorkspace["services"][number]>(last => {
+    scope.includeServices === false || replacement || scope.scene === "panel" ? Promise.resolve([]) : collectCursorPages<AunorWorkspace["services"][number]>(last => {
       let query = db.from("aunor_services").select("id,position,label,reference",{count:"exact"}).order("id").limit(200);
       if(last) query = query.gt("id", last.id);
       return query;
     }, row => row.id),
-    !["panel","detail","admin"].includes(scope.scene) ? Promise.resolve([]) : related(ids => collectCursorPages<AunorWorkspace["deliveries"][number]>(last => {
+    !["detail","admin"].includes(scope.scene) ? Promise.resolve([]) : related(ids => collectCursorPages<AunorWorkspace["deliveries"][number]>(last => {
       let query = db.from("aunor_deliveries").select("id,activity_id,version,material_link,label,published_at,confirmed_at,confirmed_by,is_current",{count:"exact"}).order("id").limit(200);
       if (detail) query = query.eq("activity_id",scope.id!);
       if (scope.scene === "panel") query = query.eq("is_current",true);
@@ -75,5 +72,5 @@ export async function readSupabaseAunor(scope: AunorReadScope = {scene:"admin"})
       return query;
     },row=>row.id) : Promise.resolve([]),
   ]);
-  return scopeAunorWorkspace({ activities,journeys,services:services.sort((a,b)=>a.position-b.position),deliveries,agreements,replacements,messages:[],contractPeriods },scope,now);
+  return scopeAunorWorkspace({ activities,journeys,services:services.sort((a,b)=>a.position-b.position),deliveries,agreements,replacements,messages:[],contractPeriods },scope);
 }

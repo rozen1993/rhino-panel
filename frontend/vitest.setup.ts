@@ -6,6 +6,7 @@ import { afterEach } from "vitest";
 // los elementos de la anterior.
 afterEach(() => {
   cleanup();
+  if (typeof window === "undefined") return;
   window.localStorage.clear();
   document.cookie = "rhino_cuentas_simuladas=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
   document.cookie = "rhino_cuenta_prueba=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
