@@ -45,7 +45,7 @@ export function ErasureControl({kind,target=null,label,dataSource,onDeleted}: {
     {open && <dialog ref={dialog} aria-label={title} onCancel={event=>{event.preventDefault();close();}}
       className="fixed inset-0 m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-xl overflow-y-auto rounded-[10px] border border-line bg-panel p-5 text-ink shadow-[var(--shadow-3)] backdrop:bg-night/65">
       <div className="flex items-start justify-between gap-3"><div><p className="data-label text-red">Eliminación irreversible</p><h2 className="section-title mt-1 text-2xl">{title}</h2>{label&&<p className="mt-2 break-words text-sm font-bold">{label}</p>}</div><button type="button" aria-label="Cancelar eliminación" disabled={pending} onClick={close} className="min-h-11 min-w-11 rounded-full border border-line">×</button></div>
-      <p className="mt-4 text-sm leading-6">Se borrarán los registros indicados, sus fotos para redes, mensajes, entregas e historial de la plataforma. No podrán restaurarse desde la papelera.</p>
+      <p className="mt-4 text-sm leading-6">Se borrarán los registros indicados, sus vínculos de Social, mensajes, entregas e historial de la plataforma. No podrán restaurarse desde la papelera. No se borran fotos ni carpetas de OneDrive.</p>
       <p className="mt-2 text-xs leading-5 text-ink-muted">No elimina archivos enlazados en OneDrive ni copias de respaldo externas.</p>
       {dataSource!=="supabase"?<p className="mt-4 text-sm">Esta operación requiere la conexión segura a Supabase; no está habilitada en la demostración.</p>:<>
         {!preview&&!error&&<p role="status" className="mt-4 text-sm">Calculando los datos afectados…</p>}

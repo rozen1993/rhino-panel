@@ -1,71 +1,36 @@
-// Isolated demo UI only. No real database or accounts.
+// Isolated demo UI only, no user database or production account access.
 import {chromium} from 'playwright';
-import {mkdir,writeFile,copyFile,unlink} from 'node:fs/promises';
-import {constants} from 'node:fs';
+import {mkdir,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import assert from 'node:assert/strict';
-const base='http://localhost:3130';
-const out=resolve('../docs/implementacion-fotos-aunor-2026-10-20');
-const artifacts=resolve('.verificacion/fotos-aunor');
-const route=resolve('app/aunor/(workspace)/fotos/visual-check/page.tsx');
+const base='http://localhost:3130',out=resolve('../docs/implementacion-social-onedrive-2026-10-20');
 await mkdir(out,{recursive:true});
-await mkdir(artifacts,{recursive:true});
-await mkdir(resolve(route,'..'),{recursive:true});
-// Refuse to overwrite a route that somebody else created.
-await copyFile(resolve('scripts/fixtures/social-photos-page.tsx.txt'),route,constants.COPYFILE_EXCL);
-const browser=await chromium.launch({headless:true});
-const errors=[];
-try{
- const context=await browser.newContext({viewport:{width:1600,height:1050}});
- const page=await context.newPage();
+const browser=await chromium.launch({headless:true}),errors=[];
+try {
+ const context=await browser.newContext({viewport:{width:1600,height:1050}}),page=await context.newPage();
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto(base+'/acceso');
  await page.getByRole('listitem').filter({hasText:'Aunor'}).getByRole('button',{name:'Ingresar'}).click();
- await page.locator('#usuario').fill('aunor');
- await page.locator('#clave').fill('aunor2026');
- await page.getByRole('button',{name:'Entrar',exact:true}).click();
- await page.waitForURL(url=>url.pathname==='/aunor');
- await page.goto(base+'/aunor?periodo=2026-01');
- await page.getByRole('heading',{name:'Actividades',exact:true}).waitFor();
- await page.getByText('3 de 3 actividades visibles',{exact:true}).waitFor();
- await page.screenshot({path:out+'/actividades-aunor-1600.png',fullPage:true});
+ await page.locator('#usuario').fill('aunor');await page.locator('#clave').fill('aunor2026');
+ await page.getByRole('button',{name:'Entrar',exact:true}).click();await page.waitForURL(url=>url.pathname==='/aunor');
+ await page.getByRole('link',{name:'Social',exact:true}).click();
+ await page.getByRole('heading',{name:'Social',exact:true}).waitFor();
+ await page.getByRole('button',{name:'Ver muestra de Charla de seguridad vial'}).waitFor();
+ await page.evaluate(()=>Promise.all([...document.images].map(img=>img.decode())));
+ assert.equal(await page.getByRole('article').count(),3);
+ assert.equal(await page.getByRole('button',{name:'Carpeta pendiente'}).count(),3);
  assert.equal(await page.getByText('Responsable',{exact:true}).count(),0);
- assert.equal(await page.getByRole('button',{name:'Planificar actividad',exact:true}).count(),0);
- await page.getByRole('link',{name:'Abrir ficha completa',exact:true}).first().click();
- await page.getByRole('heading',{name:'Detalle de actividad',exact:true}).waitFor();
- assert.match(await page.getByRole('link',{name:'Volver',exact:true}).getAttribute('href'),/periodo=2026-01/);
- await page.getByRole('link',{name:'Volver',exact:true}).click();
- await page.getByText('3 de 3 actividades visibles',{exact:true}).waitFor();
- await page.getByRole('link',{name:'Fotos para redes',exact:true}).click();
- await page.getByRole('heading',{name:'Todavía no hay fotos para redes'}).waitFor();
- await page.screenshot({path:out+'/fotos-vacio-1600.png',fullPage:true});
- await page.route('**/api/fotos/**',async route=>{
-   const id=Number(new URL(route.request().url()).pathname.split('/').at(-1).slice(-12));
-   const name=['seguridad','puente','voluntariado'][Math.floor((id-100)/3)];
-   await route.fulfill({path:resolve(`../docs/propuestas-fotos-aunor-2026-10-19/assets/${name}.png`),contentType:'image/jpeg'});
- });
- await page.goto(base+'/aunor/fotos/visual-check');
- await page.getByRole('button',{name:'Ver fotos de Charla de seguridad vial',exact:true}).waitFor();
- await page.evaluate(()=>Promise.all([...document.images].map(img=>img.decode().catch(()=>{}))));
- assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
- await page.screenshot({path:out+'/fotos-1600.png',fullPage:true});
- await page.getByRole('button',{name:'Ver fotos de Charla de seguridad vial',exact:true}).click();
- await page.getByRole('dialog').waitFor();
- await page.getByRole('button',{name:'Seleccionar foto 2',exact:true}).click();
- await page.getByRole('button',{name:'Seleccionar foto 2',exact:true}).getAttribute('aria-pressed').then(v=>assert.equal(v,'true'));
- await page.screenshot({path:out+'/visor-1600.png'});
- await page.keyboard.press('Escape');
- assert.equal(await page.getByRole('dialog').count(),0);
- const [download]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Descargar álbum de Charla de seguridad vial'}).click()]);
- await download.saveAs(artifacts+'/album-sintetico-test.zip');
- await page.setViewportSize({width:390,height:844});
- assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
- await page.screenshot({path:out+'/fotos-390.png',fullPage:true});
- await page.getByRole('button',{name:'Ver fotos de Charla de seguridad vial',exact:true}).click();
- await page.getByRole('dialog').waitFor();
- assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
- await page.screenshot({path:out+'/visor-390.png'});
- await page.getByRole('button',{name:'Cerrar',exact:true}).click();
+ assert.equal(await page.getByRole('link',{name:/Descargar/}).count(),0);
+ for(const width of [1600,390]){
+   await page.setViewportSize({width,height:width===390?844:1050});
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+   await page.screenshot({path:out+`/social-${width}.png`,fullPage:true});
+   await page.getByRole('button',{name:'Ver muestra de Charla de seguridad vial'}).click();
+   await page.getByRole('dialog').waitFor();await page.evaluate(()=>Promise.all([...document.images].map(img=>img.decode())));
+   await page.screenshot({path:out+`/muestra-${width}.png`});
+   await page.keyboard.press('Escape');assert.equal(await page.getByRole('dialog').count(),0);
+ }
  assert.deepEqual(errors,[]);
- await writeFile(out+'/verificacion-visual.json',JSON.stringify({environment:'isolated demo, synthetic photographs',widths:[1600,390],overflow:false,pageErrors:errors,albumDownload:download.suggestedFilename(),checks:['Aunor read-only','no responsible identity','empty state','3 albums','viewer selection','Escape','ZIP download']},null,2));
-} finally {await browser.close();await unlink(route);}
+ await writeFile(out+'/verificacion-visual.json',JSON.stringify({environment:'isolated demo, generated sample images',widths:[1600,390],overflow:false,pageErrors:errors,checks:['Social navigation','3 separate examples','no invented folder links','no download','no responsible identity','image preview','Escape']},null,2));
+ console.log('PASS Social desktop/mobile, 3 samples, dialog, no overflow or JS errors');
+} finally {await browser.close();}

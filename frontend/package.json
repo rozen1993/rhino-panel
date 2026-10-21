@@ -14,7 +14,7 @@
     "lint": "eslint .",
     "preflight:deploy": "node scripts/check-deployment-readiness.mjs",
     "render:chat-plan": "node scripts/render-chat-plan.mjs",
-    "test:functions": "npx --yes deno@2.9.6 test --no-lock --node-modules-dir=none --allow-env ../supabase/functions/admin-accounts/index_test.ts ../supabase/functions/change-temporary-password/index_test.ts ../supabase/functions/_shared/credential-operation_test.ts ../supabase/functions/social-photo-upload/index_test.ts",
+    "test:functions": "npx --yes deno@2.9.6 test --no-lock --node-modules-dir=none --allow-env ../supabase/functions/admin-accounts/index_test.ts ../supabase/functions/change-temporary-password/index_test.ts ../supabase/functions/_shared/credential-operation_test.ts",
     "verify:supabase:local": "node scripts/verify-aunor.mjs",
     "test": "vitest run --maxWorkers=1",
     "test:e2e": "playwright test",
@@ -26,8 +26,7 @@
     "@supabase/supabase-js": "^2.112.3",
     "next": "16.3.8",
     "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "sharp": "0.35.5"
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",

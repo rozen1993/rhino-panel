@@ -1,15 +1,22 @@
-import type {Activity} from "./activities";
-export const SOCIAL_PHOTO_BUCKET = "activity-social-photos";
-export const SOCIAL_PHOTO_MAX_BYTES = 3 * 1024 * 1024;
-export type SocialPhoto = {id:string;activity_id:string;caption:string;width:number;height:number;byte_size:number;state:"pending"|"ready";version:number;archived_at:string|null;created_at:string};
-export type SocialAlbum = {id:string;title:string;type:Activity["type"];place:string;spans:Activity["spans"];deliveryDueOn?:string|null;photos:SocialPhoto[]};
-export function socialPhotoUrl(photo:Pick<SocialPhoto,"id"|"version">, variant:"thumb"|"image"|"download"="thumb") {
-  return `/api/fotos/${encodeURIComponent(photo.id)}?variant=${variant}&v=${photo.version}`;
+import type {Activity} from './activities';
+export type SocialPhoto = {id:string;caption:string;previewUrl:string};
+export type SocialAlbum = {id:string;title:string;type:Activity['type'];place:string;spans:Activity['spans'];deliveryDueOn?:string|null;photos:SocialPhoto[];folderUrl?:string|null;sample?:boolean};
+export type SocialFolder = {activity_id:string;folder_url:string;version:number;updated_at:string};
+
+/** Navigation only: never fetch sharing links or change Microsoft permissions. */
+export function safeOneDriveFolder(value:string):string|null {
+  try {
+    if(/[\u0000-\u0020\\]/.test(value.trim()))return null;
+    const url=new URL(value.trim());
+    const host=url.hostname.toLowerCase();
+    const allowed=host==='1drv.ms'||host==='onedrive.live.com'||/^[a-z0-9-]+\.sharepoint\.com$/.test(host);
+    const hasTarget=url.pathname!=='/'||(host==='onedrive.live.com'&&Boolean(url.searchParams.get('id')||url.searchParams.get('resid')));
+    return value.length<=3000&&allowed&&url.protocol==='https:'&&!url.username&&!url.password&&!url.port&&hasTarget?url.href:null;
+  } catch {return null;}
 }
-export function photoOperationError(code?:string) {
-  if(code==='SR013')return 'Esta actividad ya tiene 3 fotos. Retira una antes de añadir otra.';
-  if(code==='SR001')return 'Las fotos cambiaron. Actualiza la ficha antes de continuar.';
-  if(code==='SR002')return 'No tienes permiso para modificar las fotos de esta actividad.';
-  if(code==='PGRST202'||code==='42P01'||code==='PGRST205')return 'Fotos para redes todavía no está habilitado en este servidor.';
-  return 'No se pudo guardar la foto. Puedes volver a intentarlo con el mismo archivo.';
+export function socialFolderError(code?:string) {
+  if(code==='SR001')return 'La carpeta cambió. Actualiza antes de guardar.';
+  if(code==='SR002')return 'No tienes permiso para vincular esta actividad.';
+  if(code==='PGRST202'||code==='42P01'||code==='PGRST205')return 'La configuración de Social todavía no está habilitada en este servidor.';
+  return 'No se pudo guardar el vínculo. Vuelve a intentarlo.';
 }

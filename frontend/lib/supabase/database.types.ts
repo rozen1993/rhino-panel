@@ -155,14 +155,12 @@ export type Database = {
         Relationships: [];
       };
     };
-    Views: AunorViews & { activity_social_photos: {Row:import("@/lib/social-photos").SocialPhoto;Relationships:[]}; team_historical_activities: {
+    Views: AunorViews & { activity_social_folders: {Row:import("@/lib/social-photos").SocialFolder;Relationships:[]}; team_historical_activities: {
       Row: Pick<Database["public"]["Tables"]["activities"]["Row"], "id" | "version" | "type" | "title" | "responsible_name" | "status" | "origin" | "description" | "place" | "material_link" | "operator_opinion" | "recording_modes" | "classification" | "delivery_due_on" | "historical_regularized_at"> & { spans: Json; first_date: string; last_date: string };
       Relationships: [];
     } };
     Functions: {
-      prepare_social_photo_v1: {Args:{p_activity_id:string;p_photo_id:string;p_digest:string;p_caption:string;p_width:number;p_height:number;p_byte_size:number;p_thumb_size:number};Returns:Json};
-      finish_social_photo_v1: {Args:{p_photo_id:string};Returns:undefined};
-      set_social_photo_archived_v1: {Args:{p_photo_id:string;p_expected_version:number;p_archived:boolean};Returns:undefined};
+      save_social_folder_v1: {Args:{p_activity_id:string;p_folder_url:string;p_expected_version:number};Returns:undefined};
       register_historical_activity_v1: { Args: {p_request_id:string;p_payload:Json}; Returns: Json };
       save_admin_activity_bundle_v1: {
         Args: { p_command:string; p_activity_id:string; p_request_id:string; p_payload:Json };

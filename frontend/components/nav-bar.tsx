@@ -3,7 +3,7 @@ import { SystemIcon, type IconName } from "@/components/system-icon";
 import type { Role } from "@/lib/roles";
 
 export type NavLabel =
-  "Actividades" | "Burson" | "Cuentas" | "Histórico" | "Papelera" | "Mi panel" | "Contrato" | "Mensajes" | "Fotos para redes";
+  "Actividades" | "Burson" | "Cuentas" | "Histórico" | "Papelera" | "Mi panel" | "Contrato" | "Mensajes" | "Social";
 const destinations: {
   label: NavLabel;
   short: string;
@@ -12,7 +12,7 @@ const destinations: {
   when: (role: Role) => boolean;
 }[] = [
   { label: "Actividades", short: "Actividades", icon: "activities", href: "/aunor", when: (role) => role.id === "aunor" },
-  { label: "Fotos para redes", short: "Fotos", icon: "camera", href: "/aunor/fotos", when: (role) => role.id === "aunor" },
+  { label: "Social", short: "Social", icon: "camera", href: "/aunor/fotos", when: (role) => role.id === "aunor" },
   { label: "Histórico", short: "Histórico", icon: "calendar", href: "/aunor/historico", when: (role) => role.id === "aunor" },
   { label: "Contrato", short: "Contrato", icon: "complete", href: "/aunor/contrato", when: (role) => role.id === "aunor" },
   {

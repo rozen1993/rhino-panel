@@ -20,7 +20,7 @@ export function ShellFrame({
   const pathname = usePathname();
   const search = useSearchParams();
   if (role.id === "aunor") {
-    active = pathname.startsWith("/aunor/fotos") ? "Fotos para redes" : pathname.startsWith("/aunor/contrato") || pathname.startsWith("/aunor/reemplazos") ? "Contrato" : pathname.startsWith("/aunor/historico") || pathname.startsWith("/aunor/calendario") ? "Histórico" : "Actividades";
+    active = pathname.startsWith("/aunor/fotos") ? "Social" : pathname.startsWith("/aunor/contrato") || pathname.startsWith("/aunor/reemplazos") ? "Contrato" : pathname.startsWith("/aunor/historico") || pathname.startsWith("/aunor/calendario") ? "Histórico" : "Actividades";
     backHref = pathname.startsWith("/aunor/actividades/") ? safeAunorReturn(search.get("volver")) : pathname.startsWith("/aunor/reemplazos/") ? "/aunor/contrato" : undefined;
   }
   const initials = (role.accountName ?? role.label)

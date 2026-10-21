@@ -60,16 +60,18 @@ test("navegación cliente conserva datos por pantalla y actualiza el panel",asyn
   await expect(page.getByRole('button',{name:'Periodos y metas'})).toHaveCount(0);
 });
 
-test('Fotos para redes conserva el espacio Aunor y muestra vacío sin inventar fotos',async({page})=>{
+test('Social conserva el espacio Aunor y separa los ejemplos de las carpetas reales',async({page})=>{
   await login(page,'aunor');
-  await page.getByRole('link',{name:'Fotos para redes',exact:true}).click();
+  await page.getByRole('link',{name:'Social',exact:true}).click();
   await expect(page).toHaveURL(/\/aunor\/fotos$/);
-  await expect(page.getByRole('heading',{name:'Todavía no hay fotos para redes'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'Todavía no hay carpetas vinculadas'})).toBeVisible();
+  await expect(page.getByRole('article')).toHaveCount(3);
+  await expect(page.getByRole('button',{name:'Carpeta pendiente'})).toHaveCount(3);
   await expect(page.getByRole('button',{name:'Añadir foto al álbum'})).toHaveCount(0);
   await expect(page.getByText('Responsable',{exact:true})).toHaveCount(0);
   await page.setViewportSize({width:390,height:844});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
-  await expect(page.getByRole('link',{name:'Fotos para redes',exact:true})).toHaveAttribute('aria-current','page');
+  await expect(page.getByRole('link',{name:'Social',exact:true})).toHaveAttribute('aria-current','page');
 });
 
 test("Aunor conserva la cabecera durante una navegación lenta",async({page},info)=>{

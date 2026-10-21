@@ -1,5 +1,7 @@
 # Aunor: actividades permanentes y Fotos para redes
 
+> **Actualización del 21/10/2026:** el apartado fotográfico de este documento fue sustituido, antes de publicarse, por [Social con carpetas OneDrive](../implementacion-social-onedrive-2026-10-20/README.md). No ejecutar el despliegue de Storage/Edge descrito debajo. La parte de actividades permanentes sigue vigente. Este documento conserva la evidencia histórica de la primera implementación local.
+
 Implementación local de la propuesta 01 aprobada. Fecha: 20 de octubre de 2026.
 Respaldo previo del código: `bf8abce`. Un commit no sustituye un respaldo de la base de datos.
 

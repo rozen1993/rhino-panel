@@ -1,0 +1,18 @@
+{
+  "environment": "isolated demo, generated sample images",
+  "widths": [
+    1600,
+    390
+  ],
+  "overflow": false,
+  "pageErrors": [],
+  "checks": [
+    "Social navigation",
+    "3 separate examples",
+    "no invented folder links",
+    "no download",
+    "no responsible identity",
+    "image preview",
+    "Escape"
+  ]
+}

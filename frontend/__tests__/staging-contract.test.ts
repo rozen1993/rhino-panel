@@ -20,8 +20,8 @@ describe("contrato de staging", () => {
     expect(config.match(/enable_signup = false/g)).toHaveLength(3);
     expect(config).toMatch(/\[db\.seed\][\s\S]*?enabled = false/);
     expect(config).toMatch(/\[realtime\]\r?\nenabled = false/);
-    expect(config).toMatch(/\[storage\]\r?\nenabled = true/);
-    expect(config).toMatch(/\[functions\.social-photo-upload\]\r?\nverify_jwt = true/);
+    expect(config).toMatch(/\[storage\]\r?\nenabled = false/);
+    expect(config).not.toContain('[functions.social-photo-upload]');
   });
 
   it("acerca Vercel a Supabase Oregon", () => {

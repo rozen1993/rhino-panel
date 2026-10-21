@@ -27,7 +27,7 @@ try {
  const files=readdirSync(migrations).filter(f=>f.endsWith('.sql')).sort();
  const performanceMigration='202609300003_contract_read_performance.sql';
  const defaultsMigration='202610010001_activity_presentation_defaults.sql';
- const photosMigration='202610190001_activity_social_photos.sql';
+ const photosMigration='202610200001_social_onedrive.sql';
  if(files.at(-1)!==photosMigration)throw Error('Review migration boundary');
  for(const f of files.filter(f=>f<performanceMigration))sql(readFileSync(migrations+'/'+f,'utf8'));
  console.log('PASS migration chain before read optimization');

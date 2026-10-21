@@ -1,34 +1,31 @@
-"use client";
-/* eslint-disable @next/next/no-img-element -- Authenticated photographs must not enter the public optimizer cache. */
+'use client';
 import {useState} from 'react';
-import {listActivityPhotos,archiveActivityPhoto} from '@/app/actividades/photo-actions';
-import {type SocialPhoto,socialPhotoUrl} from '@/lib/social-photos';
+import {readSocialFolder,saveSocialFolder} from '@/app/actividades/photo-actions';
+import {safeOneDriveFolder} from '@/lib/social-photos';
+import {SystemIcon} from './system-icon';
 import s from './social-photos.module.css';
+
 export function ActivitySocialPhotos({activityId,demo=false}:{activityId:string;demo?:boolean}) {
- const [photos,setPhotos]=useState<SocialPhoto[]>([]),[loaded,setLoaded]=useState(false),[busy,setBusy]=useState(false),[message,setMessage]=useState('');
- const [caption,setCaption]=useState('');const [file,setFile]=useState<File|null>(null);const [inputKey,setInputKey]=useState(0);
- async function refresh(){setBusy(true);try{const result=await listActivityPhotos(activityId);if(result.ok){setPhotos(result.photos);setLoaded(true);}else setMessage(result.error);}catch{setMessage('No se pudieron cargar las fotos. Vuelve a intentarlo.');}finally{setBusy(false);}}
- async function upload(e:React.FormEvent){e.preventDefault();if(!file)return;setBusy(true);setMessage('Preparando la foto…');try{const data=new FormData();data.set('file',file);data.set('activityId',activityId);data.set('caption',caption.trim());const response=await fetch('/api/fotos/upload',{method:'POST',body:data});const result=await response.json();if(!result.ok)throw Error(result.error??'No se pudo guardar la foto.');setFile(null);setCaption('');setInputKey(k=>k+1);setMessage('Foto guardada. Aunor ya puede consultarla en Fotos para redes.');await refresh();}catch(error){setMessage(error instanceof Error?error.message:'No se pudo guardar. Inténtalo nuevamente.');}finally{setBusy(false);}}
- async function archive(photo:SocialPhoto,value:boolean){setBusy(true);setMessage('');try{const result=await archiveActivityPhoto(photo.id,photo.version,value);if(!result.ok)setMessage(result.error??'No se pudo actualizar.');else{setMessage(value?'Foto retirada del álbum. Puedes restaurarla más abajo.':'Foto restaurada.');await refresh();}}catch{setMessage('No se pudo actualizar la foto.');}finally{setBusy(false);}}
- const active=photos.filter(p=>!p.archived_at),retired=photos.filter(p=>p.archived_at);
- const card=(photo:SocialPhoto)=><article className={s.managedPhoto} key={photo.id}>{photo.state==='ready'?<img src={socialPhotoUrl(photo)} alt={photo.caption} loading="lazy"/>:<div className={s.pending}>Carga pendiente</div>}<p>{photo.caption}</p><button className={s.secondary} disabled={busy} onClick={()=>void archive(photo,!photo.archived_at)}>{photo.archived_at?'Restaurar':'Retirar del álbum'}</button></article>;
- return <details className={s.manager} onToggle={e=>{if(e.currentTarget.open&&!loaded&&!busy&&!demo)void refresh();}}>
-   <summary>Fotos para redes<span>{loaded?`${active.filter(p=>p.state==='ready').length} de 3 fotos`:'Abrir álbum'}</span></summary>
-   <p className={s.managerIntro}>Añade 2–3 fotos seleccionadas de esta actividad para las redes de Aunor.</p>
-   {demo?<p className={s.notice}>Demostración: la carga real se habilita al conectar el almacenamiento privado.</p>:<>
-    {message&&<p className={s.notice} role="status">{message}</p>}
-    {!loaded?<button className={s.secondary} disabled={busy} onClick={()=>void refresh()}>{busy?'Cargando…':'Cargar fotos'}</button>:<>
-      {!!active.length&&<div className={s.managedPhotos}>{active.map(card)}</div>}
-      {active.some(p=>p.state==='pending')&&<p className={s.notice}>Una carga quedó pendiente. Selecciona el mismo archivo para reintentar o retírala del álbum.</p>}
-      {(active.length<3||active.some(p=>p.state==='pending'))&&<form className={s.uploadForm} onSubmit={upload}>
-        <label>Fotografía<input key={inputKey} type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} required onChange={e=>{const selected=e.target.files?.[0]??null;if(selected&&selected.size>4*1024*1024){setMessage('Usa una foto de hasta 4 MB.');setFile(null);e.target.value='';return;}setFile(selected);}}/></label>
-        <label>Descripción breve de la foto<input required maxLength={160} value={caption} disabled={busy} onChange={e=>setCaption(e.target.value)} placeholder="Ej. Participantes durante la charla de seguridad"/></label>
-        <p>JPG, PNG o WebP · hasta 4 MB. Guardamos una copia optimizada para redes, sin datos de cámara ni ubicación GPS. Conserva tu archivo original.</p>
-        <button className={s.primary} disabled={busy||!file||!caption.trim()}>{busy?'Guardando…':'Añadir foto al álbum'}</button>
-      </form>}
-      {active.length>=3&&!active.some(p=>p.state==='pending')&&<p className={s.managerIntro}>La selección está completa. Para cambiar una foto, retírala y añade la nueva.</p>}
-      {!!retired.length&&<details className={s.retired}><summary>Fotos retiradas ({retired.length})</summary><p>Se conservan para poder restaurarlas. No son visibles para Aunor.</p><div className={s.managedPhotos}>{retired.map(card)}</div></details>}
-    </>}
-   </>}
- </details>;
+  const [url,setUrl]=useState(''),[version,setVersion]=useState(0),[loaded,setLoaded]=useState(false),[busy,setBusy]=useState(false),[message,setMessage]=useState('');
+  async function load() {
+    if(demo){setLoaded(true);return;}
+    setBusy(true);
+    try {const result=await readSocialFolder(activityId);if(!result.ok){setMessage(result.error);return;}setUrl(result.folder?.folder_url??'');setVersion(result.folder?.version??0);setLoaded(true);}
+    catch {setMessage('No se pudo consultar la carpeta. Vuelve a abrir esta sección para reintentar.');}
+    finally {setBusy(false);}
+  }
+  const safeUrl=safeOneDriveFolder(url);
+  return <details className={s.manager} onToggle={e=>{if(e.currentTarget.open&&!loaded&&!busy)void load();}}>
+    <summary>Social<span>Carpeta de OneDrive</span></summary>
+    <p className={s.managerIntro}>Guarda las 2–3 fotos seleccionadas en la carpeta de esta actividad en OneDrive y pega su vínculo aquí.</p>
+    <form className={s.uploadForm} onSubmit={async e=>{e.preventDefault();if(demo||!loaded||busy)return;setBusy(true);setMessage('');try{const result=await saveSocialFolder(activityId,url,version);if(!result.ok){setMessage(result.error??'No se pudo guardar.');if(result.error?.includes('Actualiza')){setLoaded(false);}return;}await load();setMessage('Carpeta vinculada. Ya se puede consultar desde Social.');}catch{setMessage('No se pudo guardar el vínculo. Inténtalo de nuevo.');}finally{setBusy(false);}}}>
+      <label>Vínculo de la carpeta<input type="url" required maxLength={3000} value={url} onChange={e=>setUrl(e.target.value)} placeholder="https://empresa-my.sharepoint.com/…" disabled={demo||busy||!loaded}/></label>
+      <p>El vínculo no cambia los permisos de OneDrive. Comparte la carpeta con Aunor desde Microsoft antes de publicarla aquí.</p>
+      <button type="submit" className={s.primary} disabled={demo||busy||!loaded}>{busy?'Cargando…':'Guardar vínculo'}</button>
+      {safeUrl&&<a href={safeUrl} target="_blank" rel="noopener noreferrer" className={s.secondary}><SystemIcon name="link" className="size-4"/>Abrir carpeta en OneDrive</a>}
+      {!loaded&&!busy&&<button type="button" className={s.secondary} onClick={()=>void load()}>Actualizar carpeta</button>}
+      {demo&&<p>Demostración aislada: no se modifican vínculos reales.</p>}
+      {message&&<p role="status">{message}</p>}
+    </form>
+  </details>;
 }
