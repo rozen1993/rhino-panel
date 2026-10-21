@@ -5,6 +5,7 @@ import {randomUUID} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {verifyContractReadPerformance} from './contract-performance-check.mjs';
 import {verifySocialPhotos} from './verify-social-photos.mjs';
+import {verifyOptimizedSocialPhotos} from './verify-optimized-social-photos.mjs';
 const container=process.env.SISTEMA_R_TEST_DB_CONTAINER || 'supabase_db_sistema-r';
 if(!/^[a-zA-Z0-9_-]+$/.test(container))throw Error('Invalid disposable test container');
 const database='sr_history_test_'+randomUUID().replaceAll('-','');
@@ -28,7 +29,8 @@ try {
  const performanceMigration='202609300003_contract_read_performance.sql';
  const defaultsMigration='202610010001_activity_presentation_defaults.sql';
  const photosMigration='202610200001_social_onedrive.sql';
- if(files.at(-1)!==photosMigration)throw Error('Review migration boundary');
+ const optimizedPhotosMigration='202610210001_social_optimized_photos.sql';
+ if(files.at(-1)!==optimizedPhotosMigration)throw Error('Review migration boundary');
  for(const f of files.filter(f=>f<performanceMigration))sql(readFileSync(migrations+'/'+f,'utf8'));
  console.log('PASS migration chain before read optimization');
  sql(`insert into auth.users values ${[1,2,3,4].map(n=>`('${id(100+n)}')`).join(',')};
@@ -143,6 +145,7 @@ try {
  sql(`do $$begin assert(select place='Lima' and version=3 from public.activities where id='${e}');assert(select place='Lima' and start_date='2026-04-15' from public.activity_date_spans where activity_id='${e}');assert exists(select 1 from public.audit_events where activity_id='${e}' and action='Ubicación de Edición normalizada');end $$;`);
  console.log('PASS presentation defaults, legacy/new retries, Admin-only audited location correction and preserved real-work fields');
  verifySocialPhotos({sql,as,id,plan,migration:readFileSync(migrations+'/'+photosMigration,'utf8')});
+ verifyOptimizedSocialPhotos({sql,as,id,plan,migration:readFileSync(migrations+'/'+optimizedPhotosMigration,'utf8')});
  console.log('PASS complete migration chain including read optimization');
 } finally {
  if(created && /^sr_history_test_[a-f0-9]{32}$/.test(database)) {run(['dropdb','-U','postgres','--force',database]);console.log('Removed only the disposable database '+database);}

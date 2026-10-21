@@ -1,6 +1,7 @@
 import { withSupabase } from "npm:@supabase/server@1.4.1";
 import { createClient } from "npm:@supabase/supabase-js@2.112.3";
 import { response } from "../_shared/account-validation.ts";
+import {cleanErasedSocialPhotos} from '../_shared/social-photo-erasure.ts';
 
 // Passwords live only in this request. Never log request bodies or Auth replies.
 export async function handleAdminErasure(request: Request, ctx: any) {
@@ -36,7 +37,8 @@ export async function handleAdminErasure(request: Request, ctx: any) {
     await ctx.supabaseAdmin.rpc("cancel_erasure_v1", { p_actor: actorId, p_target: body.target });
     if (removed.error) return response({ code: "account_erasure_failed" },409);
   }
-  return response({ ok: true, total: applied.data.total });
+  const photosCleaned=await cleanErasedSocialPhotos(ctx.supabaseAdmin);
+  return response({ ok: true, total: applied.data.total, photosCleanupPending:!photosCleaned });
 }
 
 export default { fetch: withSupabase({ auth: "user" },handleAdminErasure) };

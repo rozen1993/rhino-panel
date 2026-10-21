@@ -37,5 +37,5 @@ export async function executeErasureAction(kind: ErasureKind,target: string|null
   },"No se pudo confirmar la eliminación. Actualiza la página antes de reintentar.")};
   if (data?.ok!==true) return {ok:false,error:"El servidor no confirmó la eliminación."};
   revalidatePath("/","layout");
-  return {ok:true};
+  return {ok:true,...(data.photosCleanupPending?{warning:'Los registros se eliminaron. Algunos archivos de Social siguen pendientes de limpieza; se reintentará en la siguiente eliminación autorizada.'}:{})};
 }

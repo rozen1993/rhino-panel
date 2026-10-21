@@ -62,7 +62,7 @@ export default async function ActivityEditorPage({
             </h1>
             <p className="mt-2 text-xs text-ink-muted">
               {executionMode
-                ? "Solo puedes cambiar el enlace y tu opinión."
+                ? "Actualiza el enlace y tu opinión; añade por separado las fotos para Social."
                 : "Actividad, responsable y jornadas en una sola ficha."}
             </p>
           </div>

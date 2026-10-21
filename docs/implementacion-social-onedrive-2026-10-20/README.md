@@ -1,5 +1,7 @@
 # Social · carpetas OneDrive y ejemplos de presentación
 
+> Documento histórico. La decisión posterior añade fotos optimizadas con descarga directa y conserva OneDrive como enlace opcional. Ver [implementación del 21/10/2026](../implementacion-social-fotos-2026-10-21/README.md); sus instrucciones de publicación sustituyen las de este documento.
+
 Implementación iniciada el 20/10/2026, verificada el 21/10/2026. Solo local; sin publicación ni modificaciones de bases de datos reales. Respaldo anterior: `d8f21f3`.
 
 ## Resultado

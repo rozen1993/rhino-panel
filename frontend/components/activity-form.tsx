@@ -1,5 +1,6 @@
 "use client";
 import { ActivityJourneys } from "@/components/activity-journeys";
+import { ActivitySocialPhotos } from '@/components/activity-social-photos';
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -417,7 +418,7 @@ export function ActivityForm({
           : "Crear actividad propia";
 
   return (
-    <form className="space-y-3" onSubmit={submit} onChangeCapture={() => {dirty.current = true;}}>
+    <div className="space-y-4"><form className="space-y-3" onSubmit={submit} onChangeCapture={() => {dirty.current = true;}}>
       {draftUnavailable && <p role="status" className="rounded-md border border-orange/40 bg-orange/10 p-3 text-xs">El navegador no permite guardar el borrador. Puedes guardar la actividad, pero no cierres esta pestaña antes de hacerlo.</p>}
       {notice && (
         <p
@@ -723,5 +724,7 @@ export function ActivityForm({
         </footer>
       </Card>
     </form>
+    {executionMode&&existing&&<ActivitySocialPhotos activityId={existing.id} demo={dataSource==='demo'} expanded/>}
+    </div>
   );
 }

@@ -9,6 +9,6 @@ export default async function PhotosPage(){
  await requireRole(r=>r.id==='aunor');
  const demo=resolveDataSource()==='demo';
  let albums:SocialAlbum[]=[],loadError='';
- if(!demo){try{albums=await readSocialAlbums();}catch{loadError='No se pudieron consultar las carpetas reales. Pulsa Actualizar para reintentar. Los ejemplos de presentación siguen disponibles debajo.';}}
+ if(!demo){try{albums=await readSocialAlbums();}catch{loadError='No se pudieron consultar los álbumes reales. Pulsa Actualizar para reintentar. Los ejemplos de presentación siguen disponibles debajo.';}}
  return <main><SocialPhotoAlbums albums={albums} examples={socialExamples} loadError={loadError} today={calendarDateInLima(new Date())}/></main>;
 }

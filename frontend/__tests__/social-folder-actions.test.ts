@@ -2,6 +2,7 @@ import {beforeEach,expect,it,vi} from 'vitest';
 import {roles} from '@/lib/roles';
 const mocks=vi.hoisted(()=>({role:vi.fn(),rpc:vi.fn(),from:vi.fn(),refresh:vi.fn(),single:vi.fn()}));
 vi.mock('next/cache',()=>({revalidatePath:mocks.refresh}));
+vi.mock('@/lib/supabase/social-photos',()=>({readSocialPhotos:vi.fn()}));
 vi.mock('@/lib/supabase/session',()=>({currentSupabaseRole:mocks.role}));
 vi.mock('@/lib/supabase/server',()=>({createSupabaseServerClient:async()=>({rpc:mocks.rpc,from:mocks.from})}));
 import {readSocialFolder,saveSocialFolder} from '@/app/actividades/photo-actions';

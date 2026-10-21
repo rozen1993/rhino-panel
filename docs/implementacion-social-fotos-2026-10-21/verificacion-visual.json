@@ -1,0 +1,21 @@
+{
+  "environment": "isolated demo, generated sample images",
+  "widths": [
+    1600,
+    390
+  ],
+  "overflow": false,
+  "pageErrors": [],
+  "checks": [
+    "Social navigation",
+    "3 separate examples",
+    "no invented folder links",
+    "sample download succeeds",
+    "no responsible identity",
+    "image preview",
+    "Escape",
+    "operator delivery form, no nested forms",
+    "client rejects oversize, low resolution, corrupt images",
+    "local preview, demo upload disabled"
+  ]
+}

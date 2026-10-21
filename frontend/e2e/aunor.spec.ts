@@ -64,9 +64,9 @@ test('Social conserva el espacio Aunor y separa los ejemplos de las carpetas rea
   await login(page,'aunor');
   await page.getByRole('link',{name:'Social',exact:true}).click();
   await expect(page).toHaveURL(/\/aunor\/fotos$/);
-  await expect(page.getByRole('heading',{name:'Todavía no hay carpetas vinculadas'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'Todavía no hay fotos publicadas'})).toBeVisible();
   await expect(page.getByRole('article')).toHaveCount(3);
-  await expect(page.getByRole('button',{name:'Carpeta pendiente'})).toHaveCount(3);
+  await expect(page.getByRole('button',{name:/Descargar muestra/})).toHaveCount(3);
   await expect(page.getByRole('button',{name:'Añadir foto al álbum'})).toHaveCount(0);
   await expect(page.getByText('Responsable',{exact:true})).toHaveCount(0);
   await page.setViewportSize({width:390,height:844});
