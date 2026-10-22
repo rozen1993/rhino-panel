@@ -8,3 +8,6 @@ frontend/.verificacion
 frontend/node_modules
 frontend/*.log
 frontend/*.tsbuildinfo
+# Tests run locally/CI; Edge Function sources are deployed separately to Supabase.
+/frontend/__tests__
+/frontend/e2e
